@@ -94,12 +94,12 @@ moc_CallTypeSelector.cpp: CallTypeSelector.h
 CallWizard.o: CallWizard.h CallTypeSelector.h /usr/include/stdio.h
 CallWizard.o: /usr/include/features.h /usr/include/sys/cdefs.h
 CallWizard.o: /usr/include/gnu/stubs.h
-CallWizard.o: /usr/lib/gcc-lib/i586-suse-linux/3.3.3/include/stddef.h
+CallWizard.o: /usr/lib/gcc-lib/i686-pc-linux-gnu/3.3.4/include/stddef.h
 CallWizard.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
 CallWizard.o: /usr/include/bits/typesizes.h /usr/include/libio.h
 CallWizard.o: /usr/include/_G_config.h /usr/include/wchar.h
 CallWizard.o: /usr/include/bits/wchar.h /usr/include/gconv.h
-CallWizard.o: /usr/lib/gcc-lib/i586-suse-linux/3.3.3/include/stdarg.h
+CallWizard.o: /usr/lib/gcc-lib/i686-pc-linux-gnu/3.3.4/include/stdarg.h
 CallWizard.o: /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h
 CallWizard.o: /usr/include/stdlib.h /usr/include/math.h
 CallWizard.o: /usr/include/bits/huge_val.h /usr/include/bits/mathdef.h
@@ -107,11 +107,11 @@ CallWizard.o: /usr/include/bits/mathcalls.h
 CallTypeSelector.o: CallTypeSelector.h /usr/include/stdio.h
 CallTypeSelector.o: /usr/include/features.h /usr/include/sys/cdefs.h
 CallTypeSelector.o: /usr/include/gnu/stubs.h
-CallTypeSelector.o: /usr/lib/gcc-lib/i586-suse-linux/3.3.3/include/stddef.h
+CallTypeSelector.o: /usr/lib/gcc-lib/i686-pc-linux-gnu/3.3.4/include/stddef.h
 CallTypeSelector.o: /usr/include/bits/types.h /usr/include/bits/wordsize.h
 CallTypeSelector.o: /usr/include/bits/typesizes.h /usr/include/libio.h
 CallTypeSelector.o: /usr/include/_G_config.h /usr/include/wchar.h
 CallTypeSelector.o: /usr/include/bits/wchar.h /usr/include/gconv.h
-CallTypeSelector.o: /usr/lib/gcc-lib/i586-suse-linux/3.3.3/include/stdarg.h
+CallTypeSelector.o: /usr/lib/gcc-lib/i686-pc-linux-gnu/3.3.4/include/stdarg.h
 CallTypeSelector.o: /usr/include/bits/stdio_lim.h
 CallTypeSelector.o: /usr/include/bits/sys_errlist.h /usr/include/stdlib.h
