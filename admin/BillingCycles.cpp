@@ -28,32 +28,62 @@
 
 #include <qkeycode.h>
 #include <qstrlist.h>
+#include <qpushbutton.h>
+#include <qlayout.h>
 #include <stdio.h>
 #include <ADB.h>
 #include <qmessagebox.h>
 
 
-#define Inherited BillingCyclesData
-
 BillingCycles::BillingCycles
 (
 	QWidget* parent,
 	const char* name
-)
-	:
-	Inherited( parent, name )
+) : TAAWidget( parent, name )
 {
+    // Create our widgets.
+    list = new QListView(this, "Cycle List");
+    list->addColumn("Cycle ID");
+    list->addColumn("Description");
+    list->setAllColumnsShowFocus(true);
+
+    // Create our buttons.
+    QPushButton *newButton = new QPushButton(this, "New");
+    newButton->setText("&New");
+    connect(newButton, SIGNAL(clicked()), this, SLOT(newCycle()));
+
+    QPushButton *editButton = new QPushButton(this, "Edit");
+    editButton->setText("&Edit");
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editCycle()));
+
+    QPushButton *deleteButton = new QPushButton(this, "Delete");
+    deleteButton->setText("&Delete");
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteCycle()));
+
+    QPushButton *closeButton = new QPushButton(this, "Close");
+    closeButton->setText("&Close");
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
+
+    // Our layout.  Very simple.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    ml->addWidget(list, 1);
+
+    // Buttons.
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    bl->addStretch(1);
+    bl->addWidget(newButton, 0);
+    bl->addWidget(editButton, 0);
+    bl->addWidget(deleteButton, 0);
+    bl->addWidget(closeButton, 0);
+
+    ml->addLayout(bl, 0);
+
+
+    // Create our layout.
+
+
 	setCaption( "Billing Cycles" );
 
-    QPopupMenu * options = new QPopupMenu();
-    CHECK_PTR( options );
-    options->insertItem("New", this, SLOT(newCycle()), CTRL+Key_N);
-    options->insertItem("Edit", this, SLOT(editCycle()), CTRL+Key_E);
-    options->insertItem("Delete", this, SLOT(deleteCycle()), CTRL+Key_D);
-    options->insertSeparator();
-    options->insertItem("Close", this, SLOT(Hide()), CTRL+Key_C);
-    
-    menu->insertItem("&Options", options);
 }
 
 

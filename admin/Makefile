@@ -38,7 +38,7 @@ SOURCES =	BaseList.cpp BaseListData.cpp\
 		AccountsEdit.cpp AccountsEditData.cpp\
 		RatePlans.cpp RatePlansData.cpp\
 		RatePlanEdit.cpp RatePlanEditData.cpp\
-		BillingCycles.cpp BillingCyclesData.cpp\
+		BillingCycles.cpp\
 		BillingCycleEdit.cpp BillingCycleEditData.cpp\
 		VendorTypes.cpp VendorTypesData.cpp\
 		VendorTypeEdit.cpp VendorTypeEditData.cpp\
@@ -82,7 +82,7 @@ HEADERS =	BaseList.h BaseListData.h\
 		AccountsEdit.h AccountsEditData.h\
 		RatePlans.h RatePlansData.h\
 		RatePlanEdit.h RatePlanEditData.h\
-		BillingCycles.h BillingCyclesData.h\
+		BillingCycles.h\
 		BillingCycleEdit.h BillingCycleEditData.h\
 		VendorTypes.h VendorTypesData.h\
 		VendorTypeEdit.h VendorTypeEditData.h\
@@ -128,7 +128,7 @@ SRCMETA =	moc_BaseList.cpp moc_BaseListData.cpp\
 		moc_AccountsEdit.cpp moc_AccountsEditData.cpp\
 		moc_RatePlans.cpp moc_RatePlansData.cpp\
 		moc_RatePlanEdit.cpp moc_RatePlanEditData.cpp\
-		moc_BillingCycles.cpp moc_BillingCyclesData.cpp\
+		moc_BillingCycles.cpp\
 		moc_BillingCycleEdit.cpp moc_BillingCycleEditData.cpp\
 		moc_VendorTypes.cpp moc_VendorTypesData.cpp\
 		moc_VendorTypeEdit.cpp moc_VendorTypeEditData.cpp\
@@ -255,9 +255,6 @@ moc_GenJournalEntryData.cpp: GenJournalEntryData.h
 
 moc_BillingCycles.cpp: BillingCycles.h
 	$(MOC) BillingCycles.h -o moc_BillingCycles.cpp
-
-moc_BillingCyclesData.cpp: BillingCyclesData.h
-	$(MOC) BillingCyclesData.h -o moc_BillingCyclesData.cpp
 
 moc_BillingCycleEdit.cpp: BillingCycleEdit.h
 	$(MOC) BillingCycleEdit.h -o moc_BillingCycleEdit.cpp

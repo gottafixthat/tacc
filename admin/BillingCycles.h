@@ -1,19 +1,32 @@
-/**********************************************************************
+/*
+** $Id: $
+**
+***************************************************************************
+**
+** BillingCycles - Billing Cycle Lists.
+**
+***************************************************************************
+** Written by R. Marc Lewis, 
+**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
+**   All Rights Reserved.
+**
+**  Unpublished work.  No portion of this file may be reproduced in whole
+**  or in part by any means, electronic or otherwise, without the express
+**  written consent of Blarg! Online Services and R. Marc Lewis.
+***************************************************************************
+** $Log: $
+**
+*/
 
-	--- Dlgedit generated file ---
-
-	File: BillingCycles.h
-	Last generated: Sat Sep 20 13:18:44 1997
-
- *********************************************************************/
 
 #ifndef BillingCycles_included
 #define BillingCycles_included
 
-#include "BillingCyclesData.h"
+#include <TAAWidget.h>
+#include <qlistview.h>
 #include <qstrlist.h>
 
-class BillingCycles : public BillingCyclesData
+class BillingCycles : public TAAWidget
 {
     Q_OBJECT
 
@@ -28,14 +41,16 @@ public:
     virtual ~BillingCycles();
 
 public slots:
-    virtual void Hide();
     virtual void refreshList(int);
 
-private slots:
+protected slots:
+    virtual void Hide();
     virtual void newCycle();
     virtual void editCycle();
-    virtual void editCycleL(int msg = 0);
     virtual void deleteCycle();
-    
+    virtual void editCycleL(int msg = 0);
+
+protected:
+    QListView   *list;
 };
 #endif // BillingCycles_included

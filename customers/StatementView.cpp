@@ -29,6 +29,7 @@
 #include "RunStatements.h"
 #include <ADB.h>
 #include "TAATools.h"
+#include <qapplication.h>
 
 #define Inherited StatementViewData
 
@@ -76,6 +77,7 @@ void StatementView::loadStatement(long stNo)
     if (!stNo) {
         close();
     } else {
+        QApplication::setOverrideCursor(waitCursor);
         StatementsDB        STDB;
         StatementsDataDB    STDDB;
         ADB                 DB;
@@ -131,6 +133,7 @@ void StatementView::loadStatement(long stNo)
         }
         
         myStNo = stNo;
+        QApplication::restoreOverrideCursor();
     }
 }
 
@@ -150,7 +153,9 @@ void StatementView::closeView()
 
 void StatementView::reEmailStatement()
 {
+    QApplication::setOverrideCursor(waitCursor);
     emailStatement(myStNo, 1, 1);
+    QApplication::restoreOverrideCursor();
 }
 
 /*
@@ -159,6 +164,8 @@ void StatementView::reEmailStatement()
 
 void StatementView::rePrintStatement()
 {
+    QApplication::setOverrideCursor(waitCursor);
     printStatement(myStNo, 1, 1);
+    QApplication::restoreOverrideCursor();
 }
 

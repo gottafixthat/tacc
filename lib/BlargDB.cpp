@@ -3714,6 +3714,9 @@ StatementsDB::StatementsDB(void)
     balanceX1       = amountX2 + 1;
     balanceX2       = balanceX1 + 39;
 
+    strcpy(headerFont, "b&h lucida");
+    strcpy(bodyFont,   "b&h lucida");
+    strcpy(footerFont, "b&h lucida");
 }
 
 StatementsDB::~StatementsDB()
@@ -3772,7 +3775,7 @@ void StatementsDB::print(QPainter *inP)
         //prn.setPageSize(QPrinter::Letter);
         //prn.setOutputFileName(tmpst);
         //prn.setOutputToFile(TRUE);
-        prn.setOutputToFile(FALSE);
+        prn.setOutputToFile(false);
         prn.setFullPage(true);
         //prn.setFullPage(false);
         
@@ -3790,12 +3793,13 @@ void StatementsDB::print(QPainter *inP)
     }
     
     
-    
     // Get the font metrics to see exactly how many pages we'll have.
     // We space each line by two pixels.  The description is 250 points wide.
     // Anything that needs more than that, we adjust accordingly.
-    p->setFont(QFont("lucida", 8, QFont::Normal));
+    p->setFont(QFont(bodyFont, 8, QFont::Normal));
     QFontMetrics fm(p->fontMetrics());
+    // fprintf(stderr, "Font = '%s'\n", (const char *) p->fontInfo().family());
+    
     // Now, load the statement data from the database and start printing
     // it, watching for page breaks, etc.
     yPos = 275 + pOfs;
@@ -3827,7 +3831,7 @@ void StatementsDB::print(QPainter *inP)
     while (DB.getrow()) {
         SDDB.get(atol(DB.curRow[0]));
         
-        p->setFont(QFont("lucida", 8, QFont::Normal));
+        p->setFont(QFont(bodyFont, 8, QFont::Normal));
 
         //int Lines = (int) (strlen(SDDB.getStr("Description")) / 52) + 1;
         //int RowHeight = 15 * Lines;
@@ -3939,13 +3943,24 @@ void StatementsDB::printHeader(QPainter *p, int PageNo)
     theDate = QDate::currentDate();
     
     // p->rotate(55);
-    if (PageNo == 1) yPos = 66+pOfs;
+    if (PageNo == 1) yPos = 76+pOfs;
     else yPos = 36+pOfs;
     //if (PageNo == 1) ypos = 102;
     //else ypos = 72;
-    p->setFont(QFont("helvetica", 10, QFont::Bold));
+    QFont   hbFont;
+    hbFont.setFamily(headerFont);
+    hbFont.setPointSize(10);
+    hbFont.setWeight(QFont::Bold);
+    hbFont.setStyleHint(QFont::SansSerif, QFont::PreferDevice);
+    QFont   hnFont;
+    hnFont.setFamily(headerFont);
+    hnFont.setPointSize(10);
+    hnFont.setWeight(QFont::Normal);
+    hnFont.setStyleHint(QFont::SansSerif, QFont::PreferDevice);
+
+    p->setFont(hbFont);
     p->drawText(34, yPos, "Blarg! Online Services, Inc.");
-    p->setFont(QFont("helvetica", 10, QFont::Normal));
+    p->setFont(hnFont);
     p->drawText(34, yPos+10, "PO Box 1827");
     p->drawText(34, yPos+20, "Bellevue, WA 98009-1827");
     //p->drawText(34, yPos+30, "Phone:  425.401-9821");
@@ -3970,9 +3985,18 @@ void StatementsDB::printHeader(QPainter *p, int PageNo)
     
     if (PageNo == 1) {
 
-	    p->setFont(QFont("helvetica", 10, QFont::Normal));
+	    p->setFont(QFont(headerFont, 10, QFont::Normal));
 	    //yPos = 162;
 	    yPos = 182 + pOfs;
+        // Because of the variations in the windowed envelopes,
+        // we'll center the customer address between 182 and 132 
+        // pixels.
+        if (!strlen(getStr("CustName")))  yPos += 5;
+        if (!strlen(getStr("CustAddr1"))) yPos += 5;
+        if (!strlen(getStr("CustAddr2"))) yPos += 5;
+        if (!strlen(getStr("CustAddr3"))) yPos += 5;
+        if (!strlen(getStr("CustAddr4"))) yPos += 5;
+
 	    if (strlen(getStr("CustName"))) {
 	        p->drawText( 60, yPos, getStr("CustName"));
 	        yPos += 10;
@@ -4000,10 +4024,10 @@ void StatementsDB::printHeader(QPainter *p, int PageNo)
 
         int acctSummaryTop = pOfs+66;
         yPos = acctSummaryTop;
-	    p->setFont(QFont("helvetica", 12, QFont::Bold));
+	    p->setFont(QFont(headerFont, 12, QFont::Bold));
 	    bbrush.setStyle(Qt::SolidPattern);
 	    bbrush.setColor(Qt::black);
-	    p->setBackgroundMode(Qt::OpaqueMode);
+	    //p->setBackgroundMode(Qt::OpaqueMode);
 	    p->setPen(Qt::white);
 	    //rect.setCoords(325, 100+pOfs, 575, 115+pOfs);
 	    rect.setCoords(325, yPos, 575, yPos+15);
@@ -4015,7 +4039,7 @@ void StatementsDB::printHeader(QPainter *p, int PageNo)
 	    
 	    //yPos = 120+pOfs;
 	    yPos+=20;
-	    p->setFont(QFont("lucida", 8, QFont::Normal));
+	    p->setFont(QFont(bodyFont, 8, QFont::Normal));
 	    //p->setFont(QFont("courier", 10, QFont::Normal));
 	    rect.setCoords(325,yPos,455,yPos+13);
 	    p->drawText(rect, Qt::AlignRight|Qt::AlignVCenter, "Customer ID:");
@@ -4107,9 +4131,9 @@ void StatementsDB::printHeader(QPainter *p, int PageNo)
 	    //rect.setCoords(100, 242, 674, 262);
 	    p->drawLine(  0,  262+pOfs, 692, 262+pOfs);
 	    rect.setCoords(0, 262+pOfs, 576, 282+pOfs);
-	    p->setFont(QFont("helvetica", 6, QFont::Normal, TRUE));
+	    p->setFont(QFont(headerFont, 6, QFont::Normal, TRUE));
 	    p->drawText(rect, Qt::AlignTop|Qt::AlignCenter, "Please detach here and return the upper portion with your payment.  Keep the bottom portion for your records.");
-	    p->setFont(QFont("helvetica",10, QFont::Normal));
+	    p->setFont(QFont(headerFont,10, QFont::Normal));
     }
 }
 
@@ -4131,6 +4155,7 @@ void StatementsDB::printFooter(QPainter *p, int PageNo, int TotPages)
     int         footerStart = 740;
     char        tmpstr[1024];
     QDate       stDate;
+
     
     cust.get(getLong("CustomerID"));
 
@@ -4149,14 +4174,14 @@ void StatementsDB::printFooter(QPainter *p, int PageNo, int TotPages)
     p->drawLine(  0,yPos-3, 692, yPos-3);
 
     // Put in the Blarg address
-    p->setFont(QFont("helvetica", 9, QFont::Bold));
+    p->setFont(QFont(footerFont, 9, QFont::Bold));
     QFontMetrics fm(p->fontMetrics());
     rect.setCoords(36,yPos,192,yPos+fm.height());
     p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, "Blarg! Online Services, Inc.");
     yPos += fm.height();
 
     // Reset our font and metrics
-    p->setFont(QFont("helvetica", 9, QFont::Normal));
+    p->setFont(QFont(footerFont, 9, QFont::Normal));
     fm = p->fontMetrics();
 
     rect.setCoords(36,yPos,192,yPos+fm.height());
@@ -4175,7 +4200,7 @@ void StatementsDB::printFooter(QPainter *p, int PageNo, int TotPages)
     yPos += fm.height();
 
     rect.setCoords(36,yPos,192,yPos+fm.height());
-    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, "Phone: 425.401.9821");
+    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, "Phone: 425.818.6500");
     yPos += fm.height();
     
     rect.setCoords(36,yPos,192,yPos+fm.height());
@@ -4184,7 +4209,7 @@ void StatementsDB::printFooter(QPainter *p, int PageNo, int TotPages)
     
     // Reset our font and metrics.
     // This is the middle part, which is the account summary.
-    p->setFont(QFont("lucida", 8, QFont::Normal));
+    p->setFont(QFont(headerFont, 8, QFont::Normal));
     fm = p->fontMetrics();
     yPos = footerStart;
     
@@ -4315,7 +4340,7 @@ void StatementsDB::printFooter(QPainter *p, int PageNo, int TotPages)
     yPos = footerStart;
 
     // Reset our font and metrics
-    p->setFont(QFont("lucida", 8, QFont::Normal));
+    p->setFont(QFont(footerFont, 8, QFont::Normal));
     fm = p->fontMetrics();
 
     rect.setCoords(350,yPos,565,yPos+fm.height());
@@ -4379,14 +4404,14 @@ void StatementsDB::registerHeader(QPainter *p, int PageNo)
     }
 
     //p->setFont(QFont("helvetica", 10, QFont::Normal));
-    p->setFont(QFont("lucida", 8, QFont::Normal));
+    p->setFont(QFont(headerFont, 8, QFont::Normal));
     QFontMetrics fm(p->fontMetrics());
     rowHeight = fm.height()+3;
 //    p->drawRect(40, 150, 525, 15);
     bbrush.setStyle(Qt::SolidPattern);
     bbrush.setColor(Qt::black);
 
-    p->setBackgroundMode(Qt::OpaqueMode);
+    //p->setBackgroundMode(Qt::OpaqueMode);
     p->setPen(Qt::white);
 
     rect.setCoords(transDateX1, topY, transDateX2, topY+rowHeight);
