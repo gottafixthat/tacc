@@ -49,6 +49,10 @@ Report::Report
     dateList = new QComboBox(false, this);
     dateList->insertItem("This Month");
     dateList->insertItem("Last Month");
+    dateList->insertItem("Today");
+    dateList->insertItem("Yesterday");
+    dateList->insertItem("This Week");
+    dateList->insertItem("Last Week");
     dateList->insertItem("This Year");
     dateList->insertItem("Last Year");
     dateList->insertItem("This Quarter");
@@ -110,7 +114,6 @@ Report::Report
     dl->addWidget(startDateCal,     1);
     dl->addWidget(endDateLabel,     0);
     dl->addWidget(endDateCal,       1);
-    dl->addStretch(1);
     dl->addWidget(dateList,         1);
     dl->addStretch(1);
     dl->addWidget(generateButton,   0);
@@ -697,6 +700,27 @@ void Report::dateRangeSelected(const char *newRange)
         }
         myStartDate.setYMD(today.year(), today.month(), 1);
         myEndDate.setYMD(today.year(), today.month(), today.daysInMonth());
+    }
+    if (!strcmp("Today", newRange)) {
+        myStartDate.setYMD(today.year(), today.month(), today.day());
+        myEndDate.setYMD(today.year(), today.month(), today.day());
+    }
+    if (!strcmp("Yesterday", newRange)) {
+        QDate yest = today.addDays(-1);
+        myStartDate.setYMD(yest.year(), yest.month(), yest.day());
+        myEndDate.setYMD(yest.year(), yest.month(), yest.day());
+    }
+    if (!strcmp("This Week", newRange)) {
+        QDate weekStart = today.addDays(((today.dayOfWeek() - 1) * -1));
+        QDate weekEnd   = weekStart.addDays(6);
+        myStartDate.setYMD(weekStart.year(), weekStart.month(), weekStart.day());
+        myEndDate.setYMD(weekEnd.year(), weekEnd.month(), weekEnd.day());
+    }
+    if (!strcmp("Last Week", newRange)) {
+        QDate weekStart = today.addDays(((today.dayOfWeek() - 1) * -1) - 7);
+        QDate weekEnd   = weekStart.addDays(6);
+        myStartDate.setYMD(weekStart.year(), weekStart.month(), weekStart.day());
+        myEndDate.setYMD(weekEnd.year(), weekEnd.month(), weekEnd.day());
     }
     if (!strcmp("This Year", newRange)) {
         myStartDate.setYMD(today.year(), 1, 1);

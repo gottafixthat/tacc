@@ -44,8 +44,10 @@ public:
 
 protected:
     QComboBox    *answeredByList;
+    QComboBox    *logTypeList;
 
 protected slots:
+    virtual void filterActivated(int);
     virtual void listItemSelected(QListViewItem *curItem);
     virtual void QCloseEvent(QEvent *)              { delete this; }
 
