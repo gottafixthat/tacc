@@ -460,7 +460,7 @@ void TicketEditor::refreshLog()
     ADB         DB;
     FParser     fparse;
     QString     tmpText;
-    fparse.setPath(TEMPLATE_PATH);
+    fparse.setPath(cfgVal("TemplatePath"));
 
     char        orderStr[1024];
     

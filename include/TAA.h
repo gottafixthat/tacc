@@ -24,7 +24,7 @@
 #ifndef TAA_H
 #define TAA_H
 
-#define TEMPLATE_PATH "/usr/local/lib/taa"
+//#define TEMPLATE_PATH "/usr/local/lib/taa"
 
 
 typedef struct voicemail_disposition {

@@ -579,7 +579,7 @@ const char *Ticket::fullLog(t_LogType level)
     ADB         DB;
     FParser     fparse;
     QString     tmpText;
-    fparse.setPath(TEMPLATE_PATH);
+    fparse.setPath(cfgVal("TemplatePath"));
 
     char        orderStr[1024];
     
@@ -654,7 +654,7 @@ void Ticket::sendStaffEmail()
     if (DB.rowCount) {
         while (DB.getrow()) {
             FParser     VFP;
-            VFP.setPath(TEMPLATE_PATH);
+            VFP.setPath(cfgVal("TemplatePath"));
             VFP.set("LoginID",  DB.curRow["LoginID"]);
 
             sprintf(tmpStr, "%ld", myTicketNo);

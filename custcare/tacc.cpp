@@ -84,6 +84,7 @@ int main( int argc, char ** argv )
     TAALogin        *lw;
     uid_t           myUID;
     passwd          *pent;
+    char            homeCfg[1024];
     a.setDesktopSettingsAware(true);
     
     // BlargDB	*DB;
@@ -100,13 +101,22 @@ int main( int argc, char ** argv )
         fprintf(stderr, "\nUnable to get user information.\n\n");
         exit(-1);
     }
+
+    // Create the file name for the users "local" configuration file.  This is
+    // mostly just used for development.  Keeps things local to the user only and not
+    // system wide.
+    strcpy(homeCfg, pent->pw_dir);
+    strcat(homeCfg, "/.taa/taa.cf");
     
     // load the file configuration first.  These settings can be
     // overridden by the database settings.
-    if (!loadCfg("/etc/taa.cf")) {
-        if (!loadCfg("/usr/local/etc/taa.cf")) {
-            if (!loadCfg("/usr/local/lib/taa.cf")) {
-                exit(-1);
+    if (!loadCfg(homeCfg)) {
+        if (!loadCfg("/etc/taa.cf")) {
+            if (!loadCfg("/usr/local/etc/taa.cf")) {
+                if (!loadCfg("/usr/local/lib/taa.cf")) {
+                    fprintf(stderr, "\nUnable to find a configuration file.\n");
+                    exit(-1);
+                }
             }
         }
     }

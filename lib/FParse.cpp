@@ -536,7 +536,10 @@ int FParser::loadFile(const char *fName, string &dest)
             }
         }
         fclose(fp);
-    } else retVal = 0;
+    } else {
+        fprintf(stderr, "FParser::loadFile - Unable to load file '%s'\n", fullPath.c_str());
+        retVal = 0;
+    }
 
     return retVal;
 }
