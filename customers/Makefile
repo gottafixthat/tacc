@@ -29,7 +29,7 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		NewCustomerData.cpp CallBackVerify.cpp CallBackVerifyData.cpp\
 		DupPhones.cpp DupPhonesData.cpp\
 		EditCustomer.cpp\
-		ReceivePayment.cpp ReceivePaymentData.cpp\
+		ReceivePayment.cpp\
 		CustChargeEdit.cpp\
 		SubscriptionEdit.cpp\
 		CustRegister.cpp\
@@ -68,7 +68,7 @@ HEADERS =	Customers.h NewCustomer.h\
 		DupPhones.h DupPhonesData.h\
 		CustRegister.h\
 		EditCustomer.h\
-		ReceivePayment.h ReceivePaymentData.h\
+		ReceivePayment.h\
 		CustChargeEdit.h\
 		SubscriptionEdit.h\
 		Tab_ContactInfo.h\
@@ -108,7 +108,7 @@ SRCMETA =	moc_Customers.cpp \
 		moc_DupPhones.cpp moc_DupPhonesData.cpp\
 		moc_CustRegister.cpp\
 		moc_EditCustomer.cpp\
-		moc_ReceivePayment.cpp moc_ReceivePaymentData.cpp\
+		moc_ReceivePayment.cpp\
 		moc_CustChargeEdit.cpp\
 		moc_SubscriptionEdit.cpp\
 		moc_Tab_ContactInfo.cpp\
@@ -212,9 +212,6 @@ moc_EditCustomer.cpp: EditCustomer.h
 
 moc_ReceivePayment.cpp: ReceivePayment.h
 	$(MOC) ReceivePayment.h -o moc_ReceivePayment.cpp
-
-moc_ReceivePaymentData.cpp: ReceivePaymentData.h
-	$(MOC) ReceivePaymentData.h -o moc_ReceivePaymentData.cpp
 
 moc_CustChargeEdit.cpp: CustChargeEdit.h
 	$(MOC) CustChargeEdit.h -o moc_CustChargeEdit.cpp
