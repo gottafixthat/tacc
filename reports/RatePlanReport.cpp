@@ -1,0 +1,106 @@
+/*
+** RatePlanReport - Gives a summary of the Customers and the rate plans they
+**                  are associated with.
+*/
+
+#include "RatePlanReport.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <qlistview.h>
+#include <qapplication.h>
+
+#include <ADB.h>
+#include <BString.h>
+
+#include "RatePlanDetailReport.h"
+
+RatePlanReport::RatePlanReport
+(
+	QWidget* parent,
+	const char* name
+)
+	: Report( parent, name )
+{
+	setCaption( "Rate Plans Report" );
+	setTitle("Rate Plan Summary");
+	
+	list->setColumnText(0, "Plan Tag");   list->setColumnAlignment(0, AlignLeft);
+	list->addColumn("Description");       list->setColumnAlignment(1, AlignLeft);
+	list->addColumn("Active");            list->setColumnAlignment(2, AlignRight);
+	list->addColumn("Inactive");          list->setColumnAlignment(3, AlignRight);
+	
+	refreshReport();
+	
+	allowDates(0);
+}
+
+
+RatePlanReport::~RatePlanReport()
+{
+}
+
+
+/*
+** refreshReport   - A virtual function that gets called when the user
+**                   changes one of the dates.
+*/
+
+void RatePlanReport::refreshReport()
+{
+    QApplication::setOverrideCursor(waitCursor);
+
+    list->clear();
+    
+    char    tmpActiveStr[1024];
+    char    tmpInactiveStr[1024];
+    
+    char    *query = new char[65536];
+    ADB     DB;
+    ADB     DB2;
+    
+
+    // Get a list of the rate plans.  Then we'll count the customers that
+    // are assigned that rate plan.
+    DB.query("select InternalID, PlanTag, Description from RatePlans");
+    if (DB.rowCount) {
+        while (DB.getrow()) {
+            // Now, get the number of active customers associated with this
+            // rate plan.
+            DB2.query("select CustomerID from Customers where RatePlan = %s and Active <> 0", DB.curRow["InternalID"]);
+            sprintf(tmpActiveStr, "%6ld", DB2.rowCount);
+            
+            // Now, get the number of INactive customers associated with this
+            // rate plan.
+            DB2.query("select CustomerID from Customers where RatePlan = %s and Active = 0", DB.curRow["InternalID"]);
+            sprintf(tmpInactiveStr, "%6ld", DB2.rowCount);
+
+            // Now, add the entry into the list, including the last column,
+            // which is not shown, containing the internal ID so we can
+            // zoom in on it.
+            (void) new QListViewItem(list, DB.curRow["PlanTag"], DB.curRow["Description"], tmpActiveStr, tmpInactiveStr, DB.curRow["InternalID"]);
+        } 
+    } else {
+        (void) new QListViewItem(list, "No rate plans found!!!");
+    }
+    
+    
+    delete query;
+    
+    QApplication::restoreOverrideCursor();
+}
+
+/*
+** listItemSelected - Brings up a list of customers with the double clicked
+**                    rate plan.
+*/
+
+void RatePlanReport::listItemSelected(QListViewItem *curItem)
+{
+    if (curItem != NULL) {
+        RatePlanDetailReport *RPDR = new RatePlanDetailReport();
+        RPDR->setRatePlanID(atol(curItem->key(4, 0)));
+        RPDR->show();
+    }
+}
+

@@ -1,0 +1,36 @@
+
+ModemUsageHost  = gonk
+ModemUsageDB    = bacct
+ModemUsageUser  = marc
+ModemUsagePass  = 808Frm!3
+ModemUsageTable = ModemUsage
+
+AcctHost  = gonk
+AcctDB    = bacct
+AcctUser  = marc
+AcctPass  = 808Frm!3
+
+#AcctHost  = localhost
+#AcctDB    = bacct
+#AcctUser  = marc
+#AcctPass  = 9!!8110
+
+
+# Specifying the domain name will strip it from the
+# hostname portion of the radius record.
+DomainName = blarg.net
+
+# Sleep time tells radimport the number of seconds to sleep 
+# between import runs.  Go for 15 minutes
+SleepTime  = 900
+
+# BillableNumbers - A comma seperated list of access numbers that we bill
+# for.  This will be inserted directly into the query in the form 
+# "where CalledNumber in(AccessNumbers)"
+BillableNumbers = '2067741791'
+
+# Billable Item - The _NAME_ of the billable item that we are going to
+# use as a rate to charge the use with.
+BillableName = Toll Free Dialup
+
+

@@ -1,0 +1,1711 @@
+
+# Host: localhost    Database: Blarg
+#--------------------------------------------------------
+
+#
+# Table structore for table 'Settings'
+#
+# This is the new place that all of the TAA settings will be in.
+# The program should read all of the data from this table at startup
+# and store it in a QDict structure for speed purposes.
+# It should then return the value to the calling program.
+
+CREATE TABLE Settings (
+  InternalID bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  EditLevel  int(11) NOT NULL DEFAULT '0',
+  DefaultType int(11) NOT NULL DEFAULT '0',
+  Token blob NOT NULL,
+  Setting blob NOT NULL,
+  PRIMARY KEY(InternalID)
+);
+
+
+#
+# Table structure for table 'Companies'
+#
+# Companies is how we are going to pull off having multiple "Identities" on
+# the net.  There will be one entry for Blarg and one entry for Accutek.
+# There will be only one set of books, however.  The only noticable difference
+# will be with customers and vendors.  When a customer is billed, they will
+# receive a statement/invoice from a particular company.  When a vendor
+# sends us a bill, it will be to a particular company.
+#
+# CompanyNo    - The "InternalID" of the company.
+# CompanyTag   - A short abbreviation for the company name.  This will
+#                appear in the various list boxes and such.
+# CompanyName  - The name of the company
+# Address Fields - Self explanatory.
+#
+CREATE TABLE Companies (
+  CompanyNo int(11) NOT NULL DEFAULT '0' auto_increment,
+  CompanyTag varchar(10),
+  CompanyName varchar(60),
+  Address1 varchar(60),
+  Address2 varchar(60),
+  City varchar(60),
+  State varchar(60),
+  ZIP varchar(60),
+  MainPhone varchar(30),
+  AltPhone varchar(30),
+  FaxPhone varchar(30),
+  PRIMARY KEY (CompanyNo)
+);
+
+
+
+#
+# Table structure for table 'Accounts'
+#
+CREATE TABLE Accounts (
+  AccountNo int(11),
+  AcctName varchar(30),
+  HasSubAccts int(11),
+  SubAcctOf int(11),
+  AcctType int(11),
+  Reimbursable int(11),
+  AcctNumber varchar(30),
+  TaxLine longblob,
+  Balance float(10,2),
+  TransCount int(11)
+);
+
+#
+# Table structure for table 'GLIndex' - The General Ledger Index
+#
+# TransID - The only unique transaction ID for any transaction posted in the
+#           general ledger.
+# SplitCount - A quick guide as to how many entries there are in the GL
+#              for this TransID
+# BaseDesc   - The base description for this transaction, i.e. 'Deposit'
+#              or 'Statement'.
+#
+CREATE TABLE GLIndex (
+  TransID bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  SplitCount int(11) NOT NULL DEFAULT '0',
+  BaseDesc blob,
+  PRIMARY KEY (TransID)
+);
+
+#
+# Table structure for table 'GL' - The General Ledger itself
+#
+# InternalID   - auto_increment variable.  Used to make individual entries
+#                unique in the table.
+# TransID      - Determined from the GLIndex.  There will be at least two
+#                TransID entries for every entry transaction in the
+#                database.  The first entry will be the source account, i.e.
+#                Checking, and the second (and further entries) are for
+#                the target account, i.e. Accounts Payable (for paying a
+#                bill).  The balance must be equal to 0.00.
+# AccountNo    - The account number to associate this entry with.
+# Amount       - The amount to add/subtract to/from this account.
+# LinkedTrans  - If this is a bill payment or something similar, this will
+#                be a reference to the original transaction.  This allows
+#                for a "trail" for a transaction or a group of transactions.
+#                Also gives the ability to "follow the money."
+# TransType    - Bill, Statement, Check, etc.  This determines where the
+#                transaction detail, such as name, address, invoice #, etc.
+#                comes from.
+# TransTypeLink- The InternalID of the detail record in its respective
+#                table. i.e. Statements, Vendor bills, etc.
+# TransDate    - The date of this transaction.
+# BilledDate   - When the transaction was billed.  Mostly only useful for
+#                statement charges for customes, as the user is billed only
+#                once per month.  This is the base used for aging.
+# DueDate      - When this transaction is "due".  Mostly only useful for
+#                statement charges and bill due dates.
+# Cleared      - Whether or not this transaction has been cleared. 
+#                Basically when another transaction has been linked to it
+#                and the full amount has been transferred into another
+#                account or cleared with a bank reconciliation.
+# Number       - Converted from NumberStr.toInt() (automatic)
+# NumberStr    - The statement number, bill number, check number, etc.
+# ItemID       - The BillablesItems item ID.  Mostly only useful for
+#                customer charges.
+# Quantity     - The quantity of these that we sold.  
+# Price        - The price they were sold at.  The total will be in
+#                Amount.
+# Memo         - The text associated with this item, i.e. "Dialup PPP Access
+#                Charge for Dec 1, 1997 through Dec 31, 1997" or 
+#                "ISDN Usage from Dec 1, 1997 through Dec 31, 1997\n
+#                 (hours in excess of 200)"
+# 
+#
+CREATE TABLE GL (
+  InternalID bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  TransID bigint(21) NOT NULL DEFAULT '0',
+  AccountNo int(11) NOT NULL DEFAULT '0',
+  Amount float(10,2) NOT NULL DEFAULT '0.00',
+  LinkedTrans bigint(21) NOT NULL DEFAULT '0',
+  TransType int NOT NULL DEFAULT '0',
+  TransTypeLink bigint(21) NOT NULL DEFAULT '0',
+  TransDate date NOT NULL DEFAULT '0000-00-00',
+  BilledDate date,
+  DueDate date,
+  Cleared tinyint(4) NOT NULL DEFAULT '0',
+  Number bigint(21) NOT NULL DEFAULT '0',
+  NumberStr varchar(30) NOT NULL DEFAULT '',
+  ItemID int(11) NOT NULL DEFAULT '0',
+  Quantity float(10,2) NOT NULL DEFAULT '0.00',
+  Price float(10,2) NOT NULL DEFAULT '0.00',
+  Memo blob,
+  PRIMARY KEY(InternalID)
+);
+
+#
+# Table structure for table 'AcctsRecv'
+#
+# AcctsRecv - This is the table where the associations are made between
+#             the general ledger and the AR account.  For every charge
+#             made to a customer, it is stored in this table.  The GL
+#             is linked to it through its TransTypeLink entry.
+#
+# InternalID   - auto_increment variable.  Used to make individual entries
+#                unique in the table.
+# GLTransID    - The GL(Index) Transaction ID that refers to this row.
+# GLIntID      - The GL InternalID that refers to this row.
+# TransType    - The type of transaction this is (STMT CHRG, PAYMENT, etc).
+# RefNo        - Used by payments, this is the customers check number.
+# CustomerID   - The Customer ID for this transaction
+# LoginID      - The LoginID for this transaction (optional)
+# BillingCycle - The billing cycle for this charge (used by automatic
+#                subscription entry).  This will allow us to change
+#                a customers billing cycle effective on a date in the
+#                past, and re-rate the charges correctly.
+# RatePlanID   - The rate plan ID for this charge (used by automatic 
+#                subscription entry).  This, too, will allow us to change
+#                a customer's rate plan effective on a date in the past
+#                and correctly re-rate the charges from that date forward.
+# ItemID       - An entry from Billables.  Also helpful when re-rating a
+#                changed RatePlan/BillingCycle...
+# Quantity     - The quantity of the item that we're charging.
+# Price        - The price of the item.
+# Amount       - The amount of this transaction.  Positive numbers for
+#                charges, negative numbers for credits/payments.
+# ClearedAmount- The amount of this charge that has cleared.  When the
+#                transaction is fully cleared, then this amount will
+#                be equal to Amount.
+# StatementNo  - The statement number that this transaction appears on.
+# TransDate    - The date for this transaction (should match the date in the
+#                GL).
+# BilledDate   - The date this transaction was actually billed to the user
+#                (should match the date in the GL).
+# DueDate      - The due date for this transaction (should also match the
+#                due date in the GL).
+# StartDate    - This is the starting date for the service that is being
+#                billed for.  Normally, it is 'BillingCycle.Day'.
+# EndDate      - This is the last day of service that this item is being
+#                billed for.  Normally, it is (next) BillingCycle.Day - 1.
+#                This end date should also match the Subscription entry
+#                for the user, also.  This column will be used when a
+#                user changes account types mid-month, or closes their
+#                account, or other events such as that.  The StartDate
+#                and EndDate will adjust to determine the pro-rated amount
+#                for that charge, based on the Customer's rate plan, Billing
+#                cycle and Item price, and whether or not it is part of a
+#                Package.
+# PackageItem  - If this is part of the users package, then this flag is
+#                set.  When doing a statement for the customer, what it does
+#                is groups the package items together first, charges them
+#                that amount and groups them together.  This will make for
+#                a nice clean looking statement that the user will be able
+#                to understand.
+# Cleared      - Whether or not this transaction has cleared yet.
+# Exported     - Whether or not this transaction has been exported to
+#                QuickBooks or not...
+# Memo         - Additional description lines for this transaction.  We have
+#                so damn many additional description lines that the user
+#                should never get confused if we use them appropriately.
+#
+CREATE TABLE AcctsRecv (
+  InternalID    bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  GLTransID     bigint(21) NOT NULL DEFAULT '0',
+  GLIntID       bigint(21) NOT NULL DEFAULT '0',
+  TransType     int(11) NOT NULL DEFAULT '0',
+  RefNo         char(16) NOT NULL DEFAULT '0',
+  CustomerID    bigint(21) NOT NULL DEFAULT '0',
+  LoginID       char(16) NOT NULL,
+  BillingCycle  int(11) NOT NULL DEFAULT '0',
+  RatePlanID    int(11) NOT NULL DEFAULT '0',
+  ItemID        int(11) NOT NULL DEFAULT '0',
+  Quantity      float NOT NULL DEFAULT '0.00',
+  Price         float(10,2) NOT NULL DEFAULT '0.00',
+  Amount        float(10,2) NOT NULL DEFAULT '0.00',
+  ClearedAmount float(10,2) NOT NULL DEFAULT '0.00',
+  StatementNo   bigint(21) NOT NULL DEFAULT '0',
+  TransDate     date NOT NULL DEFAULT '0000-00-00',
+  BilledDate    date,
+  DueDate       date,
+  StartDate     date,
+  EndDate       date,
+  PackageItem   tinyint(4) NOT NULL DEFAULT '0',
+  Cleared       tinyint(4) NOT NULL DEFAULT '0',
+  Exported      tinyint(4) NOT NULL DEFAULT '0',
+  Memo          blob,
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'Billables'
+#
+# Billables - Billables determines the base Billable Items that a user may
+#             be charged for.  It does not contain pricing, however,
+#             BillablesData contains prices for the individual items, and is
+#             used in conjunction with the customers rate plan and billing
+#             cycle.
+#
+#       ItemNumber - The unique item number for this billable item.  Used
+#                    all over the place.
+#
+#       ItemID     - A 16 character pneuomonic for the item.  Used in lists.
+#
+#       Description - A longer description of the item which will appear on
+#                     statements and such.
+#
+#       (ItemType was SubscriptionItem)
+#       ItemType    - 0 = Normal Item  
+#                     1 = Subscription Item.  If this is a subscription item, 
+#                         and an login or domain is created, then this item 
+#                         will automatically be added to the users subscriptions 
+#                         entries and charged based on their rate plan and 
+#                         billing cycle.  If it is not set, then the user will
+#                         be charged automatically if BaseItemLinks has an
+#                         entry, but it will not be added into their
+#                         subscriptions.
+#                     2 = Setup Charge - Standard.  This item will be
+#                         charged to the login or domain whenever they
+#                         change their account/set up the account/register
+#                         a domain/etc.
+#                     3 = Setup Charge - Merged.  If it is a merged setup
+#                         charge, then it will subtract any other setup
+#                         charges that are less than it, prior to changing
+#                         the account type.  Example:  A user has a PPP
+#                         account, and has paid their $10.00 setup charge.
+#                         They now want an ISDN account, which has a Merged
+#                         Setup Charge associated with it, the setup charge is
+#                         $15.00.  Since they have already paid $10.00 for a 
+#                         PPP account setup, the difference will be $5.00, 
+#                         which is what will be charged to the user.
+#                         If the customer has already paid $15.00 worth of
+#                         setup charges, then they won't get billed.
+#                     4 = Setup Charge - Priority/Amount.  If this is selected,
+#                         and the account is charged a setup charge for any other
+#                         type of account that has a higher priority, then
+#                         this charge will not be charged to the user.
+#                         Example:  A user has a PPP account, and switches to
+#                         a PPP+Shell account, which has the same setup charge
+#                         then the user will not be charged for the setup of
+#                         the fee.
+#                     5 = Setup Charge - Distinct.  If the item has this flag
+#                         set, and two setup charges are associated with the
+#                         same account, then only the one with the higher 
+#                         priority will be charged, regardless of the distinct
+#                         flag set on other linked Setup charges.  An example
+#                         of this would be a package.  Say package "Domain
+#                         Hosted" contains a "Domain", and a "Telnet Web" 
+#                         account.  Both have associated setup charges, but
+#                         since the package has a setup charge as well, the
+#                         user will not get charged for for the individual
+#                         setup charges for the Domain and the Telnet Web
+#                         accounts.  If two items are charged to the user and
+#                         there are multiple distinct charges, then the one
+#                         with the higher (lower, actually) priority gets
+#                         charged.
+#
+#		AccountNo		- The Account number to record the uses of this
+#                         BillableItem.  This is supposed to be a double
+#                         entry accounting system...
+#
+#		Taxable			- If taxable, then a tax line will automatically
+#                         be generated for this item on the statement.
+#
+#		Priority		- Determines how a Billable is charged.  The
+#                         lower the number, the higher the priority.
+#                         Each entry in BillableItemsData has two prices,
+#                         the Price and SecondaryPrice.  The highest
+#                         priority item that the user is charged for in their
+#                         subscription run is billed at Price.  All
+#                         other items are billed at SecondaryPrice.  In
+#                         the event that two items have the same priority,
+#                         they are both billed at Price.
+#
+#
+# What this, when combined with BaseTypes, BaseTypeLinks, RatePlans and 
+# BillingCycles allows for a user to have aa nice mixture of services, 
+# all getting billed the appropriate amount when services are added or
+# removed.  Whew.  This has been a bitch to design.
+#
+#
+CREATE TABLE Billables (
+  ItemNumber int(11) NOT NULL DEFAULT '0' auto_increment,
+  ItemID varchar(16) NOT NULL,
+  Description blob NOT NULL,
+  ItemType tinyint(4) NOT NULL,
+  AccountNo int(11) NOT NULL,
+  Taxable tinyint(4) NOT NULL,
+  Priority int(11) NOT NULL,
+  PRIMARY KEY (ItemNumber)
+);
+
+CREATE TABLE BillablesData (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  ItemNumber int(11) NOT NULL,
+  RatePlanID int(8) NOT NULL,
+  CycleID varchar(16) NOT NULL,
+  Description blob NOT NULL,
+  TrialPeriod int(8) NOT NULL,
+  Price float(10,2) NOT NULL,
+  SecondaryPrice float(10,2) NOT NULL,
+  Units varchar(16) NOT NULL,
+  Measured int(11) NOT NULL DEFAULT '0',
+  Measurement int(11) NOT NULL DEFAULT '0',
+  BaseQuantity bigint(21) NOT NULL DEFAULT '0',
+  AdditionalPrice float(10,2) NOT NULL DEFAULT '0.00',
+  Incremental int(11) NOT NULL DEFAULT '0',
+  MinIncrement bigint(21) NOT NULL DEFAULT '0',
+  PRIMARY KEY (InternalID),
+  UNIQUE(ItemNumber,RatePlanID,CycleID)
+);
+
+#
+# Table structure for table 'BillingCycles'
+#
+CREATE TABLE BillingCycles (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  CycleID varchar(16) NOT NULL,
+  Description longblob,
+  Jan int(11),
+  Feb int(11),
+  Mar int(11),
+  Apr int(11),
+  May int(11),
+  Jun int(11),
+  Jul int(11),
+  Aug int(11),
+  Sep int(11),
+  Oct int(11),
+  Nov int(11),
+  Dece int(11),
+  Day int(11),
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'Addresses'
+#
+#  Contains address entries for Customers and Vendors, possibly others in
+#  future versions.
+#
+# InternalID   - Keeps things unique.
+# RefFrom      - 0 = Customers, 1 = Vendors
+# RefID        - The CustomerID or VendorID
+# Tag          - Billing, Mailing, Shipping, etc.
+# International- Boolean.  0 for USA address, 1 for International.
+# Address1     - Address Line 1
+# Address2     - Address Line 2
+# City         - City/Province
+# State        - State         - Not used if international.
+# ZIP          - ZIP Code      - Not used if international.
+# Country      - Country       - Used only if international.
+# PostalCode   - Postal code   - Used only if international.
+# Active       - Boolean, 0 = NO, 1 = YES.
+# LastModifiedBy - The user who last updated this address.
+# LastModified - TimeStamp - automatic.
+#
+CREATE TABLE Addresses (
+  InternalID     bigint unsigned NOT NULL DEFAULT '0' auto_increment,
+  RefFrom        tinyint NOT NULL DEFAULT '0',
+  RefID          bigint NOT NULL DEFAULT '0',
+  Tag            varchar(16),
+  International  tinyint NOT NULL DEFAULT '0',
+  Address1       varchar(80),
+  Address2       varchar(80),
+  City           varchar(80),
+  State          varchar(80),
+  ZIP            varchar(16),
+  Country        varchar(80),
+  PostalCode     varchar(80),
+  Active         tinyint NOT NULL DEFAULT '1',
+  LastModifiedBy varchar(16),
+  LastModified   timestamp,
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'PhoneNumbers'
+#
+#  Contains phone number entries for Customers and Vendors, possibly others in
+#  future versions.
+#
+# InternalID     - Keeps things unique.
+# RefFrom        - 0 = Customers, 1 = Vendors
+# RefID          - The CustomerID or VendorID
+# Tag            - Day Phone, Evening Phone, Fax, Cellular, etc.
+# International  - Boolean.  0 for USA phone number, 1 for International.
+# PhoneNumber    - The number itself.
+# Active         - Boolean, 0 = NO, 1 = YES.
+# LastModifiedBy - The user who last updated this Phone Number.
+# LastModified   - TimeStamp - automatic.
+#
+CREATE TABLE PhoneNumbers (
+  InternalID     bigint unsigned NOT NULL DEFAULT '0' auto_increment,
+  RefFrom        tinyint NOT NULL DEFAULT '0',
+  RefID          bigint NOT NULL DEFAULT '0',
+  Tag            varchar(16),
+  International  tinyint NOT NULL DEFAULT '0',
+  PhoneNumber    varchar(80),
+  Active         tinyint NOT NULL DEFAULT '1',
+  LastModifiedBy varchar(16),
+  LastModified   timestamp,
+  PRIMARY KEY (InternalID)
+);
+
+
+
+#
+# Table structure for table 'Customers'
+#
+CREATE TABLE Customers (
+  CustomerID bigint(6) unsigned zerofill NOT NULL DEFAULT '0000000' auto_increment,
+  FullName char(60) NOT NULL,
+  ContactName char(60),
+  AltContact char(60),
+  PrimaryLogin char(16),
+  BillingAddress char(16),
+  RatePlan int(11),
+  RatePlanDate date,
+  BillingCycle int(11),
+  BillingCycleDate date,
+  Terms int(11),
+  CurrentBalance double(8,2),
+  CreditLimit double(8,2),
+  LastBilled date,
+  LastStatementNo bigint(21),
+  AccountExpires date,
+  PrintedStatement tinyint(4) NOT NULL DEFAULT '0',
+  FreePrintedStatement tinyint(4) NOT NULL DEFAULT '0',
+  SentToCollection tinyint(4) NOT NULL DEFAULT '0',
+  AgencyVendorNo int(11),
+  AddedBy int(11),
+  SalesRep int(11),
+  ReferredBy char(80),
+  AccountOpened date,
+  AccountClosed date,
+  AccountReOpened date,
+  Active tinyint(4) NOT NULL DEFAULT '1',
+  GraceDate date,
+  LastModified timestamp,
+  PRIMARY KEY (CustomerID)
+);
+
+
+#
+# Table structure for table 'Demographics'
+#
+CREATE TABLE Demographics (
+  CustomerID bigint(6) unsigned zerofill,
+  LoginID char(16),
+  OperatingSystem char(60),
+  ModemManufacturer char(60),
+  ModemModel char(60),
+  ReferredBy char(60),
+  LastUpdated date
+);
+
+
+#
+# Table structure for table 'Domains'
+#
+CREATE TABLE Domains (
+  InternalID bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  CustomerID bigint(6) unsigned zerofill,
+  LoginID varchar(16),
+  DomainType int(11),
+  DomainName varchar(30),
+  NICID varchar(16),
+  NICAdminID varchar(16),
+  NICTechID varchar(16),
+  NICBillID varchar(16),
+  Server varchar(16),
+  SubServer varchar(16),
+  IPAddress varchar(16),
+  DateCreated date,
+  DateRemoved date,
+  LastModified timestamp,
+  Active int(11),
+  LocalSubmit varchar(32),
+  NICSubmit varchar(32),
+  DNSUpdated varchar(32),
+  MailSystemUpdated varchar(32),
+  VirtServerSetup varchar(32),
+  NICCompleted varchar(32),
+  Released varchar(32),
+  Notes longblob,
+  PRIMARY KEY (InternalID)
+);
+
+
+#
+# Table structure for table 'IntelliPAY'
+#
+CREATE TABLE IntelliPAY (
+  InternalID bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  CustomerID bigint(6) unsigned zerofill,
+  FullName varchar(60),
+  Address1 varchar(60),
+  Address2 varchar(60),
+  City varchar(30),
+  State varchar(30),
+  ZIP varchar(16),
+  Phone varchar(16),
+  DLNumber varchar(30),
+  DLState varchar(30),
+  AuthName varchar(60),
+  CheckNumber varchar(16),
+  CheckAmount float(7,2),
+  AllNumbers varchar(60),
+  AllNumbersR varchar(60),
+  BankName varchar(60),
+  BankCity varchar(30),
+  BankState varchar(30),
+  BankZIP varchar(16),
+  Memo longblob,
+  DateEntered date,
+  DateProcessed date,
+  EnteredBy varchar(16),
+  Processed tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'DomainTypes'
+#
+# DomainTypes is how the administrative programs know what sort of
+# mail to send and how to set up domains for billing purposes.
+#
+# InternalID  - Makes things unique
+# DomainType  - The short version of the DomainType, primarily for lists.
+# Description - For humans.
+
+CREATE TABLE DomainTypes (
+  InternalID  bigint NOT NULL DEFAULT '0' auto_increment,
+  DomainType  char(32),
+  Description blob,
+  PRIMARY KEY(InternalID)
+);
+
+INSERT INTO DomainTypes VALUES (0, "Standard WWW Hosted", "Standard Domain Hosted Web Account");
+INSERT INTO DomainTypes VALUES (0, "Resale WWW Hosted", "Resalable Domain Hosted Web Account");
+INSERT INTO DomainTypes VALUES (0, "Email Only Domain", "Email Only Domain Hosting (no virtual web server)");
+
+#
+# Table structure for table 'DomainTypeBillables'
+#
+# DomainTypeBillables is we know which Billable items to charge to the user
+# when a particular type of domain is created or changed.
+#
+# InternalID   - Makes things unique
+# DomainTypeID - The Internal ID of the LoginType, primarily for lists.
+# ItemNumber   - The Billable ItemNumber to charge.  If this item is a
+#                subscription item, then it will automagically be inserted
+#                into their subscriptions as part of the creation/type change
+#                process.
+
+CREATE TABLE DomainTypeBillables (
+  InternalID    bigint NOT NULL DEFAULT '0' auto_increment,
+  DomainTypeID  bigint(21),
+  ItemNumber    bigint(21),
+  PRIMARY KEY(InternalID)
+);
+
+
+#
+# Table structure for table 'LoginFlags'
+#
+# Login Flags defines the available permissions that an account can have.
+#
+#  InternalID  - Makes it unique
+#  LoginFlag   - The flag that will be used to pass it to brassd, or other
+#                administrative programs.
+#  Description - For humans.
+
+CREATE TABLE LoginFlags (
+  InternalID bigint NOT NULL DEFAULT '0' auto_increment,
+  LoginFlag char(16),
+  Description blob,
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'LoginTypes'
+#
+# LoginTypes is how the administrative programs know what sort of
+# permissions to give to users through the brassd mechanism.
+#
+# InternalID - Makes things unique
+# LoginType  - The short version of the LoginType, primarily for lists.
+# Description - For humans.
+
+CREATE TABLE LoginTypes (
+  InternalID bigint NOT NULL DEFAULT '0' auto_increment,
+  LoginType  char(32),
+  Description blob,
+  PRIMARY KEY(InternalID)
+);
+
+INSERT INTO LoginTypes VALUES (1, 'CompleteNet', 'CompleteNet PPP Account');
+INSERT INTO LoginTypes VALUES (2, 'Unix Shell', 'Unix Shell Account');
+INSERT INTO LoginTypes VALUES (3, 'MyMail', 'MyMail Email Only Account');
+INSERT INTO LoginTypes VALUES (4, 'NewsNow', 'NewsNow remote NNTP News Account');
+INSERT INTO LoginTypes VALUES (5, 'Telnet Web', 'Telnet Only Web Account');
+INSERT INTO LoginTypes VALUES (6, 'CompleteNet ISDN', 'CompleteNet ISDN Account');
+INSERT INTO LoginTypes VALUES (7, 'CompleteNet plus Shell', 'CompleteNet PPP Account with Unix Shell Access');
+INSERT INTO LoginTypes VALUES (8, 'CompleteNet ISDN plus Shell', 'CompleteNet ISDN Account with Unix Shell Access');
+
+#
+# Table structure for table 'LoginTypeBillables'
+#
+# LoginTypeBillables is we know which Billable items to charge to the user
+# when a particular type of account is created or changed.
+#
+# InternalID - Makes things unique
+# LoginTypeID- The Internal ID of the LoginType, primarily for lists.
+# ItemNumber - The Billable ItemNumber to charge.  If this item is a
+#              subscription item, then it will automagically be inserted
+#              into their subscriptions as part of the creation/type change
+#              process.
+
+CREATE TABLE LoginTypeBillables (
+  InternalID bigint NOT NULL DEFAULT '0' auto_increment,
+  LoginTypeID  bigint(21),
+  ItemNumber bigint(21),
+  PRIMARY KEY(InternalID)
+);
+
+
+#
+# Table structure for table 'LoginTypeDictionary'
+#
+# LoginTypeDictionary is related to LoginTypes, in that it holds the list
+# Dictionary items for the specified login type.
+# The Dictionary items are sent to Brass when logins are created or
+# modified.
+#
+# InternalID - Makes things unique
+# LoginTypeID - Refers to LoginTypes.InternalID
+# FlagID - Refers to LoginFlags.InternalID
+
+CREATE TABLE LoginTypeFlags (
+  InternalID bigint NOT NULL DEFAULT '0' auto_increment,
+  LoginTypeID bigint NOT NULL,
+  Tag varchar(20) NOT NULL,
+  Value blob,
+  PRIMARY KEY(InternalID)
+);
+
+# CompleteNet PPP Dictionary Entries
+INSERT INTO LoginTypeFlags VALUES (0, 1, 'PPP', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 1, 'Routing', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 1, 'NNTP', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 1, 'Shell', '/usr/local/bin/noshell');
+# Unix Shell Dictionary Entries
+INSERT INTO LoginTypeFlags VALUES (0, 2, 'Shell', '/usr/local/bin/limesh');
+# MyMail Dictionary Entries
+INSERT INTO LoginTypeFlags VALUES (0, 3, 'Shell', '/usr/local/bin/mailsh');
+# NewsNow dictionary entries
+# Telnet Web dictionary entries
+INSERT INTO LoginTypeFlags VALUES (0, 5, 'Shell', '/usr/local/bin/limesh');
+INSERT INTO LoginTypeFlags VALUES (0, 5, 'PPP', '0');
+# ISDN dictionary entries
+INSERT INTO LoginTypeFlags VALUES (0, 6, 'ISDN', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 6, 'Routing', '1');
+# CompleteNet PPP + Shell Dictionary Entries
+INSERT INTO LoginTypeFlags VALUES (0, 7, 'PPP', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 7, 'Routing', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 7, 'NNTP', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 7, 'Shell', '/usr/local/bin/limesh');
+# CompleteNet ISDN + Shell Dictionary Entries
+INSERT INTO LoginTypeFlags VALUES (0, 8, 'ISDN', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 8, 'Routing', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 8, 'NNTP', '1');
+INSERT INTO LoginTypeFlags VALUES (0, 8, 'Shell', '/usr/local/bin/limesh');
+
+#
+# Table structure for table 'Logins'
+#
+CREATE TABLE Logins (
+  InternalID bigint NOT NULL DEFAULT '0' auto_increment,
+  CustomerID bigint(6) unsigned zerofill,
+  LoginID char(16),
+  LoginType int(11),
+
+  Opened date,
+  Closed date,
+  ReOpened date,
+  Wiped date,
+
+  ContactName char(80),
+  Address1 char(60),
+  Address2 char(60),
+  City char(60),
+  State char(60),
+  ZIP char(60),
+  Country char(60),
+  DayPhone char(30),
+  EvePhone char(30),
+  FaxPhone char(30),
+  AltPhone char(30),
+  
+  OpSys int(11),
+  MailProg int(11),
+  Browser int(11),
+  NewsReader int(11),
+  Dialer int(11),
+  ModemType int(11),
+  LAN tinyint(4) NOT NULL DEFAULT '0',
+
+  Active int(11),
+  LastModified timestamp,
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'BaseTypes'
+#
+# BaseTypes - BaseTypes determine what is billable and where, and what kind
+#             of privilages they have.  The BaseType is assigned automatically
+#             and is the primary key for the file.
+#
+#             LinkType -   1 = Applies to Logins
+#                          2 = Applies to Domains
+#
+#             Description - Description
+#
+# The following only apply if the LinkType is a Login:
+#
+#             EmailOnly   - If TRUE, this account only has email access.
+#                           Used primarily when creating the account to
+#                           determine the shell type.
+#
+#             Dialup      - If TRUE, then they will not be allowed to access
+#                           the general modem pool.
+#
+#             PPP         - If TRUE, then they will be allowed to make a PPP
+#                           connection on the modem pool.  If EmailOnly is 
+#                           also TRUE, then the IP address assigned will be
+#                           in a non-routeable block.
+#
+#             K56         - If TRUE, then Dialup connect speeds may use the
+#                           K56 protocol.  If not, they will be disconnected
+#                           after making the connection.
+#
+#             ISDN        - If TRUE, then an ISDN connection will be allowed.
+#
+#             LineType    - 1 = Dialup Analog (normal account)
+#                           2 = Dedicated Analog 
+#                           3 = Dedicated ISDN
+#                           4 = Frame Relay
+#
+#             NumChannels - 1/2 - For Dedicated ISDN, the number of B channels
+#                           that the user is allowed to connect into.
+#
+# Caveats/notes:  If the Line type is Dedicated, then they do get a single
+#                 LoginID on the system.  The LoginID will be an EmailOnly
+#                 account with no dialup access.  Granted, this can be
+#                 overridden by configuring more BaseTypes, but as for Blarg
+#                 policy, they have to add additional accounts.  The Email
+#                 account is for their use to get mass mailings for system
+#                 outages, etc...
+#
+#
+CREATE TABLE BaseTypes (
+  BaseType int(11) NOT NULL DEFAULT '0' auto_increment,
+  LinkType int(11) NOT NULL DEFAULT '0',
+  Description char(80),
+  EmailOnly tinyint(4) NOT NULL DEFAULT '0',
+  Dialup tinyint(4) NOT NULL DEFAULT '0',
+  PPP tinyint(4) NOT NULL DEFAULT '0',
+  K56 tinyint(4) NOT NULL DEFAULT '0',
+  ISDN tinyint(4) NOT NULL DEFAULT '0',
+  LineType tinyint(4) NOT NULL DEFAULT '1',
+  NumChannels tinyint(4) NOT NULL DEFAULT '1',
+  PRIMARY KEY (BaseType)
+);
+
+#
+# Table structure for BaseTypeLinks
+#
+# BaseTypeLinks - BaseTypesLinks determine which Billables item is charged
+#                 to the user when an account is created or updated.
+#
+# For example:  A Login is created that has ISDN and PPP access.  There would
+#               be two BaseTypeLinks for the login.  The first containing a
+#               reference to charge the user for their ISDN access (higher
+#               priority), and the second to be billed for add-on PPP dialup
+#               access (lower priority).  For more info on billable priorities
+#               see Billables.
+#
+#             InternalID - Auto assigned.  Makes things easy to load.
+#             ItemNumber - An entry from Billables
+#             BaseType   - An entry from BaseTypes
+#
+CREATE TABLE BaseTypeLinks (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  ItemNumber int(11) NOT NULL DEFAULT '0',
+  BaseType int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'ModemTypes'
+#
+CREATE TABLE ModemTypes (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  Manufacturer varchar(60),
+  Model varchar(60),
+  MaxSpeed varchar(16),
+  Internal int(11),
+  InitPC varchar(60),
+  InitMac varchar(60),
+  OtherNotes longblob,
+  LastUpdated date,
+  PRIMARY KEY (InternalID)
+);
+
+
+#
+# Table structure for table 'ModemUsage'
+#
+CREATE TABLE ModemUsage (
+  InternalID bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  LoginID char(16) NOT NULL,
+  StartDate date NOT NULL DEFAULT '0000-00-00',
+  StartTime time NOT NULL DEFAULT '00:00:00',
+  StopDate date NOT NULL DEFAULT '0000-00-00',
+  StopTime time NOT NULL DEFAULT '00:00:00',
+  SessionLength bigint(21) NOT NULL DEFAULT '0',
+  Host int(11) NOT NULL DEFAULT '0',
+  Port int(11) NOT NULL DEFAULT '0',
+  SessionType int(11) NOT NULL DEFAULT '0',
+  TermCause int(11) NOT NULL DEFAULT '0',
+  Speed int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (InternalID)
+);
+
+
+#
+# Table structure for table 'ModemUsageStrings'
+#
+CREATE TABLE ModemUsageStrings (
+  TextID int(11) NOT NULL DEFAULT '0' auto_increment,
+  TextStr blob NOT NULL,
+  PRIMARY KEY (TextID)
+);
+
+
+#
+# Table structure for table 'PaymentTerms'
+#
+CREATE TABLE PaymentTerms (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  TermsDesc char(60) NOT NULL,
+  DueDays int(11),
+  GraceDays int(11),
+  MinDays int(11),
+  FinanceDays int(11),
+  FinancePercent float(10,2),
+  DiscountPercent float(10,2),
+  DiscountDays int(11),
+  PRIMARY KEY (InternalID),
+  UNIQUE TermsDesc (TermsDesc)
+);
+
+
+#
+# Table structure for table 'QBRegister'
+#
+CREATE TABLE QBRegister (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  CustomerID bigint(6) unsigned zerofill,
+  LoginID varchar(16),
+  TransDate date,
+  DueDate date,
+  TransNum int(11),
+  Description longblob,
+  Cleared int(11) NOT NULL DEFAULT '0',
+  Amount float(8,2),
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'RatePlans'
+#
+CREATE TABLE RatePlans (
+  InternalID int(8) NOT NULL DEFAULT '0' auto_increment,
+  PlanTag char(16) NOT NULL,
+  Description char(80) NOT NULL,
+  AutoConvert tinyint(4) NOT NULL DEFAULT '0',
+  ConvertDays int(8) NOT NULL DEFAULT '0',
+  ConvertDate date,
+  ConvertToID int(8) NOT NULL DEFAULT '0',
+  PromoPlan tinyint(4) NOT NULL DEFAULT '0',
+  PromoEnds date,
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'Packages'
+#
+# Packages work much the way that rate plans do for users, with a few
+# differences.  A package works much the way that a 'mask' does on the 
+# billable items.  If an item is included in the package, it masks out
+# the price of the Billable.  It does this once per package item, per 
+# subscription item.  Example:  If two Email only accounts were listed in
+# the package, and the user had three email accounts, the first two listed
+# would be included in the "Package Price", and then the user would be charged
+# for the third email account.
+#
+# This is a good way of including a telnet account/ppp account/etc with a 
+# WWW account.  The telnet account is free, then the PPP accoung gets charged
+# because it is not included in the package.
+#
+# Fields:
+#
+#     InternalID     - The same as used everywhere else.  The unique identifer.
+#     PackageTag     - The thing that will be listed in combo boxes and stuff
+#     Description    - The longer, more verbose description.
+#     Price          - The price of the package itself (overrides the
+#                      price of all items listed in PackageContents.
+#     PackageType    - 0 = System, 1 = Custom User Package
+#     AutoConvert    - Much like rate plans.  Does this convert to a different
+#                      Package at some later date?
+#     ConvertDays    - How many days after creation will this package be
+#                      converted?
+#     ConvertDate    - Or will it be converted on this date (ConvertDays == 0)?
+#     ConvertToID    - If it converts, what does it convert to.
+#     PromoPackage   - If this is a special promotional package.
+#     PromoEnds      - If it is promotional, this is the date that this
+#                      promotion ends and this package can no longer
+#                      be offered to users.
+#     Active         - If this is an active Package (i.e. available to be
+#                      assigned to new users).
+#
+#
+CREATE TABLE Packages (
+  InternalID int(8) NOT NULL DEFAULT '0' auto_increment,
+  PackageTag char(16) NOT NULL,
+  Description char(80) NOT NULL,
+  PackageType int(8) NOT NULL DEFAULT '0',
+  AutoConvert tinyint(4) NOT NULL DEFAULT '0',
+  ConvertDays int(8) NOT NULL DEFAULT '0',
+  ConvertDate date,
+  ConvertToID int(8) NOT NULL DEFAULT '0',
+  PromoPackage tinyint(4) NOT NULL DEFAULT '0',
+  PromoEnds date,
+  Active tinyint(4) NOT NULL DEFAULT '0',
+  PRIMARY KEY (InternalID)
+);
+
+CREATE TABLE PackagesData (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  PackageID  int(8) NOT NULL,
+  RatePlanID int(8) NOT NULL,
+  CycleID int(8) NOT NULL,
+  Price float(10,2),
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'PackageContents'
+#
+# Field Descriptions:
+#
+#    InternalID - Internal to this Packages Contents.
+#    PackageID  - Which Package is this item a part of?
+#    ItemNumber - The ID of the billable item that this is for.
+#
+CREATE TABLE PackageContents (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  PackageID int(8) NOT NULL,
+  Quantity float(10,2) NOT NULL,
+  ItemNumber int(11) NOT NULL DEFAULT '0',
+  Description char(80) NOT NULL,
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for table 'Register'
+#
+CREATE TABLE Register (
+  TransID int(8) NOT NULL DEFAULT '0' auto_increment,
+  SplitCount int(2) NOT NULL DEFAULT '0',
+  AccountNo int(11) NOT NULL DEFAULT '0',
+  TransType int(11) NOT NULL DEFAULT '0',
+  Number varchar(30),
+  TransDate date,
+  DateBilled date,
+  DueDate date,
+  LastModified timestamp(14) NOT NULL,
+  Amount double(8,2),
+  Cleared int(11),
+  Method varchar(16),
+  ToBePrinted int(11) NOT NULL DEFAULT '0',
+  ToBeProcessed int(11) NOT NULL DEFAULT '1',
+  Memo longblob,
+  PRIMARY KEY (TransID)
+);
+
+
+#
+# Table structure for table 'RegisterSplits'
+#
+CREATE TABLE RegisterSplits (
+  TransID int(8) NOT NULL DEFAULT '0',
+  SplitID int(8) NOT NULL DEFAULT '0',
+  RefFrom int(8) NOT NULL DEFAULT '0',
+  TargetID int(6) NOT NULL DEFAULT '0',
+  TargetSubID varchar(16),
+  AccountNo int(11) NOT NULL DEFAULT '0',
+  TransType int(11) NOT NULL DEFAULT '0',
+  Number varchar(30),
+  TransDate date,
+  DateBilled date,
+  DueDate date,
+  LastModified timestamp(14) NOT NULL,
+  ItemNumber int(11),
+  Quantity float(10,2),
+  UnitPrice double(8,2),
+  Units varchar(16),
+  Amount double(8,2),
+  Taxable int(11) NOT NULL DEFAULT '0',
+  Cleared int(11),
+  Method varchar(16),
+  Memo longblob,
+  RegLink bigint(21),
+  SplitLink bigint(21),
+  PRIMARY KEY (TransID,SplitID)
+);
+
+
+#
+# Table structure for table 'Subscriptions'
+#
+# Subscriptions contain the list of things that we bill a customer for on
+# a recurring basis.
+#
+# InternalID   - See every other table...
+# CustomerID   - The customer that this is a subscription for.
+# LoginID      - If breaking things down to the login ID level, then
+#                this is the Login ID for the subscription.  Normally
+#                things are broken down to the login ID level.  For each
+#                Login ID they have on the system, they should have a 
+#                matching subscription item for them.
+# Active       - If this subscription is not active, then it will just be
+#                skipped during a subscription run.  Subscriptions shouldn't
+#                be deleted, but made inactive.  If a subscription item
+#                becomes inactive due to an event such as a Login getting
+#                closed, the "Ends on" date should be checked an an
+#                adjusting entry made in the customer's register to 
+#                pro-rate the amount that was charged from the "Last Date"
+#                to the day before the customers next billing cycle, and 
+#                the EndsOn date should be updated to be the date that the
+#                adjusting entry was made.
+#                The same holds true if a Login ID is unlocked.  The
+#                LastDate should be modified to be the day that the login
+#                was re-activated, a pro-rated amount should then be
+#                inserted into the customer register for the unlock date
+#                to the last day of the current billing cycle they were on,
+#                and the EndsOn date modified to be that date.
+# PackageNo    - If this value is non-zero, then any other subscription items 
+#                that refer to this InternalID as the ParentSubscription 
+#                are not charged, instead they follow this Subscription 
+#                item for things like the start and end dates, and active 
+#                flags.  Some smarts need to be included in the subscription
+#                maintenance engine to know when a subscription should and
+#                shouldn't be included in a package subscription.
+#                If PackageNo is non zero, then this refers to a
+#                Packages.InternalID.  This is where the user will get 
+#                charged from.  If PackageNo is zero, then ItemNumber will
+#                be used to charge the user.
+# ItemNumber   - The reference to a Billables.ItemNumber.
+# ParentID     - By default, this will be '0', which means that it
+#                it is not part of any package defined in the subscriptons.  
+#                This can _ONLY_ be set to a non-zero value if the customer 
+#                is subscribed to a package, and then this item will refer 
+#                to that Subscriptions.InternalID.  If it is non-zero, then
+#                this subscription item is included in another subscription
+#                item.  This will be a seperate query in the subscription
+#                processing runs.
+# Quantity     - The number of items that this subscription is for.
+#                Normally, this should be one.  Even if the customer is
+#                subscribed to multiple login ID's and PPP accounts (for
+#                example).  One of the few places this will not be one is
+#                in the case of disk space, then it will be the amount
+#                of extra disk space on a login ID by login ID basis.
+#                By doing this, the automatic subscribe/unsubscribe logic
+#                can work.
+# ItemDesc     - If AutoPrice is FALSE, then an overriding description for
+#                the item can be included here.  If AutoPrice is TRUE, then
+#                this is not used, and the register charge will get the
+#                description from the ItemID or the Package.
+# Price        - Similar in action to the ItemDesc.  The price hinges on
+#                the Package Price, or the Item price, also dependant on
+#                the customer's rate plan and billing cycle.
+# LastDate     - The last date this subscription item was charged to the
+#                customers register.
+# EndsOn       - The Date that this subscription ends on.  See Active for
+#                more information on LastDate and EndsOn.
+# AutoRenew    - If this is TRUE, then nothing happens.  If this is FALSE,
+#                then Active will be set to FALSE once the EndsOn date is
+#                reached.  Normally this is set to TRUE.  I'm considering
+#                setting something up where things set not to AutoRenew will
+#                cause related logins to close automagically....
+# AutoPrice    - If TRUE, then this subscription item will always use the
+#                price and description derived by looking up the information 
+#                from the RatePlan, BillingCycle, Package, and/or Items 
+#                tables.  If false, then the price and description may be
+#                overridden from this.  This is a good way of setting up
+#                "special" pricing for certian customers.
+#
+# A few more notes on Packages...
+# 
+#  - If a Package expires, then all of the Subscription entries included
+#    in that package revert to standard subscription items.
+#  - When adding Subscription items to a package careful checks must be
+#    performed to ensure that the item does not exceed the maximum number
+#    of items that are included in the package.
+#  - In our scenario, a user can only subscribe to one package, which will
+#    be setup when the account is first created (and inserting the
+#    subscription item during creation).  The program should be written,
+#    however, so that multiple package subscriptions can be used.
+#  - Packages are a very cool idea and will give us a definate edge over
+#    our competition for setting up special promotions, and not losing 
+#    track of what we're billing to whom, and have promotions not get
+#    lost...
+#  - When adding or removing any subscription item, a check should be done
+#    to see if it should be added or removed from a package subscription
+#    item.  If any changes are detected, prompt the user and allow them
+#    to be made automatically.
+#
+CREATE TABLE Subscriptions (
+  InternalID bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  CustomerID bigint(6) unsigned,
+  LoginID varchar(16) NOT NULL DEFAULT '0',
+  Active int(11) NOT NULL DEFAULT '0',
+  PackageNo int(11) NOT NULL DEFAULT '0',
+  ItemNumber int(11) NOT NULL DEFAULT '0',
+  ParentID bigint(21) NOT NULL DEFAULT '0',
+  Quantity float(10,2),
+  ItemDesc blob,
+  Price float(10,2),
+  LastDate date,
+  EndsOn date,
+  AutoRenew int(11),
+  AutoPrice int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (InternalID)
+);
+
+
+#
+# Table structure for table 'UserActivities'
+#
+CREATE TABLE UserActivities (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  Processed int(11),
+  Exported int(11),
+  ActivityType int(11),
+  CustomerID int(11),
+  ActivityDate date,
+  TrialEnds date,
+  LoginID varchar(16),
+  Name varchar(60),
+  FingerName varchar(60),
+  AcctType char(1),
+  AcctTypeDesc varchar(60),
+  ParentID varchar(16),
+  ParentName varchar(60),
+  Addr1 varchar(60),
+  Addr2 varchar(60),
+  City varchar(60),
+  State char(2),
+  ZIP varchar(16),
+  Country varchar(60),
+  DayPhone varchar(16),
+  EvePhone varchar(16),
+  OpSys char(1),
+  OpSysDesc varchar(60),
+  OpSysOther varchar(60),
+  CompanyName varchar(60),
+  DomainName varchar(30),
+  NICBillUSPS char(1),
+  BlargBillUSPS char(1),
+  ReferredBy varchar(60),
+  ChargeSetup char(1),
+  AddedBy varchar(16),
+  AddedByName varchar(60),
+  Comments longblob,
+  PRIMARY KEY (InternalID)
+);
+
+
+#
+# Table structure for table 'UserNotes'
+#
+CREATE TABLE UserNotes (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  LoginID varchar(16),
+  CustomerID bigint(6) unsigned zerofill,
+  DateStamp date,
+  NoteType varchar(16),
+  Notes longblob,
+  AddedBy varchar(16),
+  PRIMARY KEY (InternalID)
+);
+
+
+#
+# Table structure for table 'VendorTypes'
+#
+CREATE TABLE VendorTypes (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  VendorType char(60) NOT NULL,
+  HasSubTypes int(11),
+  SubTypeOf int(11),
+  PRIMARY KEY (InternalID),
+  UNIQUE VendorType (VendorType)
+);
+
+
+#
+# Table structure for table 'Vendors'
+#
+CREATE TABLE Vendors (
+  InternalID int(11) NOT NULL DEFAULT '0' auto_increment,
+  VendorID char(16) NOT NULL,
+  CompanyName char(60),
+  ContactName char(60),
+  AltContact char(60),
+  Address1 char(60),
+  Address2 char(60),
+  City char(60),
+  State char(2),
+  ZIP char(16),
+  Phone char(16),
+  AltPhone char(16),
+  Fax char(16),
+  CheckName char(60),
+  AccountNo char(60),
+  VendorType int(11),
+  Terms char(16),
+  CreditLimit float(10,2),
+  TaxID char(16),
+  Use1099 int(11),
+  Balance float(10,2),
+  BalanceDate date,
+  LastUpdated timestamp(14) NOT NULL,
+  Active int(11),
+  PRIMARY KEY (InternalID),
+  UNIQUE VendorID (VendorID)
+);
+
+
+#
+# Table structure for table 'Triggers'
+#
+# Triggers are used by the program to determine what to do when particular
+# program events happen.  The action can be either charge a billable item
+# or call a program.  Multple actions may be used for each Trigger.
+#
+# InternalID    - Same for this as everything else...Something to make it
+#                 unique.
+# Trigger		- This is the tag that is used by the program.  Some
+#                 examples would be "Printed Statement", "Reactivate Login",
+#                 "Deactivate Login", or "Change Login ID".  Others may
+#                 be added in the future, but those are a few that I was
+#                 having troubles figuring out how to handle...
+# Optional      - 0 = This trigger will be performed each time the program
+#                     performs the action.
+#                 1 = This trigger is optional, and the user will be
+#                     prompted before performing the action.  This is in the
+#                     case of things like Reactivation charges.
+# ActionType    - Determines the type of action to take for this trigger.
+#                   0 - Charge the specified Billable with the BillableID
+#                       pointed to in the BillableItem field.
+#                   1 - Call the program specified in the Program field.
+#                       I haven't yet figured out what I want to do for
+#                       standard arguments for this, but I'm thinking
+#                       about something like a CGI "post" interface which
+#                       passes variable pairs either through environmental
+#                       variables or stdin.  Haven't decided yet, so this
+#                       feature won't likely get used for a while. 
+#                       Basically, I want it for processing the new user
+#                       email messages that go out and sending me mail
+#                       when a login is locked/unlocked/wiped/etc.
+# BillableID    - In the case of ActionType being 0, this is the billable
+#                 item to charge to the user.  Their rate plan and billing
+#                 cycle are taken into effect.
+# Program       - In the case of ActionType being 1, this is the program
+#                 to call.  See above for more details.
+# Description   - If the trigger is optional, the user will be prompted with
+#                 this text when asking whether or not to perform this
+#                 action.  For things like Reactivation charges, which can
+#                 be waived under certain circumstances, the text should
+#                 explain to the operator what circumstances are allowed.
+CREATE TABLE Triggers (
+	InternalID	bigint NOT NULL DEFAULT '0' auto_increment,
+	Trigger		char(40) NOT NULL,
+	Optional    tinyint(4) NOT NULL DEFAULT '0',
+	ActionType  tinyint(4) NOT NULL DEFAULT '0',
+	BillableID  varchar(16),
+	Program		varchar(200),
+	Description	Blob,
+	PRIMARY KEY (InternalID)
+);
+
+
+#
+# Table structure for table 'Statements'
+#
+# The Statements table is an index of processed statements.  Each time
+# that there is a statement run, statements are generated for the customers
+# and stored in this file.   The 'strun' program creates the statements and
+# fills this table and the StatementsData table.  Other programs will then
+# format and send the statements to the users via email or printing.
+# Regardless of the method used to deliver the statement to the user, the
+# data will be the same, and taken out of this table.
+#
+# StatementNo    - Same for this as everything else...Something to make it
+#                  unique.
+# CustomerID     - The customer ID that this statement is for.
+# CustName       - The billed-to name.
+# CustAddr1-4    - The address lines (including Attn: lines)
+# CreatedOn      - The date this statement was created.
+# StatementDate  - The date that this statement is for.
+# DueDate        - The date that the charges on this statement are due.
+# ChargesThrough - The date that the charges are through.  This should be
+#                  the first day of the billing cycle.  This will be
+#                  displayed on the customer statement so that there is
+#                  never any discrepancies or question as to what dates the 
+#                  statement covers.  All previously unbilled charges up to
+#                  and including this date are displayed on the statement.
+# Terms          - The textual representation of the terms (i.e. 'Net 15')
+# PrevBalance    - The previous balance that the user had.
+# Credits        - The total amount of the credits that the user hasn't
+#                  seen before.  This way, PrevBalance + Credits +
+#                  NewCharges will be equal to TotalDue.
+# NewCharges     - The total new charges that the user hasn't seen before.
+# FinanceRate    - The percentage of the finance rate for late charges.
+# FinanceCharge  - The amount of the finance charge.
+# TotalDue       - PrevBalance + NewCharges + Finance Charge
+# ToBeEmailed    - If this is 1, then it needs to be emailed to the user.
+# EmailedOn      - The date that this statement was emailed to the user.
+#                  If the date is '0000-00-00', then it has not yet been
+#                  sent to the user.
+# EmailedTo      - The email address that the statement was sent to.
+# ToBePrinted    - If this is 1, then it needs to be printed.
+# PrintedOn      - The date that this statement was printed on.
+#                  If the date is '0000-00-00', then the statement has not
+#                  yet been printed.
+# HeaderMsg      - The text that should appear between the header information
+#                  (i.e. the address, charge summary, etc).  This could be
+#                  information such as automatic payment charges that will be
+#                  processed, etc.  It could also be other information such
+#                  as delinquint notices, etc.
+# FooterMsg      - The text that should appear after the "Total Due" line
+#                  and all of the line items.  This is information such as
+#                  * Your account is overdue, pay now you fucking deadbeat *
+#                  or other similar messages.
+
+CREATE TABLE Statements (
+  StatementNo    bigint(9) unsigned zerofill NOT NULL DEFAULT '000000000' auto_increment,
+  CustomerID     bigint,
+  CustName       varchar(80),
+  CustAddr1      varchar(80),
+  CustAddr2      varchar(80),
+  CustAddr3      varchar(80),
+  CustAddr4      varchar(80),
+  CreatedOn      date,
+  StatementDate	 date,
+  ChargesThrough date,
+  DueDate		 date,
+  Terms			 varchar(20),
+  PrevBalance	 float(10,2),
+  Credits        float(10,2),
+  NewCharges	 float(10,2),
+  FinanceRate    float(10,3),
+  FinanceCharge  float(10,2),
+  TotalDue		 float(10,2),
+  ToBeEmailed    tinyint(4) NOT NULL DEFAULT '0',
+  EmailedOn		 date DEFAULT '0000-00-00',
+  EmailedTo      varchar(80),
+  ToBePrinted    tinyint(4) NOT NULL DEFAULT '0',
+  PrintedOn		 date DEFAULT '0000-00-00',
+  HeaderMsg		 blob,
+  FooterMsg		 blob,
+  PRIMARY KEY (StatementNo)
+);
+
+#
+# Table structure for table 'StatementsData'
+#
+# The StatementsData table contains the individual line items of a statement.
+# It is these lines that contain the charge information.
+# 
+# InternalID   - That thing that makes it unique.
+# StatementNo  - The Statements.StatementNo that this line item belongs to.
+# AcctsRecvNo  - The InternalID of the AcctsRecv row.
+# TransDate    - The date of the transaction.
+# LoginID      - The LoginID for the customer (to break it down further, it
+#                is informational only).
+# StartDate    - For subscription/measured items, this is the starting date
+#                for the charge.  If it is '0000-00-00', it is not a 
+#                measured charge, and this and the end date should be left
+#                blank on the statement.
+# EndDate      - Same as StartDate, but refers to the last day of the 
+#                service period that this is for.
+# Special      - If this is True, then only the amount should be displayed,
+#                and the Quantity and Price should be omitted.  This is for
+#                items such as "Previous Balance" and "Payment Received".
+# Quantity     - The number of units that this line item is for.
+# Price        - The Unit price of the item.
+# Amount       - Quantity * Price (not calculated).
+# Description  - The description of the charge (i.e. Previous balance).
+
+CREATE TABLE StatementsData (
+  InternalID    bigint NOT NULL DEFAULT '0' auto_increment,
+  StatementNo   bigint,
+  AcctsRecvNo   bigint,
+  TransDate     date,
+  LoginID       varchar(16),
+  StartDate     date,
+  EndDate       date,
+  Special		tinyint(4),
+  Quantity      float(10,2),
+  Price         float(10,2),
+  Amount        float(10,2),
+  Description   blob,
+  PRIMARY KEY (InternalID)
+);
+
+#
+# Table structure for radacct
+# Keeps track of user logins for us.
+# 
+#
+CREATE TABLE radacct (
+  InternalID     bigint NOT NULL DEFAULT '0' auto_increment,
+  UserName       char(16) NOT NULL DEFAULT '',
+  NASID          char(32) NOT NULL DEFAULT '',
+  NASPortID      int(11) NOT NULL DEFAULT '0',
+  NASPortType    int(11) NOT NULL DEFAULT '0',
+  ConnectInfo    char(32) NOT NULL DEFAULT '',
+  FramedProtocol int(11) NOT NULL DEFAULT '0',
+  OutputBytes    bigint(21) NOT NULL DEFAULT '0',
+  InputBytes     bigint(21) NOT NULL DEFAULT '0',
+  StartTime      timestamp,
+  StopTime       timestamp,
+  SessionLength  bigint(21) NOT NULL DEFAULT '0',
+  PRIMARY KEY (InternalID)
+);
+
+
+#
+# AuditTrail - Keeps statistical data about the business.
+# # # InternalID  - Same as all the rest...  # TransType   - We'll start out just defining one, but will probably expand #               on it later.  #                  0 - Informational only # EntryDate   - The date this entry was made.  # EntryTime   - The time this entry was made.  # EntryName   - The name of the entry.  Something like "UserCount", or #               something like that.  # EntryVal    - The value of the entry.  #               For the name 'UserCount', it would be something like
+#               'CompleteNet:603', or 'CompleteNet ISDN:43'
+#
+
+CREATE TABLE AuditTrail (
+  InternalID      bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  TransType       int(11) NOT NULL DEFAULT '0',
+  EntryDate       date NOT NULL DEFAULT '0000-00-00',
+  EntryTime       time NOT NULL DEFAULT '00:00:00',
+  EntryName       blob NOT NULL DEFAULT '',
+  EntryValue      blob NOT NULL DEFAULT '',
+  PRIMARY KEY (InternalID)
+);
+
+#
+# IQCart - Configuration information for the IQ Cart.  Specifically, the
+#          delivery methods, etc.
+#
+# InternalID  - Same as all the rest...
+# DomainID    - The Internal ID of the domain name record
+# VendorID    - The IQCart Vendor ID
+# CustomerID  - The TAA Customer ID
+# LoginID     - The login associated with the IQ Cart
+# FaxNumber   - The _exact_ fax number that will be used when transmitting
+#               faxes orders to the customer.
+#
+
+CREATE TABLE IQCart (
+  InternalID     bigint(21) NOT NULL DEFAULT '0' auto_increment,
+  DomainID       bigint(21) NOT NULL DEFAULT '0',
+  VendorID       bigint(21) NOT NULL DEFAULT '0',
+  CustomerID     bigint(21) NOT NULL DEFAULT '0',
+  LoginID        char(16) NOT NULL DEFAULT '',
+  FaxNumber      char(32) NOT NULL DEFAULT '',
+  PRIMARY KEY (InternalID)
+);
+
+
+#
+# VoiceMail - Stores the voice mail logs for processing and record keeping.
+#
+# MsgID       - Primary key.
+# MsgDateTime - The date and time the message was left
+# LoggedBy    - Username of the person who logged the message
+# Processed   - Boolean, 0 = no, != 0 yes.
+# ProcessedOn - The date and time the message was processed
+# ProcessedBy - Username of the person who processed the message
+# Disposition - 0 = New message (unprocessed), 1 = Call returned, left message
+#               2 = Call returned spoke with person leaving message,
+#               3 = Call returned no answer
+#               4 = Responded via email per request
+#               5 = No contact information left with message
+# CustomerID  - != 0 if known
+# LoginID     - The login ID of the person who left the message (if known)
+# Message     - The text of the message
+# Followup    - Any notes about the followup of this message.
+
+CREATE TABLE VoiceMail (
+    MsgID       bigint(21) NOT NULL DEFAULT '0' auto_increment,
+    MsgDateTime datetime NOT NULL DEFAULT '',
+    LoggedBy    char(16) NOT NULL DEFAULT '',
+    LoggedAt    datetime NOT NULL DEFAULT '',
+    Processed   int(11) NOT NULL DEFAULT '0',
+    ProcessedOn datetime NOT NULL DEFAULT '',
+    Disposition int(11) NOT NULL DEFAULT '0',
+    CustomerID  bigint(21) NOT NULL DEFAULT '0',
+    LoginID     char(16) NOT NULL DEFAULT '',
+    Message     text NOT NULL DEFAULT '',
+    Followup    text NOT NULL DEFAULT '',
+    PRIMARY KEY(MsgID)
+);
+
+#
+# Scheduler - The scheduler tracks things like DSL installations and turn
+#             ups, as well as events and such.  It is meant to be a simple
+#             interface, mostly just a list and some notes.
+#             The Scheduler datafile itself is just an index into other
+#             tables.  This way it will be fast to load data from the
+#             database and into the displayed calendar.
+#
+
+CREATE TABLE Scheduler (
+    SchedulerID bigint(21) NOT NULL DEFAULT '0' auto_increment,
+    EntryType   int(11) NOT NULL DEFAULT '0',
+    EntryDate   date NOT NULL DEFAULT '',
+    EntryTime   time NOT NULL DEFAULT '',
+    Status      int(11) NOT NULL DEFAULT '',
+    Title       char(80) NOT NULL DEFAULT '',
+    PRIMARY KEY(SchedulerID)
+);
+
+#
+# QwestDSLNotices - QwestDSL contains all of the connect/disconnect notices
+#                   we get from Qwest.  It is mostly used for internal 
+#                   purposes to cross reference customers and tickets with 
+#                   connect notices.
+#
+
+CREATE TABLE QwestDSLNotices (
+    NoticeID        bigint(21) NOT NULL DEFAULT '0' auto_increment,
+    CustomerID      bigint(21) NOT NULL DEFAULT '0',
+    TicketNo        bigint(21) NOT NULL DEFAULT '0',
+    NoticeDate      datetime NOT NULL default '',
+    Action          varchar(64) NOT NULL DEFAULT '',
+    Name            varchar(64) NOT NULL DEFAULT '',
+    Addr1           varchar(64) NOT NULL DEFAULT '',
+    Addr2           varchar(64) NOT NULL DEFAULT '',
+    Addr3           varchar(64) NOT NULL DEFAULT '',
+    Select256       varchar(64) NOT NULL DEFAULT '',
+    CBR             varchar(64) NOT NULL DEFAULT '',
+    DueDate         varchar(64) NOT NULL DEFAULT '',
+    DSLNumber       varchar(64) NOT NULL DEFAULT '',
+    BlargCircuit    varchar(64) NOT NULL DEFAULT '',
+    LineSpeed       varchar(64) NOT NULL DEFAULT '',
+    VPI             varchar(64) NOT NULL DEFAULT '',
+    VCI             varchar(64) NOT NULL DEFAULT '',
+    PRIMARY KEY(NoticeID)
+);
+
+#
+# EmailTemplates - This table contains various templates used when emailing
+#                  customers.  This is to replace the file based templates
+#                  that are found in /usr/local/lib/taa/*
+#
+
+CREATE TABLE EmailTemplates (
+    TemplateID      bigint(21) NOT NULL DEFAULT '0' auto_increment,
+    Name            varchar(60) NOT NULL DEFAULT '',
+    DefaultSubject  varchar(100) NOT NULL DEFAULT '',
+    TextPart        blob NOT NULL DEFAULT '',
+    HTMLPart        blob NOT NULL DEFAULT '',
+    PRIMARY KEY(TemplateID)
+);
+
+#
+# EmailQueue    - This holds messages until the TAAMail daemon picks them
+#                 up and sends them to the mail server.
+#
+
+CREATE TABLE EmailQueue (
+    QueueID         bigint(21) NOT NULL DEFAULT '0' auto_increment,
+    ProcessID       varchar(60) NOT NULL DEFAULT '',
+    EmailTime       timestamp,
+    HoldForSync     int(11) NOT NULL DEFAULT '0',
+    EmailFrom       varchar(100) NOT NULL DEFAULT '',
+    EmailTo         varchar(100) NOT NULL DEFAULT '',
+    EmailSubject    varchar(100) NOT NULL DEFAULT '',
+    TextBody        blob NOT NULL DEFAULT '',
+    HTMLBody        blob NOT NULL DEFAULT '',
+    PRIMARY KEY(QueueID)
+);
+
+#
+# TAProcInfo    - This table holds various informational/statistical fields
+#                 about when the last time certain things were done, such 
+#                 as when the last CCC Sync was performed, etc.
+#
+
+CREATE TABLE TAProcInfo (
+    ProcInfoID      bigint(21) NOT NULL DEFAULT '0' auto_increment,
+    ProcessID       varchar(60) NOT NULL DEFAULT '',
+    LastRun         datetime,
+    LastStatus      varchar(255) NOT NULL DEFAULT '',
+    PRIMARY KEY(ProcInfoID)
+);
+
+#
+# DNS_Templates    - SOA and other information for DNS Templates
+#
+CREATE TABLE DNS_Templates (
+    TemplateID      bigint(21) NOT NULL DEFAULT '0' auto_increment,
+    TemplateName    varchar(60) NOT NULL DEFAULT '',
+    Refresh         bigint(21) NOT NULL DEFAULT '28000',
+    Retry           bigint(21) NOT NULL DEFAULT '7200',
+    Expire          bigint(21) NOT NULL DEFAULT '604800',
+    Minimum         bigint(21) NOT NULL DEFAULT '86400',
+    TTL             bigint(21) NOT NULL DEFAULT '86400',
+    Propogate       int(11) NOT NULL DEFAULT '1',
+    AllowCustEdit   int(11) NOT NULL DEFAULT '0',
+    Active          int(11) NOT NULL DEFAULT '1',
+    PRIMARY KEY(TemplateID)
+);
+
+#
+# DNS_Templates_RR - Resource records for DNS templates.
+#
+CREATE TABLE DNS_Templates_RR (
+    InternalID  bigint(21) NOT NULL DEFAULT '0' auto_increment,
+    TemplateID  bigint(21) NOT NULL,
+    Name        char(64) NOT NULL DEFAULT '',
+    RRType      enum('A','AAAA','CNAME','HINFO','MX','NS','PTR','SRV','TXT'),
+    Data        char(128) NOT NULL DEFAULT '',
+    Aux         int(10) UNSIGNED NOT NULL DEFAULT '0',
+    TTL         int(10) UNSIGNED NOT NULL DEFAULT '0',
+    PRIMARY KEY(InternalID),
+    INDEX TemplateIDIDX (TemplateID)
+);
+

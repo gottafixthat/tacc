@@ -1,0 +1,211 @@
+/*
+** ModemTotalsReport - Gives a summary of the Accounts Receivable for a month.
+*/
+
+#include "ModemTotalsReport.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <qlistview.h>
+#include <qapplication.h>
+#include <qdict.h>
+#include <qstrlist.h>
+#include <ModemUsageReport.h>
+
+#include <ADB.h>
+#include <BString.h>
+
+
+typedef struct AvgRepStruct {
+    long    Min;
+    long    Max;
+    long    Total;
+    long    recordCount;
+};
+
+
+ModemTotalsReport::ModemTotalsReport
+(
+	QWidget* parent,
+	const char* name
+)
+	: Report( parent, name )
+{
+	setCaption( "Modem Usage Report" );
+	setTitle("Modem Usage Report");
+	
+	list->setColumnText(0, "Login ID");  list->setColumnAlignment(0, AlignLeft);
+	list->addColumn("Connections");      list->setColumnAlignment(1, AlignRight);
+	list->addColumn("Total Time");       list->setColumnAlignment(2, AlignRight);
+	list->addColumn("Average Call");     list->setColumnAlignment(3, AlignRight);
+
+    loginDict.resize(4253);
+	refreshReport();
+
+    list->setItemMargin(2);
+    list->setAllColumnsShowFocus(TRUE);
+    
+    resize(495,500);
+}
+
+
+ModemTotalsReport::~ModemTotalsReport()
+{
+}
+
+
+/*
+** refreshReport   - A virtual function that gets called when the user
+**                   changes one of the dates.
+*/
+
+void ModemTotalsReport::refreshReport()
+{
+    QApplication::setOverrideCursor(waitCursor);
+
+    list->clear();
+    
+    char    sDate[64];
+    char    eDate[64];
+    char    tmpStr[2048];
+    char    fCount[1024];
+    char    fSess[1024];
+    char    fAvg[1024];
+    int     cDays = 0;
+    int     cHours = 0;
+    int     cMins  = 0;
+    long    cSecs  = 0;
+    
+    ModemTotalStruct    *curItem;
+    
+    loginDict.clear();
+    loginList.clear();
+
+    ADB     DB;
+    
+    sprintf(tmpStr, "Modem Usage Report\n%s through %s", (const char *) startDate().toString(), (const char *) endDate().toString());
+    reportTitle->setText(tmpStr);
+    
+    // Get the starting and ending dates.
+    sprintf(sDate, "%04d%02d%02d", startDate().year(), startDate().month(), startDate().day());
+    sprintf(eDate, "%04d%02d%02d", endDate().year(), endDate().month(), endDate().day());
+    
+    // First, get the list of login ID's that used the modems during the
+    // specified time period.
+    DB.query("select distinct LoginID from ModemUsage where StartDate >= '%s' and StartDate <= '%s'", 
+      sDate,
+      eDate
+    );
+    if (DB.rowCount) {
+        // Now, load up the records into a dictionary and into a list.
+        while (DB.getrow()) {
+            loginList.append(DB.curRow["LoginID"]);
+            curItem = new ModemTotalStruct;
+            curItem->loginCount = 0;
+            curItem->totalTime  = 0;
+            loginDict.insert(DB.curRow["LoginID"], curItem);
+        }
+        
+        // Okay, we've got a definitive list of login ID's.  Go through the 
+        // entire date range and add them all up.
+	    DB.query("select LoginID, SessionLength from ModemUsage where StartDate >= '%s' and StartDate <= '%s'", 
+	      sDate,
+	      eDate
+	    );
+        if (DB.rowCount) while (DB.getrow()) {
+            curItem = loginDict[DB.curRow["LoginID"]];
+            if (curItem) {
+                curItem->loginCount++;
+                curItem->totalTime += atol(DB.curRow["SessionLength"]);
+            }
+        }
+
+
+        // Okay, we're done.  Now, walk through the login ID list and put
+        // all of the stuff into our list...
+        for (unsigned int i = 0 ; i < loginList.count(); i++) {
+
+            curItem = loginDict[loginList.at(i)];
+            
+            if (curItem) {
+	            
+	            // Now, format the session length
+	            cSecs = curItem->totalTime;
+		        if (cSecs > 86400) {
+		        	cDays    = cSecs / 86400;
+		        	cSecs -= (cDays * 86400);
+		        } else {
+		            cDays    = 0;
+		        } 
+		        if (cSecs > 3600) {
+		            cHours   = cSecs / 3600;
+		            cSecs -= (cHours * 3600);
+		        } else {
+		            cHours = 0;
+		        }
+		        if (cSecs > 60) {
+		            cMins = cSecs / 60;
+		            cSecs -= (cMins * 60);
+		        } else {
+		        	cMins = 0;
+		        }
+	            sprintf(fSess, "%3d.%02d:%02d:%02ld", cDays, cHours, cMins, cSecs);
+
+	            sprintf(fCount, "%5d", curItem->loginCount);
+
+                // Get the average connection length
+                cSecs = curItem->totalTime / curItem->loginCount;
+		        if (cSecs > 86400) {
+		        	cDays    = cSecs / 86400;
+		        	cSecs -= (cDays * 86400);
+		        } else {
+		            cDays    = 0;
+		        } 
+		        if (cSecs > 3600) {
+		            cHours   = cSecs / 3600;
+		            cSecs -= (cHours * 3600);
+		        } else {
+		            cHours = 0;
+		        }
+		        if (cSecs > 60) {
+		            cMins = cSecs / 60;
+		            cSecs -= (cMins * 60);
+		        } else {
+		        	cMins = 0;
+		        }
+	            sprintf(fAvg, "%3d.%02d:%02d:%02ld", cDays, cHours, cMins, cSecs);
+            
+	            (void) new QListViewItem(list, 
+	              (const char *) loginList.at(i),
+	              fCount,
+	              fSess,
+	              fAvg
+	            );
+            }
+        }
+    } else {
+        (void) new QListViewItem(list, "No data for specified period");
+    }
+    
+    QApplication::restoreOverrideCursor();
+}
+
+
+/*
+** listItemSelected - Allows the user to zoom in on a customer in the 
+**                    report.
+*/
+
+void ModemTotalsReport::listItemSelected(QListViewItem *curItem)
+{
+    if (curItem != NULL) {
+        char    tmpLoginID[1024];
+        strcpy(tmpLoginID, curItem->key(0,0));
+        
+        ModemUsageReport    *MUR = new ModemUsageReport();
+        MUR->setStartDate(startDate());
+        MUR->setEndDate(endDate());
+        MUR->setLoginID(tmpLoginID);
+        MUR->show();
+    }
+}
