@@ -38,7 +38,8 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			calendar.cpp holiday.cpp worktime.cpp\
 			RListViewItem.cpp loadKey.cpp\
 			DNSTemplatePicker.cpp\
-			DNSManager.cpp
+			DNSManager.cpp\
+			CollReport.cpp
 
 # HEADERS =	../include/BlargDB.h
 
