@@ -1,11 +1,24 @@
-/**********************************************************************
+/*
+** $Id: $
+**
+***************************************************************************
+**
+** BillingCycleEdit - The widget responsible for editing a billing
+**                    cycle definition.
+**
+***************************************************************************
+** Written by R. Marc Lewis, 
+**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
+**   All Rights Reserved.
+**
+**  Unpublished work.  No portion of this file may be reproduced in whole
+**  or in part by any means, electronic or otherwise, without the express
+**  written consent of Blarg! Online Services and R. Marc Lewis.
+***************************************************************************
+** $Log: $
+**
+*/
 
-	--- Dlgedit generated file ---
-
-	File: BillingCycleEdit.h
-	Last generated: Sat Sep 20 13:11:15 1997
-
- *********************************************************************/
 
 #ifndef BillingCycleEdit_included
 #define BillingCycleEdit_included
