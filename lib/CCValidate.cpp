@@ -190,7 +190,7 @@ int creditCardValid(int cardType, const char *cardNo, const char *expDate)
 			} else {
 				tmpStr2 = tmpStr1.substr(2,2);
 				tmpYear = atoi(tmpStr2.c_str());
-				if (tmpYear < 9) tmpYear += 100;
+				if (tmpYear <= 9) tmpYear += 100;
 				if (tmpYear < 98 || tmpYear > 109) {
 					RetVal = CCARD_INVEXP;
 				}
