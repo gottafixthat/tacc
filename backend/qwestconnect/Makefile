@@ -5,7 +5,7 @@ INCDIRS	=  -I. -I../include -I../../tickets -I$(QTDIR)/include -I../../lib -I/us
 CFLAGS= -O2 -fno-strength-reduce -Wall -W
 
 LFLAGS  = -L../../lib -L../../tickets -L$(QTDIR)/lib
-LFLAGS	+= -L/usr/local/lib -ltickets -lblarg -ladb -lBTools -lFParse
+LFLAGS	+= -L/usr/local/lib -ltickets -ltaa -ladb
 LFLAGS  += -L/usr/lib/mysql -lmysqlclient -lqt-mt
 LFLAGS  += -lmimepp_core -lmimepp_util -lmimepp_net
 

@@ -2,13 +2,14 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../include
+INCDIRS	=  -I$(QTDIR)/include -I. -I../include -I../lib
 INCDIRS += -I/usr/local/include
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -DADBQT
 #LFLAGS  += -lg++ -lstdc++
 #LFLAGS  += -lstdc++
+LFLAGS  += -L../lib -ltaa
 LFLAGS  += -L/usr/X11R6/lib -lXext
-LFLAGS  += -L/usr/local/lib -ladbqt -lBTools -lFParse
+LFLAGS  += -L/usr/local/lib -ladbqt
 LFLAGS  += -L/usr/lib/mysql -lmysqlclient
 LFLAGS  += -lmimepp_net -lmimepp_core -lmimepp_util
 LFLAGS	+= -L$(QTDIR)/lib -lqt-mt
