@@ -1,5 +1,5 @@
 /*
-** $Id: qwestconnect.cpp,v 1.1 2004/08/21 15:45:01 marc Exp $
+** $Id$
 **
 **  qwestconnect.cpp - A filter that takes a Qwest connect notice on
 **                     stdin, searches for a matching customer phone

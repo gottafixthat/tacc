@@ -1,5 +1,5 @@
 /*
-** $Id: BlargDB.cpp,v 1.4 2004/04/15 18:13:47 marc Exp $
+** $Id$
 **
 ** BlargDB - A class library for doing MySQL queries.
 **

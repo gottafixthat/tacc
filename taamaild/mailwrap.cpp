@@ -1,5 +1,5 @@
 /*
-** $Id: mailwrap.cpp,v 1.4 1999/09/09 17:46:47 marc Exp $
+** $Id$
 **
 ** mailwrap.cpp - A very small and simple program that runs from cron that
 **                scans /var/spool/taamail and mails all of the files in it

@@ -1,5 +1,5 @@
 /*
-** $Id: StrTools.cpp,v 1.2 2001/05/19 19:34:22 marc Exp $
+** $Id$
 **
 ** StrTools.cpp - A few handy string manipulation functions.
 **
