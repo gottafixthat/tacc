@@ -511,6 +511,9 @@ private:
     int     balanceX1;
     int     balanceX2;
 
+    char    headerFont[1024];
+    char    bodyFont[1024];
+    char    footerFont[1024];
 };
 
 // StatementsDataDB - The statement line items...
