@@ -24,6 +24,7 @@
 #define CallLogReport_included
 
 #include "Report.h"
+#include <qcombobox.h>
 
 class CallLogReport : public Report
 {
@@ -40,6 +41,9 @@ public:
     virtual ~CallLogReport();
 
     virtual void refreshReport();
+
+protected:
+    QComboBox    *answeredByList;
 
 protected slots:
     virtual void listItemSelected(QListViewItem *curItem);

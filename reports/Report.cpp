@@ -105,7 +105,7 @@ Report::Report
     QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
 
     // A layout for the top row where our dates and such are
-    QBoxLayout  *dl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    dl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
     dl->addWidget(startDateLabel,   0);
     dl->addWidget(startDateCal,     1);
     dl->addWidget(endDateLabel,     0);
@@ -121,7 +121,7 @@ Report::Report
     ml->addWidget(userText,     0);
     
     // Add the button layout
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(filterButton, 0);
     bl->addWidget(userButton,   0);
