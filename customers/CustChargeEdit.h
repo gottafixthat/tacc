@@ -38,12 +38,17 @@ signals:
 	void chargeSaved(int);
 
 protected:
-    QLabel      *custNameLabel;
+    QLabel      *custNameDispLabel;
+    QLabel      *custNameDisp;
+    QLabel      *custIDDispLabel;
+    QLabel      *custIDDisp;
     QComboBox   *loginList;
     QComboBox   *itemList;
     QLineEdit   *quantity;
     QLineEdit   *price;
+    QLabel      *ratePlanDispLabel;
     QLabel      *ratePlanLabel;
+    QLabel      *cycleDispLabel;
     QLabel      *cycleLabel;
     QLineEdit   *units;
     QLabel      *totalCharge;
@@ -55,6 +60,8 @@ protected:
     QPushButton *saveButton;
     QPushButton *cancelButton;
 
+    void         calculateQuantity();
+
 private:
     long	    myCustID;
     long	    myTransID;
@@ -64,15 +71,14 @@ private:
 	GenLedger	*myGL;
 	long		*itemIDX;
 	
-	virtual	void quantityChanged(const QString &);
 
 protected slots:
-    virtual void cancelPressed() =0;
-    virtual void priceChanged(const QString&) =0;
-    virtual void saveCharge() =0;
-
-private slots:
+    virtual void cancelPressed();
+    virtual void priceChanged(const QString&);
+    virtual void saveCharge();
+	virtual	void quantityChanged(const QString &);
 	virtual void itemChanged(int newItemNumber);
+    void         periodChanged(const QDate &);
 
 };
 #endif // CustChargeEdit_included

@@ -49,59 +49,96 @@ CustChargeEdit::CustChargeEdit
 
 
     // Create our Widgets
-    custNameLabel   = new QLabel(this, "Customer Name Label");
+    custNameDispLabel   = new QLabel(this, "Customer Name Label");
+    custNameDispLabel->setAlignment(AlignRight|AlignVCenter);
+    custNameDispLabel->setText("Customer Name:");
+    custNameDisp        = new QLabel(this, "Customer Name");
+    custNameDisp->setAlignment(AlignLeft|AlignVCenter);
+
+    custIDDispLabel   = new QLabel(this, "Customer ID Label");
+    custIDDispLabel->setAlignment(AlignRight|AlignVCenter);
+    custIDDispLabel->setText("Customer ID:");
+    custIDDisp        = new QLabel(this, "Customer ID");
+    custIDDisp->setAlignment(AlignLeft|AlignVCenter);
 
     QLabel *loginListLabel = new QLabel(this, "LoginListLabel");
     loginListLabel->setText("Login ID:");
+    loginListLabel->setAlignment(AlignRight|AlignVCenter);
 
     loginList = new QComboBox(false, this, "Login List");
 
     QLabel *chargeDateLabel = new QLabel(this, "chargeDateLabel");
     chargeDateLabel->setText("Charge Date:");
+    chargeDateLabel->setAlignment(AlignRight|AlignVCenter);
     chargeDate = new QDateEdit(QDate::currentDate(), this);
 
     QLabel *itemListLabel = new QLabel(this, "itemListLabel");
     itemListLabel->setText("Item:");
+    itemListLabel->setAlignment(AlignRight|AlignVCenter);
     itemList  = new QComboBox(false, this, "ItemList");
+    connect(itemList, SIGNAL(activated(int)), this, SLOT(itemChanged(int)));
 
     QLabel *startDateLabel = new QLabel(this, "startDateLabel");
     startDateLabel->setText("Start Date:");
+    startDateLabel->setAlignment(AlignRight|AlignVCenter);
     startDate = new QDateEdit(QDate::currentDate(), this);
+    connect(startDate, SIGNAL(valueChanged(const QDate &)), this, SLOT(periodChanged(const QDate &)));
     QLabel *stopDateLabel = new QLabel(this, "stopDateLabel");
     stopDateLabel->setText("End Date:");
+    stopDateLabel->setAlignment(AlignRight|AlignVCenter);
     stopDate   = new QDateEdit(QDate::currentDate(), this);
+    connect(stopDate, SIGNAL(valueChanged(const QDate &)), this, SLOT(periodChanged(const QDate &)));
 
     QLabel *quantityLabel = new QLabel(this, "quantityLabel");
-    quantityLabel->setText("End Date:");
+    quantityLabel->setText("Quantity:");
+    quantityLabel->setAlignment(AlignRight|AlignVCenter);
     quantity = new QLineEdit(this, "Quantity");
-    taxable  = new QCheckBox(this, "Taxable");
-    taxable->setText("Taxable");
+    connect(quantity, SIGNAL(textChanged(const QString&)), this, SLOT(quantityChanged(const QString &)));
+
     QLabel *priceLabel = new QLabel(this, "priceLabel");
     priceLabel->setText("Price:");
+    priceLabel->setAlignment(AlignRight|AlignVCenter);
     price    = new QLineEdit(this, "Price");
+    connect(price, SIGNAL(textChanged(const QString&)), this, SLOT(priceChanged(const QString&)));
+
     QLabel *unitsLabel = new QLabel(this, "unitsLabel");
     unitsLabel->setText("Units:");
+    unitsLabel->setAlignment(AlignRight|AlignVCenter);
     units    = new QLineEdit(this, "Units");
+
+    taxable  = new QCheckBox(this, "Taxable");
+    taxable->setText("Taxable");
+    
     QLabel *memoLabel = new QLabel(this, "memoLabel");
     memoLabel->setText("Memo:");
+    memoLabel->setAlignment(AlignRight|AlignTop);
     memo     = new QMultiLineEdit(this, "Memo");
 
     QLabel *totalChargeLabel = new QLabel(this, "totalChargeLabel");
     totalChargeLabel->setText("Total Charge:");
+    totalChargeLabel->setAlignment(AlignRight|AlignVCenter);
     totalCharge     = new QLabel(this, "Total Charge");
+    ratePlanDispLabel = new QLabel(this, "ratePlanDispLabel");
+    ratePlanDispLabel->setText("Rate Plan:");
+    ratePlanDispLabel->setAlignment(AlignRight|AlignVCenter);
     ratePlanLabel   = new QLabel(this, "Rate Plan");
+    cycleDispLabel = new QLabel(this, "cycleDispLabel");
+    cycleDispLabel->setText("Billing Cycle:");
+    cycleDispLabel->setAlignment(AlignRight|AlignVCenter);
     cycleLabel      = new QLabel(this, "Billing Cycle");
 
     saveButton = new QPushButton(this, "saveButton");
     saveButton->setText("&Save");
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveCharge()));
+
     cancelButton = new QPushButton(this, "saveButton");
     cancelButton->setText("&Cancel");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelPressed()));
 	
     // Create the layout now.
     // The main layout first, a box layout from top to bottom.
     QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
 
-    ml->addWidget(custNameLabel, 0);
 
     // A grid to hold all of our input fields.
     QGridLayout *gl = new QGridLayout(7, 4);
@@ -111,8 +148,16 @@ CustChargeEdit::CustChargeEdit
     gl->setColStretch(3, 1);
 
     int row = 0;
-    gl->addWidget(ratePlanLabel,                    row, 0);
-    gl->addWidget(cycleLabel,                       row, 2);
+    gl->addWidget(custNameDispLabel,                row, 0);
+    gl->addWidget(custNameDisp,                     row, 1);
+    gl->addWidget(custIDDispLabel,                  row, 2);
+    gl->addWidget(custIDDisp,                       row, 3);
+    row++;
+
+    gl->addWidget(ratePlanDispLabel,                row, 0);
+    gl->addWidget(ratePlanLabel,                    row, 1);
+    gl->addWidget(cycleDispLabel,                   row, 2);
+    gl->addWidget(cycleLabel,                       row, 3);
     row++;
 
     gl->addWidget(loginListLabel,                   row, 0);
@@ -133,12 +178,15 @@ CustChargeEdit::CustChargeEdit
     
     gl->addWidget(quantityLabel,                    row, 0);
     gl->addWidget(quantity,                         row, 1);
-    gl->addWidget(taxable,                          row, 2);
+    gl->addWidget(priceLabel,                       row, 2);
     gl->addWidget(price,                            row, 3);
     row++;
 
     gl->addWidget(unitsLabel,                       row, 0);
     gl->addWidget(units,                            row, 1);
+    gl->addWidget(taxable,                          row, 3);
+    row++;
+
     gl->addWidget(totalChargeLabel,                 row, 2);
     gl->addWidget(totalCharge,                      row, 3);
     row++;
@@ -168,15 +216,24 @@ CustChargeEdit::CustChargeEdit
 	if (!myCustID) return;
 	CDB.get(myCustID);
 	
-	if (myTransID) setCaption("Edit Customer Charge");
-	else setCaption( "New Customer Charge" );
+	if (myTransID) {
+        if (strlen((const char *)CDB.getStr("ContactName"))) strcpy(separator, "/");
+        sprintf(tmpstr, "Edit Charge - %s%s%s (%ld)", (const char *) CDB.getStr("FullName"), separator, (const char *) CDB.getStr("ContactName"), myCustID);
+        setCaption(tmpstr);
+    } else {
+        if (strlen((const char *)CDB.getStr("ContactName"))) strcpy(separator, "/");
+        sprintf(tmpstr, "New Charge - %s%s%s (%ld)", (const char *) CDB.getStr("FullName"), separator, (const char *) CDB.getStr("ContactName"), myCustID);
+        setCaption(tmpstr);
+    }
 
 	// Setup the labels at the top, complete with the customer name,
 	// rate plan, and billing cycle.
 	if (strlen((const char *)CDB.getStr("ContactName"))) strcpy(separator, "/");
-	sprintf(tmpstr, "%ld, %s%s%s", myCustID, (const char *) CDB.getStr("FullName"), separator, (const char *) CDB.getStr("ContactName"));
-	custNameLabel->setText(tmpstr);
-	
+	sprintf(tmpstr, "%s%s%s", (const char *) CDB.getStr("FullName"), separator, (const char *) CDB.getStr("ContactName"));
+	custNameDisp->setText(tmpstr);
+	sprintf(tmpstr, "%ld", myCustID);
+    custIDDisp->setText(tmpstr);
+
 	DB.query("select PlanTag from RatePlans where InternalID = %ld", CDB.getLong("RatePlan"));
 	if (DB.rowCount) {
 		DB.getrow();
@@ -288,7 +345,6 @@ void CustChargeEdit::quantityChanged(const QString &newVal)
 	float	newTotal;
 	char	tmpstr[64];
 	
-	
 	tmpQty = newVal.toFloat();
 	tmpPrice = atof((const char *) price->text());
 	newTotal = tmpQty * tmpPrice;
@@ -317,4 +373,72 @@ void CustChargeEdit::priceChanged(const QString &newVal)
 	totalCharge->setText(tmpstr);
 
 }
+
+/*
+** periodChanged - Gets called whenever the start/stop date changes.  
+**                 If the quantity has not been updated manually
+**                 it recalculates the quantity based on the
+**                 start and stop dates.
+*/
+
+void CustChargeEdit::periodChanged(const QDate &)
+{
+    calculateQuantity();
+}
+
+/*
+** calculateQuantity - Calculates the quantity based on the start
+**                     and stop dates.
+*/
+
+void CustChargeEdit::calculateQuantity()
+{
+    float   baseQty = 0.0;
+    QDate   myStartDate = startDate->date();
+    QDate   myStopDate  = stopDate->date();
+
+    // Only proceed if the start date is less than the stop date
+    if (myStartDate > myStopDate) {
+        stopDate->setDate(myStartDate);
+        quantity->setText("0");
+        return;
+    }
+
+    // Okay, the stopDate is greater than the startDate.
+
+    // Count all of the months and partial months 
+    // from the start date until it reaches the
+    // stopDate's month and year.
+
+    QDate tmpEndDate;
+    tmpEndDate.setYMD(myStopDate.year(), myStopDate.month(), 1);
+    while (myStartDate < tmpEndDate) {
+        if (myStartDate.day() != 1) {
+            // Partial month.
+            float tmpAmt = (float) (myStartDate.daysInMonth() - myStartDate.day() + 1) / myStartDate.daysInMonth();
+            baseQty += tmpAmt;
+            myStartDate.setYMD(myStartDate.year(), myStartDate.month(), 1);
+        } else {
+            // Whole month.
+            baseQty += 1.0;
+        }
+        myStartDate = myStartDate.addMonths(1);
+    }
+
+    // Check to see if we're doing a partial quantity in the current month
+    if ((myStartDate.day() == 1) && (myStopDate.day() == myStopDate.daysInMonth())) {
+        // Full month.
+        baseQty += 1.0;
+    } else {
+        // Partial month
+        float tmpAmt = (float) (myStopDate.day() - myStartDate.day() + 1) / myStartDate.daysInMonth();
+        baseQty += tmpAmt;
+
+    }
+
+    char tmpstr[1024];
+	sprintf(tmpstr, "%.2f", baseQty);
+	quantity->setText(tmpstr);
+}
+
 
