@@ -75,6 +75,8 @@ void        recountAllowedMailboxes(long customerID);
 
 void        showAbout();
 
+void        emailAdmins(const char *subj, const char *body);
+
 const char *stripHTML(const char *src);
 
 #endif // TAATools_included
