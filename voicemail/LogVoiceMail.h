@@ -31,7 +31,6 @@
 #include <qmultilinedit.h>
 
 #include <TAAWidget.h>
-#include "calendar.h"
 #include <qdatetimeedit.h>
 
 class LogVoiceMail : public TAAWidget
@@ -47,8 +46,7 @@ public:
     virtual ~LogVoiceMail();
 
 protected:
-    DateInput       *msgDate;
-    QTimeEdit       *msgTime;
+    QDateTimeEdit   *msgDateTime;
     QMultiLineEdit  *message;
     QPushButton     *saveButton;
     QPushButton     *closeButton;
