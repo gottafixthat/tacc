@@ -5,4 +5,5 @@
 2004-09-03:  Added a Call Log report.
 2004-09-04:  Added more date options to the Report class, Today, Yesterday,
              This Week, Last Week.
+2004-09-04:  Re-wrote the layout for CustChargeEdit.
 
