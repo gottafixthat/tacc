@@ -4129,7 +4129,8 @@ void StatementsDB::printHeader(QPainter *p, int PageNo)
 	    // 3.5" down from the top of the page.
 	    //p->drawLine(  0,  242, 692, 242);
 	    //rect.setCoords(100, 242, 674, 262);
-	    p->drawLine(  0,  262+pOfs, 692, 262+pOfs);
+	    //p->drawLine(  0,  262+pOfs, 692, 262+pOfs);
+	    p->drawLine(  0,  277+pOfs, 692, 277+pOfs);
 	    rect.setCoords(0, 262+pOfs, 576, 282+pOfs);
 	    p->setFont(QFont(headerFont, 6, QFont::Normal, TRUE));
 	    p->drawText(rect, Qt::AlignTop|Qt::AlignCenter, "Please detach here and return the upper portion with your payment.  Keep the bottom portion for your records.");

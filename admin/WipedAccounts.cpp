@@ -39,6 +39,8 @@
 #include <BrassClient.h>
 #include "EditCustomer.h"
 #include "ParseFile.h"
+#include <CollReport.h>
+#include <Cfg.h>
 
 #define Inherited WipedAccountsData
 
@@ -350,6 +352,7 @@ void WipedAccounts::sendToCollections(void)
     NotesDB     NDB;
     QDate       theDate;
     char        today[16];
+    char        tmpStr[1024];
     
     theDate = QDate::currentDate();
     QDatetomyDate(today, theDate);
@@ -396,7 +399,8 @@ void WipedAccounts::sendToCollections(void)
             AR.ARDB->setValue("TransType", TRANSTYPE_PAYMENT);
             AR.ARDB->setValue("Price", (float) (atof(curItem->key(3,1)) * -1.0));
             AR.ARDB->setValue("Amount", (float) (atof(curItem->key(3,1)) * -1.0));
-            AR.ARDB->setValue("Memo", "Sent to collection");
+            sprintf(tmpStr, "Sent to collection (%s, %s)", cfgVal("CollectionAgency"), cfgVal("CollectionAgencyNumber"));
+            AR.ARDB->setValue("Memo", tmpStr);
             AR.SaveTrans();
 
             // Now, add a note to their account showing that we
@@ -405,7 +409,8 @@ void WipedAccounts::sendToCollections(void)
             NDB.setValue("LoginID", "");
             NDB.setValue("CustomerID", atol(curItem->key(0, 1)));
             NDB.setValue("NoteType", "Accounting");
-            NDB.setValue("NoteText", "Sent to collection");
+            sprintf(tmpStr, "Sent to collection (%s, %s, %s)", cfgVal("CollectionAgency"), cfgVal("CollectionAgencyAddress"), cfgVal("CollectionAgencyNumber"));
+            NDB.setValue("NoteText", tmpStr);
             NDB.ins();
         }
         curItem = curItem->itemBelow();
@@ -415,282 +420,4 @@ void WipedAccounts::sendToCollections(void)
     QApplication::restoreOverrideCursor();
 
 }
-
-
-
-// The print class itself...
-
-CollReport::CollReport()
-{
-}
-
-CollReport::~CollReport()
-{
-}
-
-/*
-** printHeader - Puts a header on the page containing the Blarg address,
-**               the date, etc.
-*/
-
-void CollReport::printHeader(QPainter *p, CustomersDB *cust, AddressesDB *cont, float Balance)
-{
-    QDate       theDate;
-    QRect       rect;
-    QString     tmpSt;
-    int         yPos;
-    long        CustID = cust->getLong("CustomerID");
-
-    theDate = QDate::currentDate();
-    
-    // p->rotate(55);
-    p->setFont(QFont("helvetica", 10, QFont::Bold));
-    p->drawText(10, 30, "Blarg! Online Services, Inc.");
-    p->setFont(QFont("helvetica", 10, QFont::Normal));
-    p->drawText(10, 40, "PO Box 1827");
-    p->drawText(10, 50, "Bellevue, WA 98009-1827");
-    p->drawText(10, 60, "Phone:  425.401.9821");
-    p->drawText(10, 70, "Fax: 425.401.9741");
-
-    p->setFont(QFont("helvetica", 14, QFont::Bold));
-    p->drawText(450, 40, "Collections Report");
-    p->setFont(QFont("helvetica", 10, QFont::Bold));
-    p->drawText(470, 60, theDate.toString());
-    p->setFont(QFont("helvetica", 10, QFont::Normal));
-    p->drawLine(  0,  75, 692, 75);
-
-    p->setFont(QFont("helvetica", 10, QFont::Normal));
-    p->drawText( 20, 90, "Customer:");
-    yPos = 90;
-    if (strlen(cust->getStr("FullName"))) {
-        p->drawText( 70, yPos, cust->getStr("FullName"));
-        yPos += 10;
-    }
-    if (strlen(cust->getStr("ContactName"))) {
-        p->drawText( 70, yPos, cust->getStr("ContactName"));
-        yPos += 10;
-    }
-    if (strlen(cont->Address1)) {
-        p->drawText( 70, yPos, cont->Address1);
-        yPos += 10;
-    }
-    if (strlen(cont->Address2)) {
-        p->drawText( 70, yPos, cont->Address2);
-        yPos += 10;
-    }
-
-    tmpSt = cont->City;
-    tmpSt.append(", ");
-    tmpSt.append(cont->State);
-    tmpSt.append(" ");
-    tmpSt.append(cont->ZIP);
-    p->drawText( 70,yPos, tmpSt);
-    yPos += 10;
-
-
-
-    p->setFont(QFont("courier", 10, QFont::Normal));
-    rect.setCoords(350,80,450, 93);
-    p->drawText(rect, Qt::AlignRight|Qt::AlignVCenter, "Customer ID:");
-    rect.setCoords(460,80,600, 93);
-    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, cust->getStr("CustomerID"));
-
-    rect.setCoords(350,90,450,103);
-    p->drawText(rect, Qt::AlignRight|Qt::AlignVCenter, "Balance:");
-    rect.setCoords(460,90,600, 103);
-    tmpSt.sprintf("$%.2f", Balance);
-    p->setFont(QFont("courier", 10, QFont::Bold));
-    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, tmpSt);
-    p->setFont(QFont("courier", 10, QFont::Normal));
-
-    PhoneNumbersDB  PDB;
-
-    rect.setCoords(350,100,450,113);
-    p->drawText(rect, Qt::AlignRight|Qt::AlignVCenter, "Day Phone:");
-    rect.setCoords(460,100,600,113);
-    PDB.get(REF_CUSTOMER, CustID, "Daytime");
-    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, PDB.PhoneNumber);
-    rect.setCoords(350,110,450,123);
-    p->drawText(rect, Qt::AlignRight|Qt::AlignVCenter, "Eve Phone:");
-    PDB.get(REF_CUSTOMER, CustID, "Evening");
-    rect.setCoords(460,110,600,123);
-    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, PDB.PhoneNumber);
-
-}
-
-/*
-** printFooter - Puts a footer on the page containing the page number
-*/
-
-void CollReport::printFooter(QPainter *p, int PageNo)
-{
-    char    tmpSt[1024];
-    
-    sprintf(tmpSt, "Page %d", PageNo);
-
-    p->drawLine(  0, 740, 692,740);
-    p->drawText(290, 760, tmpSt);
-}
-
-/*
-** registerHeader - Puts a register header on the page.
-*/
-
-void CollReport::registerHeader(QPainter *p)
-{
-    QRect       rect;
-    QString     tmpSt;
-    QBrush      bbrush;
-
-    p->setFont(QFont("helvetica", 10, QFont::Normal));
-//    p->drawRect(40, 150, 525, 15);
-    bbrush.setStyle(Qt::SolidPattern);
-    bbrush.setColor(Qt::black);
-
-    p->setBackgroundMode(Qt::OpaqueMode);
-    p->setPen(Qt::white);
-
-    rect.setCoords(20, 150, 80, 165);
-    p->fillRect(rect, bbrush);
-    p->drawText(rect, Qt::AlignCenter, "Trans Date");
-
-    rect.setCoords(80, 150, 140, 165);
-    p->fillRect(rect, bbrush);
-    p->drawText(rect, Qt::AlignCenter, "Due Date");
-    p->drawLine(80, 150, 80, 165);
-        
-    rect.setCoords(140, 150, 200, 165);
-    p->fillRect(rect, bbrush);
-    p->drawText(rect, Qt::AlignCenter, "Login ID");
-    p->drawLine(140, 150, 140, 165);
-        
-    rect.setCoords(200, 150, 460, 165);
-    p->fillRect(rect, bbrush);
-    p->drawText(rect, Qt::AlignCenter, "Description");
-    p->drawLine(200, 150, 200, 165);
-
-    rect.setCoords(460, 150, 520, 165);
-    p->fillRect(rect, bbrush);
-    p->drawText(rect, Qt::AlignCenter, "Amount");
-    p->drawLine(460, 150, 460, 165);
-
-    rect.setCoords(520, 150, 580, 165);
-    p->fillRect(rect, bbrush);
-    p->drawText(rect, Qt::AlignCenter, "Balance");
-    p->drawLine(520, 150, 520, 165);
-
-    // Reset our pen back to a transparent background and black letters.
-    p->setBackgroundMode(Qt::TransparentMode);
-    p->setPen(Qt::black);
-}
-
-void CollReport::printReport(long CustID)
-{
-    QDate       theDate;
-    QPrinter    prn(QPrinter::PrinterResolution);
-    QPainter    p;
-    QRect       rect;
-    ADBTable    cust;
-    ADBTable    cont;
-    ADB         DB;
-    QString     tmpSt;
-    char        tStr[1024];
-    int         yPos;
-    int         pageNo = 1;
-    float       Balance = 0.00;
-    float       EndingBalance;
-    CustomersDB CDB;
-    AddressesDB addrDB;
-    
-    CDB.get(CustID);
-    addrDB.get(REF_CUSTOMER, CustID, "Billing");
-    
-    theDate = QDate::currentDate();
-    
-    // prn.setPrintProgram("ghostview");
-    prn.setPrinterName("PostScript");
-    // prn.setOutputFileName("/home/marc/test.ps");
-    // prn.setOutputToFile(TRUE);
-    prn.setPageSize(QPrinter::Letter);
-    
-    prn.setDocName("Collection Report");
-    prn.setCreator("Blarg! Online Services, Inc.");
-    p.begin(&prn);
-    
-    EndingBalance = DB.sumFloat("select SUM(Amount) from AcctsRecv where CustomerID = %ld", CustID);
-    
-    // Put the Blarg header and contact information on the page.
-    printHeader(&p, &CDB, &addrDB, EndingBalance);
-    
-    // Put the register header on the page.
-    registerHeader(&p);
-    
-    // Now, get the register information from the database.
-    DB.query("select TransDate, DueDate, LoginID, Memo, Amount from AcctsRecv where CustomerID = %ld order by TransDate, LoginID", CustID);
-    
-    yPos = 165;
-    p.setFont(QFont("courier", 8, QFont::Normal));
-    while (DB.getrow()) {
-        int Lines = (int) (strlen(DB.curRow["Memo"]) / 52) + 1;
-        int RowHeight = 15 * Lines;
-        
-        // Check to see if we have enough room on the page left for this
-        // line.
-        if (yPos+RowHeight >= 740) {
-            printFooter(&p, pageNo++);
-            prn.newPage();
-            printHeader(&p, &CDB, &addrDB, EndingBalance);
-            registerHeader(&p);
-            yPos = 165;
-            p.setFont(QFont("courier", 8, QFont::Normal));
-        } 
-    
-        // The transaction date.
-        rect.setCoords(20, yPos, 79, yPos + RowHeight);
-        p.drawRect(rect);
-        p.drawText(rect, Qt::AlignVCenter|Qt::AlignHCenter, DB.curRow["TransDate"]);
-        
-        // The Due Date
-        rect.setCoords(80, yPos, 139, yPos + RowHeight);
-        p.drawRect(rect);
-        p.drawText(rect, Qt::AlignVCenter|Qt::AlignHCenter, DB.curRow["DueDate"]);
-        
-        // The Login ID
-        rect.setCoords(140, yPos, 199, yPos + RowHeight);
-        p.drawRect(rect);
-        p.drawText(rect, Qt::AlignVCenter|Qt::AlignHCenter, DB.curRow["LoginID"]);
-        
-        // The description...
-        rect.setCoords(200, yPos, 459, yPos + RowHeight);
-        p.drawRect(rect);
-        rect.setCoords(203, yPos, 459, yPos + RowHeight);
-        p.drawText(rect, Qt::WordBreak|Qt::AlignLeft|Qt::AlignVCenter, DB.curRow["Memo"]);
-        
-        // The amount.
-        rect.setCoords(460, yPos, 519, yPos + RowHeight);
-        p.drawRect(rect);
-        p.drawText(rect, Qt::AlignRight|Qt::AlignVCenter, DB.curRow["Amount"]);
-        
-        // The balance.
-        Balance += atof(DB.curRow["Amount"]);
-        sprintf(tStr, "%.2f", Balance);
-        if (Balance == 0.0) strcpy(tStr, "0.00");
-        rect.setCoords(520, yPos, 579, yPos + RowHeight);
-        p.drawRect(rect);
-        p.drawText(rect, Qt::AlignRight|Qt::AlignVCenter, tStr);
-        
-        yPos += RowHeight;
-    }
-
-    // Put the footer on the page.
-    printFooter(&p, pageNo);
-    
-    // prn.newPage();
-    
-    // p.drawText(300, 600, "Page 2");
-    
-    p.end();
-}
-
-
 
