@@ -1,0 +1,5 @@
+2004-08-29:  Updated various files removing the #define for the template path.
+             It is now set via cfgVal() settings.
+2004-08-29:  Updated tacc.cpp and TAAConfig.cpp to load configuration data
+             from ~/.taa/taa.cf mostly for development.
+

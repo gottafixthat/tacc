@@ -169,8 +169,6 @@ void Tab_Domains::refreshDomainList(int domainID)
     char    doingEmail[1024];
     char    hasVHost[1024];
     char    doingDNS[1024];
-    ADB     mailDB(cfgVal("MailSQLDB"), cfgVal("MailSQLUser"), cfgVal("MailSQLPass"), cfgVal("MailSQLHost"));
-    ADB     vhostDB(cfgVal("VHostSQLDB"), cfgVal("VHostSQLUser"), cfgVal("VHostSQLPass"), cfgVal("VHostSQLHost"));
     QListViewItem *curItem;
 
     // And clear the list.
@@ -180,43 +178,53 @@ void Tab_Domains::refreshDomainList(int domainID)
     DB.query("select Domains.InternalID, Domains.LoginID, DomainTypes.DomainType, Domains.DomainName, Domains.Active, Domains.HasSSL, Domains.Server from Domains, DomainTypes where Domains.CustomerID = %ld and Domains.DomainType = DomainTypes.InternalID order by DomainName", myCustID);
     //fprintf(stderr, "Query returned %ld rows...\n", DB.rowCount);
     QApplication::setOverrideCursor(waitCursor);
-	if (DB.rowCount) while(DB.getrow()) {
-        //fprintf(stderr, "Internal ID = %ld...\n", DB.curRow["InternalID"]);
-        // Active
-        if (atoi(DB.curRow["Active"])) strcpy(activeStr, "Yes");
-        else strcpy(activeStr, "No");
-		
-        // Are we accepting email for this domain?
-        mailDB.query("select VirtualID from Virtual where Mailbox = '%s'", DB.curRow["DomainName"]);
-        if (mailDB.rowCount) strcpy(doingEmail, "Yes");
-        else strcpy(doingEmail, "No");
-		
-        // Do we have a Virtual Hosting entry?
-        vhostDB.query("select VHostID from VHosts where HostName = '%s'", DB.curRow["DomainName"]);
-        if (vhostDB.rowCount) strcpy(hasVHost, "Yes");
-        else strcpy(hasVHost, "No");
-		
-        // Check to see if we're doing DNS for this domain
-        if (hasDNSRecord(DB.curRow["DomainName"])) strcpy(doingDNS, "Yes");
-        else strcpy(doingDNS, "No");
-		
-        //fprintf(stderr, "Inserting into the list...\n", DB.curRow["InternalID"]);
-		curItem = new QListViewItem(list,
-		    DB.curRow["LoginID"],       // Login ID
-		    DB.curRow["DomainType"],    // Domain Type
-		    DB.curRow["DomainName"],    // Domain Name
-            DB.curRow["Server"],        // Server
-		    doingDNS,
-		    doingEmail,
-		    hasVHost,
-		    activeStr);                 // Active
-		curItem->setText(8, DB.curRow["InternalID"]);        // Internal ID  - not shown.
-        if (atoi(DB.curRow["InternalID"]) == domainID) {
-            list->setCurrentItem(curItem);
-            list->setSelected(curItem, true);
-            list->ensureItemVisible(curItem);
+	if (DB.rowCount) {
+        ADB     mailDB(cfgVal("MailSQLDB"), cfgVal("MailSQLUser"), cfgVal("MailSQLPass"), cfgVal("MailSQLHost"));
+        ADB     vhostDB(cfgVal("VHostSQLDB"), cfgVal("VHostSQLUser"), cfgVal("VHostSQLPass"), cfgVal("VHostSQLHost"));
+        while(DB.getrow()) {
+            //fprintf(stderr, "Internal ID = %ld...\n", DB.curRow["InternalID"]);
+            // Active
+            if (atoi(DB.curRow["Active"])) strcpy(activeStr, "Yes");
+            else strcpy(activeStr, "No");
+            
+            // Are we accepting email for this domain?
+            if (mailDB.query("select VirtualID from Virtual where Mailbox = '%s'", DB.curRow["DomainName"])) {
+                if (mailDB.rowCount) strcpy(doingEmail, "Yes");
+                else strcpy(doingEmail, "No");
+            } else {
+                strcpy(doingEmail, "Unk");
+            }
+            
+            // Do we have a Virtual Hosting entry?
+            if (vhostDB.query("select VHostID from VHosts where HostName = '%s'", DB.curRow["DomainName"])) {
+                if (vhostDB.rowCount) strcpy(hasVHost, "Yes");
+                else strcpy(hasVHost, "No");
+            } else {
+                strcpy(hasVHost, "Unk");
+            }
+            
+            // Check to see if we're doing DNS for this domain
+            if (hasDNSRecord(DB.curRow["DomainName"])) strcpy(doingDNS, "Yes");
+            else strcpy(doingDNS, "No");
+            
+            //fprintf(stderr, "Inserting into the list...\n", DB.curRow["InternalID"]);
+            curItem = new QListViewItem(list,
+                DB.curRow["LoginID"],       // Login ID
+                DB.curRow["DomainType"],    // Domain Type
+                DB.curRow["DomainName"],    // Domain Name
+                DB.curRow["Server"],        // Server
+                doingDNS,
+                doingEmail,
+                hasVHost,
+                activeStr);                 // Active
+            curItem->setText(8, DB.curRow["InternalID"]);        // Internal ID  - not shown.
+            if (atoi(DB.curRow["InternalID"]) == domainID) {
+                list->setCurrentItem(curItem);
+                list->setSelected(curItem, true);
+                list->ensureItemVisible(curItem);
+            }
         }
-	}
+    }
     QApplication::restoreOverrideCursor();
 }
 

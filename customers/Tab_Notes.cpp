@@ -39,6 +39,7 @@
 #include <TAA.h>
 #include <TAATools.h>
 #include <Ticket.h>
+#include <Cfg.h>
 
 #define NOTEIDCOL   4
 #define NOTETYPECOL 5
@@ -505,7 +506,7 @@ void Tab_Notes::showNoteDetail(QListViewItem *newItem)
                     ampm
                     );
 
-            fparse.setPath(TEMPLATE_PATH);
+            fparse.setPath(cfgVal("TemplatePath"));
             fparse.set("LoginID",   detail.getStr("LoginID"));
             fparse.set("AddedBy",   detail.getStr("AddedBy"));
             fparse.set("DateTime",  tmpDate);
@@ -567,7 +568,7 @@ void Tab_Notes::showNoteDetail(QListViewItem *newItem)
                         ampm
                         );
 
-                cparse.setPath(TEMPLATE_PATH);
+                cparse.setPath(cfgVal("TemplatePath"));
                 cparse.set("LoginID",   detail.getStr("LoginID"));
                 cparse.set("AddedBy",   detail.getStr("AddedBy"));
                 cparse.set("DateTime",  tmpDate);
