@@ -88,6 +88,7 @@ int createVHostRecord(const char *domain, long customerID, const char *loginID)
     vhostDB.setValue("UID",         dump.uid);
     vhostDB.setValue("GID",         dump.gid);
     vhostDB.setValue("AdminEmail",  adminEmail);
+    vhostDB.setValue("Active",      1);
     retVal = vhostDB.ins();
 
     delete BC;
