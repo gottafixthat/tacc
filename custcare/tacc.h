@@ -118,6 +118,8 @@ protected slots:
     void            make_deposits();
     void            checkDBIntegrity();
     void            updateAllMaxMailboxes();
+    void            ratePlanList();
+    void            billingCycleList();
 
 protected:
     CustomerCareStack   *ccStack;

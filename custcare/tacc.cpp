@@ -66,6 +66,8 @@
 #include "TE_Main.h"
 #include "Accounts.h"
 #include "MakeDeposits.h"
+#include "RatePlans.h"
+#include "BillingCycles.h"
 
 #include "UserPrivs.h"
 
@@ -290,12 +292,21 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
         adminMenu->insertItem("Run Statements (All Customers)", this, SLOT(create_statements()));
         adminMenu->insertItem("Process Overdue Accounts (active)", this, SLOT(processOverdueAccounts()));
         if (isAdmin()) adminMenu->insertItem("Process Overdue Accounts (wiped)", this, SLOT(processWipedAccounts()));
-        if (isAdmin()) adminMenu->insertItem("Billable Items", this, SLOT(billableitemslist()));
-        if (isAdmin()) adminMenu->insertItem("Package Editor", this, SLOT(packagelist()));
-        if (isAdmin()) adminMenu->insertItem("Login Types", this, SLOT(logintypelist()));
-        if (isAdmin()) adminMenu->insertItem("Accounts", this, SLOT(accountlist()));
-
+        
         menuBar()->insertItem("Adm&in", adminMenu);
+        // "Other Lists"
+        if (isAdmin()) {
+            QPopupMenu *otherMenu = new QPopupMenu(this);
+            otherMenu->insertItem("Accounts", this, SLOT(accountlist()));
+            otherMenu->insertItem("Billable Items", this, SLOT(billableitemslist()));
+            otherMenu->insertItem("Billing Cycles", this, SLOT(billingCycleList()));
+            otherMenu->insertItem("Package Editor", this, SLOT(packagelist()));
+            otherMenu->insertItem("Login Types", this, SLOT(logintypelist()));
+            otherMenu->insertItem("Rate Plans", this, SLOT(ratePlanList()));
+            adminMenu->insertSeparator();
+            adminMenu->insertItem("&Other Lists", otherMenu);
+        }
+
     }
 
     QPopupMenu  *helpMenu = new QPopupMenu(this);
@@ -717,6 +728,20 @@ void CustomerCare::packagelist()
     PKG_Main    *pkgeditor = new PKG_Main();
     pkgeditor->show();
     pkgeditor->refreshPackages();
+}
+
+void CustomerCare::ratePlanList()
+{
+    RatePlans   *rpl = new RatePlans();
+    rpl->show();
+    rpl->refreshList(1);
+}
+
+void CustomerCare::billingCycleList()
+{
+    BillingCycles   *bcl = new BillingCycles();
+    bcl->show();
+    bcl->refreshList(1);
 }
 
 void CustomerCare::logintypelist()
