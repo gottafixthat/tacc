@@ -38,13 +38,13 @@ Report::Report
     startDateLabel->setText("Start:");
     startDateLabel->setAlignment(AlignVCenter|AlignRight);
 
-    startDateCal = new DateInput(this, "StartDate");
+    startDateCal = new QDateEdit(QDate::currentDate(), this, "StartDate");
     
     endDateLabel = new QLabel(this);
     endDateLabel->setText("End:");
     endDateLabel->setAlignment(AlignVCenter|AlignRight);
     
-    endDateCal = new DateInput(this, "StartDate");
+    endDateCal = new QDateEdit(QDate::currentDate(), this, "StartDate");
 
     dateList = new QComboBox(false, this);
     dateList->insertItem("This Month");
@@ -204,7 +204,7 @@ void Report::setTitle(const char * newTitle)
 
 QDate Report::startDate()
 {
-    QDate   tmpDate = startDateCal->getQDate();
+    QDate   tmpDate = startDateCal->date();
     myStartDate.setYMD(tmpDate.year(), tmpDate.month(), tmpDate.day());
     return myStartDate;
 }
@@ -215,7 +215,7 @@ QDate Report::startDate()
 
 QDate Report::endDate()
 {
-    QDate   tmpDate = endDateCal->getQDate();
+    QDate   tmpDate = endDateCal->date();
     myEndDate.setYMD(tmpDate.year(), tmpDate.month(), tmpDate.day());
     return myEndDate;
 }
@@ -228,7 +228,7 @@ void Report::setStartDate(const QDate newDate)
 {
     char    dateStr[1024];
     sprintf(dateStr, "%02d/%02d/%04d", newDate.month(), newDate.day(), newDate.year());
-    startDateCal->setDate(dateStr);
+    startDateCal->setDate(newDate);
     myStartDate = newDate;
 }
 
@@ -241,7 +241,7 @@ void Report::setEndDate(const QDate newDate)
     myEndDate = newDate;
     char    dateStr[1024];
     sprintf(dateStr, "%02d/%02d/%04d", newDate.month(), newDate.day(), newDate.year());
-    endDateCal->setDate(dateStr);
+    endDateCal->setDate(newDate);
 }
 
 
@@ -776,9 +776,9 @@ void Report::dateRangeSelected(const char *newRange)
     
     char    dateStr[1024];
     sprintf(dateStr, "%02d/%02d/%04d", myStartDate.month(), myStartDate.day(), myStartDate.year());
-    startDateCal->setDate(dateStr);
+    startDateCal->setDate(myStartDate);
     sprintf(dateStr, "%02d/%02d/%04d", myEndDate.month(), myEndDate.day(), myEndDate.year());
-    endDateCal->setDate(dateStr);
+    endDateCal->setDate(myEndDate);
     refreshReport();
 }
 

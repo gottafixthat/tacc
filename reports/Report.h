@@ -29,7 +29,8 @@
 #include <TAAWidget.h>
 
 #include <qdatetm.h>
-#include <calendar.h>
+#include <qdatetimeedit.h>
+//#include <calendar.h>
 #include <qpainter.h>
 #include <qlistview.h>
 #include <qtextview.h>
@@ -119,8 +120,8 @@ protected:
     QPushButton *filterButton;
     QComboBox   *dateList;
     QPushButton *userButton;
-    DateInput   *startDateCal;
-    DateInput   *endDateCal;
+    QDateEdit   *startDateCal;
+    QDateEdit   *endDateCal;
     QTextView   *userText;
 
 private:

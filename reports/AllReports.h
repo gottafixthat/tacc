@@ -24,6 +24,7 @@
 #include "DNS_ManagedReport.h"
 #include "DNS_UnmanagedReport.h"
 #include "ActiveDomainsReport.h"
+#include "CallLogReport.h"
 
 #include <TAAWidget.h>
 #include <qpopupmenu.h>
@@ -50,6 +51,7 @@ public slots:
     void        showDNSManagedReport();
     void        showDNSUnmanagedReport();
     void        showActiveDomainsReport();
+    void        showCallLogReport();
 
 private:
     QPopupMenu  *reportMenu;
