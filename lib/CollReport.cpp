@@ -265,8 +265,8 @@ void CollReport::printReport(long CustID)
     sprintf(tStr, "/tmp/collreport-%09ld.ps", CustID);
     // prn.setPrintProgram("ghostview");
     //prn.setPrinterName("PostScript");
-    prn.setOutputFileName(tStr);
-    prn.setOutputToFile(true);
+    //prn.setOutputFileName(tStr);
+    prn.setOutputToFile(false);
     prn.setPageSize(QPrinter::Letter);
     prn.setFullPage(true);
     prn.setDocName("Collections Report");

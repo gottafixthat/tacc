@@ -353,6 +353,8 @@ void Tab_Logins::unlockLogin(void)
 {
 	char		tmpstr[256];
 	char		tmpLogin[256];
+    char        subj[4096];
+    char        body[4096];
 	QListViewItem   *curItem;
 
     curItem = list->currentItem();
@@ -433,6 +435,11 @@ void Tab_Logins::unlockLogin(void)
                         NDB.setValue("Subject", "Login Locked");
                         NDB.setValue("NoteText", "Login Locked.");
                         NDB.ins();
+
+                        // Email the administrators with the change.
+                        sprintf(subj, "Login Locked %s", tmpLogin);
+                        sprintf(body, "   Customer ID: %ld\n      Login ID: %s\n\n     Locked by: %s", myCustID, tmpLogin, curUser().userName);
+                        emailAdmins(subj, body);
                         
                         // Now, update the AR for the lock.
                         if (isManager()) {
@@ -479,6 +486,11 @@ void Tab_Logins::unlockLogin(void)
 					NDB.setValue("NoteText", "Login Unlocked.");
 					NDB.ins();
 					
+                    // Email the administrators with the change.
+                    sprintf(subj, "Login Unlocked %s", tmpLogin);
+                    sprintf(body, "   Customer ID: %ld\n      Login ID: %s\n\n   Unlocked by: %s", myCustID, tmpLogin, curUser().userName);
+                    emailAdmins(subj, body);
+
 					// Now, update the AR for the lock.
 					updateARForLock(tmpLogin);
 					
