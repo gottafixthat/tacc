@@ -490,7 +490,11 @@ void CCEntry::saveCCard()
             APDB.ins();
         }
     } else {
-        QMessageBox::critical(this, "Invalid Entry", "Something wasn't right with the credit card entry.\nPlease validate the entry and try again.", "&Ok");
+        char errStr[1024];
+        sprintf(errStr, "Something wasn't right with the card.\nPlease validate the entry and try again.\nError code %d", CCDB.isValid());
+        //QMessageBox::critical(this, "Invalid Entry", "Something wasn't right with the credit card entry.\nPlease validate the entry and try again.", "&Ok");
+        QMessageBox::critical(this, "Invalid Entry", errStr);
+        return;
     }
     
     if (transIns || autoIns) {
