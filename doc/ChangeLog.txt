@@ -2,4 +2,7 @@
              It is now set via cfgVal() settings.
 2004-08-29:  Updated tacc.cpp and TAAConfig.cpp to load configuration data
              from ~/.taa/taa.cf mostly for development.
+2004-09-03:  Added a Call Log report.
+2004-09-04:  Added more date options to the Report class, Today, Yesterday,
+             This Week, Last Week.
 

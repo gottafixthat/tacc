@@ -47,10 +47,11 @@ CallLogReport::CallLogReport
 
 	list->setColumnText(0, "Date/Time");   list->setColumnAlignment(0, AlignLeft);
 	list->addColumn("By");                 list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("CustID");             list->setColumnAlignment(2, AlignRight);
-	list->addColumn("LoginID");            list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Duration");           list->setColumnAlignment(4, AlignRight);
-	list->addColumn("Summary");            list->setColumnAlignment(5, AlignLeft);
+	list->addColumn("Type");               list->setColumnAlignment(2, AlignLeft);
+	list->addColumn("CustID");             list->setColumnAlignment(3, AlignRight);
+	list->addColumn("LoginID");            list->setColumnAlignment(4, AlignLeft);
+	list->addColumn("Duration");           list->setColumnAlignment(5, AlignRight);
+	list->addColumn("Summary");            list->setColumnAlignment(6, AlignLeft);
 	
 	// Set the sorting to a hidden column.
     //list->setSorting(6);
@@ -64,9 +65,17 @@ CallLogReport::CallLogReport
     answeredByList = new QComboBox(false, this);
     answeredByList->insertItem("All");
     dl->insertWidget(dl->findWidget(generateButton) - 1, answeredByList, 1);
-    QWidget::setTabOrder(dateList, answeredByList);
-    QWidget::setTabOrder(answeredByList, generateButton);
 
+    logTypeList = new QComboBox(false, this);
+    logTypeList->insertItem("All");
+    dl->insertWidget(dl->findWidget(generateButton) - 1, logTypeList, 1);
+
+    // Fix our tab ordering.
+    QWidget::setTabOrder(dateList, answeredByList);
+    QWidget::setTabOrder(answeredByList, logTypeList);
+    QWidget::setTabOrder(logTypeList, generateButton);
+
+    // Fill the added by list
     ADB DB;
     DB.query("select LoginID from Staff where Active > 0 order by LoginID");
     if (DB.rowCount) {
@@ -75,6 +84,20 @@ CallLogReport::CallLogReport
         }
     }
     
+    // Fill the log type list
+    DB.query("select distinct NoteType from Notes order by NoteType");
+    if (DB.rowCount) {
+        while(DB.getrow()) {
+            logTypeList->insertItem(DB.curRow["NoteType"]);
+        }
+    }
+    
+    // Set our default dates and types.
+    logTypeList->setCurrentText("Call Log");
+    dateList->setCurrentText("Today");
+
+    connect(answeredByList, SIGNAL(activated(int)), this, SLOT(filterActivated(int)));
+    connect(logTypeList,    SIGNAL(activated(int)), this, SLOT(filterActivated(int)));
     
     endDateCal->setDate(QDate::currentDate());
     startDateCal->setDate(QDate::currentDate());
@@ -87,6 +110,15 @@ CallLogReport::~CallLogReport()
 {
 }
 
+/*
+** filterActivated - Gets called when one of the filter boxes changes.
+**                   It just calls refreshReport.
+*/
+
+void CallLogReport::filterActivated(int)
+{
+    refreshReport();
+}
 
 /*
 ** refreshReport   - A virtual function that gets called when the user
@@ -102,6 +134,7 @@ void CallLogReport::refreshReport()
     char    typeStr[1024];
     char    titleStr[1024];
     char    ansby[1024];
+    char    notetype[1024];
     QDate   sDate = this->startDateCal->date();
     QDate   eDate = this->endDateCal->date();
 
@@ -111,16 +144,26 @@ void CallLogReport::refreshReport()
 
     QApplication::setOverrideCursor(waitCursor);
 
+    // Check to see if we're going by a particular person
     if (strcmp("All", answeredByList->currentText())) {
         sprintf(ansby, "and AddedBy = '%s'", (const char *) answeredByList->currentText());
     } else {
         strcpy(ansby, "");
     }
+    
+    // Check for note type selection
+    if (strcmp("All", logTypeList->currentText())) {
+        sprintf(notetype, "and NoteType = '%s'", (const char *) logTypeList->currentText());
+    } else {
+        strcpy(notetype, "");
+    }
+
+    // Clear the list.
     list->clear();
-    DB.query("select NoteID, NoteDate, AddedBy, Duration, CustomerID, LoginID, NoteText from Notes where NoteDate >= '%s' and NoteDate <= '%s' and NoteType = 'Call Log' %s", startDate, endDate, ansby);
+    DB.query("select NoteID, NoteDate, NoteType, AddedBy, Duration, CustomerID, LoginID, NoteText from Notes where NoteDate >= '%s' and NoteDate <= '%s' %s %s", startDate, endDate, ansby, notetype);
 
     if (DB.rowCount) {
-        sprintf(titleStr, "Call Logs for %s - %s, %d calls found", (const char*)sDate.toString(), (const char *)eDate.toString(), DB.rowCount);
+        sprintf(titleStr, "Call Logs for %s - %s, %d entries found", (const char*)sDate.toString(), (const char *)eDate.toString(), DB.rowCount);
         this->setTitle(titleStr);
         while (DB.getrow()) {
             // Pretty up the call duration.
@@ -154,6 +197,7 @@ void CallLogReport::refreshReport()
             (void) new QListViewItem(list, 
                                      DB.curRow["NoteDate"],
                                      DB.curRow["AddedBy"],
+                                     DB.curRow["NoteType"],
                                      DB.curRow["CustomerID"],
                                      DB.curRow["LoginID"],
                                      dstr,
@@ -176,8 +220,8 @@ void CallLogReport::refreshReport()
 void CallLogReport::listItemSelected(QListViewItem *curItem)
 {
     if (curItem) {
-        if (atoi(curItem->key(2,0))) {
-            emit (openCustomer(atol(curItem->key(2,0))));
+        if (atoi(curItem->key(3,0))) {
+            emit (openCustomer(atol(curItem->key(3,0))));
         }
     }
 }
