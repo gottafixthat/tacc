@@ -37,6 +37,7 @@
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
+#include <qlayout.h>
 
 #include "calendar.h"
 
@@ -123,6 +124,10 @@ protected:
     QDateEdit   *startDateCal;
     QDateEdit   *endDateCal;
     QTextView   *userText;
+
+    // The layouts so that they can be added to by things that inherit from us
+    QBoxLayout      *dl;    // Date Layout (the date bar)
+    QBoxLayout      *bl;    // Button Layout (the button bar)
 
 private:
     void printReportHeader(QPainter *p);

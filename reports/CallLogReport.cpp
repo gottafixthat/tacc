@@ -61,6 +61,23 @@ CallLogReport::CallLogReport
     //allowDates(REP_NODATES);
     allowFilters(0);
 
+    answeredByList = new QComboBox(false, this);
+    answeredByList->insertItem("All");
+    dl->insertWidget(dl->findWidget(generateButton) - 1, answeredByList, 1);
+    QWidget::setTabOrder(dateList, answeredByList);
+    QWidget::setTabOrder(answeredByList, generateButton);
+
+    ADB DB;
+    DB.query("select LoginID from Staff where Active > 0 order by LoginID");
+    if (DB.rowCount) {
+        while(DB.getrow()) {
+            answeredByList->insertItem(DB.curRow["LoginID"]);
+        }
+    }
+    
+    
+    endDateCal->setDate(QDate::currentDate());
+    startDateCal->setDate(QDate::currentDate());
 	refreshReport();
 	
 }
@@ -84,6 +101,7 @@ void CallLogReport::refreshReport()
     char    endDate[1024];
     char    typeStr[1024];
     char    titleStr[1024];
+    char    ansby[1024];
     QDate   sDate = this->startDateCal->date();
     QDate   eDate = this->endDateCal->date();
 
@@ -93,9 +111,13 @@ void CallLogReport::refreshReport()
 
     QApplication::setOverrideCursor(waitCursor);
 
+    if (strcmp("All", answeredByList->currentText())) {
+        sprintf(ansby, "and AddedBy = '%s'", (const char *) answeredByList->currentText());
+    } else {
+        strcpy(ansby, "");
+    }
     list->clear();
-    DB.query("select NoteID, NoteDate, AddedBy, Duration, CustomerID, LoginID, NoteText from Notes where NoteDate >= '%s' and NoteDate <= '%s' and NoteType = 'Call Log'", startDate, endDate);
-    fprintf(stderr, "select NoteID, NoteDate, AddedBy, Duration, CustomerID, LoginID, NoteText from Notes where NoteDate >= '%s' and NoteDate <= '%s' and NoteType = 'CallLog'\n", startDate, endDate);
+    DB.query("select NoteID, NoteDate, AddedBy, Duration, CustomerID, LoginID, NoteText from Notes where NoteDate >= '%s' and NoteDate <= '%s' and NoteType = 'Call Log' %s", startDate, endDate, ansby);
 
     if (DB.rowCount) {
         sprintf(titleStr, "Call Logs for %s - %s, %d calls found", (const char*)sDate.toString(), (const char *)eDate.toString(), DB.rowCount);
