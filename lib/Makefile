@@ -71,8 +71,8 @@ OBJMETA =	$(SRCMETA:.cpp=.o)
 all: $(SRCMETA) $(OBJMETA) db-lib
 
 db-lib: $(OBJECTS)
-	ar r libblarg.a $(OBJECTS) $(OBJMETA)
-	ranlib libblarg.a
+	ar r libtaa.a $(OBJECTS) $(OBJMETA)
+	ranlib libtaa.a
 	# mv libblarg.a lib
 
 $(SUBDIRS): FORCE

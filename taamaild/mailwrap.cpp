@@ -41,7 +41,7 @@
 #include <qdir.h>
 #include <qstring.h>
 
-#include <Cfg.h>
+#include "Cfg.h"
 #include <ADB.h>
 
 #define MAXMSGS     1000

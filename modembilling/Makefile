@@ -1,9 +1,9 @@
 ####### This section is automatically generated
 
-INCDIRS	=  -I. -I/usr/local/include -I../include -I$(QTDIR)/include
+INCDIRS	=  -I. -I/usr/local/include -I../include -I../lib -I$(QTDIR)/include
 CFLAGS= -O2 -fno-strength-reduce -Wall
 LFLAGS  = -L/usr/local/lib -L/usr/lib/mysql -L../lib -L$(QTDIR)/lib -L/usr/X11R6/lib/
-LFLAGS += -lblarg -ladb -lqt-mt -lmysqlclient -lBTools -lXext -lX11 -lSM -ldl -lICE
+LFLAGS += -ltaa -ladb -lqt-mt -lmysqlclient -lXext -lX11 -lSM -ldl -lICE
 #LFLAGS += -static
 SHELL   = /bin/sh
 CC	= g++
