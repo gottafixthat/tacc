@@ -41,7 +41,7 @@ TAALogin::TAALogin(QWidget *parent, const char *name) : QDialog(parent, name, tr
     aboutText += "Customer Care System Login<br>";
     aboutText += "<p>Version ";
     aboutText += VERSION;
-    aboutText += "<br>Build Number ";
+    aboutText += "<br>";
     aboutText += BUILDNUM();
     aboutText += "</center></html>";
 

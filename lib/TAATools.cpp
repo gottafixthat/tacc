@@ -327,7 +327,7 @@ void showAbout()
     //aboutText += "Contains ADB data management software\n(C)opyright 1998-2001, R. Marc Lewis, All Rights Reserved\n";
     aboutText += "<p>Version ";
     aboutText += VERSION;
-    aboutText += "<br>Build Number ";
+    aboutText += "<br>";
     aboutText += BUILDNUM();
 
     QMessageBox::about(0, "Total AccountAbility", aboutText);
