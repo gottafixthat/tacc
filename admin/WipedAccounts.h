@@ -56,21 +56,5 @@ protected slots:
     
 };
 
-class CollReport
-{
-public:
-    CollReport();
-    ~CollReport();
-
-    void printReport(long CustID);
-    
-protected:
-    void printHeader(QPainter *p, CustomersDB *cust, AddressesDB *cont, float Balance);
-    void printFooter(QPainter *p, int PageNo);
-    void registerHeader(QPainter *p);
-    
-
-};
-
 
 #endif // WipedAccounts_included
