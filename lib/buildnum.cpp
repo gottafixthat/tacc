@@ -1,2 +1,2 @@
 const char *BUILDNUM(void)
-{ return "2, 09-06-2004";}
+{ return "Revision 14, built on 09-06-2004";}

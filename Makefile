@@ -69,6 +69,7 @@ TARGET	=
 all: $(SUBDIRS)
 
 $(SUBDIRS): FORCE
+	$(BUILDNUM)
 	cd $@; $(MAKE)
 
 $(TARGET): $(SRCMETA) $(OBJECTS) $(OBJMETA)
@@ -89,7 +90,6 @@ clean:
 FORCE: include/version.h
 
 include/version.h: ./Makefile
-	$(BUILDNUM)
 	@echo \#ifndef VERSION > .ver
 	@echo \#define VERSION \"$(VERSION).$(PATCHLEVEL).$(SUBLEVEL)\" >> .ver
 	@echo \#endif >> .ver
