@@ -1,4 +1,4 @@
-/* $Id: cccimport.cpp,v 1.1 2004/03/15 22:37:37 marc Exp $
+/* $Id$
 **
 ** cccimport  - Called from cron at lest 4 times an hour, it connects to 
 **              the CCC's database and retrieves any log entries and new 

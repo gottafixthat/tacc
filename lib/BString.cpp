@@ -1,5 +1,5 @@
 /*
-** $Id: BString.cpp,v 1.1 2003/12/07 01:47:04 marc Exp $
+** $Id$
 **
 ** BString  - A set of string functions and utilities.
 */

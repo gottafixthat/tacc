@@ -7,10 +7,18 @@
 #ifndef CustChargeEdit_included
 #define CustChargeEdit_included
 
-#include "CustChargeEditData.h"
+#include <qwidget.h>
+#include <qlabel.h>
+#include <qcheckbox.h>
+#include <qcombobox.h>
+#include <qmultilinedit.h>
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qdatetimeedit.h>
 #include "GenLedger.h"
+#include <TAAWidget.h>
 
-class CustChargeEdit : public CustChargeEditData
+class CustChargeEdit : public TAAWidget
 {
     Q_OBJECT
 
@@ -29,6 +37,24 @@ public:
 signals:
 	void chargeSaved(int);
 
+protected:
+    QLabel      *custNameLabel;
+    QComboBox   *loginList;
+    QComboBox   *itemList;
+    QLineEdit   *quantity;
+    QLineEdit   *price;
+    QLabel      *ratePlanLabel;
+    QLabel      *cycleLabel;
+    QLineEdit   *units;
+    QLabel      *totalCharge;
+    QCheckBox   *taxable;
+    QMultiLineEdit *memo;
+    QDateEdit   *chargeDate;
+    QDateEdit   *startDate;
+    QDateEdit   *stopDate;
+    QPushButton *saveButton;
+    QPushButton *cancelButton;
+
 private:
     long	    myCustID;
     long	    myTransID;
@@ -38,10 +64,12 @@ private:
 	GenLedger	*myGL;
 	long		*itemIDX;
 	
-	virtual void saveCharge();
-	virtual void cancelPressed();
 	virtual	void quantityChanged(const QString &);
-	virtual	void priceChanged(const QString &);
+
+protected slots:
+    virtual void cancelPressed() =0;
+    virtual void priceChanged(const QString&) =0;
+    virtual void saveCharge() =0;
 
 private slots:
 	virtual void itemChanged(int newItemNumber);

@@ -1,4 +1,4 @@
-// $Id: admin.cpp,v 1.2 2004/04/15 18:13:46 marc Exp $
+// $Id$
 //
 // Admin
 //

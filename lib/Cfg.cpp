@@ -1,5 +1,5 @@
 /*
-** $Id: Cfg.cpp,v 1.1.1.1 2001/03/01 01:19:04 marc Exp $
+** $Id$
 **
 ** Cfg.cpp - A _very_ simple interface to config files for programs.
 **

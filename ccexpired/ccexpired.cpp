@@ -1,4 +1,4 @@
-/* $Id: ccexpired.cpp,v 1.1 2003/12/07 01:47:04 marc Exp $
+/* $Id$
 **
 ** ccexpired  - Scans through the database looking for expired credit cards.
 **              When it finds one, it does the following:
