@@ -36,6 +36,7 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
+#include <TAATools.h>
 
 LoginEdit::LoginEdit
 (
@@ -191,6 +192,8 @@ void LoginEdit::saveLogin()
 	LoginsDB		LDB;
 	BrassClient		*BC;
 	char			tmpstr[1024];
+    char            subj[4096];
+    char            body[4096];
 	ADB 			DB;
 	ADB 			DB2;
 	int             loginTypeID = 0;
@@ -281,6 +284,11 @@ void LoginEdit::saveLogin()
 			sprintf(tmpstr, "Changed login type from %s to %s.", oldType, newType);
 			NDB.setValue("NoteText", tmpstr);
 			NDB.ins();
+
+            // Email the administrators with the change.
+            sprintf(subj, "Login Changed %s", myLoginID);
+            sprintf(body, "   Customer ID: %ld\nOLD Login Type: %s\nNEW Login Type: %s\n\n    Changed by: %s", myCustID, oldType, newType, curUser().userName);
+            emailAdmins(subj, body);
 		}
 	} else {
 		LDB.setValue("CustomerID", myCustID);

@@ -35,6 +35,7 @@
 #include "TAATools.h"
 #include "version.h"
 #include "buildnum.h"
+#include "BString.h"
 
 static char* t_MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
   "May", "Jun", "Jul", "Aug", "Sep", "Oct",
@@ -408,4 +409,53 @@ void recountAllowedMailboxes(long customerID)
 }
 
 
+/*
+** emailAdmins - Sends an email message to all of the email addresses listed
+**               in the AdminEmailList configuration variable with the
+**               specified subject and message body.
+**
+**               Should be used sparingly for events that need to have 
+**               special notice taken of them.
+*/
+
+void emailAdmins(const char *subj, const char *body)
+{
+    char    *tmpstr;
+    FILE    *fp;
+    char    mname[1024];
+    char    tmpstr2[1024];
+
+    QStrList    admins;         // The list of admins to mail.
+    
+    admins.setAutoDelete(TRUE);
+    
+    tmpstr  = new(char[65536]);
+
+    strcpy(tmpstr, cfgVal("AdminEmailList"));
+    splitString(tmpstr, ':', admins, 1);
+    
+    for (unsigned int i = 0; i < admins.count(); i++) {
+        // Create the tmp files.
+        tmpnam(mname);
+        fp = fopen(mname, "w");
+        if (fp != NULL) {
+            fprintf(fp, "From: Blarg! Support <support@blarg.net>\n");
+            fprintf(fp, "To: %s@blarg.net\n", (const char *) admins.at(i));
+            fprintf(fp, "Subject: %s\n", subj);
+            fprintf(fp, "\n");
+            fprintf(fp, "%s\n", body);
+            fprintf(fp, "\n");
+            
+            fclose(fp);
+            
+            sprintf(tmpstr2, "/var/spool/taamail/%s-XXXXXX", (const char *) admins.at(i));
+            sprintf(tmpstr, "cp %s %s", mname, mktemp(tmpstr2));
+            system(tmpstr);
+            
+            unlink(mname);
+        }
+    }
+    
+    delete(tmpstr);
+}
 
