@@ -31,6 +31,7 @@ SOURCES =	Report.cpp\
 		ARReport.cpp\
 		LoginTypeReport.cpp\
 		LoginCountReport.cpp\
+		CallLogReport.cpp\
 		LoginsToWipeReport.cpp\
 		LoginAvgReport.cpp\
 		RatePlanReport.cpp\
@@ -66,6 +67,7 @@ SRCMETA =	moc_Report.cpp\
 		moc_ARReport.cpp\
 		moc_LoginTypeReport.cpp\
 		moc_LoginCountReport.cpp\
+		moc_CallLogReport.cpp\
 		moc_LoginsToWipeReport.cpp\
 		moc_LoginAvgReport.cpp\
 		moc_RatePlanReport.cpp\
@@ -155,6 +157,9 @@ moc_LoginTypeReport.cpp: LoginTypeReport.h
 
 moc_LoginCountReport.cpp: LoginCountReport.h
 	$(MOC) LoginCountReport.h -o moc_LoginCountReport.cpp
+
+moc_CallLogReport.cpp: CallLogReport.h
+	$(MOC) CallLogReport.h -o moc_CallLogReport.cpp
 
 moc_LoginsToWipeReport.cpp: LoginsToWipeReport.h
 	$(MOC) LoginsToWipeReport.h -o moc_LoginsToWipeReport.cpp

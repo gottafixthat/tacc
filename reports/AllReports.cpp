@@ -53,6 +53,7 @@ AllReports::AllReports
     reportMenu = new QPopupMenu(this, "Reports Menu");
     reportMenu->insertItem("&Domains", domainMenu);
     if (isAdmin()) {
+        reportMenu->insertItem("Call Lo&gs", this, SLOT(showCallLogReport()));
         reportMenu->insertItem("Login &Counts (current)", this, SLOT(showLoginCountReport()));
         reportMenu->insertItem("Login Counts (&monthly average)", this, SLOT(showLoginAverageReport()));
         reportMenu->insertItem("&Rate Plans", this, SLOT(showRatePlanReport()));
@@ -222,3 +223,15 @@ void AllReports::showActiveDomainsReport()
     emit(setStatus(""));
 }
 
+/*
+** showCallLogReport - Shows the call logs report
+*/
+
+void AllReports::showCallLogReport()
+{
+    emit(setStatus("Generating report..."));
+    CallLogReport    *rep;
+    rep = new CallLogReport();
+    rep->show();
+    emit(setStatus(""));
+}
