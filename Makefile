@@ -74,9 +74,9 @@ $(SUBDIRS): FORCE
 $(TARGET): $(SRCMETA) $(OBJECTS) $(OBJMETA)
 	$(CC) $(OBJECTS) $(OBJMETA) -o $(TARGET) $(LFLAGS)
 
-depend:
-	set -e; for i in $(SUBDIRS); do cd $$i ; $(MAKE) depend ; cd ..; done
-	@makedepend -I$(INCDIR) $(SOURCES) 2> /dev/null
+#depend:
+#	set -e; for i in $(SUBDIRS); do cd $$i ; $(MAKE) depend ; cd ..; done
+#	@makedepend -I$(INCDIR) $(SOURCES) 2> /dev/null
 
 showfiles:
 	@echo $(SOURCES) $(HEADERS) Makefile
