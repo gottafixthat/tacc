@@ -14,6 +14,10 @@
  * Modified on May 5, 2000 by R. Marc Lewis <marc@blarg.net> to work 
  * with the QDate class.
  *
+ * Modified 10/2/2005 by Jeff Woods <jcwoods@bellsouth.net>:
+ * - fixed sources to build with qt3 (qt-3.3.4, in particlular...)
+ * - added default of current date if no date specified in DateInput
+ *   constructor
  */
 
 #ifndef __CALENDAR_H
@@ -69,7 +73,7 @@ private:
 
   QDate myQDate;
 
-  friend struct CalendarTip;
+  friend class CalendarTip;
 };
 
 class CalendarTip : public QToolTip {
@@ -91,7 +95,7 @@ public:
 class DateInput : public QWidget {
   Q_OBJECT
 public:
-  DateInput(QWidget*,const char*);
+  DateInput(QWidget*,const char* = NULL);
   DateInput(QWidget*, const QDate);
   const char* getDate(void);
   const QDate getQDate();
@@ -110,7 +114,6 @@ protected:
   void paintEvent(QPaintEvent*);
   void resizeEvent(QResizeEvent*);
   void mousePressEvent(QMouseEvent*);
-  virtual QSize sizeHint() const;
 private:
   Calendar* cal;
   DateValidator* dv;

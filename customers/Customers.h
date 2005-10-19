@@ -77,6 +77,19 @@ protected:
     QListView   *list;
     QPopupMenu  *optionsMenu;
 
+    QLabel      *phoneNumberLabel;
+    QLabel      *phoneNumber;
+    QLabel      *telcoNameLabel;
+    QLabel      *telcoName;
+    QLabel      *LATALabel;
+    QLabel      *LATA;
+    QLabel      *serviceAreaLabel;
+    QLabel      *serviceArea;
+    QLabel      *dslQualLabel;
+    QLabel      *dslQual;
+    QLabel      *iHostLabel;
+    QLabel      *iHost;
+
 signals:
     void    refreshTabs(int);
     

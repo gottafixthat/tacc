@@ -1709,3 +1709,36 @@ CREATE TABLE DNS_Templates_RR (
     INDEX TemplateIDIDX (TemplateID)
 );
 
+#
+# Telcos - A lookup table for telco's.
+#
+CREATE TABLE Telcos (
+    TelcoID     int(11) NOT NULL DEFAULT '0' auto_increment,
+    TelcoName   varchar(128) NOT NULL DEFAULT '',
+    HasIhosts   int(11) NOT NULL DEFAULT '0',
+    PRIMARY KEY(TelcoID)
+);
+
+#
+# Qwest_Ihosts - Lata's and names and passwords for Qwest Ihost's
+#
+CREATE TABLE Qwest_Ihosts (
+    LATA        int(11) NOT NULL DEFAULT '0',
+    TelcoID     int(11) NOT NULL DEFAULT '0',
+    IhostName   varchar(128) NOT NULL DEFAULT '',
+    IhostPass   varchar(128) NOT NULL DEFAULT '',
+    PRIMARY KEY(LATA, TelcoID)
+);
+
+#
+# NPA_NXX - Contains a 
+CREATE TABLE NPA_NXX (
+    NPA         int(11) NOT NULL DEFAULT '0',
+    NXX         int(11) NOT NULL DEFAULT '0',
+    LATA        int(11) NOT NULL DEFAULT '0',
+    TelcoID     int(11) NOT NULL DEFAULT '0',
+    Service     int(11) NOT NULL DEFAULT '0',
+    PRIMARY KEY(NPA,NXX)
+);
+
+

@@ -186,6 +186,65 @@ Customers::Customers ( QWidget* parent, const char* name)
     autoOpenCustomer->setAutoResize( FALSE );
     autoOpenCustomer->setChecked( FALSE );
 
+    // Phone Number Information
+    phoneNumberLabel   = new QLabel(this, "phoneNumberLabel");
+    phoneNumberLabel->setAlignment(AlignRight|AlignVCenter);
+    phoneNumberLabel->setText("TN:");
+
+    phoneNumber = new QLabel(this, "phoneNumber");
+    phoneNumber->setAlignment(AlignLeft|AlignVCenter);
+
+    telcoNameLabel   = new QLabel(this, "telcoNameLabel");
+    telcoNameLabel->setAlignment(AlignRight|AlignVCenter);
+    telcoNameLabel->setText("Telco:");
+
+    telcoName = new QLabel(this, "telcoName");
+    telcoName->setAlignment(AlignLeft|AlignVCenter);
+
+    LATALabel   = new QLabel(this, "LATALabel");
+    LATALabel->setAlignment(AlignRight|AlignVCenter);
+    LATALabel->setText("LATA:");
+
+    LATA = new QLabel(this, "LATA");
+    LATA->setAlignment(AlignLeft|AlignVCenter);
+
+    serviceAreaLabel   = new QLabel(this, "serviceAreaLabel");
+    serviceAreaLabel->setAlignment(AlignRight|AlignVCenter);
+    serviceAreaLabel->setText("Svc:");
+
+    serviceArea = new QLabel(this, "serviceArea");
+    serviceArea->setAlignment(AlignLeft|AlignVCenter);
+
+    dslQualLabel   = new QLabel(this, "dslQualLabel");
+    dslQualLabel->setAlignment(AlignRight|AlignVCenter);
+    dslQualLabel->setText("DSL:");
+
+    dslQual = new QLabel(this, "dslQual");
+    dslQual->setAlignment(AlignLeft|AlignVCenter);
+
+    iHostLabel   = new QLabel(this, "iHostLabel");
+    iHostLabel->setAlignment(AlignRight|AlignVCenter);
+    iHostLabel->setText("Ihost:");
+
+    iHost = new QLabel(this, "iHost");
+    iHost->setAlignment(AlignLeft|AlignVCenter);
+
+    // Put the telephone number info into a layout
+	QBoxLayout* phoneNumberLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+    phoneNumberLayout->addWidget(phoneNumberLabel, 0);
+    phoneNumberLayout->addWidget(phoneNumber,      1);
+    phoneNumberLayout->addWidget(telcoNameLabel,   1);
+    phoneNumberLayout->addWidget(telcoName,        1);
+    phoneNumberLayout->addWidget(LATALabel,        1);
+    phoneNumberLayout->addWidget(LATA,             1);
+    phoneNumberLayout->addWidget(serviceAreaLabel, 1);
+    phoneNumberLayout->addWidget(serviceArea,      1);
+    phoneNumberLayout->addWidget(iHostLabel,       1);
+    phoneNumberLayout->addWidget(iHost,            1);
+    phoneNumberLayout->addWidget(dslQualLabel,     1);
+    phoneNumberLayout->addWidget(dslQual,          0);
+
+
     list = new QListView(this, "CustomerList");
     list->setGeometry(0, 76, 500, 244);
     list->setMinimumSize(0, 0);
@@ -240,6 +299,7 @@ Customers::Customers ( QWidget* parent, const char* name)
 	qtarch_layout_1_3->addWidget( qtarch_ClearButton, 1, 0 );
 	qtarch_layout_1_3->addWidget( autoOpenCustomer, 1, 0 );
 	qtarch_layout_1->addWidget( list, 1, 0 );
+	qtarch_layout_1->addLayout( phoneNumberLayout, 0);
     resize(500,345);
     setMinimumSize(300, 300);
     setMaximumSize(32767, 32767);
@@ -295,6 +355,20 @@ Customers::Customers ( QWidget* parent, const char* name)
     list->setAllColumnsShowFocus(TRUE);
     
     autoOpenCustomer->hide();
+    // We only want to show the phone number data if the user enters a phone number
+    phoneNumber->hide();
+    phoneNumberLabel->hide();
+    telcoName->hide();
+    telcoNameLabel->hide();
+    LATA->hide();
+    LATALabel->hide();
+    serviceArea->hide();
+    serviceAreaLabel->hide();
+    dslQual->hide();
+    dslQualLabel->hide();
+    iHost->hide();
+    iHostLabel->hide();
+    
 }
 
 
@@ -355,6 +429,25 @@ void Customers::refreshList(long)
     QApplication::setOverrideCursor(waitCursor);
     emit(setStatus("Searching..."));
 
+    phoneNumber->setText("");
+    telcoName->setText("");
+    LATA->setText("");
+    serviceArea->setText("");
+    dslQual->setText("");
+    iHost->setText("");
+
+    phoneNumber->hide();
+    phoneNumberLabel->hide();
+    telcoName->hide();
+    telcoNameLabel->hide();
+    LATA->hide();
+    LATALabel->hide();
+    serviceArea->hide();
+    serviceAreaLabel->hide();
+    dslQual->hide();
+    dslQualLabel->hide();
+    iHost->hide();
+    iHostLabel->hide();
     
     // First query.  CustomerID
     if (tmpsub.toLong()) {
@@ -433,6 +526,9 @@ void Customers::refreshList(long)
     if (!allLoaded && tmpsub.length() <= 12) {
         QString tmpWorkStr;
         QString numbersOnly;
+        QString NPA;
+        QString NXX;
+        QString fmtPhone;
         // Extract the numbers only out of the string.
         tmpWorkStr  = tmpsub;
         numbersOnly = tmpWorkStr.replace(QRegExp("[^0-9]"), "");
@@ -449,6 +545,14 @@ void Customers::refreshList(long)
                 tmpWorkStr += numbersOnly.mid(3,4);
                 tmpWorkStr += "%%";
             } else {
+                NPA = numbersOnly.mid(0,3);
+                NXX = numbersOnly.mid(3,3);
+                fmtPhone += numbersOnly.mid(0,3);
+                fmtPhone += ".";
+                fmtPhone += numbersOnly.mid(3,3);
+                fmtPhone += ".";
+                fmtPhone += numbersOnly.mid(6,4);
+
                 tmpWorkStr += "%%";
                 tmpWorkStr += numbersOnly.mid(0,3);
                 tmpWorkStr += "%%";
@@ -464,6 +568,51 @@ void Customers::refreshList(long)
                     curCustID = atol(DB.curRow["RefID"]);
                     // Load them into our loadedCusts map
                     if (loadedCusts[curCustID] != curCustID) loadedCusts.insert(curCustID, curCustID);
+                }
+            }
+            // Check for an NPA/NXX Qwest Ihost lata lookup
+            if (NPA.length() == 3 && NXX.length() == 3) {
+                phoneNumberLabel->show();
+                phoneNumber->show();
+                phoneNumber->setText(fmtPhone);
+                telcoNameLabel->show();
+                telcoName->show();
+                telcoName->setText("Unk");
+                LATALabel->show();
+                LATA->show();
+                LATA->setText("Unk");
+                serviceAreaLabel->show();
+                serviceArea->show();
+                serviceArea->setText("Unk");
+                dslQualLabel->show();
+                dslQual->show();
+                dslQual->setText("Unk");
+                iHostLabel->show();
+                iHost->show();
+                iHost->setText("Unk");
+
+                DB.query("select NPA_NXX.LATA, NPA_NXX.Service, NPA_NXX.TelcoID, Telcos.TelcoName, Telcos.HasIhosts from NPA_NXX, Telcos where NPA_NXX.NPA = %d and NPA_NXX.NXX = %d and Telcos.TelcoID = NPA_NXX.TelcoID", NPA.toInt(), NXX.toInt());
+                if (DB.rowCount) {
+                    // Get the Telco Name and LATA
+                    DB.getrow();
+                    telcoName->setText(DB.curRow["TelcoName"]);
+                    LATA->setText(DB.curRow["LATA"]);
+                    if (DB.curRow.col("Service")->toInt()) {
+                        serviceArea->setText("Yes");
+                    } else {
+                        serviceArea->setText("No");
+                    }
+                    dslQual->setText("Unk");
+                    iHost->setText("N/A");
+
+                    // Check if we have Ihosts for this area.
+                    if (DB.curRow.col("HasIhosts")->toInt()) {
+                        DB2.query("select IhostName, IhostPass from Qwest_Ihosts where LATA = %d and TelcoID = %d", DB.curRow.col("LATA")->toInt(), DB.curRow.col("TelcoID")->toInt());
+                        if (DB2.rowCount) {
+                            DB2.getrow();
+                            iHost->setText(DB2.curRow["IhostName"]);
+                        }
+                    } 
                 }
             }
 
