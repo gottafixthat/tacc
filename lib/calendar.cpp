@@ -11,9 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- * Modified on May 5, 2000 by R. Marc Lewis <marc@donttouchthat.com> to work 
- * with the QDate class.
- * Modified on Oct 28, 2001 by R. Marc Lewis <marc@donttouchthat.com> to work 
+ * Modified on May 5, 2000 by R. Marc Lewis <marc@blarg.net> to work 
  * with the QDate class.
  *
  */
@@ -32,8 +30,6 @@
 #include <qpainter.h>
 #include <qdrawutil.h>
 #include <qstyle.h>
-#include <qrect.h>
-#include <qfontinfo.h>
 
 #include "calendar.h"
 
@@ -47,9 +43,9 @@
 #define INITIAL_TIME 750
 #define REPEAT_TIME 100
 
-static char* months[] = { "January", "February", "March", "April",
-  "May", "June", "July", "August", "September", "October",
-  "November", "December" 
+static char* months[] = { "Jan", "Feb", "Mar", "Apr",
+  "May", "Jun", "Jul", "Aug", "Sep", "Oct",
+  "Nov", "Dec" 
 };
 
 // Calendar
@@ -487,8 +483,13 @@ DateInput::DateInput(QWidget* p, const QDate sdate)
 
 void DateInput::setDate(const char* str)
 {
-  text->setText(str);
-  emit(dateChanged());
+    QString s(str);
+
+    if (str == (const char *) NULL)
+        s = QDate::currentDate().toString("MM/dd/yyyy");
+
+    text->setText(s);
+    emit(dateChanged());
 }
 
 void DateInput::setDate(const QDate newDate)
@@ -506,7 +507,7 @@ const char* DateInput::getDate(void)
 
 const QDate DateInput::getQDate()
 {
-    //int     tmpPos = 0;
+    int     tmpPos = 0;
     char    *tmpStr = new char[1024];
     char    *part;
     int     Y = 1900, M = 1, D = 1;
@@ -550,20 +551,8 @@ void DateInput::paintEvent(QPaintEvent*)
   QPainter paint;
   paint.begin(this);
   qDrawShadePanel(&paint,0,0,width(),height(),colorGroup(),FALSE,1,NULL);
-
-  /*
-  ** Qt v2.x
-  style().drawArrow(&paint,Qt::DownArrow,FALSE,width()-19,5,height()-12,
-    height()-12,colorGroup(),FALSE);
-  */
-
-  /*
-  ** Qt v3.0
-  */
-
-  QRect tmpRect(width()-19,5,12,height()-12);
-  style().drawPrimitive(QStyle::PE_ArrowDown,&paint,tmpRect, colorGroup());
-
+  QRect r(width() - 19, 5, height() - 12, height() - 12);
+  style().drawPrimitive(QStyle::PE_ArrowDown, &paint, r, colorGroup(), FALSE);
   qDrawShadeLine(&paint,width()-18,height()-7,width()-7,height()-7,
     colorGroup(),FALSE,1,1);
   paint.end();
@@ -589,13 +578,4 @@ void DateInput::mousePressEvent(QMouseEvent* qme)
   }
 }
 
-QSize DateInput::sizeHint() const
-{
-    QSize   tmpSize;
-    QFontInfo   fi = fontInfo();
-    tmpSize == text->minimumSizeHint();
-    tmpSize.setHeight(text->height() + 15);
-    tmpSize.setWidth(fontInfo().pointSize()*9);
-    return tmpSize;
-}
 
