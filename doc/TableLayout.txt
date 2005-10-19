@@ -1731,7 +1731,7 @@ CREATE TABLE Qwest_Ihosts (
 );
 
 #
-# NPA_NXX - Contains a 
+# NPA_NXX - Contains all of the Area Codes and Prefixes we know about
 CREATE TABLE NPA_NXX (
     NPA         int(11) NOT NULL DEFAULT '0',
     NXX         int(11) NOT NULL DEFAULT '0',
@@ -1741,4 +1741,13 @@ CREATE TABLE NPA_NXX (
     PRIMARY KEY(NPA,NXX)
 );
 
+#
+# DSL_Quals - Contains all of the prequalifications we have for fast lookups
+CREATE TABLE DSL_Quals (
+    PhoneNumber bigint(21) NOT NULL DEFAULT '0',
+    Qualifies   tinyint NOT NULL DEFAULT '0',
+    QualDate    datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    Stale       tinyint NOT NULL DEFAULT '0',
+    PRIMARY KEY(PhoneNumber)
+);
 
