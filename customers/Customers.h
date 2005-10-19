@@ -89,6 +89,8 @@ protected:
     QLabel      *dslQual;
     QLabel      *iHostLabel;
     QLabel      *iHost;
+    QLabel      *locationLabel;
+    QLabel      *location;
 
 signals:
     void    refreshTabs(int);

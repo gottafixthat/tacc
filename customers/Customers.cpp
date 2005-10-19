@@ -229,6 +229,13 @@ Customers::Customers ( QWidget* parent, const char* name)
     iHost = new QLabel(this, "iHost");
     iHost->setAlignment(AlignLeft|AlignVCenter);
 
+    locationLabel   = new QLabel(this, "locationLabel");
+    locationLabel->setAlignment(AlignRight|AlignVCenter);
+    locationLabel->setText("CO:");
+
+    location = new QLabel(this, "location");
+    location->setAlignment(AlignLeft|AlignVCenter);
+
     // Put the telephone number info into a layout
 	QBoxLayout* phoneNumberLayout = new QBoxLayout(QBoxLayout::LeftToRight);
     phoneNumberLayout->addWidget(phoneNumberLabel, 0);
@@ -244,6 +251,9 @@ Customers::Customers ( QWidget* parent, const char* name)
     phoneNumberLayout->addWidget(dslQualLabel,     1);
     phoneNumberLayout->addWidget(dslQual,          0);
 
+	QBoxLayout* locationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
+    locationLayout->addWidget(locationLabel, 0);
+    locationLayout->addWidget(location,      1);
 
     list = new QListView(this, "CustomerList");
     list->setGeometry(0, 76, 500, 244);
@@ -300,6 +310,7 @@ Customers::Customers ( QWidget* parent, const char* name)
 	qtarch_layout_1_3->addWidget( autoOpenCustomer, 1, 0 );
 	qtarch_layout_1->addWidget( list, 1, 0 );
 	qtarch_layout_1->addLayout( phoneNumberLayout, 0);
+	qtarch_layout_1->addLayout( locationLayout, 0);
     resize(500,345);
     setMinimumSize(300, 300);
     setMaximumSize(32767, 32767);
@@ -368,7 +379,8 @@ Customers::Customers ( QWidget* parent, const char* name)
     dslQualLabel->hide();
     iHost->hide();
     iHostLabel->hide();
-    
+    location->hide();
+    locationLabel->hide();
 }
 
 
@@ -435,6 +447,7 @@ void Customers::refreshList(long)
     serviceArea->setText("");
     dslQual->setText("");
     iHost->setText("");
+    location->setText("");
 
     phoneNumber->hide();
     phoneNumberLabel->hide();
@@ -448,6 +461,8 @@ void Customers::refreshList(long)
     dslQualLabel->hide();
     iHost->hide();
     iHostLabel->hide();
+    location->hide();
+    locationLabel->hide();
     
     // First query.  CustomerID
     if (tmpsub.toLong()) {
@@ -591,7 +606,7 @@ void Customers::refreshList(long)
                 iHost->show();
                 iHost->setText("Unk");
 
-                DB.query("select NPA_NXX.LATA, NPA_NXX.Service, NPA_NXX.TelcoID, Telcos.TelcoName, Telcos.HasIhosts from NPA_NXX, Telcos where NPA_NXX.NPA = %d and NPA_NXX.NXX = %d and Telcos.TelcoID = NPA_NXX.TelcoID", NPA.toInt(), NXX.toInt());
+                DB.query("select NPA_NXX.LATA, NPA_NXX.Service, NPA_NXX.TelcoID, NPA_NXX.City, NPA_NXX.State, Telcos.TelcoName, Telcos.HasIhosts from NPA_NXX, Telcos where NPA_NXX.NPA = %d and NPA_NXX.NXX = %d and Telcos.TelcoID = NPA_NXX.TelcoID", NPA.toInt(), NXX.toInt());
                 if (DB.rowCount) {
                     // Get the Telco Name and LATA
                     DB.getrow();
@@ -605,6 +620,20 @@ void Customers::refreshList(long)
                     dslQual->setText("Unk");
                     iHost->setText("N/A");
 
+                    QString tmpLoc;
+                    if (strlen(DB.curRow["City"])) {
+                        tmpLoc += DB.curRow["City"];
+                    }
+                    if (strlen(DB.curRow["State"])) {
+                        if (tmpLoc.length()) tmpLoc += ", ";
+                        tmpLoc += DB.curRow["State"];
+                    }
+                    if (tmpLoc.length()) {
+                        locationLabel->show();
+                        location->show();
+                        location->setText(tmpLoc);
+                    }
+
                     // Check if we have Ihosts for this area.
                     if (DB.curRow.col("HasIhosts")->toInt()) {
                         DB2.query("select IhostName, IhostPass from Qwest_Ihosts where LATA = %d and TelcoID = %d", DB.curRow.col("LATA")->toInt(), DB.curRow.col("TelcoID")->toInt());
@@ -613,11 +642,20 @@ void Customers::refreshList(long)
                             iHost->setText(DB2.curRow["IhostName"]);
                         }
                     } 
+
+                    // Check to see if this number qualifies for DSL
+                    DB2.query("select Qualifies, QualDate from DSL_Quals where PhoneNumber = %s", (const char *) numbersOnly);
+                    if (DB2.rowCount) {
+                        DB2.getrow();
+                        if (atoi(DB2.curRow["Qualifies"])) {
+                            dslQual->setText("Yes");
+                        } else {
+                            dslQual->setText("No");
+                        }
+                    }
                 }
             }
-
         }
-
     }
     
     if (loadedCusts.count()) {
