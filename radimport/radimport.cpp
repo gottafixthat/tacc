@@ -28,7 +28,7 @@ using namespace std;
 #include <Cfg.h>
 #include <ADB.h>
 
-#define MAXIMPORTROWS 25000
+#define MAXIMPORTROWS 50000
 
 #define configFile   "/usr/local/etc/radimport.cf"
 #define lockFileName "/var/run/radimport.pid"
@@ -148,18 +148,16 @@ void getRemoteDB(void)
     ADB         RadDB2(cfgVal("RadiusDB"), cfgVal("RadiusUser"), cfgVal("RadiusPass"), cfgVal("RadiusHost"));
     if (DebugMode) fprintf(stderr, "Connecting to Accounting database %s@%s as %s\n", cfgVal("AcctDB"), cfgVal("AcctHost"), cfgVal("AcctUser"));
     ADB         AcctDB(cfgVal("AcctDB"), cfgVal("AcctUser"), cfgVal("AcctPass"), cfgVal("AcctHost"));
-
     ADBTable    AcctTable(cfgVal("AcctTable"), cfgVal("AcctDB"), cfgVal("AcctUser"), cfgVal("AcctPass"), cfgVal("AcctHost"));
-    
+
     long        impCount = 0;
 
-    time_t      startTime, stopTime;
+    string      startDateTime;
+    string      stopDateTime;
     char        startDateStr[1024];
     char        startTimeStr[1024];
     char        stopDateStr[1024];
     char        stopTimeStr[1024];
-    tm          *startTimeRec;
-    tm          *stopTimeRec;
 
     // Hostname lookup vars
     struct hostent  *hp;
@@ -168,7 +166,7 @@ void getRemoteDB(void)
     string          hostonly;
 
     // Load all of the stop records.  They contain everything we need.
-    RadDB.query("select * from radius_log where status_type = 2 and exported = 0");
+    RadDB.query("select * from %s where AcctStopTime <> '0000-00-00 00:00:00' and exported = 0 limit %ld", cfgVal("RadiusTable"), MAXIMPORTROWS);
     syslog(LOG_NOTICE, "Found %ld remote radius accounting records", RadDB.rowCount);
     if (DebugMode) printf("Found %ld radius accounting records.\n", RadDB.rowCount);
     
@@ -188,37 +186,47 @@ void getRemoteDB(void)
         }
         while (RadDB.getrow()) {
             AcctTable.clearData();
+            if (DebugMode) {
+                printf("%-8s %-10s %-16s %-3s %-20s %-10s %-10s %-8s\n",
+                  RadDB.curRow["RadAcctId"],
+                  RadDB.curRow["UserName"],
+                  RadDB.curRow["NASIPAddress"],
+                  RadDB.curRow["NASPortID"],
+                  RadDB.curRow["ConnectInfo_start"],
+                  RadDB.curRow["AcctOutputOctets"],
+                  RadDB.curRow["AcctInputOctets"],
+                  RadDB.curRow["AcctSessionTime"]
+                );
+            }
 
             // Get the start and stop times and turn them into something
             // that MySQL likes
-            stopTime = RadDB.curRow.col("event_time")->toInt();
-            startTime = stopTime - RadDB.curRow.col("session_time")->toInt();
-            startTimeRec = localtime(&startTime);
+            startDateTime.assign(RadDB.curRow["AcctStartTime"]);
+            strcpy(startDateStr, startDateTime.substr(0,10).c_str());
+            strcpy(startTimeStr, startDateTime.substr(11,8).c_str());
 
-            sprintf(startDateStr, "%4d-%02d-%02d", startTimeRec->tm_year+1900, startTimeRec->tm_mon+1, startTimeRec->tm_mday);
-            sprintf(startTimeStr, "%02d:%02d:%02d", startTimeRec->tm_hour, startTimeRec->tm_min, startTimeRec->tm_sec);
-            stopTimeRec  = localtime(&stopTime);
-            sprintf(stopDateStr, "%4d-%02d-%02d", stopTimeRec->tm_year+1900, stopTimeRec->tm_mon+1, stopTimeRec->tm_mday);
-            sprintf(stopTimeStr, "%02d:%02d:%02d", stopTimeRec->tm_hour, stopTimeRec->tm_min, stopTimeRec->tm_sec);
-            
+            stopDateTime.assign(RadDB.curRow["AcctStopTime"]);
+            strcpy(stopDateStr, stopDateTime.substr(0,10).c_str());
+            strcpy(stopTimeStr, stopDateTime.substr(11,8).c_str());
+
             // Do the translation from the remote radius database to the
             // local accounting database.  The fields are totally different.
             
-            AcctTable.setValue("LoginID",       RadDB.curRow["user_name"]);
+            AcctTable.setValue("LoginID",       RadDB.curRow["UserName"]);
             AcctTable.setValue("StartDate",     startDateStr);
             AcctTable.setValue("StartTime",     startTimeStr);
             AcctTable.setValue("StopDate",      stopDateStr);
             AcctTable.setValue("StopTime",      stopTimeStr);
-            AcctTable.setValue("SessionLength", RadDB.curRow.col("session_time")->toLong());
-            AcctTable.setValue("Port",          RadDB.curRow.col("port_id")->toInt());
+            AcctTable.setValue("SessionLength", RadDB.curRow.col("AcctSessionTime")->toLong());
+            AcctTable.setValue("Port",          RadDB.curRow.col("NASPortId")->toInt());
             AcctTable.setValue("Speed",         "");
-            AcctTable.setValue("InBytes",       RadDB.curRow.col("input_bytes")->toLong());
-            AcctTable.setValue("OutBytes",      RadDB.curRow.col("output_bytes")->toLong());
-            AcctTable.setValue("CallerID",      RadDB.curRow["calling_number"]);
-            AcctTable.setValue("CalledNumber",  RadDB.curRow["called_number"]);
+            AcctTable.setValue("InBytes",       RadDB.curRow.col("AcctInputOctets")->toLong());
+            AcctTable.setValue("OutBytes",      RadDB.curRow.col("AcctOutputOctets")->toLong());
+            AcctTable.setValue("CallerID",      RadDB.curRow["CallingStationId"]);
+            AcctTable.setValue("CalledNumber",  RadDB.curRow["CalledStationId"]);
 
             // get the host name by address.
-            n_ipaddr = htonl(ipstr2long(RadDB.curRow["nas_ip"]));
+            n_ipaddr = htonl(ipstr2long(RadDB.curRow["NASIPAddress"]));
             hp = gethostbyaddr((char *) &n_ipaddr, sizeof(struct in_addr), AF_INET);
             strcpy(hstname, hp->h_name);
 
@@ -240,22 +248,20 @@ void getRemoteDB(void)
             AcctTable.setValue("Host", strxlt[hstname]);
 
             // Add the terminate cause.
-            if (!strxlt[termxlt[RadDB.curRow.col("terminate_cause")->toInt()]]) {
-                addToDict(termxlt[RadDB.curRow.col("terminate_cause")->toInt()]);
+            if (!strxlt[RadDB.curRow["AcctTerminateCause"]]) {
+                addToDict(RadDB.curRow["AcctTerminateCause"]);
             }
-            AcctTable.setValue("TermCause", strxlt[termxlt[RadDB.curRow.col("terminate_cause")->toInt()]]);
+            AcctTable.setValue("TermCause", strxlt[RadDB.curRow["AcctTerminateCause"]]);
             
             // Add the session type
-            if (!strxlt[portxlt[RadDB.curRow.col("port_type")->toInt()]]) {
-                addToDict(portxlt[RadDB.curRow.col("port_type")->toInt()]);
+            if (!strxlt[RadDB.curRow["NASPortType"]]) {
+                addToDict(RadDB.curRow["NASPortType"]);
             }
-            AcctTable.setValue("SessionType", strxlt[portxlt[RadDB.curRow.col("port_type")->toInt()]]);
-
-            
+            AcctTable.setValue("SessionType", strxlt[RadDB.curRow["NASPortType"]]);
             AcctTable.ins();
             
             // And update the Exported flag in the remote system.
-            RadDB2.dbcmd("update radius_log set exported = 1 where record_id = %d", atoi(RadDB.curRow["record_id"]));
+            RadDB2.dbcmd("update %s set exported = 1 where RadAcctId = %d", cfgVal("RadiusTable"), atoi(RadDB.curRow["RadAcctId"]));
             
             impCount++;
 
@@ -282,7 +288,7 @@ void deleteExported(void)
 {
     if (DebugMode) fprintf(stderr, "Connecting to RADIUS database %s@%s as %s to delete exported records\n", cfgVal("RadiusDB"), cfgVal("RadiusHost"), cfgVal("RadiusUser"));
     ADB         RadDB(cfgVal("RadiusDB"), cfgVal("RadiusUser"), cfgVal("RadiusPass"), cfgVal("RadiusHost"));
-    RadDB.dbcmd("delete from radius_log where exported = 1");
+    RadDB.dbcmd("delete from radacct where exported = 1");
 }
 
 

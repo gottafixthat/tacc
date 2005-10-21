@@ -28,7 +28,7 @@ HEADERS =
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 
-TARGET	=	radimport
+TARGET	=	../bin/radimport
 
 ####### Implicit rules
 
