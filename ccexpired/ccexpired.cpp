@@ -143,7 +143,7 @@ void findCards(void)
     sprintf(dateStr, "%04d-%02d-%02d", theDate.year(), theDate.month(), theDate.day());
 
     
-    DB.query("select InternalID from AutoPayments where ExpDate <= '%s' and Active = 1", dateStr);
+    DB.query("select AutoPayments.InternalID, Customers.CustomerID, Logins.LoginID from AutoPayments, Customers, Logins where AutoPayments.ExpDate <= '%s' and AutoPayments.Active = 1 and Logins.LoginID = Customers.PrimaryLogin and Logins.Active = 1 and AutoPayments.CustomerID = Customers.CustomerID", dateStr);
     if (DB.rowCount) while (DB.getrow()) {
         APDB.get(atol(DB.curRow["InternalID"]));
         
@@ -168,7 +168,8 @@ void findCards(void)
         APDB.setValue("Active", 0);
         APDB.upd();
     }
-    syslog(LOG_INFO, "Expired %ld credit cards from the automatic payment database", DB.rowCount);
+    syslog(LOG_INFO, "Expired active %ld credit cards from the automatic payment database", DB.rowCount);
+    DB.query("update AutoPayments set Active = 0 where ExpDate <= '%s' and Active = 1", dateStr);
 }
 
 /*
