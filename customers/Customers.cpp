@@ -636,10 +636,16 @@ void Customers::refreshList(long)
 
                     // Check if we have Ihosts for this area.
                     if (DB.curRow.col("HasIhosts")->toInt()) {
-                        DB2.query("select IhostName, IhostPass from Qwest_Ihosts where LATA = %d and TelcoID = %d", DB.curRow.col("LATA")->toInt(), DB.curRow.col("TelcoID")->toInt());
+                        QString tmpIHost;
+                        DB2.query("select IhostName, IhostPass, VPI_Blarg from Qwest_Ihosts where LATA = %d and TelcoID = %d", DB.curRow.col("LATA")->toInt(), DB.curRow.col("TelcoID")->toInt());
                         if (DB2.rowCount) {
                             DB2.getrow();
-                            iHost->setText(DB2.curRow["IhostName"]);
+                            tmpIHost += DB2.curRow["IhostName"];
+                            if (atoi(DB2.curRow["VPI_Blarg"]) >= 0) {
+                                tmpIHost += " VPI ";
+                                tmpIHost += DB2.curRow["VPI_Blarg"];
+                            }
+                            iHost->setText(tmpIHost);
                         }
                     } 
 
