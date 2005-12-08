@@ -39,6 +39,7 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			RListViewItem.cpp loadKey.cpp\
 			DNSTemplatePicker.cpp\
 			DNSManager.cpp\
+			AsteriskManager.cpp\
 			CollReport.cpp
 
 # HEADERS =	../include/BlargDB.h
@@ -54,6 +55,7 @@ SRCMETA =	moc_TAAWidget.cpp\
 			moc_calendar.cpp\
 			moc_RListViewItem.cpp\
 			moc_DNSTemplatePicker.cpp\
+			moc_AsteriskManager.cpp\
 			moc_DNSManager.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
@@ -131,6 +133,9 @@ moc_DNSTemplatePicker.cpp: DNSTemplatePicker.h
 
 moc_DNSManager.cpp: ../include/DNSManager.h
 	$(MOC) ../include/DNSManager.h -o moc_DNSManager.cpp
+
+moc_AsteriskManager.cpp: AsteriskManager.h
+	$(MOC) AsteriskManager.h -o moc_AsteriskManager.cpp
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
