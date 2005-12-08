@@ -50,7 +50,7 @@ struct fparsedeq
 
 // StringDict is our basic lookup hash.
 //typedef hash_map<const char *, string, hash<const char *>, fparsedeq, single_client_alloc> FPStringDict;
-typedef hash_map<const char *, string, hash<const char *>, fparsedeq> __gnu_cxx::FPStringDict;
+typedef hash_map<const char *, string, hash<const char *>, fparsedeq> FPStringDict;
 typedef list<FPStringDict> FPStringList;
 typedef hash_map<const char *, FPStringList, hash<const char *>, fparsedeq> FPStringListList;
 typedef hash_map<int, string, hash<int> >  FPIntDict;

@@ -165,13 +165,14 @@ int main( int argc, char ** argv )
     QPalette qt_std_pal( std_act, std_dis, std_inact );
 
     //awFont.setPointSize(10);
-    awFont.setPointSize(9);
-    awFont.setFamily(QString("Luxi Sans"));
+    awFont.setPointSize(10);
+    awFont.setFamily(QString("Bistream Vera Sans"));
+    awFont.setStyleHint(QFont::SansSerif);
     //awFont.setWeight(50);
 
-    a.setStyle(new QWindowsStyle);
-    a.setFont(awFont, true);
-    a.setPalette(qt_std_pal);
+    //a.setStyle(new QWindowsStyle);
+    //a.setFont(awFont, true);
+    //a.setPalette(qt_std_pal);
 
 
     // Try logging in now.

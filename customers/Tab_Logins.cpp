@@ -669,7 +669,10 @@ void Tab_Logins::wipeLogin()
     sprintf(today, "%04d-%02d-%02d", tmpDate.year(), tmpDate.month(), tmpDate.day());
 
     LDB.get(myCustID, (const char *) curItem->text(0));
-    if (strcmp((const char *)LDB.getStr("Wiped"), "0000-00-00")) {
+    if (LDB.getInt("Active")) {
+        QMessageBox::information(this, "Wipe Login", "Only inactive accounts may be wiped.\nIf you really want to wipe this account, close it first.");
+        return;
+    } else if (strcmp((const char *)LDB.getStr("Wiped"), "0000-00-00")) {
         QMessageBox::information(this, "Wipe Login", "This login has already been wiped.");
         return;
     } else {
