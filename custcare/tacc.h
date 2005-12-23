@@ -34,19 +34,25 @@
 #include "Customers.h"
 #include "ProcessVoiceMail.h"
 #include <admin.h>
+#include "AsteriskManager.h"
+#include "QueueMonitor.h"
+#include "AgentStatus.h"
+#include "Customers.h"
 
 class CustomerCareStack : public TAAWidget
 {
     Q_OBJECT
 
 public:
-    CustomerCareStack ( QWidget *parent = NULL, const char *name = NULL);
+    CustomerCareStack ( AsteriskManager *astmgr, QWidget *parent = NULL, const char *name = NULL);
     virtual ~CustomerCareStack();
     
     TicketManager       *tickets;
     Customers           *custs;
     ProcessVoiceMail    *processVM;
     Administration      *adm;
+    QueueMonitor        *qMon;
+    AgentStatus         *agents;
 
 public slots:
     void            raiseTab1();
@@ -121,6 +127,8 @@ protected slots:
     void            ratePlanList();
     void            billingCycleList();
 
+    void            asteriskEvent(const astEventRecord);
+
 protected:
     CustomerCareStack   *ccStack;
     QTabBar         *tabs;
@@ -132,6 +140,8 @@ protected:
     QLabel          *countLabel;
     QProgressBar    *progressMeter;
     bool            realTimeProgress;
+    AsteriskManager *am;
+    Customers       *clist;
 };
 
 

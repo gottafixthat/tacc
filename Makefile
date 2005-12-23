@@ -33,7 +33,7 @@ ifdef USEDES
 	export USEDES=1
 endif
 
-SUBDIRS += voicemail ccards customers 
+SUBDIRS += voicemail ccards asterisk customers
 SUBDIRS += reports tickets admin custcare
 # SUBDIRS += sam taa
 #SUBDIRS += mbrassd 

@@ -251,7 +251,11 @@ void TAALogin::checkLogin()
             // Good login.  Lets set our system info.
             DB.getrow();
             taa_User    userInfo;
-            strcpy(userInfo.userName, (const char *) userName->text());
+            strcpy(userInfo.userName, DB.curRow["LoginID"]); //(const char *) userName->text());
+            strcpy(userInfo.location, DB.curRow["Telephone"]);
+            strcpy(userInfo.agentID,    DB.curRow["AgentID"]);
+            strcpy(userInfo.extension,  DB.curRow["Extension"]);
+            fprintf(stderr, "My telephone location is '%s'\n", DB.curRow["Telephone"]);
             userInfo.accessLevel = (AccessLevels) atoi(DB.curRow["AccessLevel"]);
             setCurUser(userInfo);
             setResult(1);

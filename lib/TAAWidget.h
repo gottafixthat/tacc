@@ -81,6 +81,17 @@ public:
     virtual ~HorizLine();
 };
 
+// A vertical line class.
+
+class VertLine : public QLabel
+{
+    Q_OBJECT
+
+public:
+    VertLine(QWidget *parent = NULL, const char *name = NULL, WFlags f = 0);
+    virtual ~VertLine();
+};
+
 #endif // TAAWIDGET_H
 
 

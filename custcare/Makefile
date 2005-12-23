@@ -2,10 +2,10 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../customers -I../include -I../lib -I../tickets -I../reports -I../voicemail -I../admin -I../ccards
+INCDIRS	=  -I$(QTDIR)/include -I. -I../customers -I../include -I../lib -I../tickets -I../reports -I../voicemail -I../admin -I../ccards -I../asterisk
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -DADBQT
 # CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
-LFLAGS  += -ladmin -lcustomers -L../reports -lreports -lvoicemail -ltickets -lccards
+LFLAGS  += -ladmin -lcustomers -L../reports -lreports -lvoicemail -ltickets -lccards -lasterisk
 LFLAGS  += -L$(QTDIR)/lib -ltaa -ladbqt -lqt-mt -lcrypt -L../lib 
 LFLAGS	+= -L/usr/X11R6/lib -lX11 -lXext -lXft -lSM -lICE -L/usr/lib/mysql -lmysqlclient
 LFLAGS  += -lmimepp_util -lmimepp_net -lmimepp_core 

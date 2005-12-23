@@ -201,7 +201,10 @@ taa_User curUser()
 
 void setCurUser(taa_User newInfo)
 {
-    strcpy(myCurrentUser.userName, newInfo.userName);
+    strcpy(myCurrentUser.userName,  newInfo.userName);
+    strcpy(myCurrentUser.location,  newInfo.location);
+    strcpy(myCurrentUser.agentID,   newInfo.agentID);
+    strcpy(myCurrentUser.extension, newInfo.extension);
     myCurrentUser.accessLevel = newInfo.accessLevel;
 }
 
