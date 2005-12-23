@@ -76,3 +76,15 @@ HorizLine::~HorizLine()
 {
 }
 
+VertLine::VertLine(QWidget *parent, const char *name, WFlags f)
+    : QLabel(parent, name, f)
+{
+    setFrameStyle(QFrame::VLine|QFrame::Sunken);
+    setMinimumSize(4,0);
+    setMaximumSize(4,32767);
+}
+
+VertLine::~VertLine()
+{
+}
+

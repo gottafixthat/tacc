@@ -36,10 +36,11 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			ParseFile.cpp SelectionList.cpp\
 			TAALogin.cpp buildnum.cpp\
 			calendar.cpp holiday.cpp worktime.cpp\
-			RListViewItem.cpp loadKey.cpp\
+			RListViewItem.cpp\
+			ColorListViewItem.cpp\
+			loadKey.cpp\
 			DNSTemplatePicker.cpp\
 			DNSManager.cpp\
-			AsteriskManager.cpp\
 			CollReport.cpp
 
 # HEADERS =	../include/BlargDB.h
@@ -54,8 +55,8 @@ SRCMETA =	moc_TAAWidget.cpp\
 			moc_TAALogin.cpp\
 			moc_calendar.cpp\
 			moc_RListViewItem.cpp\
+			moc_ColorListViewItem.cpp\
 			moc_DNSTemplatePicker.cpp\
-			moc_AsteriskManager.cpp\
 			moc_DNSManager.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
@@ -125,6 +126,9 @@ moc_TAALogin.cpp: TAALogin.h
 moc_RListViewItem.cpp: RListViewItem.h
 	$(MOC) RListViewItem.h -o moc_RListViewItem.cpp
 
+moc_ColorListViewItem.cpp: ColorListViewItem.h
+	$(MOC) ColorListViewItem.h -o moc_ColorListViewItem.cpp
+
 moc_calendar.cpp: ../include/calendar.h
 	$(MOC) ../include/calendar.h -o moc_calendar.cpp
 
@@ -133,9 +137,6 @@ moc_DNSTemplatePicker.cpp: DNSTemplatePicker.h
 
 moc_DNSManager.cpp: ../include/DNSManager.h
 	$(MOC) ../include/DNSManager.h -o moc_DNSManager.cpp
-
-moc_AsteriskManager.cpp: AsteriskManager.h
-	$(MOC) AsteriskManager.h -o moc_AsteriskManager.cpp
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.

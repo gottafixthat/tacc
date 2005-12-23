@@ -68,6 +68,8 @@
 #include "MakeDeposits.h"
 #include "RatePlans.h"
 #include "BillingCycles.h"
+#include "AsteriskManager.h";
+#include "QueueMonitor.h";
 
 #include "UserPrivs.h"
 
@@ -233,7 +235,8 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     setMainWin(this);
     setCaption("Total Accountability - Customer Care");
     
-    ccStack = new CustomerCareStack(this);
+    am = new AsteriskManager(this, "Asterisk Manager Connection");
+    ccStack = new CustomerCareStack(am, this);
     setCentralWidget(ccStack);
 
     QAccel  *ac = new QAccel(this);
@@ -367,6 +370,13 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     //clockLabel->setFrameStyle(QFrame::NoFrame|QFrame::Plain);
     statusBar()->addWidget(clockLabel, 0, true);
 
+    // Create our Asterisk Manager conneciton now.
+    connect(am, SIGNAL(eventReceived(const astEventRecord)), this, SLOT(asteriskEvent(const astEventRecord)));
+    connect(am, SIGNAL(eventReceived(const astEventRecord)), ccStack->qMon, SLOT(asteriskEvent(const astEventRecord)));
+    connect(ccStack->qMon, SIGNAL(transferCall(const char *, const char *, const char *, int)), am, SLOT(transferCall(const char *, const char *, const char *, int)));
+    //connect(am, SIGNAL(eventReceived(const astEventRecord)), ccStack->agents, SLOT(asteriskEvent(const astEventRecord)));
+    //connect(ccStack->agents, SIGNAL(sendAsteriskCommand(int)), am, SLOT(simpleCommand(int)));
+
     
     updateClock();
 
@@ -395,8 +405,9 @@ void CustomerCare::takeCall()
 
 void CustomerCare::customerList()
 {
-    Customers *clist = new Customers();
+    clist = new Customers();
     clist->show();
+    connect(ccStack->qMon, SIGNAL(phoneNumberSelected(const char *)), clist, SLOT(customerSearch(const char *)));
 }
 
 /*
@@ -579,7 +590,7 @@ void CustomerCare::setProgressMWRT(int cur, int tot)
 **                     the user tickets, voice mail, customers, etc.
 */
 
-CustomerCareStack::CustomerCareStack(QWidget *parent, const char *name) : TAAWidget(parent, name)
+CustomerCareStack::CustomerCareStack(AsteriskManager *astmgr, QWidget *parent, const char *name) : TAAWidget(parent, name)
 {
     setCaption("Total Accountability - Customer Care");
     
@@ -625,6 +636,10 @@ CustomerCareStack::CustomerCareStack(QWidget *parent, const char *name) : TAAWid
     qws->addWidget(processVM, curLevel);
     curLevel++;
 
+    qMon   = new QueueMonitor(this, "Queue Monitor");
+    agents = new AgentStatus(astmgr, this, "Agent List");
+    connect(qMon, SIGNAL(phoneNumberSelected(const char *)), custs, SLOT(customerSearch(const char *)));
+    
     /*
     if (isAdmin()) {
         adm = new Administration(qws, "Admin");
@@ -633,11 +648,15 @@ CustomerCareStack::CustomerCareStack(QWidget *parent, const char *name) : TAAWid
     }
     */
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 0);
-    ml->addWidget(tabs, 0);
-    ml->addWidget(hline1, 0);
-    ml->addWidget(qws, 1);
-    ml->addWidget(hline2, 0);
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::LeftToRight, 0, 0);
+    QBoxLayout *mcl = new QBoxLayout(QBoxLayout::TopToBottom, 0, 0);
+    mcl->addWidget(tabs, 0);
+    mcl->addWidget(hline1, 0);
+    mcl->addWidget(qws, 1);
+    mcl->addWidget(hline2, 0);
+    mcl->addWidget(qMon, 1);
+    ml->addLayout(mcl, 1);
+    ml->addWidget(agents, 0);
 }
 
 CustomerCareStack::~CustomerCareStack()
@@ -1132,4 +1151,16 @@ void CustomerCare::updateAllMaxMailboxes()
     QApplication::restoreOverrideCursor();
 }
 
+/** asteriskEvent - Gets called automagically when a new asterisk event comes
+  * in from the AsteriskManager class.
+  */
+void CustomerCare::asteriskEvent(const astEventRecord event)
+{
+    /*
+    for (int i = 0; i < event.count; i++) {
+        fprintf(stderr, "CustomerCare::asteriskEvent() - Key: '%s', Val: '%s'\n",
+                event.data[i].key, event.data[i].val);
+    }
+    */
+}
 

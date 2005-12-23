@@ -51,6 +51,7 @@ public:
 
 public slots:
     virtual void refreshList(long);
+    void         customerSearch(const char *);
     
 protected slots:
     void         refreshListV();

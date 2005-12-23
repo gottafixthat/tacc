@@ -985,3 +985,14 @@ void Customers::globalAliases()
     da->setCustomerID(0);
     da->show();
 }
+
+/** customerSearch - Clears the query, sets it to the selected value, and
+  * searches for the customer.
+  */
+void Customers::customerSearch(const char *searchStr)
+{
+    fprintf(stderr, "customerSearch('%s')\n", searchStr);
+    listQuery->setText(searchStr);
+    refreshList(0);
+}
+
