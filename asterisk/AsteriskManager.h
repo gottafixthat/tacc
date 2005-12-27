@@ -17,10 +17,10 @@
 #define ASTERISKMANAGER_H
 
 // FIXME: These should all come out of a config file.
-#define ASTERISKHOST "asterisk.corp.blarg.net"
-#define ASTERISKPORT 1234
-#define ASTERISKUSER "tacc"
-#define ASTERISKPASS "VKF3i6iz"
+//#define ASTERISKHOST "asterisk.corp.blarg.net"
+//#define ASTERISKPORT 1234
+//#define ASTERISKUSER "tacc"
+//#define ASTERISKPASS "VKF3i6iz"
 
 // FIXME: This should be in a config file
 #define ASTEXT_PARK "700"
@@ -73,6 +73,10 @@ public slots:
     void transferCall(const char *chan, const char *exten, const char *context, int pri);
 
 protected slots:
+    void reconnect();
+    void disconnected();
+    void socketError(int);
+    void checkConnection();
     void authenticate();
     void checkManager();
 

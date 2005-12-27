@@ -15,6 +15,8 @@
 #include <qlayout.h>
 #include <qlistview.h>
 #include <qregexp.h>
+#include <qdatetime.h>
+#include <qtimer.h>
 
 #include "ColorListViewItem.h"
 
@@ -43,7 +45,11 @@ QueueMonitor::QueueMonitor
     callq->addColumn("Position");
     callq->addColumn("Location");
     callq->addColumn("Agent");
+    callq->addColumn("Time");
+    callq->setMinimumHeight(100);
     connect(callq, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(callDoubleClicked(QListViewItem *)));
+
+    callq->setColumnAlignment((QMColumnNames)Position, AlignRight);
 
     // Attach a context menu to the queue list.
     menu = new QPopupMenu(callq);
@@ -55,6 +61,11 @@ QueueMonitor::QueueMonitor
     // The main layout.
     QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 0);
     ml->addWidget(callq, 1);
+
+    // Create a timer to update the "time" column.
+    QTimer  *t = new QTimer(this);
+    connect(t, SIGNAL(timeout()), this, SLOT(refreshTimers()));
+    t->start(1000, false);
 
     // Done.
 }
@@ -76,6 +87,7 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
     char    chan[ASTMAXVALLENGTH];
     char    member[ASTMAXVALLENGTH];
     char    agent[ASTMAXVALLENGTH];
+    char    tmpStr[2048];
     strcpy(callqueue,   "");
     strcpy(pos,         "");
     strcpy(state,       "");
@@ -127,7 +139,9 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
             else if (!strcasecmp(event.data[i].key, "position")) strcpy(pos, event.data[i].val);
         }
         removeChannel(chan);
-        QListViewItem *newItem = new ColorListViewItem(callq, queued_rgb, chan, state, cid, callqueue, pos, member, agent);
+        QListViewItem *newItem = new ColorListViewItem(callq, queued_rgb, chan, state, cid, callqueue, pos, member, agent, "0:00");
+        sprintf(tmpStr, "%ld", QDateTime::currentDateTime().toTime_t());
+        newItem->setText((QMColumnNames)TimerHidden, tmpStr);
     } else if (!strcasecmp(event.msgVal, "leave")) {
         // Someone is leaving the queue.
         for (int i = 0; i < event.count; i++) {
@@ -161,7 +175,9 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
         }
 
         removeChannel(chan);
-        QListViewItem *newItem = new ColorListViewItem(callq, connect_rgb, chan, state, cid, callqueue, pos, member, agent);
+        QListViewItem *newItem = new ColorListViewItem(callq, connect_rgb, chan, state, cid, callqueue, pos, member, agent, "0:00");
+        sprintf(tmpStr, "%ld", QDateTime::currentDateTime().toTime_t());
+        newItem->setText((QMColumnNames)TimerHidden, tmpStr);
     } else if (!strcasecmp(event.msgVal, "AgentComplete")) {
         // A queue call is being ended.  Find it in the list and remove it.
         // Walk through the event records first
@@ -250,7 +266,7 @@ QListViewItem *QueueMonitor::findChannel(const char *chan)
     QListViewItem           *retVal = NULL;
     for (; it.current(); ++it) {
         curItem = it.current();
-        if (!strcasecmp(curItem->key(0,0), chan)) {
+        if (!strcasecmp(curItem->key((QMColumnNames) Channel, 0), chan)) {
             // Found it.  Remove it from the list.
             retVal = curItem;
         }
@@ -294,13 +310,13 @@ void QueueMonitor::callPopupMenu( QListViewItem* item, const QPoint & point, int
 
     
     menu->clear();
-    i = menu->insertItem(item->key(0,0));
+    i = menu->insertItem(item->key((QMColumnNames) Channel, 0));
     menu->setItemEnabled(i, false);
     menu->insertSeparator();
 
     // Give them the ability to park.
     i = menu->insertItem("Park Call");
-    if (item->key(5,0).isEmpty()) menu->setItemEnabled(i, false);
+    if (item->key((QMColumnNames) Location,0).isEmpty()) menu->setItemEnabled(i, false);
 
     // Load the list of people we can transfer to.
     db.query("select * from Staff where Active > 0 and Extension <> '' order by LoginID");
@@ -323,10 +339,10 @@ void QueueMonitor::callPopupMenu( QListViewItem* item, const QPoint & point, int
     i = menu->insertItem("Send to Voice Mail", vmTargets);
     menu->setItemEnabled(i, false);
     // Check to see if we own this call.
-    if (!strcasecmp(curUser().location, item->key(5,0)) || curUser().accessLevel == Admin || curUser().accessLevel == Manager) {
+    if (!strcasecmp(curUser().location, item->key((QMColumnNames) Location,0)) || curUser().accessLevel == Admin || curUser().accessLevel == Manager) {
         // We own it or we're a supervisor, allow the transfer.
         // But only if it is a connected call.
-        if (!item->key(5,0).isEmpty()) menu->setItemEnabled(i, true);
+        if (!item->key((QMColumnNames)Location,0).isEmpty()) menu->setItemEnabled(i, true);
     }
 
 
@@ -341,7 +357,7 @@ void QueueMonitor::callDoubleClicked(QListViewItem *item)
 {
     if (!item) return;
     //fprintf(stderr, "Emitting phoneNumberSelected(%s)...\n", (const char *)item->key(2,0));
-    emit(phoneNumberSelected((const char *)item->key(2,0)));
+    emit(phoneNumberSelected((const char *)item->key((QMColumnNames)CallerID,0)));
 }
 
 /** menuItemSelected - Gets called by the popup menu when the user selects
@@ -357,7 +373,7 @@ void QueueMonitor::menuItemSelected(int menuID)
         if (curItem) {
             char    extStr[2048];
             sprintf(extStr, "%d", menuID);
-            emit(transferCall(curItem->key(0,0), extStr, "default", 1));
+            emit(transferCall(curItem->key((QMColumnNames)Channel, 0), extStr, "default", 1));
         }
     }
     if (menuID >= 1100 && menuID <= 1199) {
@@ -366,8 +382,40 @@ void QueueMonitor::menuItemSelected(int menuID)
         if (curItem) {
             char    extStr[2048];
             sprintf(extStr, "*%d", menuID-1000);
-            emit(transferCall(curItem->key(0,0), extStr, "default", 1));
+            emit(transferCall(curItem->key((QMColumnNames)Channel, 0), extStr, "default", 1));
         }
     }
 }
 
+/** refreshTimers - Walks through the items in the callq list and updates the timers.
+  * Gets called automatically once per second.
+  */
+void QueueMonitor::refreshTimers()
+{
+    if (!callq->childCount()) return;
+    QListViewItemIterator   it(callq);
+    QListViewItem           *curItem;
+    QDateTime               tmpTime = QDateTime::currentDateTime();
+    QDateTime               startTime;
+    char                    tmpSt[1024];
+    int                     h, m, s, secs;
+    uint                    utime;
+    for (; it.current(); ++it) {
+        curItem = it.current();
+        utime = atoi(curItem->key((QMColumnNames) TimerHidden, 0));
+        h = m = s = secs = 0;
+        startTime.setTime_t(utime);
+        secs = startTime.secsTo(tmpTime);
+        while (secs >= 3600) {
+            h++;
+            secs = secs - 3600;
+        }
+        while (secs >= 60) {
+            m++;
+            secs = secs - 60;
+        }
+        s = secs;
+        sprintf(tmpSt, "%d:%02d:%02d", h, m, s);
+        curItem->setText((QMColumnNames) Timer, tmpSt);
+    }
+}

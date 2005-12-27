@@ -50,6 +50,8 @@ protected:
     QPtrList<QLabel>    locations;
     QPtrList<QLabel>    status;
     QPtrList<QLabel>    guistatus;
+    QPtrList<QLabel>    callstaken;
+    QPtrList<QLabel>    lastcall;
     QPushButton         *setStatusButton;
     QPopupMenu          *setStatusMenu;              
 

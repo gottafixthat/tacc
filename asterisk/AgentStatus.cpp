@@ -70,15 +70,27 @@ AgentStatus::AgentStatus
         QLabel  *tmpName = new QLabel(this);
         tmpName->setText(query.value(0).toString());
         names.append(tmpName);
+
         QLabel *tmpLoc = new QLabel(this);
         tmpLoc->setText(query.value(1).toString());
         locations.append(tmpLoc);
+
         QLabel *tmpGuiStatus = new QLabel(this);
         tmpGuiStatus->setPixmap(signedout);
         guistatus.append(tmpGuiStatus);
+
         QLabel *tmpStatus = new QLabel(this);
         tmpStatus->setText("Signed Out");
         status.append(tmpStatus);
+        
+        QLabel *tmpCallsTaken = new QLabel(this);
+        tmpCallsTaken->setAlignment(AlignVCenter);
+        callstaken.append(tmpCallsTaken);
+
+        QLabel *tmpLastCall = new QLabel(this);
+        tmpLastCall->setAlignment(AlignVCenter);
+        lastcall.append(tmpLastCall);
+
         i++;
     }
 
@@ -97,6 +109,10 @@ AgentStatus::AgentStatus
         wl->addWidget(locations.at(i),      curRow, 2, AlignLeft|AlignTop);
         curRow++;
         wl->addMultiCellWidget(status.at(i), curRow,curRow,1,2, AlignLeft|AlignTop);
+        curRow++;
+        wl->addMultiCellWidget(callstaken.at(i),    curRow, curRow, 1, 2, AlignLeft|AlignTop);
+        curRow++;
+        wl->addMultiCellWidget(lastcall.at(i),      curRow, curRow, 1, 2, AlignLeft|AlignTop);
         curRow++;
         HorizLine *tmpLine = new HorizLine(this);
         wl->addMultiCellWidget(tmpLine, curRow,curRow,0,2);
@@ -138,6 +154,9 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
     QString     newStatus;
     int         newGuiStatus;
     int         memberStatus = -1;
+    int         calls = -1;
+    uint        lastcalltime = 0;
+    char        tmpStr[1024];
     QPixmap     avail(available_xpm);
     QPixmap     onbreak(onbreak_xpm);
     QPixmap     signedout(signedout_xpm);
@@ -155,6 +174,8 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
         for (int i = 0; i < event.count; i++) {
             if (!strcasecmp(event.data[i].key, "Location")) loc = event.data[i].val;
             else if (!strcasecmp(event.data[i].key, "Status")) memberStatus = atoi(event.data[i].val);
+            else if (!strcasecmp(event.data[i].key, "CallsTaken")) calls = atoi(event.data[i].val);
+            else if (!strcasecmp(event.data[i].key, "LastCall")) lastcalltime = atoi(event.data[i].val);
         }
         newStatus = "Signed Out";
         newGuiStatus = AGENT_STATUS_SIGNEDOUT;
@@ -173,6 +194,8 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
                     newGuiStatus = AGENT_STATUS_ONBREAK;
                 }
             } else if (!strcasecmp(event.data[i].key, "Status")) memberStatus = atoi(event.data[i].val);
+            else if (!strcasecmp(event.data[i].key, "CallsTaken")) calls = atoi(event.data[i].val);
+            else if (!strcasecmp(event.data[i].key, "LastCall")) lastcalltime = atoi(event.data[i].val);
         }
         //newGuiStatus = signedout;
         //newGuiStatus.loadFromData(onbreak_xpm, strlen(onbreak_xpm));
@@ -186,6 +209,8 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
                     isPaused = 1;
                 }
             } else if (!strcasecmp(event.data[i].key, "Status")) memberStatus = atoi(event.data[i].val);
+            else if (!strcasecmp(event.data[i].key, "CallsTaken")) calls = atoi(event.data[i].val);
+            else if (!strcasecmp(event.data[i].key, "LastCall")) lastcalltime = atoi(event.data[i].val);
         }
         if (isPaused) {
             newStatus = "On Break";
@@ -245,6 +270,16 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
                 default:
                     guistatus.at(i)->setPixmap(signedout);
                     break;
+            }
+            if (calls >= 0) {
+                sprintf(tmpStr, "Calls Taken: %d", calls);
+                callstaken.at(i)->setText(tmpStr);
+            }
+            if (lastcalltime > 0) {
+                QDateTime   tmpTime;
+                tmpTime.setTime_t(lastcalltime);
+                sprintf(tmpStr, "Last Call: %s", (const char *)tmpTime.toString("h:mm:ssap"));
+                lastcall.at(i)->setText(tmpStr);
             }
         }
     }

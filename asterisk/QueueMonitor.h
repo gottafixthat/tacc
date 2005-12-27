@@ -20,7 +20,7 @@
 #include <qpopupmenu.h>
 #include "AsteriskManager.h"
 
-typedef enum QMColumnNames { Channel = 0, ChanState = 1, CallerID= 2, QueueName = 3, Position= 4, Location = 5, Agent = 6};
+typedef enum QMColumnNames { Channel = 0, ChanState = 1, CallerID= 2, QueueName = 3, Position= 4, Location = 5, Agent = 6, Timer = 7, TimerHidden = 8};
 
 class QueueMonitor : public TAAWidget
 {
@@ -50,5 +50,6 @@ protected slots:
     void        callPopupMenu(QListViewItem *, const QPoint &, int);
     void        callDoubleClicked(QListViewItem *);
     void        menuItemSelected(int);
+    void        refreshTimers();
 };
 #endif // QueueMonitor_included
