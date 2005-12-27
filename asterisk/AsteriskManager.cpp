@@ -17,6 +17,7 @@
 #include <qtimer.h>
 #include <qdatetime.h>
 #include "TAATools.h"
+#include "Cfg.h"
 
 /** AsteriskManager - Contructor
   */
@@ -31,9 +32,11 @@ AsteriskManager::AsteriskManager(QObject * parent, const char * name)
     curResponseID       = 0;
     
     mySocket = new QSocket(this, "Asterisk Socket Connection");
-    connect(mySocket, SIGNAL(connected()), this, SLOT(authenticate()));
-    mySocket->connectToHost(ASTERISKHOST, ASTERISKPORT);
-    connect(mySocket, SIGNAL(readyRead()), this, SLOT(checkManager()));
+    connect(mySocket, SIGNAL(connected()),        this, SLOT(authenticate()));
+    connect(mySocket, SIGNAL(readyRead()),        this, SLOT(checkManager()));
+    connect(mySocket, SIGNAL(connectionClosed()), this, SLOT(disconnected()));
+    connect(mySocket, SIGNAL(error(int))        , this, SLOT(socketError(int)));
+    reconnect();
 }
 
 /** ~AsteriskManager - Destructor
@@ -42,12 +45,59 @@ AsteriskManager::~AsteriskManager()
 {
 }
 
+/** reconnect() - Reconnects to the asterisk server.
+  */
+void AsteriskManager::reconnect()
+{
+    //fprintf(stderr, "AsteriskManager::reconnect() - Attempting to reconnect to Asterisk Server...\n");
+    mySocket->connectToHost(cfgVal("AsteriskHost"), atoi(cfgVal("AsteriskPort")));
+    // Check after 5 seconds, if we're not connected try again.
+    QTimer::singleShot(5000, this, SLOT(checkConnection()));
+}
+
+/** disconnected() - This gets called when the socket connection is closed.
+  * We create a single shot timer and try reconnecting.
+  */
+void AsteriskManager::disconnected()
+{
+    // Try again in one second.
+    QTimer::singleShot(1000, this, SLOT(reconnect()));
+}
+
+/** error() - Gets called when there is a socket error.
+  * We check the state and if we're disconnected or have some
+  * other type of error, we try again.
+  */
+void AsteriskManager::socketError(int err)
+{
+    // Abort everything and close the connection.
+    mySocket->clearPendingData();
+    mySocket->close();
+    // Reconnect in one second.
+    //QTimer::singleShot(1000, this, SLOT(reconnect()));
+}
+
+/** checkConnection - Checks to see if we are connected or not, if we're
+  * not, close down our attempt and reconnect.
+  */
+void AsteriskManager::checkConnection()
+{
+    if (mySocket->state() != QSocket::Connected) {
+        // Abort everything and close the connection.
+        mySocket->clearPendingData();
+        mySocket->close();
+        // Reconnect in one second.
+        QTimer::singleShot(1000, this, SLOT(reconnect()));
+    }
+}
+
 /** authenticate() - After we are connected, this authenticates us.
   */
 void AsteriskManager::authenticate()
 {
     char    authStr[2048];
-    sprintf(authStr, "Action: login\nUsername: %s\nSecret: %s\n\n", ASTERISKUSER, ASTERISKPASS);
+    sprintf(authStr, "Action: login\nUsername: %s\nSecret: %s\n\n", cfgVal("AsteriskUser"), cfgVal("AsteriskPass"));
+    //fprintf(stderr, "Sending:\n%s", authStr);
     mySocket->writeBlock(authStr, strlen(authStr));
 }
 

@@ -58,8 +58,6 @@ Customers::Customers ( QWidget* parent, const char* name)
 
     QPushButton *newButton = new QPushButton(this, "NewButton");
     newButton->setGeometry(0, 25, 100, 26);
-    newButton->setMinimumSize(0, 0);
-    newButton->setMaximumSize(32767, 32767);
     newButton->setFocusPolicy(QWidget::TabFocus);
     newButton->setBackgroundMode(QWidget::PaletteBackground);
     newButton->setText( "&New" );
@@ -73,8 +71,6 @@ Customers::Customers ( QWidget* parent, const char* name)
 
     QPushButton *qtarch_EditButton = new QPushButton(this, "EditButton");
     qtarch_EditButton->setGeometry(100, 25, 100, 26);
-    qtarch_EditButton->setMinimumSize(0, 0);
-    qtarch_EditButton->setMaximumSize(32767, 32767);
     qtarch_EditButton->setFocusPolicy(QWidget::TabFocus);
     qtarch_EditButton->setBackgroundMode(QWidget::PaletteBackground);
     qtarch_EditButton->setText( "&Edit" );
@@ -105,8 +101,6 @@ Customers::Customers ( QWidget* parent, const char* name)
 
     QPushButton *qtarch_AddNote_Button = new QPushButton(this, "AddNote_Button");
     qtarch_AddNote_Button->setGeometry(300, 25, 100, 26);
-    qtarch_AddNote_Button->setMinimumSize(0, 0);
-    qtarch_AddNote_Button->setMaximumSize(32767, 32767);
     qtarch_AddNote_Button->setFocusPolicy(QWidget::TabFocus);
     qtarch_AddNote_Button->setBackgroundMode(QWidget::PaletteBackground);
     qtarch_AddNote_Button->setText( "&Add Note" );
@@ -120,8 +114,6 @@ Customers::Customers ( QWidget* parent, const char* name)
 
     QPushButton *qtarch_TakeCallButton = new QPushButton(this, "TakeCallButton");
     qtarch_TakeCallButton->setGeometry(400, 25, 100, 26);
-    qtarch_TakeCallButton->setMinimumSize(0, 0);
-    qtarch_TakeCallButton->setMaximumSize(32767, 32767);
     qtarch_TakeCallButton->setFocusPolicy(QWidget::TabFocus);
     qtarch_TakeCallButton->setBackgroundMode(QWidget::PaletteBackground);
     qtarch_TakeCallButton->setText( "&Take Call" );
@@ -134,6 +126,7 @@ Customers::Customers ( QWidget* parent, const char* name)
     connect(qtarch_TakeCallButton, SIGNAL(clicked()), SLOT(takeCall()));
 
     queryLabel = new QLabel(this, "QueryLabel");
+    /*
     queryLabel->setGeometry(0, 53, 60, 20);
     queryLabel->setMinimumSize(60, 20);
     queryLabel->setMaximumSize(60, 20);
@@ -143,16 +136,12 @@ Customers::Customers ( QWidget* parent, const char* name)
     queryLabel->setLineWidth( 1 );
     queryLabel->setMidLineWidth( 0 );
     queryLabel->QFrame::setMargin( -1 );
+    */
     queryLabel->setText( "&Query:" );
     queryLabel->setAlignment( AlignRight|AlignVCenter|ExpandTabs );
     queryLabel->setMargin( -1 );
 
     listQuery = new QLineEdit(this, "QueryEntry");
-    listQuery->setGeometry(65, 52, 188, 22);
-    listQuery->setMinimumSize(0, 0);
-    listQuery->setMaximumSize(32767, 32767);
-    listQuery->setFocusPolicy(QWidget::StrongFocus);
-    listQuery->setBackgroundMode(QWidget::PaletteBase);
     listQuery->setText( "" );
     listQuery->setMaxLength( 32767 );
     listQuery->setFrame( QLineEdit::Normal );
@@ -160,10 +149,16 @@ Customers::Customers ( QWidget* parent, const char* name)
     listQuery->setAlignment( AlignLeft );
     connect(listQuery, SIGNAL(returnPressed()), SLOT(listQueryS()));
 
+    QPushButton *searchButton = new QPushButton(this, "Search");
+    searchButton->setText("Search");
+    connect(searchButton, SIGNAL(clicked()), this, SLOT(listQueryS()));
+
     QPushButton *qtarch_ClearButton = new QPushButton(this, "ClearButton");
     qtarch_ClearButton->setGeometry(258, 51, 50, 25);
+    /*
     qtarch_ClearButton->setMinimumSize(50, 25);
     qtarch_ClearButton->setMaximumSize(50, 25);
+    */
     qtarch_ClearButton->setFocusPolicy(QWidget::TabFocus);
     qtarch_ClearButton->setBackgroundMode(QWidget::PaletteBackground);
     qtarch_ClearButton->setText( "C&lear" );
@@ -177,8 +172,6 @@ Customers::Customers ( QWidget* parent, const char* name)
 
     autoOpenCustomer = new QCheckBox(this, "AutoOpenCheckbox");
     autoOpenCustomer->setGeometry(313, 54, 187, 19);
-    autoOpenCustomer->setMinimumSize(0, 0);
-    autoOpenCustomer->setMaximumSize(32767, 32767);
     autoOpenCustomer->setFocusPolicy(QWidget::TabFocus);
     autoOpenCustomer->setBackgroundMode(QWidget::PaletteBackground);
     autoOpenCustomer->setText( "&Auto open if only one match." );
@@ -257,8 +250,6 @@ Customers::Customers ( QWidget* parent, const char* name)
 
     list = new QListView(this, "CustomerList");
     list->setGeometry(0, 76, 500, 244);
-    list->setMinimumSize(0, 0);
-    list->setMaximumSize(32767, 32767);
     list->setFocusPolicy(QWidget::TabFocus);
     list->setBackgroundMode(QWidget::PaletteBackground);
     list->setFrameStyle( 17 );
@@ -301,19 +292,22 @@ Customers::Customers ( QWidget* parent, const char* name)
 	//qtarch_layout_1_2->addWidget( qtarch_CloseButton, 1, 0 );
 	qtarch_layout_1_2->addWidget( qtarch_AddNote_Button, 1, 0 );
 	qtarch_layout_1_2->addWidget( qtarch_TakeCallButton, 1, 0 );
-	QBoxLayout* qtarch_layout_1_3 = new QBoxLayout( QBoxLayout::LeftToRight, 5, NULL );
+	QBoxLayout* qtarch_layout_1_3 = new QBoxLayout( QBoxLayout::LeftToRight, 0, NULL );
 	qtarch_layout_1->addLayout( qtarch_layout_1_3, 1 );
 	qtarch_layout_1_3->addStrut( 0 );
-	qtarch_layout_1_3->addWidget( queryLabel, 1, 0 );
+	qtarch_layout_1_3->addWidget( queryLabel, 0, 0 );
 	qtarch_layout_1_3->addWidget( listQuery, 1, 0 );
-	qtarch_layout_1_3->addWidget( qtarch_ClearButton, 1, 0 );
-	qtarch_layout_1_3->addWidget( autoOpenCustomer, 1, 0 );
+	qtarch_layout_1_3->addWidget( searchButton, 0, 0 );
+	qtarch_layout_1_3->addWidget( qtarch_ClearButton, 0, 0 );
+	qtarch_layout_1_3->addWidget( autoOpenCustomer, 0, 0 );
 	qtarch_layout_1->addWidget( list, 1, 0 );
 	qtarch_layout_1->addLayout( phoneNumberLayout, 0);
 	qtarch_layout_1->addLayout( locationLayout, 0);
+    /*
     resize(500,345);
     setMinimumSize(300, 300);
     setMaximumSize(32767, 32767);
+    */
 
     // Set up the menu...
     
