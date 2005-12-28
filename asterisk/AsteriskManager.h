@@ -70,7 +70,9 @@ public slots:
     void goOnBreak();
     void signMeIn();
     void signMeOut();
+    void setAgentStatus(int ext, int agent, int state);
     void transferCall(const char *chan, const char *exten, const char *context, int pri);
+    void queueStatus();
 
 protected slots:
     void reconnect();
