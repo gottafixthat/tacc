@@ -236,6 +236,48 @@ void AsteriskManager::signMeOut()
     mySocket->writeBlock(authStr, strlen(authStr));
 }
 
+/** setAgentStatus - Given an extension, an agent ID and a state
+  * we will attempt to set the state.
+  */
+void AsteriskManager::setAgentStatus(int ext, int agent, int state)
+{
+    char    actStr[2048];
+    
+    switch (state) {
+        case 1:             // Sign in the agent
+            sprintf(actStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %d\nExten: %d\nPaused: false\n\n", "BlargQueue", agent, ext);
+            mySocket->writeBlock(actStr, strlen(actStr));
+            sprintf(actStr, "Action: QueuePause\nQueue: %s\nInterface: Agent/%d\nPaused: false\n\n", "BlargQueue", agent);
+            mySocket->writeBlock(actStr, strlen(actStr));
+            break;
+
+        case 2:             // Put the agent on break
+            sprintf(actStr, "Action: QueuePause\nQueue: %s\nInterface: Agent/%d\nPaused: true\n\n", "BlargQueue", agent);
+            mySocket->writeBlock(actStr, strlen(actStr));
+            break;
+
+        case 3:             // Sign the agent out
+            sprintf(actStr, "Action: AgentLogoff\nQueue: %s\nAgent: %d\n\n", "BlargQueue", agent);
+            mySocket->writeBlock(actStr, strlen(actStr));
+            break;
+
+        default:            // Unknown action
+            fprintf(stderr, "AsteriskManager::setAgentStatus() unknown state (%d) for extension %d, agent ID %d!\n", state, ext, agent);
+            break;
+    }
+    // After we're all done, referesh the queue again.
+    //sprintf(actStr, "Action: QueueStatus\nQueue: %s\n\n", "BlargQueue");
+    //mySocket->writeBlock(actStr, strlen(actStr));
+    QTimer::singleShot(2000, this, SLOT(queueStatus()));
+}
+
+/** queueStatus - Calls simpleCommand(ASTCMD_QUEUESTATUS)
+  */
+void AsteriskManager::queueStatus()
+{
+    simpleCommand(ASTCMD_QUEUESTATUS);
+}
+
 /** transferCall() - Redirects a call from one extension to another.
   */
 void AsteriskManager::transferCall(const char *chan, const char *exten, const char *context, int pri)

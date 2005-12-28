@@ -20,6 +20,7 @@
 #include "AgentStatus.h"
 #include "Cfg.h"
 
+#include <ADB.h>
 #include <TAAWidget.h>
 #include <TAATools.h>
 #include <qsqldatabase.h>
@@ -65,6 +66,7 @@ AgentStatus::AgentStatus
     QPixmap signedout(signedout_xpm);
     QPixmap avail(available_xpm);
     QPixmap onbreak(onbreak_xpm);
+    QPixmap user_icon(user_icon_xpm);
     int i = 0;
     while (query.next()) {
         QLabel  *tmpName = new QLabel(this);
@@ -125,6 +127,35 @@ AgentStatus::AgentStatus
     setStatusMenu->insertItem(avail, "Available", am, SLOT(signMeIn()));
     setStatusMenu->insertItem(onbreak, "On Break", am, SLOT(goOnBreak()));
     setStatusMenu->insertItem(signedout, "Signed Out", am, SLOT(signMeOut()));
+    if (isAdmin()) {
+        setStatusMenu->insertSeparator();
+        QPopupMenu *agentsMenu = new QPopupMenu(this);
+        ADB     db;
+        db.query("select * from Staff where Active > 0 and Extension <> '' order by LoginID");
+        if (db.rowCount) {
+            // Add in all agents but ourselves.
+            while (db.getrow()) if (strcmp(curUser().userName, db.curRow["LoginID"])) {
+                int i;
+                QPopupMenu *agent = new QPopupMenu(this);
+
+                i = agent->insertItem(avail, "Available", atoi(db.curRow["Extension"])+1000);
+                agent->connectItem(i, this, SLOT(agentSetStatus(int)));
+                agent->setItemParameter(i, i);
+
+                i = agent->insertItem(onbreak, "On Break", atoi(db.curRow["Extension"])+2000);
+                agent->connectItem(i, this, SLOT(agentSetStatus(int)));
+                agent->setItemParameter(i, i);
+
+                i = agent->insertItem(signedout, "Signed Out", atoi(db.curRow["Extension"])+3000);
+                agent->connectItem(i, this, SLOT(agentSetStatus(int)));
+                agent->setItemParameter(i, i);
+
+                agentsMenu->insertItem(user_icon, db.curRow["LoginID"], agent);
+            }
+        }
+        // Create another menu for the admin to log people in and out
+        setStatusMenu->insertItem(user_icon, "Agents", agentsMenu);
+    }
     setStatusButton = new QPushButton(signedout, "Signed Out", this);
     setStatusButton->setPopup(setStatusMenu);
     ml->addWidget(setStatusButton, 0);
@@ -160,6 +191,7 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
     QPixmap     avail(available_xpm);
     QPixmap     onbreak(onbreak_xpm);
     QPixmap     signedout(signedout_xpm);
+    QPixmap     user_icon(user_icon_xpm);
     if (!strcasecmp(event.msgVal, "QueueMemberAdded")) {
         // An agent is joining the call queue
         for (int i = 0; i < event.count; i++) {
@@ -212,17 +244,46 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
             else if (!strcasecmp(event.data[i].key, "CallsTaken")) calls = atoi(event.data[i].val);
             else if (!strcasecmp(event.data[i].key, "LastCall")) lastcalltime = atoi(event.data[i].val);
         }
-        if (isPaused) {
-            newStatus = "On Break";
-            newGuiStatus = AGENT_STATUS_ONBREAK;
+        if (memberStatus > 3 && memberStatus < 6) {
+            newGuiStatus = AGENT_STATUS_SIGNEDOUT;
         } else {
-            if (memberStatus > 3 && memberStatus < 6) {
-                newGuiStatus = AGENT_STATUS_SIGNEDOUT;
-            } else {
-                newGuiStatus = AGENT_STATUS_AVAILABLE;
+            newGuiStatus = AGENT_STATUS_AVAILABLE;
+            if (isPaused) {
+                newStatus = "On Break";
+                newGuiStatus = AGENT_STATUS_ONBREAK;
             }
         }
         //newGuiStatus.loadFromData(onbreak_xpm, strlen(onbreak_xpm));
+    } else if (!strcasecmp(event.msgVal, "Agents")) {
+        // Agent status update
+        int isPaused = 0;
+        for (int i = 0; i < event.count; i++) {
+            if (!strcasecmp(event.data[i].key, "Agent")) {
+                sprintf(tmpStr, "Agent/%s", (const char *) event.data[i].val);
+                loc = tmpStr;
+            }
+            else if (!strcasecmp(event.data[i].key, "Status")) {
+                if (!strcasecmp(event.data[i].val, "AGENT_LOGGEDOFF")) {
+                    memberStatus = 5;
+                } else if (!strcasecmp(event.data[i].val, "AGENT_IDLE")) {
+                    memberStatus = 1;
+                } else if (!strcasecmp(event.data[i].val, "AGENT_ONCALL")) {
+                    memberStatus = 2;
+                } else {
+                    memberStatus = 0;
+                }
+            } 
+        }
+    } else if (!strcasecmp(event.msgVal, "Agentcallbacklogoff")) {
+        // Agent status update
+        int isPaused = 0;
+        for (int i = 0; i < event.count; i++) {
+            if (!strcasecmp(event.data[i].key, "Agent")) {
+                sprintf(tmpStr, "Agent/%s", (const char *) event.data[i].val);
+                loc = tmpStr;
+            }
+            memberStatus = 5;
+        }
     }
 
     if (memberStatus >= 0) {
@@ -315,5 +376,19 @@ void AgentStatus::refreshAgentList()
 {
     am->simpleCommand(ASTCMD_QUEUESTATUS);
     //emit(sendAsteriskCommand(ASTCMD_QUEUESTATUS));
+}
+
+/** agentSetStatus - Given the Extension some number over 1000 we will
+  * attempt to set the status of the agent.
+  */
+void AgentStatus::agentSetStatus(int ext)
+{
+    int     state  = 0;
+    //fprintf(stderr, "AgentStatus::agentSetStatus(%d) called.\n", ext);
+    while (ext > 1000) {
+        state++;
+        ext = ext - 1000;
+    }
+    am->setAgentStatus(ext, ext, state);
 }
 
