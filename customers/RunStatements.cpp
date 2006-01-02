@@ -35,6 +35,7 @@
 #include "BString.h"
 #include "ParseFile.h"
 #include <ADB.h>
+#include "Cfg.h"
 
 /*
 ** RunStatements - Runs statements for all customers that need them.
@@ -559,7 +560,7 @@ void emailStatement(long StNo, int Force = 0, int Dup = 0)
 
     // Put the email headers into the file.
     fprintf(stfp, "From: Blarg Accounting <accounting@blarg.net>\n");
-    fprintf(stfp, "To: %s\n", tmpLogin);
+    fprintf(stfp, "To: %s@%s\n", tmpLogin, cfgVal("EmailDomain"));
     // fprintf(stfp, "To: marc\n");
     fprintf(stfp, "Subject: Account Statement\n");
     fprintf(stfp, "\n\n");
