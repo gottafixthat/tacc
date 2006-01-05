@@ -54,6 +54,7 @@ AllReports::AllReports
     reportMenu->insertItem("&Domains", domainMenu);
     if (isAdmin()) {
         reportMenu->insertItem("Call Lo&gs", this, SLOT(showCallLogReport()));
+        reportMenu->insertItem("Call Detail Records", this, SLOT(showAsteriskCDRReport()));
         reportMenu->insertItem("Login &Counts (current)", this, SLOT(showLoginCountReport()));
         reportMenu->insertItem("Login Counts (&monthly average)", this, SLOT(showLoginAverageReport()));
         reportMenu->insertItem("&Rate Plans", this, SLOT(showRatePlanReport()));
@@ -235,3 +236,15 @@ void AllReports::showCallLogReport()
     rep->show();
     emit(setStatus(""));
 }
+
+/** showAsteriskCDRReport - Shows the Asterisk Call Detail Records report.
+  */
+void AllReports::showAsteriskCDRReport()
+{
+    emit(setStatus("Generating report..."));
+    AsteriskCDRReport   *rep;
+    rep = new AsteriskCDRReport();
+    rep->show();
+    emit(setStatus(""));
+}
+

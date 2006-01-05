@@ -68,6 +68,7 @@ AgentStatus::AgentStatus
     QPixmap onbreak(onbreak_xpm);
     QPixmap user_icon(user_icon_xpm);
     int i = 0;
+    myPosition = 0;
     while (query.next()) {
         QLabel  *tmpName = new QLabel(this);
         tmpName->setText(query.value(0).toString());
@@ -85,6 +86,10 @@ AgentStatus::AgentStatus
         tmpStatus->setText("Signed Out");
         status.append(tmpStatus);
         
+        QLabel *tmpTimeInState = new QLabel(this);
+        tmpTimeInState->setText("0:00:00");
+        timeinstate.append(tmpTimeInState);
+        
         QLabel *tmpCallsTaken = new QLabel(this);
         tmpCallsTaken->setAlignment(AlignVCenter);
         callstaken.append(tmpCallsTaken);
@@ -93,6 +98,15 @@ AgentStatus::AgentStatus
         tmpLastCall->setAlignment(AlignVCenter);
         lastcall.append(tmpLastCall);
 
+        statusInfoStruct *tmpSInfo = new statusInfoStruct;
+        tmpSInfo->lastchange = QDateTime::currentDateTime().toTime_t();
+        tmpSInfo->paused = 0;
+        tmpSInfo->status = 0;
+        statusinfo.append(tmpSInfo);
+
+        if (!strcmp(curUser().agentID, query.value(1).toString())) {
+            myPosition = i;
+        }
         i++;
     }
 
@@ -110,7 +124,8 @@ AgentStatus::AgentStatus
         wl->addWidget(names.at(i),          curRow, 1, AlignLeft|AlignTop);
         wl->addWidget(locations.at(i),      curRow, 2, AlignLeft|AlignTop);
         curRow++;
-        wl->addMultiCellWidget(status.at(i), curRow,curRow,1,2, AlignLeft|AlignTop);
+        wl->addWidget(status.at(i),         curRow, 1, AlignLeft|AlignTop);
+        wl->addWidget(timeinstate.at(i),    curRow, 2, AlignRight|AlignTop);
         curRow++;
         wl->addMultiCellWidget(callstaken.at(i),    curRow, curRow, 1, 2, AlignLeft|AlignTop);
         curRow++;
@@ -164,6 +179,10 @@ AgentStatus::AgentStatus
 
     QTimer::singleShot(1000, this, SLOT(refreshAgentList()));
 
+    QTimer  *timeInStateTimer = new QTimer(this);
+    connect(timeInStateTimer, SIGNAL(timeout()), this, SLOT(updateTimeInState()));
+    timeInStateTimer->start(1000, false);   // Update once per second
+
     // Make our connections to the Asterisk Manager
     connect(am, SIGNAL(eventReceived(const astEventRecord)), this, SLOT(asteriskEvent(const astEventRecord)));
 
@@ -192,6 +211,8 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
     QPixmap     onbreak(onbreak_xpm);
     QPixmap     signedout(signedout_xpm);
     QPixmap     user_icon(user_icon_xpm);
+    QDateTime   curDateTime = QDateTime::currentDateTime();
+
     if (!strcasecmp(event.msgVal, "QueueMemberAdded")) {
         // An agent is joining the call queue
         for (int i = 0; i < event.count; i++) {
@@ -342,6 +363,11 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
                 sprintf(tmpStr, "Last Call: %s", (const char *)tmpTime.toString("h:mm:ssap"));
                 lastcall.at(i)->setText(tmpStr);
             }
+            // Reset the time, but only if its not us.
+            if ((newGuiStatus != statusinfo.at(i)->status) && (i != myPosition)) {
+                statusinfo.at(i)->status = newGuiStatus;
+                statusinfo.at(i)->lastchange = curDateTime.toTime_t();
+            }
         }
     }
 
@@ -360,9 +386,44 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
                 break;
             case AGENT_STATUS_SIGNEDOUT:
             default:
+                newGuiStatus = AGENT_STATUS_SIGNEDOUT;
                 setStatusButton->setText("Signed Out");
                 setStatusButton->setIconSet(signedout);
                 break;
+        }
+
+        //fprintf(stderr, "Checking to see if I need to update myself, myPosition = %d.\n", myPosition);
+        if (newGuiStatus != statusinfo.at(myPosition)->status) {
+            // Update the database with this change.
+            //fprintf(stderr, "Inserting agent change into the database...\n");
+            QSqlDatabase        *myDB;
+            myDB = QSqlDatabase::database("asteriskagentstatus");
+            myDB->setHostName(cfgVal("TAAMySQLHost"));
+            myDB->setDatabaseName(cfgVal("TAAMySQLDB"));
+            myDB->setUserName(cfgVal("TAAMySQLUser"));
+            myDB->setPassword(cfgVal("TAAMySQLPass"));
+
+            if (!myDB->open()) {
+                fprintf(stderr, "AgentStatus::AgentStatus() Unable to connect to the databse!\n");
+            } else {
+                QSqlQuery query(myDB);
+
+                QDateTime   startTime;
+                startTime.setTime_t(statusinfo.at(myPosition)->lastchange);
+                char        tmpStr[1024];
+                sprintf(tmpStr, "replace into AgentStatus (LoginID, State, StartTime, EndTime, ElapsedSeconds) values ('%s', %d, '%s', '%s', %ld)",
+                        curUser().userName,
+                        statusinfo.at(myPosition)->status,
+                        (const char *) startTime.toString("yyyy-MM-dd hh:mm:ss"),
+                        (const char *) curDateTime.toString("yyyy-MM-dd hh:mm:ss"),
+                        startTime.secsTo(curDateTime));
+                query.exec(tmpStr);
+            }
+
+            //fprintf(stderr, "Finished inserting agent change into the database...\n");
+
+            statusinfo.at(myPosition)->status = newGuiStatus;
+            statusinfo.at(myPosition)->lastchange = curDateTime.toTime_t();
         }
     }
 }
@@ -392,3 +453,29 @@ void AgentStatus::agentSetStatus(int ext)
     am->setAgentStatus(ext, ext, state);
 }
 
+/** updateTimeInState - Refreshes the time in state for each of the agents.
+  */
+void AgentStatus::updateTimeInState()
+{
+    QDateTime   startTime;
+    QDateTime   curTime = QDateTime::currentDateTime();
+    char        tmpSt[1024];
+    int         h, m, s, secs;
+    for (int i = 0; i < agentCount; i++) {
+        startTime.setTime_t(statusinfo.at(i)->lastchange);
+        h = m = s = secs = 0;
+        secs = startTime.secsTo(curTime);
+
+        while (secs >= 3600) {
+            h++;
+            secs = secs - 3600;
+        }
+        while (secs >= 60) {
+            m++;
+            secs = secs - 60;
+        }
+        s = secs;
+        sprintf(tmpSt, "%d:%02d:%02d", h, m, s);
+        timeinstate.at(i)->setText(tmpSt);
+    }
+}

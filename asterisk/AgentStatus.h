@@ -18,6 +18,7 @@
 #define AGENT_STATUS_AVAILABLE 1
 #define AGENT_STATUS_ONBREAK 2
 
+#include <sys/time.h>
 #include <qwidget.h>
 #include <qlabel.h>
 #include <TAAWidget.h>
@@ -26,6 +27,12 @@
 #include <qpushbutton.h>
 #include <qpopupmenu.h>
 #include "AsteriskManager.h"
+
+typedef struct statusInfoStruct {
+    time_t      lastchange;
+    int         paused;
+    int         status;
+};
 
 class AgentStatus : public TAAWidget
 {
@@ -49,16 +56,20 @@ protected:
     QPtrList<QLabel>    names;
     QPtrList<QLabel>    locations;
     QPtrList<QLabel>    status;
+    QPtrList<QLabel>    timeinstate;
     QPtrList<QLabel>    guistatus;
     QPtrList<QLabel>    callstaken;
     QPtrList<QLabel>    lastcall;
+    QPtrList<statusInfoStruct>  statusinfo;
     QPushButton         *setStatusButton;
     QPopupMenu          *setStatusMenu;              
+    int                 myPosition;
 
 protected slots:
     void        asteriskEvent(const astEventRecord);
     void        refreshAgentList();
     void        agentSetStatus(int);
+    void        updateTimeInState();
 };
 
 /* XPM */
