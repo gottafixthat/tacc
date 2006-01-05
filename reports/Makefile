@@ -54,6 +54,7 @@ SOURCES =	Report.cpp\
 		DNS_UnmanagedReport.cpp\
 		ActiveDomainsReport.cpp\
 		ActiveDomainsDetail.cpp\
+		AsteriskCDRReport.cpp\
 		AllReports.cpp
 
 ifdef USEQWT
@@ -90,6 +91,7 @@ SRCMETA =	moc_Report.cpp\
 		moc_DNS_UnmanagedReport.cpp\
 		moc_ActiveDomainsReport.cpp\
 		moc_ActiveDomainsDetail.cpp\
+		moc_AsteriskCDRReport.cpp\
 		moc_AllReports.cpp
 ifdef USEQWT
 SOURCES += moc_Graph.cpp moc_GraphData.cpp
@@ -235,6 +237,9 @@ moc_ActiveDomainsReport.cpp: ActiveDomainsReport.h
 
 moc_ActiveDomainsDetail.cpp: ActiveDomainsDetail.h
 	$(MOC) ActiveDomainsDetail.h -o moc_ActiveDomainsDetail.cpp
+
+moc_AsteriskCDRReport.cpp: AsteriskCDRReport.h
+	$(MOC) AsteriskCDRReport.h -o moc_AsteriskCDRReport.cpp
 
 moc_AllReports.cpp: AllReports.h
 	$(MOC) AllReports.h -o moc_AllReports.cpp

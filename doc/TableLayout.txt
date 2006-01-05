@@ -1751,3 +1751,13 @@ CREATE TABLE DSL_Quals (
     PRIMARY KEY(PhoneNumber)
 );
 
+#
+# AgentStatus - Keeps track of when an agent logs in or out.
+CREATE TABLE AgentStatus (
+    LoginID         varchar(64) NOT NULL DEFAULT '',
+    State           int(11) NOT NULL DEFAULT '0',
+    StartTime       datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    EndTime         datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    ElapsedSeconds  bigint(21) NOT NULL DEFAULT '0',
+    PRIMARY KEY(LoginID, State, StartTime, EndTime)
+);

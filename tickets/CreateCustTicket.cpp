@@ -199,6 +199,49 @@ void CreateCustTicket::setCustomerID(long custID)
 
 void CreateCustTicket::saveTicket()
 {
+    // Validate that the user entered good data.
+    QString tmpSummary;
+    QString tmpText;
+
+    tmpSummary = ticketSummary->text().simplifyWhiteSpace();
+    tmpText    = ticketNotes->text().simplifyWhiteSpace();
+
+    if (!tmpSummary.length() && !tmpText.length()) {
+        QMessageBox::critical(this, "Choose", "Cake or death?", "Cake", "Death");
+        return;
+    }
+    
+    if (!tmpSummary.length()) {
+        QMessageBox::critical(this, "Summary Missing", "What good is a ticket with no summary?\nTry again.");
+        return;
+    }
+    
+    if (!tmpText.length()) {
+        QMessageBox::critical(this, "Detail Missing", "Tickets with no detail are worse\nthan tickets with no summary.\nTry again.");
+        return;
+    }
+    
+    if (tmpSummary.length() > 45) {
+        QMessageBox::critical(this, "Summary Too Long", "<b>Summary</b>; as in to sum up or reduce into few words.<p /><hr><p />A summary that long would be classified as detail.");
+        return;
+    }
+
+    if (tmpSummary.length() > tmpText.length()) {
+        QMessageBox::critical(this, "Summary longer than detail", "A summary should be just that -- a summary.\nYour summary is longer than your detail.  Isn't that a bit backwards?");
+        return;
+    }
+
+    if ((tmpSummary.length() < 10) || (tmpText.length() < 15)) {
+        QMessageBox::critical(this, "Tickets Need Content", "Remember, someone is going to be working this\nticket and will only have its contents to go\non.  You need to be a bit more verbose.");
+        return;
+    }
+
+    if (!tmpSummary.compare(tmpText)) {
+        QMessageBox::critical(this, "Identical Content", "Repeating yourself doesn't make for a good ticket.\nA ticket should contain actual details and have a summary\nthat can be quickly identified in the ticket list or an inbox.\nThey shouldn't match.");
+        return;
+    }
+    
+    
     Ticket  newTick;
     newTick.setCustomerID(myCustID);
     newTick.setName((const char *)customerName->text());

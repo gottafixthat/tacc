@@ -408,7 +408,7 @@ void Customers::refreshList(long)
     long        curCustID = 0;
     bool        allLoaded = false;
     bool        matchFound = false;
-    QString tmpsub;
+    QString     tmpsub;
     tmpsub = "";
     char    *isActive  = new char[64];
     
@@ -425,7 +425,8 @@ void Customers::refreshList(long)
     // Clear our map of loaded customers as well.
     loadedCusts.clear();
 
-    tmpsub = listQuery->text();
+    tmpsub = listQuery->text().replace(QRegExp("[^a-zA-Z0-9\\,.\\-_ /]"), "").simplifyWhiteSpace();
+    listQuery->setText(tmpsub);
 
     emit(setStatus(""));
     QApplication::restoreOverrideCursor();
