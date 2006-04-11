@@ -191,7 +191,7 @@ void    parseFile(const char *SrcFile, const char *DstFile, long CustomerID, con
     parser.set("ContactName",   custDB.getStr("ContactName"));
     parser.set("PrimaryLogin",  custDB.getStr("PrimaryLogin"));
     parser.set("LoginID",       LoginID);
-    parser.set("DomainName",    "blarg.net");
+    parser.set("DomainName",    "avvanta.com");
     parser.set("ExpDate",       ExpDate);
 
 

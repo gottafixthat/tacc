@@ -4197,7 +4197,7 @@ void StatementsDB::printFooter(QPainter *p, int PageNo, int TotPages)
     yPos += fm.height();
 
     rect.setCoords(36,yPos,192,yPos+fm.height());
-    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, "Email: accounting@blarg.net");
+    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, "Email: accounting@avvanta.com");
     yPos += fm.height();
 
     rect.setCoords(36,yPos,192,yPos+fm.height());

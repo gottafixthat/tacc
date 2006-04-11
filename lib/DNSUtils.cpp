@@ -84,8 +84,8 @@ int createDNSRecord(const char *domain, long customerID, const char *loginID, in
     sprintf(tmpStr, "%s.", domain);
     sprintf(serial, "%04d%02d%02d01", tmpDate.year(), tmpDate.month(), tmpDate.day());
     dnsDB.setValue("origin",    tmpStr);
-    dnsDB.setValue("ns",        "ns1.blarg.net.");
-    dnsDB.setValue("mbox",      "hostmaster.blarg.net.");
+    dnsDB.setValue("ns",        "ns1.avvanta.com.");
+    dnsDB.setValue("mbox",      "hostmaster.avvanta.com.");
     dnsDB.setValue("serial",    atol(serial));
     dnsDB.setValue("refresh",   28800);
     dnsDB.setValue("retry",     7200);
@@ -98,11 +98,11 @@ int createDNSRecord(const char *domain, long customerID, const char *loginID, in
     rrDB.setValue("zone",       dnsDB.getLong("id"));
     rrDB.setValue("name",       "");
     rrDB.setValue("type",       "NS");
-    rrDB.setValue("data",       "ns1.blarg.net.");
+    rrDB.setValue("data",       "ns1.avvanta.com.");
     rrDB.setValue("ttl",        "86400");
     rrDB.ins();
     rrDB.setValue("id",         0);
-    rrDB.setValue("data",       "ns2.blarg.net.");
+    rrDB.setValue("data",       "ns2.avvanta.com.");
     rrDB.ins();
 
     zoneDB.setValue("zoneid",       dnsDB.getLong("id"));
@@ -151,8 +151,8 @@ int setupDNSFromTemplate(int templateID, const char *domain, long customerID, co
     sprintf(tmpStr, "%s.", domain);
     sprintf(serial, "%04d%02d%02d01", tmpDate.year(), tmpDate.month(), tmpDate.day());
     dnsDB.setValue("origin",    tmpStr);
-    dnsDB.setValue("ns",        "ns1.blarg.net.");
-    dnsDB.setValue("mbox",      "hostmaster.blarg.net.");
+    dnsDB.setValue("ns",        "ns1.avvanta.com.");
+    dnsDB.setValue("mbox",      "hostmaster.avvanta.com.");
     dnsDB.setValue("serial",    atol(serial));
     dnsDB.setValue("refresh",   DB.curRow["Refresh"]);
     dnsDB.setValue("retry",     DB.curRow["Retry"]);

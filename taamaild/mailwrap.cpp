@@ -47,7 +47,7 @@
 #define MAXMSGS     1000
 #define SLEEPTIME   10
 #define INBUFSIZE   1024
-#define SMTPHOST    "mail.blarg.net"
+#define SMTPHOST    "mail.avvanta.com"
 #define BIGBUFSIZE  262144
 
 int msgCount = 0;
@@ -156,7 +156,7 @@ void scanDir(void)
                         tmpstr2 = tmpstr.remove(0, 4);
                         // Make sure the "To" address has a domain.
                         if (!tmpstr2.find("@")) {
-                            tmpstr2.append("@blarg.net");
+                            tmpstr2.append("@avvanta.com");
                         }
                         strcpy(toaddr, tmpstr2);
                         continue;
@@ -180,8 +180,8 @@ void scanDir(void)
                 if (strlen(fromline)) {
                     sprintf(tmpbuf, "/usr/sbin/sendmail -t -f\"%s\"", fromline);
                 } else {
-                    sprintf(fromline, "support@blarg.net");
-                    sprintf(tmpbuf, "/usr/sbin/sendmail -t -fsupport@blarg.net");
+                    sprintf(fromline, "support@avvanta.com");
+                    sprintf(tmpbuf, "/usr/sbin/sendmail -t -fsupport@avvanta.com");
                 }
                 
                 if (!strlen(toaddr)) {
@@ -214,7 +214,7 @@ void scanDir(void)
                     DwString rcptaddrst = rcptaddr->LocalPart();
                     rcptaddrst += "@";
                     if (!strlen(rcptaddr->Domain().c_str())) {
-                        rcptaddrst += "blarg.net";
+                        rcptaddrst += "avvanta.com";
                     } else {
                         rcptaddrst += rcptaddr->Domain();
                     }
@@ -386,7 +386,7 @@ void scanDb(void)
             DwString rcptaddrst = rcptaddr->LocalPart();
             rcptaddrst += "@";
             if (!strlen(rcptaddr->Domain().c_str())) {
-                rcptaddrst += "blarg.net";
+                rcptaddrst += "avvanta.com";
             } else {
                 rcptaddrst += rcptaddr->Domain();
             }

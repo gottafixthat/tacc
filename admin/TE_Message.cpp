@@ -64,7 +64,7 @@ char * TE_Message::createMessage()
     if (qfp.open(IO_WriteOnly)) {
         QTextStream ts(&qfp);
         
-        ts << "To: {LoginID}@blarg.net" << endl;
+        ts << "To: {LoginID}@avvanta.com" << endl;
         ts << "From: " << fromLine->text() << endl;
         ts << "Subject: " << msgSubject->text() << endl;
         ts << endl;

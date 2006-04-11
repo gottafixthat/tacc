@@ -559,7 +559,7 @@ void emailStatement(long StNo, int Force = 0, int Dup = 0)
     parseFile("/usr/local/lib/taa/StatementFooter.txt", footerFName, STDB.getLong("CustomerID"), tmpLogin, "");
 
     // Put the email headers into the file.
-    fprintf(stfp, "From: Blarg Accounting <accounting@blarg.net>\n");
+    fprintf(stfp, "From: Avvanta Accounting <accounting@avvanta.com>\n");
     fprintf(stfp, "To: %s@%s\n", tmpLogin, cfgVal("EmailDomain"));
     // fprintf(stfp, "To: marc\n");
     fprintf(stfp, "Subject: Account Statement\n");

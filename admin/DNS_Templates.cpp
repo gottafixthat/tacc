@@ -440,7 +440,7 @@ void DNS_Templates::newTemplate()
     rrDB.setValue("TemplateID",     soaDB.getLong("TemplateID"));
     rrDB.setValue("Name",           "");
     rrDB.setValue("RRType",         "NS");
-    rrDB.setValue("Data",           "ns1.blarg.net.");
+    rrDB.setValue("Data",           "ns1.avvanta.com.");
     rrDB.setValue("Aux",            0);
     rrDB.setValue("TTL",            86400);
     rrDB.ins();
@@ -448,7 +448,7 @@ void DNS_Templates::newTemplate()
     rrDB.setValue("TemplateID",     soaDB.getLong("TemplateID"));
     rrDB.setValue("Name",           "");
     rrDB.setValue("RRType",         "NS");
-    rrDB.setValue("Data",           "ns2.blarg.net.");
+    rrDB.setValue("Data",           "ns2.avvanta.com.");
     rrDB.setValue("Aux",            0);
     rrDB.setValue("TTL",            86400);
     rrDB.ins();
@@ -611,7 +611,7 @@ void DNS_Templates::addRR()
         //fprintf(stderr, "Not an IP address.\n");
         // Since its not an IP address, check to see if it is a FQDN.
         if (ipAddress->text().find(".") < 0) {
-            strcat(errText, "You must enter an IP address or fully qualified host name (i.e. www.blarg.net).\n");
+            strcat(errText, "You must enter an IP address or fully qualified host name (i.e. www.avvanta.com).\n");
             canAdd = 0;
             // Its a bare host name or not valid.
         } else {
