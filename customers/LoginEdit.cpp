@@ -425,8 +425,8 @@ void LoginEdit::mailPrimaryLogin(void)
         tmpnam(mname);
         fp = fopen(mname, "w");
         if (fp != NULL) {
-            fprintf(fp, "From: Blarg! Support <support@blarg.net>\n");
-            fprintf(fp, "To: %s@blarg.net\n", myLoginID);
+            fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
+            fprintf(fp, "To: %s@avvanta.com\n", myLoginID);
             
             // Append the parsed file to our email message
             sprintf(tmpstr, "%s/%s", prefix, (const char *) files.at(j));
@@ -483,8 +483,8 @@ void LoginEdit::mailAddOnLogin(void)
         tmpnam(mname);
         fp = fopen(mname, "w");
         if (fp != NULL) {
-            fprintf(fp, "From: Blarg! Support <support@blarg.net>\n");
-            fprintf(fp, "To: %s@blarg.net\n", myLoginID);
+            fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
+            fprintf(fp, "To: %s@avvanta.com\n", myLoginID);
             
             // Append the parsed file to our email message
             sprintf(tmpstr, "%s/%s", prefix, (const char *) files.at(j));
@@ -545,8 +545,8 @@ void LoginEdit::mailParent(void)
         tmpnam(mname);
         fp = fopen(mname, "w");
         if (fp != NULL) {
-            fprintf(fp, "From: Blarg! Support <support@blarg.net>\n");
-            fprintf(fp, "To: %s@blarg.net\n", (const char *) CDB.getStr("PrimaryLogin"));
+            fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
+            fprintf(fp, "To: %s@avvanta.com\n", (const char *) CDB.getStr("PrimaryLogin"));
             
             // Append the parsed file to our email message
             sprintf(tmpstr, "%s/%s", prefix, (const char *) files.at(j));
@@ -608,8 +608,8 @@ void LoginEdit::mailAdmins(void)
         tmpnam(mname);
         fp = fopen(mname, "w");
         if (fp != NULL) {
-            fprintf(fp, "From: Blarg! Support <support@blarg.net>\n");
-            fprintf(fp, "To: %s@blarg.net\n", (const char *) admins.at(i));
+            fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
+            fprintf(fp, "To: %s@avvanta.com\n", (const char *) admins.at(i));
             
             // Append the parsed file to our email message
             sprintf(tmpstr, "%s/%s", prefix, (const char *) files.at(j));

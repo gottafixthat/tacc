@@ -412,9 +412,9 @@ void OverdueAccounts::sendReminders(void)
                     // pipe it through sendmail.
 		            sprintf(tmpStr, "/tmp/.reminder.b%08ld", atol(curItem->key(0, 1)));
                     fp  = fopen(tmpStr, "w");
-                    fprintf(fp, "From: Blarg Accounting <accounting@blarg.net>\n");
-                    // fprintf(fp, "To: %s@blarg.net\n", "marc");
-                    fprintf(fp, "To: %s@blarg.net\n", (const char *) CDB.getStr("PrimaryLogin"));
+                    fprintf(fp, "From: Avvanta Accounting <accounting@avvanta.com>\n");
+                    // fprintf(fp, "To: %s@avvanta.com\n", "marc");
+                    fprintf(fp, "To: %s@avvanta.com\n", (const char *) CDB.getStr("PrimaryLogin"));
                     fprintf(fp, "Subject: Reminder\n");
                     fprintf(fp, "\n");
                     
@@ -428,7 +428,7 @@ void OverdueAccounts::sendReminders(void)
                     unlink(tmpStr);
                     
                     sprintf(tmpStr, "cp /tmp/.reminder.b%08ld /var/spool/taamail/reminder.b%08ld", atol(curItem->key(0,1)), atol(curItem->key(0,1)));
-                    // sprintf(tmpStr, "cat /tmp/.reminder.b%08ld | /usr/sbin/sendmail -t -Faccounting@blarg.net", atol(curItem->key(0, 1)));
+                    // sprintf(tmpStr, "cat /tmp/.reminder.b%08ld | /usr/sbin/sendmail -t -Faccounting@avvanta.com", atol(curItem->key(0, 1)));
                     system(tmpStr);
                     
                     sprintf(tmpStr, "/tmp/.reminder.b%08ld", atol(curItem->key(0, 1)));

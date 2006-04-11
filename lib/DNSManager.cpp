@@ -357,7 +357,7 @@ int DNSManager::addRR()
         //fprintf(stderr, "Not an IP address.\n");
         // Since its not an IP address, check to see if it is a FQDN.
         if (addressBox->text().find(".") < 0) {
-            strcat(errText, "You must enter an IP address or fully qualified host name (i.e. www.blarg.net).\n");
+            strcat(errText, "You must enter an IP address or fully qualified host name (i.e. www.avvanta.com).\n");
             canAdd = 0;
             // Its a bare host name or not valid.
         } else {

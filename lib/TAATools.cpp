@@ -442,8 +442,8 @@ void emailAdmins(const char *subj, const char *body)
         tmpnam(mname);
         fp = fopen(mname, "w");
         if (fp != NULL) {
-            fprintf(fp, "From: Blarg! Support <support@blarg.net>\n");
-            fprintf(fp, "To: %s@blarg.net\n", (const char *) admins.at(i));
+            fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
+            fprintf(fp, "To: %s@avvanta.com\n", (const char *) admins.at(i));
             fprintf(fp, "Subject: %s\n", subj);
             fprintf(fp, "\n");
             fprintf(fp, "%s\n", body);

@@ -337,14 +337,15 @@ void QueueMonitor::callPopupMenu( QListViewItem* item, const QPoint & point, int
     }
     i = menu->insertItem("Transfer Call", xferTargets);
     i = menu->insertItem("Send to Voice Mail", vmTargets);
-    menu->setItemEnabled(i, false);
+    menu->setItemEnabled(i, true);
     // Check to see if we own this call.
+    /*
     if (!strcasecmp(curUser().location, item->key((QMColumnNames) Location,0)) || curUser().accessLevel == Admin || curUser().accessLevel == Manager) {
         // We own it or we're a supervisor, allow the transfer.
         // But only if it is a connected call.
         if (!item->key((QMColumnNames)Location,0).isEmpty()) menu->setItemEnabled(i, true);
     }
-
+    */
 
     menu->popup( point );
 }

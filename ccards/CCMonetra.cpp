@@ -463,7 +463,7 @@ void CCMonetra::finishedPressed()
 
             //fprintf(stderr, "Calling parseEmail()\n");
             strcpy(whichFile, DeclFile);
-            //parseEmail("CCDeclined", atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), "", 1, "Blarg Accounting <accounting@blarg.net>", "", "", extVars);
+            //parseEmail("CCDeclined", atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), "", 1, "Avvanta Accounting <accounting@avvanta.com>", "", "", extVars);
 
             AcctsRecv   AR;
             char        memoStr[512];
@@ -566,7 +566,7 @@ void CCMonetra::finishedPressed()
                 
             //fprintf(stderr, "Calling parseEmail()\n");
             // Finally, send it to them.
-            parseEmail(whichFile, atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), "", 1, "Blarg Accounting <accounting@blarg.net>", "", "", extVars);
+            parseEmail(whichFile, atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), "", 1, "Avvanta Accounting <accounting@avvanta.com>", "", "", extVars);
             
             emit(customerUpdated(atol(curItem->key(6,1))));
         }
