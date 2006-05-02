@@ -3968,12 +3968,11 @@ void StatementsDB::printHeader(QPainter *p, int PageNo)
     hnFont.setStyleHint(QFont::SansSerif, QFont::PreferDevice);
 
     p->setFont(hbFont);
-    p->drawText(34, yPos, "Blarg! Online Services, Inc.");
+    p->drawText(34, yPos, "Avvanta Communications Corporation");
     p->setFont(hnFont);
-    p->drawText(34, yPos+10, "PO Box 1827");
-    p->drawText(34, yPos+20, "Bellevue, WA 98009-1827");
-    //p->drawText(34, yPos+30, "Phone:  425.401-9821");
-    //p->drawText(34, yPos+40, "Fax: 425/401-9741");
+    p->drawText(34, yPos+10, "(formerly Blarg! Online Services)");
+    p->drawText(34, yPos+20, "PO Box 1827");
+    p->drawText(34, yPos+30, "Bellevue, WA 98009-1827");
 
     myDatetoQDate((const char *)getStr("StatementDate"), &stDate);
     
@@ -4187,7 +4186,7 @@ void StatementsDB::printFooter(QPainter *p, int PageNo, int TotPages)
     p->setFont(QFont(footerFont, 9, QFont::Bold));
     QFontMetrics fm(p->fontMetrics());
     rect.setCoords(36,yPos,192,yPos+fm.height());
-    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, "Blarg! Online Services, Inc.");
+    p->drawText(rect, Qt::AlignLeft|Qt::AlignVCenter, "Avvanta Communications Corporation");
     yPos += fm.height();
 
     // Reset our font and metrics
