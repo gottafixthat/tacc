@@ -53,11 +53,15 @@ AllReports::AllReports
     reportMenu = new QPopupMenu(this, "Reports Menu");
     reportMenu->insertItem("&Domains", domainMenu);
     if (isAdmin()) {
+        QPopupMenu *salesMenu = new QPopupMenu(this);
+        salesMenu->insertItem("By Service", this, SLOT(showSalesByServiceReport()));
+
         reportMenu->insertItem("Call Lo&gs", this, SLOT(showCallLogReport()));
         reportMenu->insertItem("Call Detail Records", this, SLOT(showAsteriskCDRReport()));
         reportMenu->insertItem("Login &Counts (current)", this, SLOT(showLoginCountReport()));
         reportMenu->insertItem("Login Counts (&monthly average)", this, SLOT(showLoginAverageReport()));
         reportMenu->insertItem("&Rate Plans", this, SLOT(showRatePlanReport()));
+        reportMenu->insertItem("&Sales", salesMenu);
         reportMenu->insertItem("&User Cities", this, SLOT(showCityReport()));
         reportMenu->insertSeparator();
         reportMenu->insertItem("&Accounts Receivable", this, SLOT(showARReport()));
@@ -246,5 +250,18 @@ void AllReports::showAsteriskCDRReport()
     rep = new AsteriskCDRReport();
     rep->show();
     emit(setStatus(""));
+}
+
+/** showSalesByServiceReport - Shows a report for our sales by service.
+  */
+void AllReports::showSalesByServiceReport()
+{
+    QApplication::setOverrideCursor(waitCursor);
+    emit(setStatus("Generating report..."));
+    salesByServiceReport   *rep;
+    rep = new salesByServiceReport();
+    rep->show();
+    emit(setStatus(""));
+    QApplication::restoreOverrideCursor();
 }
 

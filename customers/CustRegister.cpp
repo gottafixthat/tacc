@@ -213,7 +213,7 @@ CustRegister::~CustRegister()
 void CustRegister::refreshRegister(int)
 {
     QApplication::setOverrideCursor(waitCursor);
-	char	tmpItem[64];
+	char	tmpItem[1024];
 	ADB     DB;
 	ADB     DB2;
 	float	runningTotal = 0.00;
@@ -224,7 +224,7 @@ void CustRegister::refreshRegister(int)
 	RListViewItem   *curItem = NULL;
 	int     isOdd = 1;
 	
-	DB.query("select InternalID, TransDate, LoginID, ItemID, Quantity, Amount, Memo from AcctsRecv where CustomerID = %ld order by InternalID", myCustID);
+	DB.query("select InternalID, TransDate, LoginID, ItemID, Quantity, Amount, Memo, PackageItem from AcctsRecv where CustomerID = %ld order by InternalID", myCustID);
 	
     list->clear();
 
@@ -244,7 +244,15 @@ void CustRegister::refreshRegister(int)
 				DB2.getrow();
 				strcpy(tmpItem, DB2.curRow["ItemID"]);
 			}
-	    }
+	    } else {
+            if (atoi(DB.curRow["PackageItem"])) {
+                DB2.query("select PackageTag from Packages where InternalID = %d", atoi(DB.curRow["PackageItem"]));
+                if (DB2.rowCount) {
+                    DB2.getrow();
+                    sprintf(tmpItem, "[%s]", DB2.curRow["PackageTag"]);
+                }
+            }
+        }
 
 		curItem = new RListViewItem(list, 
 		  isOdd,

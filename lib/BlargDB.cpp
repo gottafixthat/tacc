@@ -1803,13 +1803,14 @@ int CustomersDB::doSubscriptions(void)
 	        DaysLeft   = ChargeDate.daysTo(CycleEnd);
 	        
 			AR.ARDB->setValue("CustomerID", getLong("CustomerID"));
-			AR.ARDB->setValue("LoginID", "Package");
+			AR.ARDB->setValue("LoginID", SDB.getStr("LoginID")); //"Package");
 			AR.ARDB->setValue("BillingCycle", getLong("BillingCycle"));
 			AR.ARDB->setValue("RatePlan", getLong("RatePlan"));
 			AR.ARDB->setValue("ItemID", (long) 0);
 			AR.ARDB->setValue("TransDate", sChargeDate);
 			AR.ARDB->setValue("StartDate", sChargeDate);
 			AR.ARDB->setValue("EndDate", sCycleEnd);
+            AR.ARDB->setValue("PackageItem", SDB.getLong("PackageNo"));
 			// Get the quantity
 			if (SDB.getFloat("Quantity") == 0.00) {
 			    SDB.setValue("Quantity", (float) 1.00);
@@ -1859,7 +1860,7 @@ int CustomersDB::doSubscriptions(void)
 	            // Okay, we've got everything we need, setup the AR entry.
 	            AcctsRecv       AR2;
 				AR2.ARDB->setValue("CustomerID", getLong("CustomerID"));
-				AR2.ARDB->setValue("LoginID", "Package");
+			    AR2.ARDB->setValue("LoginID", SDB.getStr("LoginID")); //"Package");
 				AR2.ARDB->setValue("ItemID", PSetupItem);
 	    		AR2.ARDB->setValue("BillingCycle", getLong("BillingCycle"));
 		    	AR2.ARDB->setValue("RatePlan", getLong("RatePlan"));
@@ -1870,6 +1871,7 @@ int CustomersDB::doSubscriptions(void)
 				AR2.ARDB->setValue("Price", BDDB.getFloat("Price"));
 				AR2.ARDB->setValue("Quantity", (float) 1.00);
 				AR2.ARDB->setValue("Amount", BDDB.getFloat("Price"));
+                //AR2.ARDB->setValue("PackageItem", SDB.getLong("PackageNo"));
 
 				AR2.SaveTrans();
                 SDB.setValue("SetupCharged", 1);
@@ -1891,10 +1893,15 @@ int CustomersDB::doSubscriptions(void)
 			DB2.query("select InternalID from Subscriptions where CustomerID = %ld and ParentID = %ld", getLong("CustomerID"), atol(DB.curRow[0]));
 			if (DB2.rowCount) while (DB2.getrow()) {
 				AcctsRecv		AR2;
+                BillablesDB     biDB;
 				#ifdef DBDEBUG
 				printf("Doing Subscription ID %ld", atol(DB2.curRow["InternalID"]));
 				#endif
 				SDB.get(atol(DB2.curRow["InternalID"]));
+
+                // Get the item description from the Billables table
+                biDB.get(SDB.getLong("ItemNumber"));
+
 
 	    		// Get the charge date.
                 // We don't want to recalculate any start or end dates if
@@ -1929,11 +1936,13 @@ int CustomersDB::doSubscriptions(void)
 				#endif
 				// The price is zero because it is part of the package.
 				AR2.ARDB->setValue("Memo", SDB.getStr("ItemDesc"));
+                /* If we're in a package it says prorated, we don't need to do it again.
 				if (Quantity < 1.00) {
 					AR2.ARDB->appendStr("Memo", " (Prorated)");
 				}
+                */
 				AR2.ARDB->appendStr("Memo", " (Included with ");
-				AR2.ARDB->appendStr("Memo", PDB.getStr("Description"));
+				AR2.ARDB->appendStr("Memo", biDB.getStr("Description"));
 				AR2.ARDB->appendStr("Memo", ")");
 				AR2.ARDB->setValue("Price", (float) 0.00);
 				AR2.ARDB->setValue("Quantity", Quantity);
