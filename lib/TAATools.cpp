@@ -325,8 +325,8 @@ void showAbout()
     QString     aboutText;
     
     aboutText  = "Total <I>Account</I>Ability<BR>";
-    aboutText += "(C)opyright 1997-2004, R. Marc Lewis<br>";
-    aboutText += "and Blarg! Online Services, Inc.<br>";
+    aboutText += "(C)opyright 1997-2006, R. Marc Lewis<br>";
+    aboutText += "and Avvanta Communications Corp.<br>";
     aboutText += "All Rights Reserved<BR>";
     //aboutText += "Contains ADB data management software\n(C)opyright 1998-2001, R. Marc Lewis, All Rights Reserved\n";
     aboutText += "<p>Version ";
