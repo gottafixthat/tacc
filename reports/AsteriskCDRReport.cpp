@@ -73,7 +73,12 @@ void AsteriskCDRReport::refreshReport()
     ADB     DB;
     ADB     DB2;
     char    tmpStr[1024];
-    DB.query("select * from cdr order by calldate");
+    QDate   sDate = this->startDateCal->date();
+    QDate   eDate = this->endDateCal->date();
+
+    DB.query("select * from cdr where calldate >= '%04d-%02d-%02d 00:00:00' and calldate <= '%04d-%02d-%02d 23:59:59' order by calldate",
+            sDate.year(), sDate.month(), sDate.day(),
+            eDate.year(), eDate.month(), eDate.day());
     while (DB.getrow()) {
         //DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         //sprintf(tmpStr, "%5d", DB2.rowCount);

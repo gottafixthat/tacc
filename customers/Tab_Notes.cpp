@@ -63,6 +63,10 @@ Tab_Notes::Tab_Notes
     connect(searchText, SIGNAL(returnPressed()), this, SLOT(startSearch()));
 
     searchLabel->setBuddy(searchText);
+
+    openTicketCount = new QLabel(this);
+    openTicketCount->setAlignment(AlignVCenter|AlignRight);
+    openTicketCount->setTextFormat(Qt::RichText);
     
     list = new QListView(this, "Note List");
     //list->addColumn("Ticket");
@@ -210,7 +214,7 @@ Tab_Notes::Tab_Notes
     QBoxLayout *sal = new QBoxLayout(QBoxLayout::LeftToRight, 4);
     sal->addWidget(searchLabel, 0);
     sal->addWidget(searchText,  1);
-    sal->addStretch(1);
+    sal->addWidget(openTicketCount,  1);
 
     ml->addLayout(sal, 0);
 
@@ -398,12 +402,14 @@ void Tab_Notes::refreshNotesList(int)
 
     // Get the tickets for this customer
     DB.query("select TicketNo from Tickets where CustomerID = %ld", myCustID);
+    int openCount = 0;
 	if (DB.rowCount) while(DB.getrow()) {
         Ticket  *tmpTick = new Ticket();
         tmpTick->setTicketNo(atol(DB.curRow["TicketNo"]));
         char    loginStr[1024];
         sprintf(loginStr, "[T%ld]", tmpTick->ticketNo());
 
+        if (tmpTick->status() != Ticket::Closed) openCount++;
         curItem = new QListViewItem(list,
             //ticketNo,
             tmpTick->openedStr(),
@@ -416,6 +422,15 @@ void Tab_Notes::refreshNotesList(int)
             "1"                     // Ticket
         );
         delete tmpTick;
+    }
+
+    if (openCount) {
+        char countStr[1024];
+        sprintf(countStr, "<font color=red>%d</font> open ticket", openCount);
+        if (openCount > 1) strcat(countStr, "s");
+        openTicketCount->setText(countStr);
+    } else {
+        openTicketCount->setText("");
     }
 
 
