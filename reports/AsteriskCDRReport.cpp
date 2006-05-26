@@ -53,6 +53,9 @@ AsteriskCDRReport::AsteriskCDRReport
 	
     allowDates(REP_ALLDATES);
     allowFilters(0);
+    dateList->setCurrentText("Today");
+    startDateCal->setDate(QDate::currentDate());
+    endDateCal->setDate(QDate::currentDate());
 	refreshReport();
 }
 
