@@ -59,6 +59,7 @@ protected:
     QListView   *list;
     QTextView   *noteText;
     QLineEdit   *searchText;
+    QLabel      *openTicketCount;
     QLabel      *addedBy;
     QLabel      *noteType;
     QLabel      *subject;
