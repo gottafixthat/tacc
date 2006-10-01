@@ -606,7 +606,7 @@ void DNS_Templates::addRR()
 
     // Check the address box to see if it appears to be an IP address.
     // If its not, then we need to add a "." to the end of it.
-    qreg.setPattern("^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$");
+    qreg.setPattern("^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$");
     if (qreg.search(ipAddress->text()) < 0) {
         //fprintf(stderr, "Not an IP address.\n");
         // Since its not an IP address, check to see if it is a FQDN.

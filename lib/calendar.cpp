@@ -189,11 +189,11 @@ void Calendar::paintEvent(QPaintEvent*)
   for (int i=1;i<=numdaysinmonth;i++) {
     char txt[3];
     sprintf(txt,"%i",i);
-    if (daycolor[i-1] == Color1) {
+    if (daycolor[i-1] == (char)Color1) {
       paint.fillRect(((i+startdow-1)%7)*w+4,((i+startdow-1)/7)*ROW_HEIGHT+
         TITLE_HEIGHT+ROW_HEIGHT+1,BLOCK_SIZE,BLOCK_SIZE,gray);
     }
-    if (daycolor[i-1] == Color2) {
+    if (daycolor[i-1] == (char)Color2) {
       paint.fillRect(((i+startdow-1)%7)*w+4,((i+startdow-1)/7)*ROW_HEIGHT+
         TITLE_HEIGHT+ROW_HEIGHT+1,BLOCK_SIZE,BLOCK_SIZE,red);
     }
