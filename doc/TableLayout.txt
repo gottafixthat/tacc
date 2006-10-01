@@ -1761,3 +1761,4 @@ CREATE TABLE AgentStatus (
     ElapsedSeconds  bigint(21) NOT NULL DEFAULT '0',
     PRIMARY KEY(LoginID, State, StartTime, EndTime)
 );
+
