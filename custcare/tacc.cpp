@@ -70,6 +70,7 @@
 #include "BillingCycles.h"
 #include "AsteriskManager.h";
 #include "QueueMonitor.h";
+#include "DIDManager.h";
 
 #include "UserPrivs.h"
 
@@ -277,6 +278,14 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     menuBar()->insertItem("C&ustomers", ccStack->custs->menu());
     
     menuBar()->insertItem("&Reports", reports->menu());
+        
+    
+    // Creat the VoIP Menu
+    QPopupMenu *voipMenu = new QPopupMenu(this);
+    if (isAdmin()) voipMenu->insertItem("&Add DID's", this, SLOT(voipAddDIDs()));
+
+    menuBar()->insertItem("VoI&P", voipMenu);
+
     statusBar()->message("Bwahahaha!", 5000);
 
     if (isManager()) {
@@ -296,7 +305,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
         adminMenu->insertItem("Run Statements (All Customers)", this, SLOT(create_statements()));
         adminMenu->insertItem("Process Overdue Accounts (active)", this, SLOT(processOverdueAccounts()));
         if (isAdmin()) adminMenu->insertItem("Process Overdue Accounts (wiped)", this, SLOT(processWipedAccounts()));
-        
+
         menuBar()->insertItem("Adm&in", adminMenu);
         // "Other Lists"
         if (isAdmin()) {
@@ -794,6 +803,12 @@ void CustomerCare::processWipedAccounts()
     WipedAccounts *WAP;
     WAP = new WipedAccounts;
     WAP->show();
+}
+
+void CustomerCare::voipAddDIDs()
+{
+    DIDManagerAdd *MD = new DIDManagerAdd();
+    MD->show();
 }
 
 /*
