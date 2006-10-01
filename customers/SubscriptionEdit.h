@@ -35,6 +35,7 @@
 #include <qcheckbox.h>
 #include <qmultilineedit.h>
 #include <qlineedit.h>
+#include <qcombobox.h>
 
 class SubscriptionEdit : public TAAWidget
 {
