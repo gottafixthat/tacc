@@ -73,7 +73,7 @@ DIDManagerAdd::DIDManagerAdd
     nxx->setInputMask("999");
     nxx->setMaximumWidth(nxx->minimumSizeHint().width() * 2);
 
-    QLabel startLabel = new QLabel(this, "startLabel");
+    QLabel *startLabel = new QLabel(this, "startLabel");
     startLabel->setText("Starting Number:");
 
     numStart = new QLineEdit(this, "numStart");
