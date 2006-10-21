@@ -1807,6 +1807,7 @@ CREATE TABLE DID_Rate_Centers (
 CREATE TABLE DID_Inventory (
     DID                 bigint(21) NOT NULL DEFAULT '0',
     OriginationID       bigint(21) NOT NULL DEFAULT '0',
+    RateCenterID        bigint(21) NOT NULL DEFAULT '0',
     CustomerID          bigint(21) NOT NULL DEFAULT '0',
     Reserved            int(11) NOT NULL default '0',
     ReserveDate         date NOT NULL DEFAULT '0000-00-00',
