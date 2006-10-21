@@ -93,13 +93,17 @@ public:
 
 protected slots:
     virtual void doneClicked();
+    void         countrySelected(const QString &);
+    void         stateSelected(const QString &);
 
 protected:
     QLineEdit       *npa;
     QLineEdit       *nxx;
     QLineEdit       *numStart;
     QLineEdit       *numStop;
-    QComboBox       *rateCenter;
+    QComboBox       *countryList;
+    QComboBox       *stateList;
+    QComboBox       *cityList;
     QLabel          *messageArea;
 
     QPushButton     *addButton;

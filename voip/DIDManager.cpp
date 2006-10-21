@@ -55,6 +55,10 @@ DIDManagerAdd::DIDManagerAdd
 {
     setCaption( "DID Manager - Add DIDs" );
 
+    QApplication::setOverrideCursor(Qt::waitCursor);
+
+    ADB     DB;
+
     QLabel *npaLabel = new QLabel(this, "npaLabel");
     npaLabel->setText("NPA/NXX:");
     npaLabel->setAlignment(AlignRight|AlignVCenter);
@@ -89,9 +93,38 @@ DIDManagerAdd::DIDManagerAdd
     numStop->setMaxLength(4);
     numStop->setMaximumWidth(numStop->minimumSizeHint().width() * 2);
 
-    QLabel *rateCenterLabel = new QLabel(this, "rateCenterLabel");
-    rateCenterLabel->setText("Rate Center:");
-    rateCenter = new QComboBox(true, this);
+    QLabel *countryListLabel = new QLabel(this, "countryListLabel");
+    countryListLabel->setText("Country:");
+    countryListLabel->setAlignment(Qt::AlignRight);
+
+    countryList = new QComboBox(this, "countryList");
+    DB.query("select distinct(Country) from DID_Rate_Centers order by Country");
+    if (DB.rowCount) while (DB.getrow()) {
+        countryList->insertItem(DB.curRow["Country"]);
+    }
+    connect(countryList, SIGNAL(activated(const QString &)), this, SLOT(countrySelected(const QString &)));
+
+    QLabel *stateListLabel = new QLabel(this, "stateListLabel");
+    stateListLabel->setText("State:");
+    stateListLabel->setAlignment(Qt::AlignRight);
+
+    stateList = new QComboBox(this, "stateList");
+    DB.query("select distinct(State) from DID_Rate_Centers where Country = '%s' order by State", (const char *)countryList->currentText());
+    if (DB.rowCount) while (DB.getrow()) {
+        stateList->insertItem(DB.curRow["State"]);
+    }
+    connect(stateList, SIGNAL(activated(const QString &)), this, SLOT(stateSelected(const QString &)));
+
+    QLabel *cityListLabel = new QLabel(this, "cityListLabel");
+    cityListLabel->setText("City:");
+    cityListLabel->setAlignment(Qt::AlignRight);
+
+    cityList = new QComboBox(this, "cityList");
+    DB.query("select distinct(City) from DID_Rate_Centers where Country = '%s' and State = '%s' order by City", (const char *)countryList->currentText(), (const char *)stateList->currentText());
+    if (DB.rowCount) while (DB.getrow()) {
+        cityList->insertItem(DB.curRow["City"]);
+    }
+    connect(cityList, SIGNAL(activated(const QString &)), this, SLOT(citySelected(const QString &)));
 
     messageArea = new QLabel(this, "messageArea");
 
@@ -121,8 +154,14 @@ DIDManagerAdd::DIDManagerAdd
     gl->addWidget(endLabel,             rowNum, 0);
     gl->addWidget(numStop,              rowNum, 1);
     rowNum++;
-    gl->addWidget(rateCenterLabel,      rowNum, 0);
-    gl->addWidget(rateCenter,           rowNum, 1);
+    gl->addWidget(countryListLabel,     rowNum, 0);
+    gl->addWidget(countryList,          rowNum, 1);
+    rowNum++;
+    gl->addWidget(stateListLabel,       rowNum, 0);
+    gl->addWidget(stateList,            rowNum, 1);
+    rowNum++;
+    gl->addWidget(cityListLabel,        rowNum, 0);
+    gl->addWidget(cityList,             rowNum, 1);
     rowNum++;
 
     ml->addLayout(gl, 1);
@@ -136,6 +175,7 @@ DIDManagerAdd::DIDManagerAdd
 
     ml->addLayout(bl, 0);
 
+    QApplication::restoreOverrideCursor();
 }
 
 /**
@@ -152,4 +192,40 @@ void DIDManagerAdd::doneClicked()
 {
     delete this;
 }
+
+/**
+  * countrySelected - When the customer picks a country, we need to fill in
+  * the states for that country.
+  */
+void DIDManagerAdd::countrySelected(const QString &newCountry)
+{
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    ADB     DB;
+    stateList->clear();
+    DB.query("select distinct(State) from DID_Rate_Centers where Country = '%s' order by State", (const char *)newCountry);
+    if (DB.rowCount) while (DB.getrow()) {
+        stateList->insertItem(DB.curRow["State"]);
+    }
+    QApplication::restoreOverrideCursor();
+    // Now reset the state list.
+    stateSelected(stateList->currentText());
+}
+
+
+/**
+  * stateSelected - When the customer picks a state, we need to fill in
+  * the cities for that state.
+  */
+void DIDManagerAdd::stateSelected(const QString &newState)
+{
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    ADB     DB;
+    cityList->clear();
+    DB.query("select distinct(City) from DID_Rate_Centers where Country = '%s' and State = '%s' order by City", (const char *)countryList->currentText(), (const char *)newState);
+    if (DB.rowCount) while (DB.getrow()) {
+        cityList->insertItem(DB.curRow["City"]);
+    }
+    QApplication::restoreOverrideCursor();
+}
+
 
