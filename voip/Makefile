@@ -23,14 +23,18 @@ endif
 
 SUBDIRS =	
 
-SOURCES =	DIDManager.cpp
+SOURCES =	DIDManager.cpp\
+			RateCenterManager.cpp\
+			OriginationProviders.cpp
 #			ProcessVoiceMail.cpp
 
 # HEADERS =	../include/BlargDB.h
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 
-SRCMETA =	moc_DIDManager.cpp
+SRCMETA =	moc_DIDManager.cpp\
+			moc_RateCenterManager.cpp\
+			moc_OriginationProviders.cpp
 #			moc_ProcessVoiceMail.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
@@ -75,6 +79,12 @@ FORCE:
 
 moc_DIDManager.cpp: DIDManager.h
 	$(MOC) DIDManager.h -o moc_DIDManager.cpp
+
+moc_RateCenterManager.cpp: RateCenterManager.h
+	$(MOC) RateCenterManager.h -o moc_RateCenterManager.cpp
+
+moc_OriginationProviders.cpp: OriginationProviders.h
+	$(MOC) OriginationProviders.h -o moc_OriginationProviders.cpp
 
 #moc_ProcessVoiceMail.cpp: ProcessVoiceMail.h
 #	$(MOC) ProcessVoiceMail.h -o moc_ProcessVoiceMail.cpp

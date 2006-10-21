@@ -81,6 +81,9 @@ DIDManagerAdd::DIDManagerAdd
     numStart->setMaxLength(4);
     numStart->setMaximumWidth(numStart->minimumSizeHint().width() * 2);
 
+    QLabel *endLabel = new QLabel(this, "endLabel");
+    endLabel->setText("Ending Number:");
+
     numStop = new QLineEdit(this, "numStop");
     numStop->setInputMask("9999");
     numStop->setMaxLength(4);
@@ -96,24 +99,31 @@ DIDManagerAdd::DIDManagerAdd
     addButton->setText("&Add");
     doneButton = new QPushButton(this);
     doneButton->setText("&Done");
+    connect(doneButton, SIGNAL(clicked()), this, SLOT(doneClicked()));
 
     // Setup our layout now.
     QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
 
-    QBoxLayout  *didl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
-    didl->addWidget(npa, 0);
-    didl->addWidget(nxxLabel, 0);
-    didl->addWidget(nxx, 0);
-    didl->addWidget(numStart, 0);
-    didl->addWidget(numStop, 0);
-    didl->addStretch(1);
+    QBoxLayout  *npanxxb = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    npanxxb->addWidget(npa, 0);
+    npanxxb->addWidget(nxxLabel, 0);
+    npanxxb->addWidget(nxx, 0);
+    npanxxb->addStretch(1);
 
     QGridLayout *gl = new QGridLayout(3, 5);
-    gl->addWidget(npaLabel,             0, 0);
-    gl->addLayout(didl,                 0, 1);
-    gl->addWidget(startLabel,           1, 0);
-    gl->addWidget(rateCenterLabel,      2, 0);
-    gl->addWidget(rateCenter,           2, 1);
+    int rowNum = 0;
+    gl->addWidget(npaLabel,             rowNum, 0);
+    gl->addLayout(npanxxb,              rowNum, 1);
+    rowNum++;
+    gl->addWidget(startLabel,           rowNum, 0);
+    gl->addWidget(numStart,             rowNum, 1);
+    rowNum++;
+    gl->addWidget(endLabel,             rowNum, 0);
+    gl->addWidget(numStop,              rowNum, 1);
+    rowNum++;
+    gl->addWidget(rateCenterLabel,      rowNum, 0);
+    gl->addWidget(rateCenter,           rowNum, 1);
+    rowNum++;
 
     ml->addLayout(gl, 1);
 
@@ -140,6 +150,6 @@ DIDManagerAdd::~DIDManagerAdd()
   */
 void DIDManagerAdd::doneClicked()
 {
-    return;
+    delete this;
 }
 
