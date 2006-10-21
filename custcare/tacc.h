@@ -126,7 +126,11 @@ protected slots:
     void            updateAllMaxMailboxes();
     void            ratePlanList();
     void            billingCycleList();
+    void            vendorList();
+    void            vendorTypeList();
     void            voipAddDIDs();
+    void            voipOriginationProviderList();
+    void            manageRateCenters();
 
     void            asteriskEvent(const astEventRecord);
 

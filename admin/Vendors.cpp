@@ -121,15 +121,14 @@ void Vendors::refreshList(int)
     
     QApplication::setOverrideCursor(waitCursor);
 
-    DB.query("select InternalID, VendorID, CompanyName, Balance from Vendors order by CompanyName");
+    DB.query("select VendorID, CompanyName, Balance from Vendors order by CompanyName");
     rowcnt = DB.rowCount;
     
     while(DB.getrow()) {
         (void) new QListViewItem(list,
                                  DB.curRow["CompanyName"],
-                                 DB.curRow["VendorID"],
                                  DB.curRow["Balance"],
-                                 DB.curRow["InternalID"]
+                                 DB.curRow["VendorID"]
                                  );
     }
     
@@ -161,7 +160,7 @@ void Vendors::editVendor()
     QListViewItem   *curItem = list->currentItem();
 	if (curItem) {
 	    VendorEdit *vendEdit;
-    	vendEdit = new VendorEdit(0, "", atoi(curItem->key(3,0)));
+    	vendEdit = new VendorEdit(0, "", atoi(curItem->key(2,0)));
 	    vendEdit->show();
     	connect(vendEdit, SIGNAL(refresh(int)), SLOT(refreshList(int)));
     }

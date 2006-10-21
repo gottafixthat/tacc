@@ -23,7 +23,7 @@ public:
     (
         QWidget* parent = NULL,
         const char* name = NULL,
-        int IntID = 0
+        int vendorID = 0
     );
 
     virtual ~VendorEdit();
@@ -34,7 +34,7 @@ private slots:
 
 private:
 	VendorsDB		*vendor;
-	int				myIntID;
+	int				myVendorID;
 
 signals:
 	void			refresh(int);

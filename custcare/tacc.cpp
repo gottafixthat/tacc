@@ -68,9 +68,13 @@
 #include "MakeDeposits.h"
 #include "RatePlans.h"
 #include "BillingCycles.h"
-#include "AsteriskManager.h";
-#include "QueueMonitor.h";
-#include "DIDManager.h";
+#include "AsteriskManager.h"
+#include "QueueMonitor.h"
+#include "DIDManager.h"
+#include "OriginationProviders.h"
+#include "RateCenterManager.h"
+#include "Vendors.h"
+#include "VendorTypes.h"
 
 #include "UserPrivs.h"
 
@@ -283,6 +287,8 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     // Creat the VoIP Menu
     QPopupMenu *voipMenu = new QPopupMenu(this);
     if (isAdmin()) voipMenu->insertItem("&Add DID's", this, SLOT(voipAddDIDs()));
+    if (isAdmin()) voipMenu->insertItem("&Origination Providers", this, SLOT(voipOriginationProviderList()));
+    if (isAdmin()) voipMenu->insertItem("Manage &Rate Centers", this, SLOT(manageRateCenters()));
 
     menuBar()->insertItem("VoI&P", voipMenu);
 
@@ -316,6 +322,8 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
             otherMenu->insertItem("Package Editor", this, SLOT(packagelist()));
             otherMenu->insertItem("Login Types", this, SLOT(logintypelist()));
             otherMenu->insertItem("Rate Plans", this, SLOT(ratePlanList()));
+            otherMenu->insertItem("Vendors", this, SLOT(vendorList()));
+            otherMenu->insertItem("Vendor Types", this, SLOT(vendorTypeList()));
             adminMenu->insertSeparator();
             adminMenu->insertItem("&Other Lists", otherMenu);
         }
@@ -766,6 +774,20 @@ void CustomerCare::ratePlanList()
     rpl->refreshList(1);
 }
 
+void CustomerCare::vendorList()
+{
+    Vendors *vlist = new Vendors();
+    vlist->show();
+    vlist->refreshList(1);
+}
+
+void CustomerCare::vendorTypeList()
+{
+    VendorTypes *vtlist = new VendorTypes();
+    vtlist->show();
+    vtlist->refreshList(1);
+}
+
 void CustomerCare::billingCycleList()
 {
     BillingCycles   *bcl = new BillingCycles();
@@ -809,6 +831,18 @@ void CustomerCare::voipAddDIDs()
 {
     DIDManagerAdd *MD = new DIDManagerAdd();
     MD->show();
+}
+
+void CustomerCare::voipOriginationProviderList()
+{
+    OriginationProviders *OP = new OriginationProviders();
+    OP->show();
+}
+
+void CustomerCare::manageRateCenters()
+{
+    RateCenterManager *RCM = new RateCenterManager();
+    RCM->show();
 }
 
 /*

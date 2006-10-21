@@ -31,23 +31,22 @@ VendorEdit::VendorEdit
 (
 	QWidget* parent,
 	const char* name,
-	int	IntID
+	int	vendorID
 )
 	:
 	Inherited( parent, name )
 {
-	myIntID = IntID;
+	myVendorID = vendorID;
 	
 	vendor = new VendorsDB;
 	
-	if (myIntID) {
+	if (myVendorID) {
 		setCaption("Edit Vendor");
-		vendor->get(myIntID);
+		vendor->get(myVendorID);
 	} else {
 		setCaption("New Vendor");
 	}
 
-	vendorID->setText(vendor->getStr("VendorID"));
 	companyName->setText(vendor->getStr("CompanyName"));
 	contactName->setText(vendor->getStr("ContactName"));
 	altContact->setText(vendor->getStr("AltContact"));
@@ -64,7 +63,6 @@ VendorEdit::VendorEdit
 	active->setChecked(vendor->getInt("Active"));
 
 /*
-	vendorID->setText(vendor->VendorID);
 	companyName->setText(vendor->CompanyName);
 	contactName->setText(vendor->ContactName);
 	altContact->setText(vendor->AltContact);
@@ -97,7 +95,6 @@ VendorEdit::~VendorEdit()
 
 void VendorEdit::saveVendor()
 {
-	vendor->setValue("VendorID", vendorID->text());
 	vendor->setValue("CompanyName", companyName->text());
 	vendor->setValue("ContactName", contactName->text());
 	vendor->setValue("AltContact", altContact->text());
@@ -113,7 +110,7 @@ void VendorEdit::saveVendor()
 	vendor->setValue("CreditLimit", creditLimit->text());
 	vendor->setValue("Active", active->isChecked());
 
-	if (myIntID) { 
+	if (myVendorID) { 
 		vendor->upd();
 	} else {
 		vendor->ins();
