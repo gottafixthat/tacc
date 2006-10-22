@@ -104,7 +104,7 @@ void RateCenterManager::refreshList()
     ADB     myDB2;
     ADB     myDB3;
 
-    long    curID = 0;
+    long    curID = -1;
     // Get the ID of the currently hilighted item.
     if (rcList->currentItem() != 0) {
         QListViewItem *tmpCur = rcList->currentItem();
@@ -128,12 +128,14 @@ void RateCenterManager::refreshList()
                 myDB3.query("select City, RateCenterID from DID_Rate_Centers where Country = '%s' and State = '%s' order by City", myDB.curRow["Country"], myDB2.curRow["State"]);
                 while (myDB3.getrow()) {
                     QListViewItem *curItem = new QListViewItem(stateItem, myDB3.curRow["City"], "", "", "", myDB3.curRow["RateCenterID"]);
+                    fprintf(stderr, "Checking RateCenterID against '%ld'\n", curID); fflush(stderr);
                     if (atol(myDB3.curRow["RateCenterID"]) == curID) {
                         countryItem->setOpen(true);
                         stateItem->setOpen(true);
                         rcList->setCurrentItem(curItem);
                         rcList->ensureItemVisible(curItem);
                     }
+                    fprintf(stderr, "Done checking RateCenterID against '%ld'\n", curID); fflush(stderr);
                 }
             }
         }
