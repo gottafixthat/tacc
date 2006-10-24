@@ -129,6 +129,15 @@ void OriginationProviders::refreshList()
                     long    dAvail = 0;
                     char    typeStr[1024];
 
+                    myDB3.query("select count(DID) from DID_Inventory where CustomerID > 0 and OriginationID = %s", myDB2.curRow["OriginationID"]);
+                    myDB3.getrow();
+                    dInUse = atol(myDB3.curRow[0]);
+
+                    myDB3.query("select count(DID) from DID_Inventory where CustomerID = 0 and OriginationID = %s", myDB2.curRow["OriginationID"]);
+                    myDB3.getrow();
+                    dAvail = atol(myDB3.curRow[0]);
+                    inUse += dInUse;
+                    avail += dAvail;
 
                     sprintf(inUseStr, "%ld", dInUse);
                     sprintf(availStr, "%ld", dAvail);

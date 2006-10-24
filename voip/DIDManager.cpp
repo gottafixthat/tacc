@@ -24,6 +24,7 @@
 #include <qlayout.h>
 #include <qtimer.h>
 #include <qapplication.h>
+#include <qmessagebox.h>
 
 #include <TAA.h>
 #include "DIDManager.h"
@@ -59,6 +60,56 @@ DIDManagerAdd::DIDManagerAdd
 
     ADB     DB;
 
+    QLabel *vendorListLabel = new QLabel(this, "vendorListLabel");
+    vendorListLabel->setText("Vendor:");
+    vendorListLabel->setAlignment(Qt::AlignRight);
+
+    vendorList = new QComboBox(this, "vendorList");
+    DB.query("select Vendors.CompanyName, VoIP_Origination.OriginationID from Vendors, VoIP_Origination where Vendors.VendorID = VoIP_Origination.VendorID group by VoIP_Origination.VendorID order by Vendors.CompanyName");
+    if (DB.rowCount) while (DB.getrow()) {
+        vendorList->insertItem(DB.curRow["CompanyName"]);
+    }
+    
+    QLabel *groupListLabel = new QLabel(this, "groupListLabel");
+    groupListLabel->setText("Origination Group:");
+    groupListLabel->setAlignment(Qt::AlignRight);
+
+    groupList = new QComboBox(this, "groupList");
+    vendorSelected(vendorList->currentText());
+    connect(vendorList, SIGNAL(activated(const QString &)), this, SLOT(vendorSelected(const QString &)));
+
+    QLabel *countryListLabel = new QLabel(this, "countryListLabel");
+    countryListLabel->setText("Country:");
+    countryListLabel->setAlignment(Qt::AlignRight);
+
+    countryList = new QComboBox(this, "countryList");
+    DB.query("select distinct(Country) from DID_Rate_Centers order by Country");
+    if (DB.rowCount) while (DB.getrow()) {
+        countryList->insertItem(DB.curRow["Country"]);
+    }
+    connect(countryList, SIGNAL(activated(const QString &)), this, SLOT(countrySelected(const QString &)));
+
+    QLabel *stateListLabel = new QLabel(this, "stateListLabel");
+    stateListLabel->setText("State:");
+    stateListLabel->setAlignment(Qt::AlignRight);
+
+    stateList = new QComboBox(this, "stateList");
+    DB.query("select distinct(State) from DID_Rate_Centers where Country = '%s' order by State", (const char *)countryList->currentText());
+    if (DB.rowCount) while (DB.getrow()) {
+        stateList->insertItem(DB.curRow["State"]);
+    }
+    connect(stateList, SIGNAL(activated(const QString &)), this, SLOT(stateSelected(const QString &)));
+
+    QLabel *cityListLabel = new QLabel(this, "cityListLabel");
+    cityListLabel->setText("City:");
+    cityListLabel->setAlignment(Qt::AlignRight);
+
+    cityList = new QComboBox(this, "cityList");
+    DB.query("select distinct(City) from DID_Rate_Centers where Country = '%s' and State = '%s' order by City", (const char *)countryList->currentText(), (const char *)stateList->currentText());
+    if (DB.rowCount) while (DB.getrow()) {
+        cityList->insertItem(DB.curRow["City"]);
+    }
+
     QLabel *npaLabel = new QLabel(this, "npaLabel");
     npaLabel->setText("NPA/NXX:");
     npaLabel->setAlignment(AlignRight|AlignVCenter);
@@ -93,43 +144,19 @@ DIDManagerAdd::DIDManagerAdd
     numStop->setMaxLength(4);
     numStop->setMaximumWidth(numStop->minimumSizeHint().width() * 2);
 
-    QLabel *countryListLabel = new QLabel(this, "countryListLabel");
-    countryListLabel->setText("Country:");
-    countryListLabel->setAlignment(Qt::AlignRight);
+    QLabel *reservedLabel = new QLabel(this, "reservedLabel");
+    reservedLabel->setText("Reserve Status:");
 
-    countryList = new QComboBox(this, "countryList");
-    DB.query("select distinct(Country) from DID_Rate_Centers order by Country");
-    if (DB.rowCount) while (DB.getrow()) {
-        countryList->insertItem(DB.curRow["Country"]);
-    }
-    connect(countryList, SIGNAL(activated(const QString &)), this, SLOT(countrySelected(const QString &)));
-
-    QLabel *stateListLabel = new QLabel(this, "stateListLabel");
-    stateListLabel->setText("State:");
-    stateListLabel->setAlignment(Qt::AlignRight);
-
-    stateList = new QComboBox(this, "stateList");
-    DB.query("select distinct(State) from DID_Rate_Centers where Country = '%s' order by State", (const char *)countryList->currentText());
-    if (DB.rowCount) while (DB.getrow()) {
-        stateList->insertItem(DB.curRow["State"]);
-    }
-    connect(stateList, SIGNAL(activated(const QString &)), this, SLOT(stateSelected(const QString &)));
-
-    QLabel *cityListLabel = new QLabel(this, "cityListLabel");
-    cityListLabel->setText("City:");
-    cityListLabel->setAlignment(Qt::AlignRight);
-
-    cityList = new QComboBox(this, "cityList");
-    DB.query("select distinct(City) from DID_Rate_Centers where Country = '%s' and State = '%s' order by City", (const char *)countryList->currentText(), (const char *)stateList->currentText());
-    if (DB.rowCount) while (DB.getrow()) {
-        cityList->insertItem(DB.curRow["City"]);
-    }
-    connect(cityList, SIGNAL(activated(const QString &)), this, SLOT(citySelected(const QString &)));
+    reserved = new QComboBox(this, "reserved");
+    reserved->insertItem("Not Reserved");
+    reserved->insertItem("Reserved - Manual Selection Only");
 
     messageArea = new QLabel(this, "messageArea");
 
     addButton = new QPushButton(this);
     addButton->setText("&Add");
+    connect(addButton, SIGNAL(clicked()), this, SLOT(addClicked()));
+
     doneButton = new QPushButton(this);
     doneButton->setText("&Done");
     connect(doneButton, SIGNAL(clicked()), this, SLOT(doneClicked()));
@@ -145,14 +172,11 @@ DIDManagerAdd::DIDManagerAdd
 
     QGridLayout *gl = new QGridLayout(3, 5);
     int rowNum = 0;
-    gl->addWidget(npaLabel,             rowNum, 0);
-    gl->addLayout(npanxxb,              rowNum, 1);
+    gl->addWidget(vendorListLabel,      rowNum, 0);
+    gl->addWidget(vendorList,           rowNum, 1);
     rowNum++;
-    gl->addWidget(startLabel,           rowNum, 0);
-    gl->addWidget(numStart,             rowNum, 1);
-    rowNum++;
-    gl->addWidget(endLabel,             rowNum, 0);
-    gl->addWidget(numStop,              rowNum, 1);
+    gl->addWidget(groupListLabel,       rowNum, 0);
+    gl->addWidget(groupList,            rowNum, 1);
     rowNum++;
     gl->addWidget(countryListLabel,     rowNum, 0);
     gl->addWidget(countryList,          rowNum, 1);
@@ -162,6 +186,18 @@ DIDManagerAdd::DIDManagerAdd
     rowNum++;
     gl->addWidget(cityListLabel,        rowNum, 0);
     gl->addWidget(cityList,             rowNum, 1);
+    rowNum++;
+    gl->addWidget(npaLabel,             rowNum, 0);
+    gl->addLayout(npanxxb,              rowNum, 1);
+    rowNum++;
+    gl->addWidget(startLabel,           rowNum, 0);
+    gl->addWidget(numStart,             rowNum, 1);
+    rowNum++;
+    gl->addWidget(endLabel,             rowNum, 0);
+    gl->addWidget(numStop,              rowNum, 1);
+    rowNum++;
+    gl->addWidget(reservedLabel,        rowNum, 0);
+    gl->addWidget(reserved,             rowNum, 1);
     rowNum++;
 
     ml->addLayout(gl, 1);
@@ -175,6 +211,7 @@ DIDManagerAdd::DIDManagerAdd
 
     ml->addLayout(bl, 0);
 
+    errorBoxText = "Unable to save DIDs";
     QApplication::restoreOverrideCursor();
 }
 
@@ -186,12 +223,29 @@ DIDManagerAdd::~DIDManagerAdd()
 }
 
 /**
-  * doneClicked - Gets called when the user hits the "Done" button.
+  * vendorSelected - When the user selects a vendor from the list, we need
+  * to refresh the origination group list to show the ones associated
+  * with this vendor.
   */
-void DIDManagerAdd::doneClicked()
+void DIDManagerAdd::vendorSelected(const QString &newVendor)
 {
-    delete this;
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    ADB     DB;
+    long    vendorID;
+    groupList->clear();
+    // Get the Vendor ID
+    DB.query("select VendorID from Vendors where CompanyName = '%s'", (const char *)newVendor);
+    if (DB.rowCount) {
+        DB.getrow();
+        vendorID = atol(DB.curRow["VendorID"]);
+        DB.query("select Tag from VoIP_Origination where VendorID = %ld order by Tag", vendorID);
+        if (DB.rowCount) while (DB.getrow()) {
+            groupList->insertItem(DB.curRow["Tag"]);
+        }
+    }
+    QApplication::restoreOverrideCursor();
 }
+
 
 /**
   * countrySelected - When the customer picks a country, we need to fill in
@@ -228,4 +282,158 @@ void DIDManagerAdd::stateSelected(const QString &newState)
     QApplication::restoreOverrideCursor();
 }
 
+
+/**
+  * doneClicked - Gets called when the user hits the "Done" button.
+  */
+void DIDManagerAdd::doneClicked()
+{
+    delete this;
+}
+
+/**
+  * addClicked - Validates the form information and adds the DID's into
+  * the database.
+  */
+void DIDManagerAdd::addClicked()
+{
+    // Validate the form data.  We have mostly combo boxes, so validation
+    // is mostly making sure that the NPA/NXX and number ranges are valid.
+    // We also need to make sure that we haven't added any of these DID's
+    // before.
+    int     numNPA = 0;
+    int     numNXX = 0;
+    int     rangeStart = 0;
+    int     rangeStop = 0;
+
+    if (!npa->hasAcceptableInput()) {
+        QMessageBox::critical(this, errorBoxText, "The NPA is not valid.");
+        npa->setFocus();
+        return;
+    } else {
+        numNPA = npa->text().toInt();
+        if (numNPA < 100 || numNPA > 999) {
+            QMessageBox::critical(this, errorBoxText, "The NPA is not valid.");
+            npa->setFocus();
+            return;
+        }
+    }
+
+    if (!nxx->hasAcceptableInput()) {
+        QMessageBox::critical(this, errorBoxText, "The NXX is not valid.");
+        nxx->setFocus();
+        return;
+    } else {
+        numNXX = nxx->text().toInt();
+        if (numNXX < 100 || numNXX > 999) {
+            QMessageBox::critical(this, errorBoxText, "The NXX is not valid.");
+            nxx->setFocus();
+            return;
+        }
+    }
+
+    if (!numStart->hasAcceptableInput()) {
+        QMessageBox::critical(this, errorBoxText, "The starting number is not valid.");
+        numStart->setFocus();
+        return;
+    } else {
+        rangeStart = numStart->text().toInt();
+        if (rangeStart < 0 || rangeStart > 9999) {
+            QMessageBox::critical(this, errorBoxText, "The starting number is not valid.");
+            numStart->setFocus();
+            return;
+        }
+    }
+
+    if (!numStop->hasAcceptableInput()) {
+        QMessageBox::critical(this, errorBoxText, "The ending number is not valid.");
+        numStop->setFocus();
+        return;
+    } else {
+        rangeStop = numStop->text().toInt();
+        if (rangeStart < 0 || rangeStart > 9999) {
+            QMessageBox::critical(this, errorBoxText, "The ending number is not valid.");
+            numStop->setFocus();
+            return;
+        }
+    }
+
+    if (rangeStop < rangeStart) {
+        QMessageBox::critical(this, errorBoxText, "The starting number is greater than the ending number.");
+        numStart->setFocus();
+        return;
+    }
+
+    // If we made to this point, we have validated that all of the inputs are
+    // correct.  Now make sure we don't have any overlapping numbers.
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    ADB     DB;
+    char    didStr[1024];
+    char    startDIDStr[1024];
+    char    stopDIDStr[1024];
+    sprintf(startDIDStr, "%03d%03d%04d", numNPA, numNXX, rangeStart);
+    sprintf(stopDIDStr,  "%03d%03d%04d", numNPA, numNXX, rangeStop);
+    long    matchCount = 0;
+    DB.query("select count(DID) from DID_Inventory where DID >= %s and DID <= %s", startDIDStr, stopDIDStr);
+    DB.getrow();
+    QApplication::restoreOverrideCursor();
+    matchCount = atol(DB.curRow[0]);
+    if (matchCount > 0) {
+        char    tmpStr[1024];
+        sprintf(tmpStr, "Duplicate DIDs already found in inventory.\n%ld DIDs match.", matchCount);
+        QMessageBox::critical(this, errorBoxText, tmpStr);
+        return;
+    }
+
+    // We made it to this point, get the supporting ID's from the rate centers
+    // and origination provider tables and then save the DIDs one by one.
+    long    rateCenterID = 0;
+    long    originationID = 0;
+    long    vendorID = 0;
+
+    // Get the Origination ID.
+    DB.query("select VendorID from Vendors where CompanyName = '%s'", (const char *)vendorList->currentText());
+    if (!DB.rowCount) {
+        QMessageBox::critical(this, errorBoxText, "Unable to locate the vendor for this origination group.\n\nPerhaps add an origination group?");
+        return;
+    }
+    DB.getrow();
+    vendorID = atol(DB.curRow["VendorID"]);
+
+    DB.query("select OriginationID from VoIP_Origination where VendorID = %ld and Tag = '%s'", vendorID, (const char *)groupList->currentText());
+    if (!DB.rowCount) {
+        QMessageBox::critical(this, errorBoxText, "Unable to locate the origination group.\n\nPerhaps add an origination group first?");
+        return;
+    }
+    DB.getrow();
+    originationID = atol(DB.curRow["OriginationID"]);
+
+    // Get the rate center ID
+    DB.query("select RateCenterID from DID_Rate_Centers where Country = '%s' and State = '%s' and City = '%s'", (const char *)countryList->currentText(), (const char *)stateList->currentText(), (const char *)cityList->currentText());
+    if (!DB.rowCount) {
+        QMessageBox::critical(this, errorBoxText, "Unable to locate the rate center.\n\nPerhaps add a rate center first?");
+        return;
+    }
+    DB.getrow();
+    rateCenterID = atol(DB.curRow["RateCenterID"]);
+
+    // Okay, we have everything we need now.  Walk through the
+    // list one by one and add them in.
+    QApplication::setOverrideCursor(Qt::waitCursor);
+    emit(setStatus("Adding DIDs..."));
+    int curCount = 0;
+    int endCount = rangeStop - rangeStart;
+    for (long i = rangeStart; i < rangeStop + 1; i++) {
+        sprintf(didStr, "%03d%03d%04d", numNPA, numNXX, i);
+        DB.dbcmd("insert into DID_Inventory (DID, OriginationID, RateCenterID, Reserved, AddDate) values (%s, %ld, %ld, %d, NOW())",
+                didStr, originationID, rateCenterID, reserved->currentItem());
+        emit(setProgress(++curCount, endCount));
+    }
+
+    emit(setStatus(""));
+    QApplication::restoreOverrideCursor();
+
+    delete this;
+
+}
 

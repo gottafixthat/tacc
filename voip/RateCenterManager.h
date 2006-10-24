@@ -46,15 +46,15 @@ public:
     virtual ~RateCenterManager();
 
 public slots:
-    virtual void    refreshList();
     virtual void    refreshRateCenter(long);
 
 protected slots:
-    virtual void QCloseEvent(QEvent *)      { closeClicked(); }
-    virtual void addClicked();
-    virtual void editClicked();
-    virtual void deleteClicked();
-    virtual void closeClicked();
+    virtual void    refreshRateCenters();
+    virtual void    QCloseEvent(QEvent *)      { closeClicked(); }
+    virtual void    addClicked();
+    virtual void    editClicked();
+    virtual void    deleteClicked();
+    virtual void    closeClicked();
 
 protected:
     QListView       *rcList;
@@ -102,8 +102,6 @@ protected:
     QLineEdit       *city;
     QPushButton     *saveButton;
     QPushButton     *cancelButton;
-
-
 };
 
 #endif // RateCenterManager_included
