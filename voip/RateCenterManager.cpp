@@ -13,6 +13,11 @@
 **  or in part by any means, electronic or otherwise, without the express
 **  written consent of Avvanta Communications and R. Marc Lewis.
 ***************************************************************************
+** ToDo:
+**  - The refreshRateCenters is horribly inefficient.  Each time a new
+**    rate center is added it clears the list and starts over.  It should
+**    scan throught the list for changes updating list items as needed.
+**
 */
 
 #include <stdio.h>
@@ -87,7 +92,7 @@ RateCenterManager::RateCenterManager
 
     ml->addLayout(bl, 0);
 
-    refreshList();
+    refreshRateCenters();
 }
 
 RateCenterManager::~RateCenterManager()
@@ -95,19 +100,28 @@ RateCenterManager::~RateCenterManager()
 }
 
 /**
-  * refreshList - Refreshes the rate center list.
+  * refreshRateCenters - Refreshes the rate center list.
   */
 
-void RateCenterManager::refreshList()
+void RateCenterManager::refreshRateCenters()
 {
     ADB     myDB;
     ADB     myDB2;
     ADB     myDB3;
+    ADB     myDB4;
+    char    availStr[1024];
+    char    activeStr[1024];
+    char    totalStr[1024];
+    long    avail;
+    long    active;
+    long    total;
+    QListViewItem   *curItem;
 
     long    curID = -1;
     // Get the ID of the currently hilighted item.
-    if (rcList->currentItem() != 0) {
-        QListViewItem *tmpCur = rcList->currentItem();
+    QListViewItem   *tmpCur;
+    tmpCur = rcList->currentItem();
+    if (tmpCur) {
         if (strlen(tmpCur->key(idColumn,0))) {
             curID = atol(tmpCur->key(idColumn,0));
         }
@@ -120,24 +134,69 @@ void RateCenterManager::refreshList()
     if (myDB.rowCount) {
         // Walk through the list of countries and get the states
         while(myDB.getrow()) {
-            QListViewItem   *countryItem = new QListViewItem(rcList, myDB.curRow["Country"]);
+            QListViewItem   *countryItem = new QListViewItem(rcList, myDB.curRow["Country"], "", "", "", "0");
             myDB2.query("select distinct(State) from DID_Rate_Centers where Country = '%s' order by State", myDB.curRow["Country"]);
             // No need to check if they exist since a state can't exist without a country.
             while (myDB2.getrow()) {
-                QListViewItem   *stateItem = new QListViewItem(countryItem, myDB2.curRow["State"]);
+                QListViewItem   *stateItem = new QListViewItem(countryItem, myDB2.curRow["State"], "", "", "", "0");
                 myDB3.query("select City, RateCenterID from DID_Rate_Centers where Country = '%s' and State = '%s' order by City", myDB.curRow["Country"], myDB2.curRow["State"]);
                 while (myDB3.getrow()) {
-                    QListViewItem *curItem = new QListViewItem(stateItem, myDB3.curRow["City"], "", "", "", myDB3.curRow["RateCenterID"]);
-                    fprintf(stderr, "Checking RateCenterID against '%ld'\n", curID); fflush(stderr);
+                    myDB4.query("select count(DID) from DID_Inventory where RateCenterID = %s", myDB3.curRow["RateCenterID"]);
+                    myDB4.getrow();
+                    total = atol(myDB4.curRow[0]);
+                    myDB4.query("select count(DID) from DID_Inventory where RateCenterID = %s and CustomerID > 0", myDB3.curRow["RateCenterID"]);
+                    myDB4.getrow();
+                    active = atol(myDB4.curRow[0]);
+                    myDB4.query("select count(DID) from DID_Inventory where RateCenterID = %s and CustomerID = 0 and Reserved = 0", myDB3.curRow["RateCenterID"]);
+                    myDB4.getrow();
+                    avail = atol(myDB4.curRow[0]);
+                    sprintf(availStr, "%ld", avail);
+                    sprintf(activeStr, "%ld", active);
+                    sprintf(totalStr, "%ld", total);
+
+                    QListViewItem *curItem = new QListViewItem(stateItem, myDB3.curRow["City"], activeStr, availStr, totalStr, myDB3.curRow["RateCenterID"]);
                     if (atol(myDB3.curRow["RateCenterID"]) == curID) {
                         countryItem->setOpen(true);
                         stateItem->setOpen(true);
                         rcList->setCurrentItem(curItem);
                         rcList->ensureItemVisible(curItem);
                     }
-                    fprintf(stderr, "Done checking RateCenterID against '%ld'\n", curID); fflush(stderr);
                 }
+                // Count the children of this item and total up the DID counts
+                curItem = stateItem->firstChild();
+                active = 0;
+                avail  = 0;
+                total  = 0;
+                while (curItem) {
+                    active += atol(curItem->key(activeColumn, 0));
+                    avail  += atol(curItem->key(availColumn, 0));
+                    total  += atol(curItem->key(totalColumn, 0));
+                    curItem = curItem->nextSibling();
+                }
+                sprintf(availStr, "%ld", avail);
+                sprintf(activeStr, "%ld", active);
+                sprintf(totalStr, "%ld", total);
+                stateItem->setText(activeColumn, activeStr);
+                stateItem->setText(availColumn,  availStr);
+                stateItem->setText(totalColumn,  totalStr);
             }
+            // Count the children of this item and total up the DID counts
+            curItem = countryItem->firstChild();
+            active = 0;
+            avail  = 0;
+            total  = 0;
+            while (curItem) {
+                active += atol(curItem->key(activeColumn, 0));
+                avail  += atol(curItem->key(availColumn, 0));
+                total  += atol(curItem->key(totalColumn, 0));
+                curItem = curItem->nextSibling();
+            }
+            sprintf(availStr, "%ld", avail);
+            sprintf(activeStr, "%ld", active);
+            sprintf(totalStr, "%ld", total);
+            countryItem->setText(activeColumn, activeStr);
+            countryItem->setText(availColumn,  availStr);
+            countryItem->setText(totalColumn,  totalStr);
         }
     }
 
@@ -152,7 +211,7 @@ void RateCenterManager::refreshList()
   */
 void RateCenterManager::refreshRateCenter(long rateCenterID)
 {
-    refreshList();
+    refreshRateCenters();
 }
 
 /**

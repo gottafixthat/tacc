@@ -1,0 +1,35 @@
+# v41 to v47
+
+alter table Vendors drop column VendorID;
+alter table Vendors change column InternalID VendorID bigint(21) NOT NULL auto_increment;
+CREATE TABLE VoIP_Origination (
+    OriginationID       bigint(21) NOT NULL auto_increment,
+    VendorID            bigint(21) NOT NULL DEFAULT '0',
+    Tag                 varchar(64) NOT NULL DEFAULT '',
+    DeliveryMethod      tinyint NOT NULL DEFAULT '0',
+    DBHost              varchar(64) NOT NULL DEFAULT '',
+    DBName              varchar(64) NOT NULL DEFAULT '',
+    DBUser              varchar(64) NOT NULL DEFAULT '',
+    DBPass              varchar(64) NOT NULL DEFAULT '',
+    PRIMARY KEY(OriginationID)
+);
+CREATE TABLE DID_Rate_Centers (
+    RateCenterID        bigint(21) NOT NULL auto_increment,
+    City                varchar(64) NOT NULL DEFAULT '',
+    State               varchar(64) NOT NULL DEFAULT '',
+    Country             varchar(64) NOT NULL DEFAULT 'US',
+    PRIMARY KEY(RateCenterID),
+    INDEX RateCenterIDX(City,State,Country)
+);
+CREATE TABLE DID_Inventory (
+    DID                 bigint(21) NOT NULL DEFAULT '0',
+    OriginationID       bigint(21) NOT NULL DEFAULT '0',
+    RateCenterID        bigint(21) NOT NULL DEFAULT '0',
+    CustomerID          bigint(21) NOT NULL DEFAULT '0',
+    Reserved            int(11) NOT NULL default '0',
+    ReserveDate         date NOT NULL DEFAULT '0000-00-00',
+    AssignDate          datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    AddDate             datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    PRIMARY KEY(DID)
+);
+
