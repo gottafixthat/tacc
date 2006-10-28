@@ -41,6 +41,7 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			loadKey.cpp\
 			DNSTemplatePicker.cpp\
 			DNSManager.cpp\
+			ServerGroups.cpp\
 			CollReport.cpp
 
 # HEADERS =	../include/BlargDB.h
@@ -57,7 +58,8 @@ SRCMETA =	moc_TAAWidget.cpp\
 			moc_RListViewItem.cpp\
 			moc_ColorListViewItem.cpp\
 			moc_DNSTemplatePicker.cpp\
-			moc_DNSManager.cpp
+			moc_DNSManager.cpp\
+			moc_ServerGroups.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 
@@ -137,6 +139,9 @@ moc_DNSTemplatePicker.cpp: DNSTemplatePicker.h
 
 moc_DNSManager.cpp: ../include/DNSManager.h
 	$(MOC) ../include/DNSManager.h -o moc_DNSManager.cpp
+
+moc_ServerGroups.cpp: ServerGroups.h
+	$(MOC) ServerGroups.h -o moc_ServerGroups.cpp
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.

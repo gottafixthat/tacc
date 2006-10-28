@@ -40,6 +40,7 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		Tab_Domains.cpp\
 		DomainAliases.cpp\
 		Tab_Notes.cpp\
+		Tab_VoIP.cpp\
 		Tab_Accounts.cpp Tab_AccountsData.cpp\
 		LoginEdit.cpp\
 		NoteEdit.cpp\
@@ -78,6 +79,7 @@ HEADERS =	Customers.h NewCustomer.h\
 		Tab_Domains.h\
 		DomainAliases.h\
 		Tab_Notes.h\
+		Tab_VoIP.h\
 		Tab_Accounts.h Tab_AccountsData.h\
 		LoginEdit.h\
 		NoteEdit.h\
@@ -118,6 +120,7 @@ SRCMETA =	moc_Customers.cpp \
 		moc_Tab_Domains.cpp\
 		moc_DomainAliases.cpp\
 		moc_Tab_Notes.cpp\
+		moc_Tab_VoIP.cpp\
 		moc_Tab_Accounts.cpp moc_Tab_AccountsData.cpp\
 		moc_LoginEdit.cpp\
 		moc_NoteEdit.cpp\
@@ -239,6 +242,9 @@ moc_DomainAliases.cpp: DomainAliases.h
 
 moc_Tab_Notes.cpp: Tab_Notes.h
 	$(MOC) Tab_Notes.h -o moc_Tab_Notes.cpp
+
+moc_Tab_VoIP.cpp: Tab_VoIP.h
+	$(MOC) Tab_VoIP.h -o moc_Tab_VoIP.cpp
 
 moc_Tab_Accounts.cpp: Tab_Accounts.h
 	$(MOC) Tab_Accounts.h -o moc_Tab_Accounts.cpp

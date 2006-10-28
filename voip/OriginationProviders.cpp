@@ -266,37 +266,15 @@ OriginationProviderEditor::OriginationProviderEditor
     deliveryMethod->insertItem("SIP");
     deliveryMethod->insertItem("PRI");
 
-    QLabel *databaseHostLabel = new QLabel(this, "databaseHostLabel");
-    databaseHostLabel->setText("Database Host:");
-    databaseHostLabel->setAlignment(Qt::AlignRight);
+    QLabel *serverGroupLabel = new QLabel(this, "serverGroupLabel");
+    serverGroupLabel->setText("Server Group:");
+    serverGroupLabel->setAlignment(Qt::AlignRight);
 
-    databaseHost = new QLineEdit(this, "databaseHost");
-
-    QLabel *databaseNameLabel = new QLabel(this, "databaseNameLabel");
-    databaseNameLabel->setText("Database Name:");
-    databaseNameLabel->setAlignment(Qt::AlignRight);
-
-    databaseName = new QLineEdit(this, "databaseName");
-
-    QLabel *databaseUserLabel = new QLabel(this, "databaseUserLabel");
-    databaseUserLabel->setText("Database User:");
-    databaseUserLabel->setAlignment(Qt::AlignRight);
-
-    databaseUser = new QLineEdit(this, "databaseUser");
-
-    QLabel *databasePass1Label = new QLabel(this, "databasePass1Label");
-    databasePass1Label->setText("Database Password:");
-    databasePass1Label->setAlignment(Qt::AlignRight);
-
-    databasePass1 = new QLineEdit(this, "databasePass1");
-    databasePass1->setEchoMode(QLineEdit::Password);
-
-    QLabel *databasePass2Label = new QLabel(this, "databasePass2Label");
-    databasePass2Label->setText("Verify Password:");
-    databasePass2Label->setAlignment(Qt::AlignRight);
-
-    databasePass2 = new QLineEdit(this, "databasePass2");
-    databasePass2->setEchoMode(QLineEdit::Password);
+    serverGroup = new QComboBox(this, "serverGroup");
+    DB.query("select ServerGroup from ServerGroups order by ServerGroup");
+    if (DB.rowCount) while (DB.getrow()) {
+        serverGroup->insertItem(DB.curRow["ServerGroup"]);
+    }
 
     saveButton = new QPushButton(this, "saveButton");
     saveButton->setText("&Save");
@@ -319,20 +297,8 @@ OriginationProviderEditor::OriginationProviderEditor
     gl->addWidget(deliveryMethodLabel,      curRow, 0);
     gl->addWidget(deliveryMethod,           curRow, 1);
     curRow++;
-    gl->addWidget(databaseHostLabel,        curRow, 0);
-    gl->addWidget(databaseHost,             curRow, 1);
-    curRow++;
-    gl->addWidget(databaseNameLabel,        curRow, 0);
-    gl->addWidget(databaseName,             curRow, 1);
-    curRow++;
-    gl->addWidget(databaseUserLabel,        curRow, 0);
-    gl->addWidget(databaseUser,             curRow, 1);
-    curRow++;
-    gl->addWidget(databasePass1Label,       curRow, 0);
-    gl->addWidget(databasePass1,            curRow, 1);
-    curRow++;
-    gl->addWidget(databasePass2Label,       curRow, 0);
-    gl->addWidget(databasePass2,            curRow, 1);
+    gl->addWidget(serverGroupLabel,        curRow, 0);
+    gl->addWidget(serverGroup,             curRow, 1);
     curRow++;
 
     ml->addLayout(gl, 0);
@@ -376,11 +342,13 @@ int OriginationProviderEditor::setProviderID(long newID)
 
         tagLine->setText(DB.getStr("Tag"));
         deliveryMethod->setCurrentItem(atoi(DB.getStr("DeliveryMethod")));
-        databaseHost->setText(DB.getStr("DBHost"));
-        databaseName->setText(DB.getStr("DBName"));
-        databaseUser->setText(DB.getStr("DBUser"));
-        databasePass1->setText(DB.getStr("DBPass"));
-        databasePass2->setText(DB.getStr("DBPass"));
+
+        // Get the server group
+        myDB.query("select ServerGroup from ServerGroups where ServerGroupID = %ld", DB.getLong("ServerGroupID"));
+        if (myDB.rowCount) {
+            myDB.getrow();
+            serverGroup->setCurrentText(myDB.curRow["ServerGroup"]);
+        }
 
         retVal = 1;
         originationID = newID;
@@ -398,6 +366,7 @@ void OriginationProviderEditor::saveClicked()
     // Validate the form data.
     ADB     DB;
     long    vendorID = 0;
+    long    serverGroupID = 0;
 
     // Get the vendor
     DB.query("select VendorID from Vendors where CompanyName = '%s'", (const char *)vendorList->currentText());
@@ -413,46 +382,21 @@ void OriginationProviderEditor::saveClicked()
         QMessageBox::critical(this, "Unable to save Provider", "Tag line must be between 2 and 64 characters long.");
         return;
     }
+
     DB.query("select OriginationID from VoIP_Origination where Tag = '%s' and OriginationID <> %ld", (const char *)tagLine->text(), originationID);
     if (DB.rowCount) {
         QMessageBox::critical(this, "Unable to save Provider", "Tag lines must be unique.");
         return;
     }
 
-    // Validate the database host
-    if (databaseHost->text().length() < 2 || databaseHost->text().length() > 64) {
-        QMessageBox::critical(this, "Unable to save Provider", "Database host name must be between 2 and 64 characters long.");
+    // Get the server group, and make sure its valid.
+    DB.query("select ServerGroupID from ServerGroups where ServerGroup = '%s'", (const char *)serverGroup->currentText());
+    if (!DB.rowCount) {
+        QMessageBox::critical(this, "Unable to save Provider", "No server group could be found for this provider.");
         return;
     }
-
-    if (databaseName->text().length() < 2 || databaseName->text().length() > 64) {
-        QMessageBox::critical(this, "Unable to save Provider", "Database name must be between 2 and 64 characters long.");
-        return;
-    }
-
-    if (databaseUser->text().length() < 2 || databaseUser->text().length() > 64) {
-        QMessageBox::critical(this, "Unable to save Provider", "Database user must be between 2 and 64 characters long.");
-        return;
-    }
-
-    if (databasePass1->text().length() < 2 || databasePass1->text().length() > 64) {
-        QMessageBox::critical(this, "Unable to save Provider", "Database password must be between 2 and 64 characters long.");
-        return;
-    }
-
-    if (strcmp(databasePass1->text(), databasePass2->text())) {
-        QMessageBox::critical(this, "Unable to save Provider", "Database passwords do not match.");
-        return;
-    }
-
-    // Try connecting to the database they specified, and if we can't, give them a warning
-    // but save anyway.
-    QApplication::setOverrideCursor(Qt::waitCursor);
-    ADB     tmpDB((const char *)databaseName->text(), (const char *)databaseUser->text(), (const char *)databasePass1->text(), (const char *)databaseHost->text());
-    QApplication::restoreOverrideCursor();
-    if (!tmpDB.Connected()) {
-        QMessageBox::warning(this, "Database Connection Problem", "Warning:  Unable to connect to the specified database.");
-    }
+    DB.getrow();
+    serverGroupID = atol(DB.curRow["ServerGroupID"]);
 
     // Now check to see if we are updating or adding.
     ADBTable    opDB("VoIP_Origination");
@@ -463,10 +407,7 @@ void OriginationProviderEditor::saveClicked()
     opDB.setValue("VendorID",       vendorID);
     opDB.setValue("Tag",            (const char *)tagLine->text());
     opDB.setValue("DeliveryMethod", deliveryMethod->currentItem());
-    opDB.setValue("DBHost",         (const char *)databaseHost->text());
-    opDB.setValue("DBName",         (const char *)databaseName->text());
-    opDB.setValue("DBUser",         (const char *)databaseUser->text());
-    opDB.setValue("DBPass",         (const char *)databasePass1->text());
+    opDB.setValue("ServerGroupID",  serverGroupID);
 
     if (originationID) {
         opDB.upd();

@@ -150,6 +150,15 @@ DIDManagerAdd::DIDManagerAdd
     reserved = new QComboBox(this, "reserved");
     reserved->insertItem("Not Reserved");
     reserved->insertItem("Reserved - Manual Selection Only");
+    reserved->insertItem("Reserved Until Specified Date");
+
+    QLabel *reserveDateLabel = new QLabel(this, "reserveDateLabel");
+    reserveDateLabel->setText("Reserve Date:");
+
+    reserveDate = new QDateEdit(this);
+    reserveDate->setDate(QDate::currentDate().addDays(90));
+    reserveDate->setEnabled(false);
+    connect(reserved, SIGNAL(activated(int)), this, SLOT(reserveTypeChanged(int)));
 
     messageArea = new QLabel(this, "messageArea");
 
@@ -198,6 +207,9 @@ DIDManagerAdd::DIDManagerAdd
     rowNum++;
     gl->addWidget(reservedLabel,        rowNum, 0);
     gl->addWidget(reserved,             rowNum, 1);
+    rowNum++;
+    gl->addWidget(reserveDateLabel,     rowNum, 0);
+    gl->addWidget(reserveDate,          rowNum, 1);
     rowNum++;
 
     ml->addLayout(gl, 1);
@@ -282,6 +294,24 @@ void DIDManagerAdd::stateSelected(const QString &newState)
     QApplication::restoreOverrideCursor();
 }
 
+/**
+  * reserveTypeChanged - Gets called when the user changes
+  * the reserved setting on the DID's.  This enables or disables
+  * the date entry box according to how we reserve it.
+  */
+void DIDManagerAdd::reserveTypeChanged(int newReserve)
+{
+    switch (newReserve) {
+        case 0:
+        case 1:
+            reserveDate->setEnabled(false);
+            break;
+        default:
+            reserveDate->setEnabled(true);
+            break;
+    }
+}
+
 
 /**
   * doneClicked - Gets called when the user hits the "Done" button.
@@ -305,6 +335,7 @@ void DIDManagerAdd::addClicked()
     int     numNXX = 0;
     int     rangeStart = 0;
     int     rangeStop = 0;
+    char    resDateStr[1024];
 
     if (!npa->hasAcceptableInput()) {
         QMessageBox::critical(this, errorBoxText, "The NPA is not valid.");
@@ -421,12 +452,24 @@ void DIDManagerAdd::addClicked()
     // list one by one and add them in.
     QApplication::setOverrideCursor(Qt::waitCursor);
     emit(setStatus("Adding DIDs..."));
+
+    // Set the reserve date string
+    switch(reserved->currentItem()) {
+        case 0:
+        case 1:
+            strcat(resDateStr, "NOW()");
+            break;
+        default:
+            sprintf(resDateStr, "'%04d-%02d-%02d'", reserveDate->date().year(), reserveDate->date().month(), reserveDate->date().day());
+            break;
+    }
+
     int curCount = 0;
     int endCount = rangeStop - rangeStart;
     for (long i = rangeStart; i < rangeStop + 1; i++) {
         sprintf(didStr, "%03d%03d%04d", numNPA, numNXX, i);
-        DB.dbcmd("insert into DID_Inventory (DID, OriginationID, RateCenterID, Reserved, AddDate) values (%s, %ld, %ld, %d, NOW())",
-                didStr, originationID, rateCenterID, reserved->currentItem());
+        DB.dbcmd("insert into DID_Inventory (DID, OriginationID, RateCenterID, Reserved, ReserveDate, AddDate) values (%s, %ld, %ld, %d, '%s', NOW())",
+                didStr, originationID, rateCenterID, reserved->currentItem(), resDateStr);
         emit(setProgress(++curCount, endCount));
     }
 

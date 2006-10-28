@@ -35,6 +35,7 @@
 #include "CustSubscrList.h"
 #include "Tab_Logins.h"
 #include "Tab_Domains.h"
+#include "Tab_VoIP.h"
 #include "Tab_Notes.h"
 #include <TAAWidget.h>
 // #include "Tab_Accounts.h"
@@ -76,6 +77,7 @@ protected slots:
     void                raiseTab4();
     void                raiseTab5();
     void                raiseTab6();
+    void                raiseTab7();
 
 protected:
     QTabBar             *tabBar;
@@ -91,6 +93,7 @@ private:
 	CustSubscrList      *subscrsTab;
 //	Tab_Logins			*loginsTab;
 	Tab_Domains			*domainsTab;
+	Tab_VoIP 			*voipTab;
 	Tab_Notes			*notesTab;
 //	Tab_Accounts        *accountsTab;
 	long				myCustID;

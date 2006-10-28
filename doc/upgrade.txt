@@ -2,15 +2,22 @@
 
 alter table Vendors drop column VendorID;
 alter table Vendors change column InternalID VendorID bigint(21) NOT NULL auto_increment;
+CREATE TABLE ServerGroups (
+    ServerGroupID       bigint(21) NOT NULL auto_increment,
+    ServerGroup         varchar(128) NOT NULL DEFAULT '',
+    Description         varchar(255) NOT NULL DEFAULT '',
+    DBHost              varchar(64) NOT NULL DEFAULT '',
+    DBName              varchar(64) NOT NULL DEFAULT '',
+    DBUser              varchar(64) NOT NULL DEFAULT '',
+    DBPass              varchar(64) NOT NULL DEFAULT '',
+    PRIMARY KEY(ServerGroupID)
+);
 CREATE TABLE VoIP_Origination (
     OriginationID       bigint(21) NOT NULL auto_increment,
     VendorID            bigint(21) NOT NULL DEFAULT '0',
     Tag                 varchar(64) NOT NULL DEFAULT '',
     DeliveryMethod      tinyint NOT NULL DEFAULT '0',
-    DBHost              varchar(64) NOT NULL DEFAULT '',
-    DBName              varchar(64) NOT NULL DEFAULT '',
-    DBUser              varchar(64) NOT NULL DEFAULT '',
-    DBPass              varchar(64) NOT NULL DEFAULT '',
+    ServerGroupID       bigint(21) NOT NULL DEFAULT '0',
     PRIMARY KEY(OriginationID)
 );
 CREATE TABLE DID_Rate_Centers (
@@ -26,10 +33,14 @@ CREATE TABLE DID_Inventory (
     OriginationID       bigint(21) NOT NULL DEFAULT '0',
     RateCenterID        bigint(21) NOT NULL DEFAULT '0',
     CustomerID          bigint(21) NOT NULL DEFAULT '0',
-    Reserved            int(11) NOT NULL default '0',
+    LoginID             varchar(64) NOT NULL DEFAULT '',
+    Reserved            int(11) NOT NULL DEFAULT '0',
     ReserveDate         date NOT NULL DEFAULT '0000-00-00',
     AssignDate          datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    ProvisioningMethod  int(11) NOT NULL DEFAULT '0',
+    ServerGroupID       bigint(21) NOT NULL DEFAULT '0',
     AddDate             datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    PRIMARY KEY(DID)
+    PRIMARY KEY(DID),
+    INDEX CustomerIDIDX (CustomerID)
 );
 
