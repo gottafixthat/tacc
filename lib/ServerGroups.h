@@ -1,7 +1,7 @@
 /*
 ***************************************************************************
 **
-** OriginationProviders - An interface that allows an admin to maintain
+** ServerGroups - An interface that allows an admin to maintain
 ** the list of origination providers.
 **
 ***************************************************************************
@@ -16,8 +16,8 @@
 */
 
 
-#ifndef OriginationProviders_included
-#define OriginationProviders_included
+#ifndef ServerGroups_included
+#define ServerGroups_included
 
 #include "TAATools.h"
 #include "TAAWidget.h"
@@ -33,21 +33,21 @@
 #include <qpopupmenu.h>
 #include <qsqldatabase.h>
 
-class OriginationProviders : public TAAWidget
+class ServerGroups : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    OriginationProviders(
+    ServerGroups(
         QWidget *parent = NULL,
         const char *name = NULL );
 
-    virtual ~OriginationProviders();
+    virtual ~ServerGroups();
 
 public slots:
     virtual void    refreshList();
-    virtual void    refreshProvider(long);
+    virtual void    refreshServerGroup(long);
 
 protected slots:
     virtual void QCloseEvent(QEvent *)      { closeClicked(); }
@@ -57,7 +57,7 @@ protected slots:
     virtual void closeClicked();
 
 protected:
-    QListView       *opList;
+    QListView       *sgList;
     QPushButton     *addButton;
     QPushButton     *editButton;
     QPushButton     *deleteButton;
@@ -66,30 +66,27 @@ protected:
     QSqlDatabase    *myDB2;
 
     // Things to mark the columns in the list view
-    int             activeColumn;
-    int             availColumn;
-    int             totalColumn;
     int             idColumn;
 
 };
 
 
-class OriginationProviderEditor : public TAAWidget
+class ServerGroupEditor : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    OriginationProviderEditor(
+    ServerGroupEditor(
         QWidget *parent = NULL,
         const char *name = NULL );
 
-    virtual ~OriginationProviderEditor();
+    virtual ~ServerGroupEditor();
 
-    int             setProviderID(long);
+    int             setServerGroupID(long);
 
 signals:
-    void        providerSaved(long);
+    void        serverGroupSaved(long);
 
 protected slots:
     virtual void QCloseEvent(QEvent *)      { cancelClicked(); }
@@ -97,15 +94,18 @@ protected slots:
     virtual void cancelClicked();
 
 protected:
-    long            originationID;
-    QComboBox       *vendorList;
-    QLineEdit       *tagLine;
-    QComboBox       *deliveryMethod;
-    QComboBox       *serverGroup;
+    long            serverGroupID;
+    QLineEdit       *serverGroup;
+    QMultiLineEdit  *description;
+    QLineEdit       *databaseHost;
+    QLineEdit       *databaseName;
+    QLineEdit       *databaseUser;
+    QLineEdit       *databasePass1;
+    QLineEdit       *databasePass2;
     QPushButton     *saveButton;
     QPushButton     *cancelButton;
 
 
 };
 
-#endif // OriginationProviders_included
+#endif // ServerGroups_included

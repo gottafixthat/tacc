@@ -28,7 +28,7 @@
 #include <qlistview.h>
 #include <qcombobox.h>
 #include <qmultilineedit.h>
-#include <calendar.h>
+#include <qdatetimeedit.h>
 #include <qtextview.h>
 #include <qpopupmenu.h>
 
@@ -97,6 +97,7 @@ protected slots:
     void         vendorSelected(const QString &);
     void         countrySelected(const QString &);
     void         stateSelected(const QString &);
+    void         reserveTypeChanged(int);
 
 protected:
     QString         errorBoxText;
@@ -110,6 +111,7 @@ protected:
     QComboBox       *stateList;
     QComboBox       *cityList;
     QComboBox       *reserved;
+    QDateEdit       *reserveDate;
     QLabel          *messageArea;
 
     QPushButton     *addButton;

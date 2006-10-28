@@ -73,6 +73,7 @@
 #include "DIDManager.h"
 #include "OriginationProviders.h"
 #include "RateCenterManager.h"
+#include "ServerGroups.h"
 #include "Vendors.h"
 #include "VendorTypes.h"
 
@@ -322,6 +323,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
             otherMenu->insertItem("Package Editor", this, SLOT(packagelist()));
             otherMenu->insertItem("Login Types", this, SLOT(logintypelist()));
             otherMenu->insertItem("Rate Plans", this, SLOT(ratePlanList()));
+            otherMenu->insertItem("Server Groups", this, SLOT(serverGroupList()));
             otherMenu->insertItem("Vendors", this, SLOT(vendorList()));
             otherMenu->insertItem("Vendor Types", this, SLOT(vendorTypeList()));
             adminMenu->insertSeparator();
@@ -774,6 +776,13 @@ void CustomerCare::ratePlanList()
     rpl->refreshList(1);
 }
 
+void CustomerCare::serverGroupList()
+{
+    ServerGroups *sgl = new ServerGroups();
+    sgl->show();
+    sgl->refreshList();
+}
+
 void CustomerCare::vendorList()
 {
     Vendors *vlist = new Vendors();
@@ -946,7 +955,6 @@ void CustomerCare::settleCCBatch()
 {
     MCVE_CONN   mcvec;
     long        mcveid;
-    long        transStat;
     long        rows;
     int         cols;
     long        totTrans = 0;
@@ -1075,7 +1083,7 @@ void CustomerCare::settleCCBatch()
         return;
     }
 
-    sprintf(tmpStr, "There are %ld transactions in %ld batches to be\nsettled for a total of $%.2f.\nAre you sure you wish to continue?", totTrans, totBatches, totAmount);
+    sprintf(tmpStr, "There are %ld transactions in %d batches to be\nsettled for a total of $%.2f.\nAre you sure you wish to continue?", totTrans, totBatches, totAmount);
     if (QMessageBox::warning(this, "Settle Credit Card Batches", tmpStr, "&Yes", "&No", 0, 1) == 1) {
         MCVE_DestroyConn(&mcvec);
         return;

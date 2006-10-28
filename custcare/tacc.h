@@ -125,6 +125,7 @@ protected slots:
     void            checkDBIntegrity();
     void            updateAllMaxMailboxes();
     void            ratePlanList();
+    void            serverGroupList();
     void            billingCycleList();
     void            vendorList();
     void            vendorTypeList();

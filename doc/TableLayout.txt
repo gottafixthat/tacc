@@ -1763,6 +1763,33 @@ CREATE TABLE AgentStatus (
 );
 
 #
+# ServerGroups - Server groups track names that are assocated with servers
+# and the databases that they use.  For example, a server group would be
+# called mail.avvanta.com which would a server type for "Email Aliases" the
+# database would be the database to connect to to manage the aliases for
+# the server group mail.avvanta.com.  In the case where a database is
+# spanned acrossed multiple servers, a replication solution will have to
+# be used and the database server here would be the master.
+#
+# ServerGroupID - Primary key, referenced by other services that need
+#   to use ServerGroups
+# ServerGroup - The name of the server group, i.e. mail.avvanta.com,
+#   sip.avvanta.com, iax.avvanta.com, etc.
+# Description - A brief description of the server group.
+# DBHost, etc. - The database server to connect to to provision the
+# service.
+CREATE TABLE ServerGroups (
+    ServerGroupID       bigint(21) NOT NULL auto_increment,
+    ServerGroup         varchar(128) NOT NULL DEFAULT '',
+    Description         varchar(255) NOT NULL DEFAULT '',
+    DBHost              varchar(64) NOT NULL DEFAULT '',
+    DBName              varchar(64) NOT NULL DEFAULT '',
+    DBUser              varchar(64) NOT NULL DEFAULT '',
+    DBPass              varchar(64) NOT NULL DEFAULT '',
+    PRIMARY KEY(ServerGroupID)
+);
+
+#
 # VoIP Services
 #
 
@@ -1784,10 +1811,7 @@ CREATE TABLE VoIP_Origination (
     VendorID            bigint(21) NOT NULL DEFAULT '0',
     Tag                 varchar(64) NOT NULL DEFAULT '',
     DeliveryMethod      tinyint NOT NULL DEFAULT '0',
-    DBHost              varchar(64) NOT NULL DEFAULT '',
-    DBName              varchar(64) NOT NULL DEFAULT '',
-    DBUser              varchar(64) NOT NULL DEFAULT '',
-    DBPass              varchar(64) NOT NULL DEFAULT '',
+    ServerGroupID       bigint(21) NOT NULL DEFAULT '0',
     PRIMARY KEY(OriginationID)
 );
 
@@ -1804,15 +1828,43 @@ CREATE TABLE DID_Rate_Centers (
 
 #
 # DID_Inventory - Tracks our DID inventory
+# DID - The actual phone number
+# OriginationID - Associated with the VoIP_Origination table, this 
+# will determine how we provision a DID.
+# RateCenterID  - Associated with the DID_Rate_Centers table, this
+# is a logical grouping of what city/state/country a DID is in.
+# CustomerID - Taken from the Customers table, this identifies
+# whether or not a DID has been assigned to a customer.
+# LoginID - From the Logins table, this is the username associated with
+# this DID assignment
+# Reserved - This is a flag that determines whether or not a DID
+# is reserved, and if so, how it is reserved.
+#   0 - Not Reserved and available for assignment
+#   1 - Reserved for manual selection only (i.e. not in a pool)
+#   2 - Reserved and scheduled to be cycled back into the pool
+# ReserveDate - This is the date that the DID is reserved until it is
+# cycled back into the general pool.  For manually selected DID's
+# it is the date that it was reserved.
+# AssignDate - The date the DID was assigned to the customer
+# ProvisioningMethod - This is a flag that determines how this customer
+# is provisioned.
+#   0 - SIP - The DID will be added to the SER/OpenSER configuration
+#   1 - IAX - The DID will be added to the Asterisk configuration
+# AddDate - The date the DID was added into our inventory.
 CREATE TABLE DID_Inventory (
     DID                 bigint(21) NOT NULL DEFAULT '0',
     OriginationID       bigint(21) NOT NULL DEFAULT '0',
     RateCenterID        bigint(21) NOT NULL DEFAULT '0',
     CustomerID          bigint(21) NOT NULL DEFAULT '0',
-    Reserved            int(11) NOT NULL default '0',
+    LoginID             varchar(64) NOT NULL DEFAULT '',
+    Reserved            int(11) NOT NULL DEFAULT '0',
     ReserveDate         date NOT NULL DEFAULT '0000-00-00',
     AssignDate          datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+    ProvisioningMethod  int(11) NOT NULL DEFAULT '0',
+    ServerGroupID       bigint(21) NOT NULL DEFAULT '0',
     AddDate             datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-    PRIMARY KEY(DID)
+    PRIMARY KEY(DID),
+    INDEX CustomerIDIDX (CustomerID)
 );
+
 

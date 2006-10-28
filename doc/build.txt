@@ -1,0 +1,11 @@
+
+In order to build Total AccountAbility, the following development libraries are required:
+
+ - Qt v3.3.x
+ - Monetra's libmcve 3.2.x
+ - mimepp 1.3.x
+
+ - ADBQt 1.0.x
+ - bdes
+
+
