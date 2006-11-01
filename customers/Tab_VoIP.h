@@ -54,6 +54,7 @@ public slots:
 
 protected slots:
     virtual void refreshCustomer(long);
+    virtual void    addVoIPService();
 
 private:
 	long myCustID;

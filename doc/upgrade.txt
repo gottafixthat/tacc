@@ -12,6 +12,21 @@ CREATE TABLE ServerGroups (
     DBPass              varchar(64) NOT NULL DEFAULT '',
     PRIMARY KEY(ServerGroupID)
 );
+CREATE TABLE VoIP_Service_Types (
+    VoIPServiceID       bigint(21) NOT NULL auto_increment,
+    ServiceName         varchar(64) NOT NULL DEFAULT '',
+    ServiceType         int(11) NOT NULL DEFAULT '0',
+    BillableItemID      bigint(21) NOT NULL DEFAULT '0',
+    BaseChannels        int(11) NOT NULL DEFAULT '1',
+    ChannelBillable     bigint(21) NOT NULL DEFAULT '0',
+    PRIMARY KEY(VoIPServiceID)
+);
+CREATE TABLE VoIP_Service_Items (
+    VoIPServiceItemID   bigint(21) NOT NULL auto_increment,
+    VoIPServiceID       bigint(21) NOT NULL DEFAULT '0',
+    ServiceFlag         int(11) NOT NULL DEFAULT '0',
+    PRIMARY KEY(VoIPServiceItemID)
+);
 CREATE TABLE VoIP_Origination (
     OriginationID       bigint(21) NOT NULL auto_increment,
     VendorID            bigint(21) NOT NULL DEFAULT '0',

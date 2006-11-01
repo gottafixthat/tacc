@@ -352,6 +352,10 @@ CalendarTip::CalendarTip(QWidget* p, Calendar* c)
   cal=c;
 }
 
+CalendarTip::~CalendarTip()
+{
+}
+
 void CalendarTip::maybeTip(const QPoint& p)
 {
   int row=int(p.y()>TITLE_HEIGHT+ROW_HEIGHT?(p.y()-(TITLE_HEIGHT+ROW_HEIGHT))/

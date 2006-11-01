@@ -23,9 +23,11 @@ endif
 
 SUBDIRS =	
 
-SOURCES =	DIDManager.cpp\
+SOURCES =	VoIPCommon.cpp\
+			DIDManager.cpp\
 			RateCenterManager.cpp\
-			OriginationProviders.cpp
+			OriginationProviders.cpp\
+			VoIPServiceTypes.cpp
 #			ProcessVoiceMail.cpp
 
 # HEADERS =	../include/BlargDB.h
@@ -34,7 +36,8 @@ OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_DIDManager.cpp\
 			moc_RateCenterManager.cpp\
-			moc_OriginationProviders.cpp
+			moc_OriginationProviders.cpp\
+			moc_VoIPServiceTypes.cpp
 #			moc_ProcessVoiceMail.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
@@ -85,6 +88,9 @@ moc_RateCenterManager.cpp: RateCenterManager.h
 
 moc_OriginationProviders.cpp: OriginationProviders.h
 	$(MOC) OriginationProviders.h -o moc_OriginationProviders.cpp
+
+moc_VoIPServiceTypes.cpp: VoIPServiceTypes.h
+	$(MOC) VoIPServiceTypes.h -o moc_VoIPServiceTypes.cpp
 
 #moc_ProcessVoiceMail.cpp: ProcessVoiceMail.h
 #	$(MOC) ProcessVoiceMail.h -o moc_ProcessVoiceMail.cpp

@@ -1793,6 +1793,39 @@ CREATE TABLE ServerGroups (
 # VoIP Services
 #
 
+# VoIP_Service_Types - Tracks the different types of VoIP Services that
+# we offer.
+#
+# VoIPServiceID     - Primary key, associated with DID's
+# ServiceName       - The name of this service, displayed to CSRs.
+# ServiceType       - 0 - SIP, 1 - IAX
+# BillableItemID    - The ItemNumber that this is billed from BillableItems.
+# BaseChannels      - How many simultaneous calls will we allow them
+# ChannelBillable   - For additional channels, what billable do we use
+CREATE TABLE VoIP_Service_Types (
+    VoIPServiceID       bigint(21) NOT NULL auto_increment,
+    ServiceName         varchar(64) NOT NULL DEFAULT '',
+    ServiceType         int(11) NOT NULL DEFAULT '0',
+    BillableItemID      bigint(21) NOT NULL DEFAULT '0',
+    BaseChannels        int(11) NOT NULL DEFAULT '1',
+    ChannelBillable     bigint(21) NOT NULL DEFAULT '0',
+    PRIMARY KEY(VoIPServiceID)
+);
+
+# VoIP_Service_Items - For each VoIP_Service_Type there will be one or more
+# flags that are included to determine how service will be delivered.
+# This has a many-to-one relationship with VoIP_Service_Types.
+# 
+# VoIPServiceItemID - Primary key
+# VoIPServiceID     - Associated with the VoIP_Service_Types
+# ServiceFlag       - The type of service provided.
+CREATE TABLE VoIP_Service_Items (
+    VoIPServiceItemID   bigint(21) NOT NULL auto_increment,
+    VoIPServiceID       bigint(21) NOT NULL DEFAULT '0',
+    ServiceFlag         int(11) NOT NULL DEFAULT '0',
+    PRIMARY KEY(VoIPServiceItemID)
+);
+
 #
 # VoIP_Origination - Tracks all of our origination sources, this includes what
 # vendor is providing the service, how the DID's are being delivered and, if
