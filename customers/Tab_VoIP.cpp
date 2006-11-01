@@ -58,6 +58,7 @@ Tab_VoIP::Tab_VoIP
     list = new QListView(this, "VoIP List");
     list->addColumn("DID");
     list->addColumn("Login");
+    list->addColumn("Service");
     list->addColumn("Type");
     list->addColumn("City");
     list->addColumn("State");
@@ -127,7 +128,7 @@ void Tab_VoIP::refreshVoIPList(int)
                     strcpy(provMethod, "Unknown");
                     break;
             }
-            QListViewItem *curItem = new QListViewItem(list, DB.curRow["DID"], DB.curRow["LoginID"], provMethod, DB.curRow["City"], DB.curRow["State"], DB.curRow["Country"]);
+            QListViewItem *curItem = new QListViewItem(list, DB.curRow["DID"], DB.curRow["LoginID"], "", provMethod, DB.curRow["City"], DB.curRow["State"], DB.curRow["Country"]);
 
         }
     }

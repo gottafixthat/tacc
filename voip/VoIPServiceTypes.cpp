@@ -45,6 +45,8 @@ VoIPServiceTypes::VoIPServiceTypes
     vstList->addColumn("Service Name/Flags");
     vstList->addColumn("Type");
     vstList->addColumn("Chan");
+    connect(vstList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+    connect(vstList, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
 
     idColumn        = 3;
 
@@ -179,6 +181,15 @@ void VoIPServiceTypes::editClicked()
 }
 
 /**
+  * itemDoubleClicked - Gets called when the user double clicks an item.
+  */
+
+void VoIPServiceTypes::itemDoubleClicked(QListViewItem *curItem)
+{
+    if (curItem) editClicked();
+}
+
+/**
   * deleteClicked - Gets called when the user clicks on the Delete button.
   */
 
@@ -253,6 +264,8 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
 
     flagsAvailable = new QListView(this, "flagsAvailable");
     flagsAvailable->addColumn("Available Flags");
+    connect(flagsAvailable, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(availableFlagDoubleClicked(QListViewItem *)));
+
     int fCount = 0;
     char sfStr[1024];
     while (strlen(voipServiceFlagText[fCount])) {
@@ -271,6 +284,12 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
 
     flagsAssigned = new QListView(this, "flagsAssigned");
     flagsAssigned->addColumn("Assigned Flags");
+    connect(flagsAssigned, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(assignedFlagDoubleClicked(QListViewItem *)));
+
+    // Server groups.
+    serverGroups = new ServerGroupSelector(this, "serverGroupSelector");
+    serverGroups->setAddButtonText("A&dd");
+    serverGroups->setRemoveButtonText("R&emove");
 
     saveButton = new QPushButton(this, "saveButton");
     saveButton->setText("&Save");
@@ -300,6 +319,10 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
     gl->addWidget(channelBillable,          curRow, 1);
     curRow++;
 
+    HorizLine *hline1 = new HorizLine(this);
+    gl->addMultiCellWidget(hline1, curRow, curRow, 0, 1);
+    curRow++;
+
     // Create a layout for the flags
     QBoxLayout *fl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
     fl->addWidget(flagsAvailable, 1);
@@ -315,6 +338,18 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
     fl->addWidget(flagsAssigned, 1);
 
     gl->addMultiCellLayout(fl,curRow, curRow, 0, 1);
+    curRow++;
+
+    HorizLine *hline2 = new HorizLine(this);
+    gl->addMultiCellWidget(hline2, curRow, curRow, 0, 1);
+    curRow++;
+
+    // Create a layout for the server groups
+    gl->addMultiCellWidget(serverGroups,curRow, curRow, 0, 1);
+    curRow++;
+
+    HorizLine *hline3 = new HorizLine(this);
+    gl->addMultiCellWidget(hline3, curRow, curRow, 0, 1);
     curRow++;
 
     ml->addLayout(gl, 0);
@@ -510,4 +545,21 @@ void VoIPServiceTypeEditor::rmFlagClicked()
     }
 }
 
+/**
+  * availableFlagDoubleClicked - When the user double clicks on a flag,
+  * this is called.
+  */
+void VoIPServiceTypeEditor::availableFlagDoubleClicked(QListViewItem *curItem)
+{
+    if (curItem) addFlagClicked();
+}
+
+/**
+  * assignedFlagDoubleClicked - When the user double clicks on a flag,
+  * this is called.
+  */
+void VoIPServiceTypeEditor::assignedFlagDoubleClicked(QListViewItem *curItem)
+{
+    if (curItem) rmFlagClicked();
+}
 
