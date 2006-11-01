@@ -24,6 +24,7 @@
 #include <qregexp.h>
 #include <qapplication.h>
 #include <qlayout.h>
+#include <qmessagebox.h>
 
 #include <FParse.h>
 
@@ -68,6 +69,7 @@ Tab_VoIP::Tab_VoIP
     // Create our action buttons.
     addButton = new QPushButton(this, "addButton");
     addButton->setText("&Add");
+    connect(addButton, SIGNAL(clicked()), this, SLOT(addVoIPService()));
 
     // Create the main layout to hold them all.
     QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
@@ -140,4 +142,14 @@ void Tab_VoIP::refreshCustomer(long custID)
 {
     if (custID == myCustID) refreshVoIPList(1);
 }
+
+
+/**
+  * addVoIPService - Gets called when the CSR wants to Add VoIP service
+  */
+void Tab_VoIP::addVoIPService()
+{
+    QMessageBox::information(this, "Add Service", "Coming soon.");
+}
+
 

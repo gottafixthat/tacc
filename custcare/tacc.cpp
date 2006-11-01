@@ -76,6 +76,7 @@
 #include "ServerGroups.h"
 #include "Vendors.h"
 #include "VendorTypes.h"
+#include "VoIPServiceTypes.h"
 
 #include "UserPrivs.h"
 
@@ -326,6 +327,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
             otherMenu->insertItem("Server Groups", this, SLOT(serverGroupList()));
             otherMenu->insertItem("Vendors", this, SLOT(vendorList()));
             otherMenu->insertItem("Vendor Types", this, SLOT(vendorTypeList()));
+            otherMenu->insertItem("VoIP Service Types", this, SLOT(voipServiceTypeList()));
             adminMenu->insertSeparator();
             adminMenu->insertItem("&Other Lists", otherMenu);
         }
@@ -846,6 +848,12 @@ void CustomerCare::voipOriginationProviderList()
 {
     OriginationProviders *OP = new OriginationProviders();
     OP->show();
+}
+
+void CustomerCare::voipServiceTypeList()
+{
+    VoIPServiceTypes *VST = new VoIPServiceTypes();
+    VST->show();
 }
 
 void CustomerCare::manageRateCenters()

@@ -79,6 +79,7 @@ private:
 class CalendarTip : public QToolTip {
 public:
   CalendarTip(QWidget*,Calendar*);
+  virtual ~CalendarTip();
 protected:
   void maybeTip(const QPoint&);
 private:
