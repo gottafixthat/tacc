@@ -34,6 +34,8 @@
 #include <qsqldatabase.h>
 #include <qspinbox.h>
 
+#include <ServerGroups.h>
+
 class VoIPServiceTypes : public TAAWidget
 {
     Q_OBJECT
@@ -56,6 +58,7 @@ protected slots:
     virtual void editClicked();
     virtual void deleteClicked();
     virtual void closeClicked();
+    virtual void itemDoubleClicked(QListViewItem *);
 
 protected:
     QListView       *vstList;
@@ -92,20 +95,23 @@ protected slots:
     virtual void    saveClicked();
     virtual void    cancelClicked();
     virtual void    addFlagClicked();
+    virtual void    availableFlagDoubleClicked(QListViewItem *);
+    virtual void    assignedFlagDoubleClicked(QListViewItem *);
     virtual void    rmFlagClicked();
 
 protected:
-    long            voipServiceID;
+    long                voipServiceID;
     
-    QLineEdit       *serviceName;
-    QComboBox       *serviceType;
-    QComboBox       *billableItem;
-    QSpinBox        *baseChannels;
-    QComboBox       *channelBillable;
-    QListView       *flagsAvailable;
-    QListView       *flagsAssigned;
-    QPushButton     *saveButton;
-    QPushButton     *cancelButton;
+    QLineEdit           *serviceName;
+    QComboBox           *serviceType;
+    QComboBox           *billableItem;
+    QSpinBox            *baseChannels;
+    QComboBox           *channelBillable;
+    QListView           *flagsAvailable;
+    QListView           *flagsAssigned;
+    ServerGroupSelector *serverGroups;
+    QPushButton         *saveButton;
+    QPushButton         *cancelButton;
 
 };
 

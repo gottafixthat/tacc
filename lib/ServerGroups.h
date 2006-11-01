@@ -55,6 +55,7 @@ protected slots:
     virtual void editClicked();
     virtual void deleteClicked();
     virtual void closeClicked();
+    virtual void itemDoubleClicked(QListViewItem *);
 
 protected:
     QListView       *sgList;
@@ -108,4 +109,40 @@ protected:
 
 };
 
+/**
+  * ServerGroupSelector is a widget group that displays two columns of
+  * server groups, available and assigned.
+  */
+class ServerGroupSelector : public TAAWidget
+{
+    Q_OBJECT
+
+public:
+
+    ServerGroupSelector (
+        QWidget *parent = NULL,
+        const char *name = NULL );
+
+    virtual ~ServerGroupSelector();
+
+    void    setAddButtonText(const char *);
+    void    setRemoveButtonText(const char *);
+    void    assign(long);
+    void    unassign(long);
+    long    *getAssigned();
+
+protected slots:
+    virtual void addClicked();
+    virtual void rmClicked();
+    virtual void availableDoubleClicked(QListViewItem *);
+    virtual void assignedDoubleClicked(QListViewItem *);
+
+protected:
+    long            idColumn;
+    QListView       *available;
+    QListView       *assigned;
+    QPushButton     *addButton;
+    QPushButton     *rmButton;
+};
+ 
 #endif // ServerGroups_included

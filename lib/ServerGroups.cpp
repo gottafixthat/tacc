@@ -43,12 +43,12 @@ ServerGroups::ServerGroups
     sgList->setAllColumnsShowFocus(true);
     sgList->setRootIsDecorated(false);
     sgList->addColumn("Server Group");
-    sgList->addColumn("ID");
     sgList->addColumn("Description");
 
-    idColumn        = 1;
+    idColumn        = 2;
 
-    sgList->setColumnAlignment(idColumn, Qt::AlignRight);
+    connect(sgList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+    connect(sgList, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
 
 
     addButton = new QPushButton(this, "Add Button");
@@ -102,7 +102,7 @@ void ServerGroups::refreshList()
     myDB.query("select ServerGroupID, ServerGroup, Description from ServerGroups");
     if (myDB.rowCount) while (myDB.getrow()) {
         // Walk through the list of server groups and populate it
-        QListViewItem   *curItem = new QListViewItem(sgList, myDB.curRow["ServerGroup"], myDB.curRow["ServerGroupID"], myDB.curRow["Description"]);
+        new QListViewItem(sgList, myDB.curRow["ServerGroup"], myDB.curRow["Description"], myDB.curRow["ServerGroupID"]);
     }
 
     QApplication::restoreOverrideCursor();
@@ -140,6 +140,27 @@ void ServerGroups::editClicked()
         long    tmpID;
         if (curItem->key(idColumn,0).length()) {
             tmpID = atoi(curItem->key(idColumn, 0));
+            if (tmpID) {
+                ServerGroupEditor   *ope;
+                ope = new ServerGroupEditor();
+                ope->setServerGroupID(tmpID);
+                ope->show();
+                connect(ope, SIGNAL(serverGroupSaved(long)), this, SLOT(refreshServerGroup(long)));
+            }
+        }
+    }
+}
+
+/**
+  * itemDoubleClicked - Connected to the server group list, gets called when the user
+  * double clicks on an item.
+  */
+void ServerGroups::itemDoubleClicked(QListViewItem *selItem)
+{
+    if (selItem) {
+        long    tmpID;
+        if (selItem->key(idColumn,0).length()) {
+            tmpID = atoi(selItem->key(idColumn, 0));
             if (tmpID) {
                 ServerGroupEditor   *ope;
                 ope = new ServerGroupEditor();
@@ -320,7 +341,6 @@ void ServerGroupEditor::saveClicked()
 {
     // Validate the form data.
     ADB     DB;
-    long    vendorID = 0;
 
     // Validate the server group name.
     if (serverGroup->text().length() < 2 || serverGroup->text().length() > 64) {
@@ -399,5 +419,178 @@ void ServerGroupEditor::saveClicked()
 void ServerGroupEditor::cancelClicked()
 {
     delete this;
+}
+
+
+/**
+  * ServerGroupSelector - Allows the user to add or remove server groups
+  * using a two pane list widget.
+  */
+
+ServerGroupSelector::ServerGroupSelector
+(
+	QWidget* parent,
+	const char* name
+) : TAAWidget( parent, name )
+{
+    ADB     DB;
+
+    // Server groups.
+    available = new QListView(this, "serverGroupsAvailable");
+    available->addColumn("Available Server Groups");
+    idColumn = 1;
+    connect(available, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(availableDoubleClicked(QListViewItem *)));
+    DB.query("select ServerGroupID, ServerGroup from ServerGroups");
+    if (DB.rowCount) while (DB.getrow()) {
+        new QListViewItem(available, DB.curRow["ServerGroup"], DB.curRow["ServerGroupID"]);
+    }
+
+    addButton = new QPushButton(this, "addButton");
+    addButton->setText("&Add");
+    connect(addButton, SIGNAL(clicked()), this, SLOT(addClicked()));
+
+    rmButton = new QPushButton(this, "rmButton");
+    rmButton->setText("&Remove");
+    connect(rmButton, SIGNAL(clicked()), this, SLOT(rmClicked()));
+
+    assigned = new QListView(this, "assigned");
+    assigned->addColumn("Assigned Server Groups");
+    connect(assigned, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(assignedDoubleClicked(QListViewItem *)));
+
+    // Create a layout for the server groups
+    QBoxLayout *sgl = new QBoxLayout(this, QBoxLayout::LeftToRight, 3, 3);
+    sgl->addWidget(available, 1);
+
+    QBoxLayout *sgbl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    sgbl->addStretch(1);
+    sgbl->addWidget(addButton, 0);
+    sgbl->addWidget(rmButton, 0);
+    sgbl->addStretch(1);
+
+    sgl->addLayout(sgbl, 0);
+
+    sgl->addWidget(assigned, 1);
+
+}
+
+ServerGroupSelector::~ServerGroupSelector()
+{
+}
+
+/**
+  * setAddButtonText - Lets the caller set the text of the add button.
+  */
+void ServerGroupSelector::setAddButtonText(const char *newText)
+{
+    addButton->setText(newText);
+}
+
+/**
+  * setRemoveButtonText - Lets the caller set the text of the remove button.
+  */
+void ServerGroupSelector::setRemoveButtonText(const char *newText)
+{
+    rmButton->setText(newText);
+}
+
+/**
+  * assign - Moves an item from the available to the assigned list.
+  */
+void ServerGroupSelector::assign(long serverGroupID)
+{
+    QListViewItem   *curItem;
+
+    // Find the item in available list
+    curItem = available->firstChild();
+    while(curItem) {
+        if (serverGroupID == atoi(curItem->key(idColumn,0))) {
+            new QListViewItem(assigned, curItem->key(0,0), curItem->key(1,0));
+            available->removeItem(curItem);
+            curItem = 0;
+        } else {
+            curItem = curItem->itemBelow();
+        }
+    }
+}
+
+/**
+  * unassign - Moves an item from the assigned to the available list.
+  */
+void ServerGroupSelector::unassign(long serverGroupID)
+{
+    QListViewItem   *curItem;
+
+    // Find the item in available list
+    curItem = assigned->firstChild();
+    while(curItem) {
+        if (serverGroupID == atoi(curItem->key(idColumn,0))) {
+            QListViewItem *tmpItem = new QListViewItem(available, curItem->key(0,0), curItem->key(1,0));
+            assigned->removeItem(curItem);
+            curItem = 0;
+        } else {
+            curItem = curItem->itemBelow();
+        }
+    }
+}
+
+/**
+  * getAssigned - Returns an array of ServerGroupID's containing the list of
+  * ids in the assigned list.
+  * The list will end with "0".
+  */
+long *ServerGroupSelector::getAssigned()
+{
+    QListViewItem   *curItem;
+    long    *retVal = new long[assigned->childCount()+2];
+    int     count = 0;
+
+    retVal[count] = 0;
+
+    // Find the item in available list
+    curItem = assigned->firstChild();
+    while(curItem) {
+        retVal[count] = atol(curItem->key(idColumn,0));
+        count++;
+        retVal[count] = 0;
+        curItem = curItem->itemBelow();
+    }
+
+    return (retVal);
+}
+
+/**
+  * addClicked - Gets called when the Add button is clicked.
+  */
+void ServerGroupSelector::addClicked()
+{
+    QListViewItem *curItem = available->currentItem();
+    if (curItem) assign(atol(curItem->key(idColumn,0)));
+}
+
+/**
+  * rmClicked - Gets called when the Remove button is clicked.
+  */
+void ServerGroupSelector::rmClicked()
+{
+    QListViewItem *curItem = assigned->currentItem();
+    if (curItem) unassign(atol(curItem->key(idColumn,0)));
+}
+
+/**
+  * availableDoubleClicked - Gets called when the user double
+  * clicks on an available server group.
+  */
+void ServerGroupSelector::availableDoubleClicked(QListViewItem *curItem)
+{
+    if (curItem) assign(atol(curItem->key(idColumn,0)));
+}
+
+/**
+  * assignedDoubleClicked - Gets called when the user double
+  * clicks on an assigned server group.
+  */
+void ServerGroupSelector::assignedDoubleClicked(QListViewItem *curItem)
+{
+    if (curItem) unassign(atol(curItem->key(idColumn,0)));
 }
 
