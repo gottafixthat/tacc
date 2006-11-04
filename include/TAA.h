@@ -26,6 +26,18 @@
 
 //#define TEMPLATE_PATH "/usr/local/lib/taa"
 
+enum TACCModules {
+    Customers           = 1,
+    Vendors             = 2,
+    Logins              = 3,
+    Domains             = 4,
+    EmailAliases        = 5,
+    DNSServers          = 6,
+    VoIPServiceTypes    = 7,
+    VoIPOrigination     = 8,
+    VoIPTermination     = 9,
+    VoIPDIDInventory    = 10
+};
 
 typedef struct voicemail_disposition {
     int     dispid;

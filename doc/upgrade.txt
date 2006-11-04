@@ -12,6 +12,13 @@ CREATE TABLE ServerGroups (
     DBPass              varchar(64) NOT NULL DEFAULT '',
     PRIMARY KEY(ServerGroupID)
 );
+CREATE TABLE ServerGroupAssociations (
+    AssociationID       bigint(21) NOT NULL auto_increment,
+    AssociatedFrom      int(11) NOT NULL DEFAULT '0',
+    AssociatedID        bigint(21) NOT NULL DEFAULT '0',
+    ServerGroupID       bigint(21) NOT NULL DEFAULT '0',
+    PRIMARY KEY(AssociationID)
+);
 CREATE TABLE VoIP_Service_Types (
     VoIPServiceID       bigint(21) NOT NULL auto_increment,
     ServiceName         varchar(64) NOT NULL DEFAULT '',

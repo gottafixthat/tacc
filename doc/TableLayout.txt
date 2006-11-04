@@ -1790,6 +1790,32 @@ CREATE TABLE ServerGroups (
 );
 
 #
+# ServerGroupAssociations - This is a "generic" table that holds the
+# server group associations from various parts of the system.  Each
+# part of the system will be assigned a unique numeric ID that will
+# identify it in other parts of the system, this is what the
+# AssociatedFrom column contains.  The AssociatedID contains the 
+# ID (typically the primary key) from the table that it is associated 
+# from.  The ServerGroupID is the actual server group that is 
+# being associated.  There can be multiple ServerGroupID's 
+# per associated ID.
+#
+# AssociationID - Primary key
+# AssociatedFrom - Where in the system this server group
+# is associated, i.e. 1 = Customers, 2 = Vendors, etc.
+# AssociatedID - The primary key in the other table that is associated
+# with this server group, i.e. VoIP_Origination.OriginationID.
+# ServerGroupID - The actual server group.
+# 
+CREATE TABLE ServerGroupAssociations (
+    AssociationID       bigint(21) NOT NULL auto_increment,
+    AssociatedFrom      int(11) NOT NULL DEFAULT '0',
+    AssociatedID        bigint(21) NOT NULL DEFAULT '0',
+    ServerGroupID       bigint(21) NOT NULL DEFAULT '0',
+    PRIMARY KEY(AssociationID)
+);
+
+#
 # VoIP Services
 #
 
@@ -1798,7 +1824,7 @@ CREATE TABLE ServerGroups (
 #
 # VoIPServiceID     - Primary key, associated with DID's
 # ServiceName       - The name of this service, displayed to CSRs.
-# ServiceType       - 0 - SIP, 1 - IAX
+# ServiceType       - 0 - SIP, 1 - IAX, 2 - SIP (Asterisk)
 # BillableItemID    - The ItemNumber that this is billed from BillableItems.
 # BaseChannels      - How many simultaneous calls will we allow them
 # ChannelBillable   - For additional channels, what billable do we use
@@ -1883,6 +1909,7 @@ CREATE TABLE DID_Rate_Centers (
 # is provisioned.
 #   0 - SIP - The DID will be added to the SER/OpenSER configuration
 #   1 - IAX - The DID will be added to the Asterisk configuration
+#   2 - SIP (Asterisk) The DID will be added to an Asterisk SIP configuration
 # AddDate - The date the DID was added into our inventory.
 CREATE TABLE DID_Inventory (
     DID                 bigint(21) NOT NULL DEFAULT '0',

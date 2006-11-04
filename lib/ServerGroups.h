@@ -127,6 +127,7 @@ public:
 
     void    setAddButtonText(const char *);
     void    setRemoveButtonText(const char *);
+    void    reset();
     void    assign(long);
     void    unassign(long);
     long    *getAssigned();
