@@ -494,6 +494,24 @@ void ServerGroupSelector::setRemoveButtonText(const char *newText)
 }
 
 /**
+  * reset - Resets all of the assigned items back to available.
+  */
+void ServerGroupSelector::reset()
+{
+    QListViewItem   *curItem;
+
+    // Find the item in available list
+    curItem = assigned->firstChild();
+    if (curItem) {
+        while(curItem) {
+            new QListViewItem(available, curItem->key(0,0), curItem->key(1,0));
+            curItem = curItem->itemBelow();
+        }
+        assigned->clear();
+    }
+}
+
+/**
   * assign - Moves an item from the available to the assigned list.
   */
 void ServerGroupSelector::assign(long serverGroupID)

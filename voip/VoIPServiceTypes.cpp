@@ -429,6 +429,14 @@ int VoIPServiceTypeEditor::setServiceID(long newID)
             }
         }
 
+        // Finally, set the server groups.
+        serverGroups->reset();
+        myDB.query("select AssociationID, ServerGroupID from ServerGroupAssociations where AssociatedFrom = %d and AssociatedID = %ld", (TACCModules)VoIPServiceTypes, newID);
+        if (myDB.rowCount) while (myDB.getrow()) {
+            serverGroups->assign(atol(myDB.curRow["ServerGroupID"]));
+        }
+
+
         retVal = 1;
         voipServiceID = newID;
     }
