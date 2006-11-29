@@ -97,6 +97,7 @@ protected slots:
 protected:
     long            serverGroupID;
     QLineEdit       *serverGroup;
+    QComboBox       *serverType;
     QMultiLineEdit  *description;
     QLineEdit       *databaseHost;
     QLineEdit       *databaseName;

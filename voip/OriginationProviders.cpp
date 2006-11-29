@@ -47,6 +47,7 @@ OriginationProviders::OriginationProviders
     opList->addColumn("Avail");
     opList->addColumn("Total");
     opList->addColumn("Type");
+    connect(opList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
 
     activeColumn    = 1;
     availColumn     = 2;
@@ -223,6 +224,14 @@ void OriginationProviders::closeClicked()
     delete this;
 }
 
+/**
+  * itemDoubleClicked - When the user double clicks on an origination provider
+  * this opens the edit window.
+  */
+void OriginationProviders::itemDoubleClicked(QListViewItem *curItem)
+{
+    if (curItem) editClicked();
+}
 
 /**
   * OriginationProviderEditor - Allows the user to add or edit an

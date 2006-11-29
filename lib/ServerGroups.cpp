@@ -43,9 +43,10 @@ ServerGroups::ServerGroups
     sgList->setAllColumnsShowFocus(true);
     sgList->setRootIsDecorated(false);
     sgList->addColumn("Server Group");
+    sgList->addColumn("Type");
     sgList->addColumn("Description");
 
-    idColumn        = 2;
+    idColumn        = 3;
 
     connect(sgList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
     connect(sgList, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
@@ -95,14 +96,17 @@ ServerGroups::~ServerGroups()
 void ServerGroups::refreshList()
 {
     ADB     myDB;
+    ServerTypes     tmpType;
 
     QApplication::setOverrideCursor(Qt::waitCursor);
     sgList->clear();
     // Get the list of server groups
-    myDB.query("select ServerGroupID, ServerGroup, Description from ServerGroups");
+    myDB.query("select ServerGroupID, ServerGroup, ServerType, Description from ServerGroups");
     if (myDB.rowCount) while (myDB.getrow()) {
         // Walk through the list of server groups and populate it
-        new QListViewItem(sgList, myDB.curRow["ServerGroup"], myDB.curRow["Description"], myDB.curRow["ServerGroupID"]);
+        tmpType = (ServerTypes) atoi(myDB.curRow["ServerType"]);
+        if (tmpType > (ServerTypes) MAX_SERVER_TYPES) tmpType = Unknown;
+        new QListViewItem(sgList, myDB.curRow["ServerGroup"], server_types[tmpType].description, myDB.curRow["Description"], myDB.curRow["ServerGroupID"]);
     }
 
     QApplication::restoreOverrideCursor();
@@ -213,6 +217,17 @@ ServerGroupEditor::ServerGroupEditor
 
     serverGroup = new QLineEdit(this, "serverGroup");
 
+    QLabel *serverTypeLabel = new QLabel(this, "serverTypeLabel");
+    serverTypeLabel->setText("Server Type:");
+    serverTypeLabel->setAlignment(Qt::AlignRight);
+
+    serverType = new QComboBox(this, "serverType");
+    int i = 0;
+    while (server_types[i].servertype >= 0) {
+        serverType->insertItem(server_types[i].description);
+        i++;
+    }
+
     QLabel *descriptionLabel = new QLabel(this, "descriptionLabel");
     descriptionLabel->setText("Description:");
     descriptionLabel->setAlignment(Qt::AlignRight|Qt::AlignTop);
@@ -265,6 +280,9 @@ ServerGroupEditor::ServerGroupEditor
     int curRow = 0;
     gl->addWidget(serverGroupLabel,         curRow, 0);
     gl->addWidget(serverGroup,              curRow, 1);
+    curRow++;
+    gl->addWidget(serverTypeLabel,          curRow, 0);
+    gl->addWidget(serverType,               curRow, 1);
     curRow++;
     gl->addWidget(descriptionLabel,         curRow, 0);
     gl->addWidget(description,              curRow, 1);
@@ -319,6 +337,7 @@ int ServerGroupEditor::setServerGroupID(long newID)
         ADB     myDB;
 
         serverGroup->setText(DB.getStr("ServerGroup"));
+        serverType->setCurrentItem(DB.getInt("ServerType"));
         description->setText(DB.getStr("Description"));
         databaseHost->setText(DB.getStr("DBHost"));
         databaseName->setText(DB.getStr("DBName"));
@@ -395,6 +414,7 @@ void ServerGroupEditor::saveClicked()
     }
 
     sgDB.setValue("ServerGroup",    (const char *)serverGroup->text());
+    sgDB.setValue("ServerType",     serverType->currentItem());
     sgDB.setValue("Description",    (const char *)description->text());
     sgDB.setValue("DBHost",         (const char *)databaseHost->text());
     sgDB.setValue("DBName",         (const char *)databaseName->text());

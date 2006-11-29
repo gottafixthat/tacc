@@ -512,6 +512,16 @@ void VoIPServiceTypeEditor::saveClicked()
         flagsAssigned->clear();
     }
 
+    // And add the Server Groups
+    if (voipServiceID) DB.dbcmd("delete from ServerGroupAssociations where AssociatedFrom = %d and AssociatedID = %ld", (TACCModules) VoIPServiceTypes, voipServiceID);
+    long    *sGroups = serverGroups->getAssigned();
+    int i = 0;
+    while (sGroups[i]) {
+        DB.dbcmd("insert into ServerGroupAssociations (AssociationID, AssociatedFrom, AssociatedID, ServerGroupID) values (0, %d, %d, %ld)",
+                (TACCModules) VoIPServiceTypes, voipServiceID, sGroups[i]);
+        i++;
+    }
+
     emit(serviceItemSaved(voipServiceID));
 
     delete this;

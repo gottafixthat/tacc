@@ -51,6 +51,7 @@ RateCenterManager::RateCenterManager
     rcList->addColumn("Active");
     rcList->addColumn("Avail");
     rcList->addColumn("Total");
+    connect(rcList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
 
     activeColumn    = 1;
     availColumn     = 2;
@@ -264,6 +265,14 @@ void RateCenterManager::deleteClicked()
 void RateCenterManager::closeClicked()
 {
     delete this;
+}
+
+/**
+  * itemDoubleClicked - Gets called when the user double clicks a rate center.
+  */
+void RateCenterManager::itemDoubleClicked(QListViewItem *curItem)
+{
+    if (curItem) editClicked();
 }
 
 
