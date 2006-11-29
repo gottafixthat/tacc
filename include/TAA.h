@@ -39,6 +39,31 @@ enum TACCModules {
     VoIPDIDInventory    = 10
 };
 
+enum ServerTypes {
+    Unknown             = 0,
+    Asterisk            = 1,
+    OpenSER             = 2,
+    MyDNS               = 3,
+    Postfix             = 4,
+    Aliases             = 5
+};
+
+typedef struct server_type {
+    int         servertype;
+    char        description[80];
+};
+
+#define MAX_SERVER_TYPES 5
+static struct server_type server_types[] = {
+    {Unknown,   "Unknown/Undefined"},
+    {Asterisk,  "Asterisk"},
+    {OpenSER,   "OpenSER"},
+    {MyDNS,     "MyDNS"},
+    {Postfix,   "Postfix"},
+    {Aliases,   "Aliases"},
+    {-1,        ""}
+};
+
 typedef struct voicemail_disposition {
     int     dispid;
     char    code[32];

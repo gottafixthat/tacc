@@ -55,6 +55,7 @@ protected slots:
     virtual void editClicked();
     virtual void deleteClicked();
     virtual void closeClicked();
+    virtual void itemDoubleClicked(QListViewItem *);
 
 protected:
     QListView       *opList;

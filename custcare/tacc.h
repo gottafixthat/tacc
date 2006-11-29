@@ -133,6 +133,7 @@ protected slots:
     void            voipOriginationProviderList();
     void            voipServiceTypeList();
     void            manageRateCenters();
+    void            openCompanyList();
 
     void            asteriskEvent(const astEventRecord);
 

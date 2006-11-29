@@ -77,6 +77,7 @@
 #include "Vendors.h"
 #include "VendorTypes.h"
 #include "VoIPServiceTypes.h"
+#include "CompanyEditor.h"
 
 #include "UserPrivs.h"
 
@@ -291,6 +292,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     if (isAdmin()) voipMenu->insertItem("&Add DID's", this, SLOT(voipAddDIDs()));
     if (isAdmin()) voipMenu->insertItem("&Origination Providers", this, SLOT(voipOriginationProviderList()));
     if (isAdmin()) voipMenu->insertItem("Manage &Rate Centers", this, SLOT(manageRateCenters()));
+    if (isAdmin()) voipMenu->insertItem("VoIP &Service Types", this, SLOT(voipServiceTypeList()));
 
     menuBar()->insertItem("VoI&P", voipMenu);
 
@@ -321,13 +323,13 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
             otherMenu->insertItem("Accounts", this, SLOT(accountlist()));
             otherMenu->insertItem("Billable Items", this, SLOT(billableitemslist()));
             otherMenu->insertItem("Billing Cycles", this, SLOT(billingCycleList()));
+            otherMenu->insertItem("Company List", this, SLOT(openCompanyList()));
             otherMenu->insertItem("Package Editor", this, SLOT(packagelist()));
             otherMenu->insertItem("Login Types", this, SLOT(logintypelist()));
             otherMenu->insertItem("Rate Plans", this, SLOT(ratePlanList()));
             otherMenu->insertItem("Server Groups", this, SLOT(serverGroupList()));
             otherMenu->insertItem("Vendors", this, SLOT(vendorList()));
             otherMenu->insertItem("Vendor Types", this, SLOT(vendorTypeList()));
-            otherMenu->insertItem("VoIP Service Types", this, SLOT(voipServiceTypeList()));
             adminMenu->insertSeparator();
             adminMenu->insertItem("&Other Lists", otherMenu);
         }
@@ -804,6 +806,13 @@ void CustomerCare::billingCycleList()
     BillingCycles   *bcl = new BillingCycles();
     bcl->show();
     bcl->refreshList(1);
+}
+
+void CustomerCare::openCompanyList()
+{
+    CompanyList *cl = new CompanyList();
+    cl->show();
+    //cl->refreshList(1);
 }
 
 void CustomerCare::logintypelist()

@@ -1781,6 +1781,7 @@ CREATE TABLE AgentStatus (
 CREATE TABLE ServerGroups (
     ServerGroupID       bigint(21) NOT NULL auto_increment,
     ServerGroup         varchar(128) NOT NULL DEFAULT '',
+    ServerType          int(11) NOT NULL DEFAULT '0',
     Description         varchar(255) NOT NULL DEFAULT '',
     DBHost              varchar(64) NOT NULL DEFAULT '',
     DBName              varchar(64) NOT NULL DEFAULT '',

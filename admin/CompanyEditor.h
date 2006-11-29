@@ -1,8 +1,8 @@
 /*
 ***************************************************************************
 **
-** RateCenterManager - An interface that allows an admin to maintain
-** the list of rate centers that we provide DID's in.
+** CompanyEditor - An interface that allows an admin to maintain
+** the list of companies that TACC manages.
 **
 ***************************************************************************
 ** Written by R. Marc Lewis, 
@@ -16,8 +16,8 @@
 */
 
 
-#ifndef RateCenterManager_included
-#define RateCenterManager_included
+#ifndef CompanyEditor_included
+#define CompanyEditor_included
 
 #include "TAATools.h"
 #include "TAAWidget.h"
@@ -33,76 +33,81 @@
 #include <qpopupmenu.h>
 #include <qsqldatabase.h>
 
-class RateCenterManager : public TAAWidget
+class CompanyList : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    RateCenterManager(
+    CompanyList (
         QWidget *parent = NULL,
         const char *name = NULL );
 
-    virtual ~RateCenterManager();
+    virtual ~CompanyList();
 
 public slots:
-    virtual void    refreshRateCenter(long);
+    virtual void    refreshList();
+    virtual void    refreshCompany(long);
 
 protected slots:
-    virtual void    refreshRateCenters();
-    virtual void    QCloseEvent(QEvent *)      { closeClicked(); }
-    virtual void    addClicked();
-    virtual void    editClicked();
-    virtual void    deleteClicked();
-    virtual void    closeClicked();
-    virtual void    itemDoubleClicked(QListViewItem *);
+    virtual void QCloseEvent(QEvent *)      { closeClicked(); }
+    virtual void addClicked();
+    virtual void editClicked();
+    virtual void deleteClicked();
+    virtual void closeClicked();
+    virtual void itemDoubleClicked(QListViewItem *);
 
 protected:
-    QListView       *rcList;
+    QListView       *coList;
     QPushButton     *addButton;
     QPushButton     *editButton;
     QPushButton     *deleteButton;
     QPushButton     *closeButton;
 
     // Things to mark the columns in the list view
-    int             activeColumn;
-    int             availColumn;
-    int             totalColumn;
     int             idColumn;
 
 };
 
 
-class RateCenterEditor : public TAAWidget
+class CompanyEditor : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    RateCenterEditor(
+    CompanyEditor (
         QWidget *parent = NULL,
         const char *name = NULL );
 
-    virtual ~RateCenterEditor();
+    virtual ~CompanyEditor();
 
-    int         setRateCenterID(long);
+    int             setCompanyID(long);
 
 signals:
-    void        rateCenterSaved(long);
+    void            companySaved(long);
 
 protected slots:
     virtual void QCloseEvent(QEvent *)      { cancelClicked(); }
     virtual void saveClicked();
     virtual void cancelClicked();
-    void         countrySelected(const QString &);
 
 protected:
-    long            rateCenterID;
-    QComboBox       *countryList;
-    QComboBox       *stateList;
+    long            companyID;
+    QLineEdit       *companyTag;
+    QLineEdit       *companyName;
+    QLineEdit       *address1;
+    QLineEdit       *address2;
     QLineEdit       *city;
+    QLineEdit       *state;
+    QLineEdit       *zip;
+    QLineEdit       *mainPhone;
+    QLineEdit       *altPhone;
+    QLineEdit       *faxPhone;
     QPushButton     *saveButton;
     QPushButton     *cancelButton;
+
 };
 
-#endif // RateCenterManager_included
+#endif // CompanyEditor_included
+
