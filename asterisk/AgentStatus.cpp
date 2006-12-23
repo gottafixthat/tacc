@@ -23,9 +23,178 @@
 #include <ADB.h>
 #include <TAAWidget.h>
 #include <TAATools.h>
+#include <TAAPixmaps.h>
 #include <qsqldatabase.h>
 #include <qpixmap.h>
 #include <qtimer.h>
+
+/**
+  * AgentInfo is the container for a single agent's status.
+  */
+AgentInfo::AgentInfo
+(
+    QWidget *parent,
+    const char *name
+) : TAAWidget(parent, name)
+{
+    agentname = new QLabel(this, "agentname");
+    location = new QLabel(this, "location");
+    status = new QLabel(this, "status");
+    timeinstate = new QLabel(this, "timeinstate");
+    guistatus = new QLabel(this, "guistatus");
+    callstaken = new QLabel(this, "callstaken");
+    lastcall = new QLabel(this, "lastcall");
+    expandButton = new QPushButton(this, "expandButton");
+    expandButton->setFlat(true);
+    connect(expandButton, SIGNAL(clicked()), this, SLOT(expandedClicked()));
+    //expandButton->setPixmap(down_xpm);
+
+    location->setText("Location");
+    status->setText("Signed Out");
+    timeinstate->setText("00:00");
+    callstaken->setText("8 Total");
+    lastcall->setText("Last: 4:43pm");
+
+    // By default we don't want to show everything,
+    // only the basics.
+    intIsExpanded = true;
+    setExpanded(false);
+
+
+    // Create the layouts for it.
+    //QBoxLayout *ml = new QBoxLayout(QBoxLayout::TopToBottom, 4);
+    
+    // Create a layout for each agent
+    QGridLayout *wl = new QGridLayout(this, 3, 4, 2, 1);
+    wl->setColStretch(0, 0);
+    wl->setColStretch(1, 1);
+    wl->setColStretch(2, 1);
+    wl->setColStretch(3, 0);
+    wl->setColSpacing(2, 5);
+    int curRow = 0;
+    wl->addMultiCellWidget(guistatus,   curRow, curRow+1, 0, 0, AlignLeft|AlignTop);
+    wl->addWidget(agentname,            curRow, 1, AlignLeft|AlignVCenter);
+    wl->addWidget(location,             curRow, 2, AlignRight|AlignVCenter);
+    wl->addMultiCellWidget(expandButton,curRow, curRow+1, 3, 3, AlignLeft|AlignTop);
+    curRow++;
+    wl->addMultiCellWidget(status,      curRow, curRow, 1, 1, AlignLeft|AlignTop);
+    wl->addMultiCellWidget(timeinstate, curRow, curRow, 2, 2, AlignRight|AlignTop);
+    curRow++;
+    wl->addMultiCellWidget(lastcall,    curRow, curRow, 1, 1, AlignLeft|AlignTop);
+    wl->addMultiCellWidget(callstaken,  curRow, curRow, 2, 2, AlignRight|AlignTop);
+    curRow++;
+
+    HorizLine *tmpLine = new HorizLine(this);
+    wl->addMultiCellWidget(tmpLine, curRow,curRow,0,3);
+    curRow++;
+    //ml->addLayout(wl, 0);
+    //ml->addStretch(1);
+
+}
+  
+AgentInfo::~AgentInfo()
+{
+}
+
+/**
+  * agentName - Returns the name of the agent.
+  */
+const char *AgentInfo::agentName()
+{
+    return (const char *) agentname->text();
+}
+
+/**
+  * isExpanded - Returns true or false depending on whether
+  * or not this agent's information is expanded.
+  */
+bool AgentInfo::isExpanded()
+{
+    return intIsExpanded;
+}
+
+/**
+  * setAgentName - Sets the text in the agent name box.
+  */
+void AgentInfo::setAgentName(const char *newName)
+{
+    agentname->setText(newName);
+}
+
+/**
+  * setLocation - Sets the text in the agent location box.
+  */
+void AgentInfo::setLocation(const char *newLoc)
+{
+    location->setText(newLoc);
+}
+
+/**
+  * setStatus - Sets the status of the agent.
+  */
+void AgentInfo::setStatus(int newStatus)
+{
+    QPixmap signedout(signedout_xpm);
+    QPixmap avail(available_xpm);
+    QPixmap onbreak(onbreak_xpm);
+    QPixmap user_icon(user_icon_xpm);
+    QPixmap busy_icon(busy_xpm);
+    switch (newStatus) {
+        case AGENT_STATUS_AVAILABLE:
+            guistatus->setPixmap(avail);
+            break;
+        case AGENT_STATUS_ONBREAK:
+            guistatus->setPixmap(onbreak);
+            break;
+        case AGENT_STATUS_SIGNEDOUT:
+        default:
+            guistatus->setPixmap(signedout);
+            break;
+    }
+}
+
+/**
+  * setExpanded - Expands or shrinks the status by hiding certain widgets.
+  */
+void AgentInfo::setExpanded(bool newVal)
+{
+    if (newVal == intIsExpanded) return;
+
+    QPixmap downmap(down_xpm);
+    QPixmap upmap(up_xpm);
+    bool    newHidden = true;
+    if (newVal) {
+        newHidden = false;
+        expandButton->setPixmap(upmap);
+    } else {
+        expandButton->setPixmap(downmap);
+    }
+
+    status->setHidden(newHidden);
+    timeinstate->setHidden(newHidden);
+    callstaken->setHidden(newHidden);
+    lastcall->setHidden(newHidden);
+
+
+    intIsExpanded = newVal;
+}
+
+/**
+  * expandedClicked - The slot that gets called when the user wants to 
+  * expand or condense the view.
+  */
+void AgentInfo::expandedClicked()
+{
+    if (intIsExpanded) setExpanded(false);
+    else setExpanded(true);
+    //setExpanded(false ? intIsExpanded : true);
+}
+
+
+/**
+  * AgentStatus is the main widget container and controller
+  * for all of the AgentInfo widgets.
+  */
 
 AgentStatus::AgentStatus
 (
@@ -55,7 +224,7 @@ AgentStatus::AgentStatus
 
     // Get the agents out of the database.
     QSqlQuery query(myDB);
-    query.exec("select LoginID, AgentID from Staff where Active > 0 and AgentID <> ''");
+    query.exec("select LoginID, AgentID, Extension from Staff where Active > 0 and AgentID <> ''");
     if (query.size() < 1) {
         fprintf(stderr, "AgentStatus::AgentStatus() No agents found!\n");
         return;
@@ -67,15 +236,23 @@ AgentStatus::AgentStatus
     QPixmap avail(available_xpm);
     QPixmap onbreak(onbreak_xpm);
     QPixmap user_icon(user_icon_xpm);
+    QPixmap busy_icon(busy_xpm);
     int i = 0;
     myPosition = 0;
     while (query.next()) {
+        AgentInfo   *tmpAgent = new AgentInfo(this);
+        tmpAgent->setAgentName(query.value(0).toString());
+        tmpAgent->setStatus(AGENT_STATUS_SIGNEDOUT);
+        tmpAgent->setLocation("Ext " + query.value(2).toString());
+        agentList.append(tmpAgent);
+
         QLabel  *tmpName = new QLabel(this);
         tmpName->setText(query.value(0).toString());
         names.append(tmpName);
 
         QLabel *tmpLoc = new QLabel(this);
-        tmpLoc->setText(query.value(1).toString());
+        tmpLoc->setText("Ext " + query.value(2).toString());
+        tmpLoc->setAlignment(Qt::AlignRight);
         locations.append(tmpLoc);
 
         QLabel *tmpGuiStatus = new QLabel(this);
@@ -134,6 +311,10 @@ AgentStatus::AgentStatus
         HorizLine *tmpLine = new HorizLine(this);
         wl->addMultiCellWidget(tmpLine, curRow,curRow,0,2);
         curRow++;
+
+        wl->addMultiCellWidget(agentList.at(i), curRow, curRow, 0, 2);
+        curRow++;
+
     }
     ml->addLayout(wl, 0);
     ml->addStretch(1);
@@ -479,3 +660,4 @@ void AgentStatus::updateTimeInState()
         timeinstate.at(i)->setText(tmpSt);
     }
 }
+
