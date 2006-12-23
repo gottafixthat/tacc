@@ -1,6 +1,4 @@
 /*
-** $Id$
-**
 ***************************************************************************
 **
 ** UserEditor.cpp -  UserEditor is the widget that will allow the user to
@@ -8,7 +6,12 @@
 **
 ***************************************************************************
 ** Written by R. Marc Lewis, 
-**     under contract to The Public Defender Association
+**   (C)opyright 1998-2006, R. Marc Lewis and Avvanta Communications Corp.
+**   All Rights Reserved.
+**
+**  Unpublished work.  No portion of this file may be reproduced in whole
+**  or in part by any means, electronic or otherwise, without the express
+**  written consent of Blarg! Online Services and R. Marc Lewis.
 ***************************************************************************
 */
 

@@ -28,6 +28,7 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			CustomerSearch.cpp\
 			TAATools.cpp BlargDB.cpp\
 			TAAConfig.cpp\
+			TAAPixmaps.cpp\
 			DNSUtils.cpp\
 			VHostUtils.cpp\
 			GenLedger.cpp AcctsRecv.cpp BrassClient.cpp\
