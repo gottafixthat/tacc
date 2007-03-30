@@ -19,6 +19,16 @@ CREATE TABLE Settings (
   PRIMARY KEY(InternalID)
 );
 
+CREATE TABLE UserPrefs (
+    PrefID      bigint(21) NOT NULL auto_increment,
+    LoginID     varchar(32) NOT NULL DEFAULT '',
+    PrefKey     varchar(64) NOT NULL DEFAULT '',
+    PrefSubKey  varchar(64) NOT NULL DEFAULT '',
+    PrefData    varchar(255) NOT NULL DEFAULT '',
+    PRIMARY KEY (PrefID),
+    INDEX UserPrefsIDX(LoginID,PrefKey,PrefSubKey)
+);
+
 
 #
 # Table structure for table 'Companies'

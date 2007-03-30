@@ -1,0 +1,28 @@
+
+Asterisk Agents/Queues:
+
+ - Add a new management interface that will define the call queues that we
+   should be handling, i.e. AvvantaSupport, HarbornetSupport, Reception, etc.
+ - Add sections in the staff manager that allow the admins to manage a user's
+   Agent number, default extension and what queues they are allowed to join.
+   Agents should be allowed to join multiple queues simultaneously.
+ - Add a section in the staff manager to include other people's extensions as
+   well, whether or not they are an agent.  This will allow right clicks on
+   calls to transfer.
+ - The Agent Status "panel" should include what queues the agent is currently
+   signed in on.
+ - If the Agent can be signed in to multiple queues, the "Sign In" and "Sign
+   Out" options should have sub-menus showing first "All", then the individual
+   queues that they can sign in/out of.
+ - Data should be more dynamic and retrieved from the Asterisk Manager so when
+   starting up TACC, the call stats and any queue entries are loaded from
+   Asterisk on startup.
+ - Popups for transfers and such should pull the data from the database when
+   the menu is created and not be static.
+ - Add additional call-flow monitoring.  Non-agent staff members should also be
+   able to be listed to show their "on a call" status, similar to an operator
+   panel.  Access levels will probably need to be updated so different details
+   can be shown.  The operator panel may need to be a new tab or possibly even
+   (perish the thought) a different application.
+
+

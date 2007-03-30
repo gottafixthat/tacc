@@ -32,6 +32,7 @@
 
 #include <TAATools.h>
 #include "TAAWidget.h"
+#include <ADB.h>
 
 
 
@@ -62,7 +63,36 @@ TAAWidget::~TAAWidget()
 {
 }
 
+/** updateUserPref - Updates the database with the user preferences.
+  */
+void TAAWidget::setUserPref(const char *key, const char *subkey, const char *val)
+{
+    ADB     DB;
+    DB.query("select PrefData from UserPrefs where LoginID = '%s' and PrefKey = '%s' and PrefSubKey = '%s'", curUser().userName, key, subkey);
+    if (DB.rowCount) {
+        DB.dbcmd("update UserPrefs set PrefData = '%s' where LoginID = '%s' and PrefKey = '%s' and PrefSubKey = '%s'", val, curUser().userName, key, subkey);
+    } else {
+        DB.dbcmd("insert into UserPrefs (LoginID, PrefKey, PrefSubKey, PrefData) values('%s', '%s', '%s', '%s')", curUser().userName, key, subkey, val);
+    }
+}
 
+/** getUserPref - Returns the requested user preference
+  */
+const char *TAAWidget::getUserPref(const char *key, const char *subkey)
+{
+    char    *retStr;
+    ADB     DB;
+    DB.query("select PrefData from UserPrefs where LoginID = '%s' and PrefKey = '%s' and PrefSubKey = '%s'", curUser().userName, key, subkey);
+    if (DB.rowCount) {
+        DB.getrow();
+        retStr = new(char[strlen(DB.curRow["PrefData"]) + 2]);
+        strcpy(retStr, DB.curRow["PrefData"]);
+    } else {
+        retStr = new(char[2]);
+        strcpy(retStr, "");
+    }
+    return (const char *) retStr;
+}
     
 HorizLine::HorizLine(QWidget *parent, const char *name, WFlags f)
     : QLabel(parent, name, f)

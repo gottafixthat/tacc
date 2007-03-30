@@ -212,7 +212,7 @@ void AsteriskManager::simpleCommand(int cmd)
 void AsteriskManager::goOnBreak()
 {
     char    authStr[2048];
-    sprintf(authStr, "Action: QueuePause\nQueue: %s\nInterface: %s\nPaused: true\n\n", "BlargQueue", curUser().agentID);
+    sprintf(authStr, "Action: QueuePause\nQueue: %s\nInterface: %s\nPaused: true\n\n", curUser().queue, curUser().agentID);
     mySocket->writeBlock(authStr, strlen(authStr));
 }
 
@@ -221,9 +221,9 @@ void AsteriskManager::goOnBreak()
 void AsteriskManager::signMeIn()
 {
     char    authStr[2048];
-    sprintf(authStr, "Action: QueuePause\nQueue: %s\nInterface: %s\nPaused: false\n\n", "BlargQueue", curUser().agentID);
+    sprintf(authStr, "Action: QueuePause\nQueue: %s\nInterface: %s\nPaused: false\n\n", curUser().queue, curUser().agentID);
     mySocket->writeBlock(authStr, strlen(authStr));
-    sprintf(authStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %s\nExten: %s\nPaused: false\n\n", "BlargQueue", curUser().extension, curUser().extension);
+    sprintf(authStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %s\nExten: %s\nPaused: false\n\n", curUser().queue, curUser().extension, curUser().extension);
     mySocket->writeBlock(authStr, strlen(authStr));
 }
 
@@ -232,37 +232,37 @@ void AsteriskManager::signMeIn()
 void AsteriskManager::signMeOut()
 {
     char    authStr[2048];
-    sprintf(authStr, "Action: AgentLogoff\nQueue: %s\nAgent: %s\n\n", "BlargQueue", curUser().extension);
+    sprintf(authStr, "Action: AgentLogoff\nQueue: %s\nAgent: %s\n\n", curUser().queue, curUser().extension);
     mySocket->writeBlock(authStr, strlen(authStr));
 }
 
 /** setAgentStatus - Given an extension, an agent ID and a state
   * we will attempt to set the state.
   */
-void AsteriskManager::setAgentStatus(int ext, int agent, int state)
+void AsteriskManager::setAgentStatus(int ext, int agent, int state, const char *queue)
 {
     char    actStr[2048];
-    
+
     switch (state) {
         case 1:             // Sign in the agent
-            sprintf(actStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %d\nExten: %d\nPaused: false\n\n", "BlargQueue", agent, ext);
+            sprintf(actStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %d\nExten: %d\nPaused: false\n\n", queue, agent, ext);
             mySocket->writeBlock(actStr, strlen(actStr));
-            sprintf(actStr, "Action: QueuePause\nQueue: %s\nInterface: Agent/%d\nPaused: false\n\n", "BlargQueue", agent);
+            sprintf(actStr, "Action: QueuePause\nQueue: %s\nInterface: Agent/%d\nPaused: false\n\n", queue, agent);
             mySocket->writeBlock(actStr, strlen(actStr));
             break;
 
         case 2:             // Put the agent on break
-            sprintf(actStr, "Action: QueuePause\nQueue: %s\nInterface: Agent/%d\nPaused: true\n\n", "BlargQueue", agent);
+            sprintf(actStr, "Action: QueuePause\nQueue: %s\nInterface: Agent/%d\nPaused: true\n\n", queue, agent);
             mySocket->writeBlock(actStr, strlen(actStr));
             break;
 
         case 3:             // Sign the agent out
-            sprintf(actStr, "Action: AgentLogoff\nQueue: %s\nAgent: %d\n\n", "BlargQueue", agent);
+            sprintf(actStr, "Action: AgentLogoff\nQueue: %s\nAgent: %d\n\n", queue, agent);
             mySocket->writeBlock(actStr, strlen(actStr));
             break;
 
         default:            // Unknown action
-            fprintf(stderr, "AsteriskManager::setAgentStatus() unknown state (%d) for extension %d, agent ID %d!\n", state, ext, agent);
+            fprintf(stderr, "AsteriskManager::setAgentStatus() unknown state (%d) for extension %d, agent ID %d for queue %s!\n", state, ext, agent, queue);
             break;
     }
     // After we're all done, referesh the queue again.

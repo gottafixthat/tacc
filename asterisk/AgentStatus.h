@@ -46,11 +46,18 @@ public:
     virtual ~AgentInfo();
 
     const char  *agentName();
+    const char  *agentLocation();
     bool        isExpanded();
 
     void        setAgentName(const char *);
     void        setLocation(const char *);
-    void        setStatus(int);
+    void        setStatus(int, const char *);
+    int         getStatus();
+    void        setCallsTaken(int);
+    void        setLastCallTime(int);
+    void        setLastStatusChange(time_t);
+    time_t      getLastStatusChange();
+    void        setTimeInState(int, int, int);
 
 public slots:
     void        setExpanded(bool);
@@ -64,8 +71,12 @@ protected:
     QLabel      *callstaken;
     QLabel      *lastcall;
     QPushButton *expandButton;
+    time_t      lastchange;
+    int         curstatus;
 
     bool        intIsExpanded;
+
+    void        updateExpandedPrefs();
 
 protected slots:
     void        expandedClicked();
@@ -91,6 +102,7 @@ signals:
 protected:
     int                 agentCount;
     AsteriskManager     *am;
+    /*
     QPtrList<QLabel>    names;
     QPtrList<QLabel>    locations;
     QPtrList<QLabel>    status;
@@ -99,6 +111,7 @@ protected:
     QPtrList<QLabel>    callstaken;
     QPtrList<QLabel>    lastcall;
     QPtrList<statusInfoStruct>  statusinfo;
+    */
     QPtrList<AgentInfo> agentList;
     QPushButton         *setStatusButton;
     QPopupMenu          *setStatusMenu;              
