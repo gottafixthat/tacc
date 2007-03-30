@@ -55,6 +55,7 @@ typedef struct taa_User {
     char            location[64];       // Telephone Extension, i.e. SIP/x113
     char            agentID[64];        // Agent ID
     char            extension[64];      // Telephone Extension, numeric, i.e. 113
+    char            queue[64];
     AccessLevels    accessLevel;
 };
 

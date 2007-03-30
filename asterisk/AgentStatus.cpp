@@ -20,13 +20,13 @@
 #include "AgentStatus.h"
 #include "Cfg.h"
 
-#include <ADB.h>
 #include <TAAWidget.h>
 #include <TAATools.h>
 #include <TAAPixmaps.h>
 #include <qsqldatabase.h>
 #include <qpixmap.h>
 #include <qtimer.h>
+#include <ADB.h>
 
 /**
   * AgentInfo is the container for a single agent's status.
@@ -52,8 +52,8 @@ AgentInfo::AgentInfo
     location->setText("Location");
     status->setText("Signed Out");
     timeinstate->setText("00:00");
-    callstaken->setText("8 Total");
-    lastcall->setText("Last: 4:43pm");
+    callstaken->setText("0 Total");
+    lastcall->setText("Last: N/A");
 
     // By default we don't want to show everything,
     // only the basics.
@@ -105,6 +105,14 @@ const char *AgentInfo::agentName()
 }
 
 /**
+  * agentLocation - Returns the location of the agent.
+  */
+const char *AgentInfo::agentLocation()
+{
+    return (const char *) location->text();
+}
+
+/**
   * isExpanded - Returns true or false depending on whether
   * or not this agent's information is expanded.
   */
@@ -130,9 +138,58 @@ void AgentInfo::setLocation(const char *newLoc)
 }
 
 /**
+  * setCallsTaken - Sets the number of calls the the agent has taken.
+  */
+void AgentInfo::setCallsTaken(int calls)
+{
+    char    tmpStr[1024];
+    sprintf(tmpStr, "%d Total", calls);
+    callstaken->setText(tmpStr);
+}
+
+/**
+  * setLastCallTime - Sets the last time that the agent took a call.
+  */
+void AgentInfo::setLastCallTime(int last)
+{
+    QDateTime   tmpTime;
+    char        tmpStr[1024];
+    tmpTime.setTime_t(last);
+    sprintf(tmpStr, "Last: %s", (const char *)tmpTime.toString("h:mmap"));
+    lastcall->setText(tmpStr);
+}
+
+/**
+  * setLastStatusChange - Sets the last time the status of this user
+  * changed.
+  */
+void AgentInfo::setLastStatusChange(time_t tmpTime)
+{
+    lastchange = tmpTime;
+}
+
+/**
+  * getLastStatusChange - Returns the last status change.
+  */
+time_t AgentInfo::getLastStatusChange()
+{
+    return lastchange;
+}
+
+/**
+  * setTimeInState - Updates the time in state label.
+  */
+void AgentInfo::setTimeInState(int h, int m, int s)
+{
+    char    tmpStr[1024];
+    sprintf(tmpStr, "%d:%02d:%02d", h, m, s);
+    timeinstate->setText(tmpStr);
+}
+
+/**
   * setStatus - Sets the status of the agent.
   */
-void AgentInfo::setStatus(int newStatus)
+void AgentInfo::setStatus(int newStatus, const char *textStatus)
 {
     QPixmap signedout(signedout_xpm);
     QPixmap avail(available_xpm);
@@ -151,6 +208,15 @@ void AgentInfo::setStatus(int newStatus)
             guistatus->setPixmap(signedout);
             break;
     }
+    status->setText(textStatus);
+}
+
+/**
+  * getStatus - Returns the status of the agent.
+  */
+int AgentInfo::getStatus()
+{
+    return curstatus;
 }
 
 /**
@@ -176,7 +242,26 @@ void AgentInfo::setExpanded(bool newVal)
     lastcall->setHidden(newHidden);
 
 
+    // Update the user preferences
+
     intIsExpanded = newVal;
+
+    updateExpandedPrefs();
+}
+
+/**
+  * updateExpandedPrefs
+  */
+void AgentInfo::updateExpandedPrefs()
+{
+    if (!agentname->text().length()) return;
+    char    tmpSt[1024];
+    int tmpExp = 0;
+    if (intIsExpanded) {
+        tmpExp = 1;
+    }
+    sprintf(tmpSt, "%d", tmpExp);
+    setUserPref("AgentListExpanded", (const char *)agentname->text(), tmpSt);
 }
 
 /**
@@ -224,12 +309,14 @@ AgentStatus::AgentStatus
 
     // Get the agents out of the database.
     QSqlQuery query(myDB);
-    query.exec("select LoginID, AgentID, Extension from Staff where Active > 0 and AgentID <> ''");
+    query.exec("select LoginID, AgentID, Extension, QueueName from Staff where Active > 0 and AgentID <> ''");
     if (query.size() < 1) {
         fprintf(stderr, "AgentStatus::AgentStatus() No agents found!\n");
         return;
     }
-    
+
+    ADB     DB;
+
     agentCount = query.size();
     // Create our widgets.
     QPixmap signedout(signedout_xpm);
@@ -242,44 +329,15 @@ AgentStatus::AgentStatus
     while (query.next()) {
         AgentInfo   *tmpAgent = new AgentInfo(this);
         tmpAgent->setAgentName(query.value(0).toString());
-        tmpAgent->setStatus(AGENT_STATUS_SIGNEDOUT);
-        tmpAgent->setLocation("Ext " + query.value(2).toString());
+        tmpAgent->setStatus(AGENT_STATUS_SIGNEDOUT, "Signed Out");
+        tmpAgent->setLocation("Agent/" + query.value(2).toString());
+        tmpAgent->setLastStatusChange(QDateTime::currentDateTime().toTime_t());
+        // Check to see if we prefer this agent expanded or not.
+        QString tmpQSt = getUserPref("AgentListExpanded",  (const char *)query.value(0).toString());
+        if (tmpQSt.length()) {
+            tmpAgent->setExpanded(tmpQSt.toInt());
+        }
         agentList.append(tmpAgent);
-
-        QLabel  *tmpName = new QLabel(this);
-        tmpName->setText(query.value(0).toString());
-        names.append(tmpName);
-
-        QLabel *tmpLoc = new QLabel(this);
-        tmpLoc->setText("Ext " + query.value(2).toString());
-        tmpLoc->setAlignment(Qt::AlignRight);
-        locations.append(tmpLoc);
-
-        QLabel *tmpGuiStatus = new QLabel(this);
-        tmpGuiStatus->setPixmap(signedout);
-        guistatus.append(tmpGuiStatus);
-
-        QLabel *tmpStatus = new QLabel(this);
-        tmpStatus->setText("Signed Out");
-        status.append(tmpStatus);
-        
-        QLabel *tmpTimeInState = new QLabel(this);
-        tmpTimeInState->setText("0:00:00");
-        timeinstate.append(tmpTimeInState);
-        
-        QLabel *tmpCallsTaken = new QLabel(this);
-        tmpCallsTaken->setAlignment(AlignVCenter);
-        callstaken.append(tmpCallsTaken);
-
-        QLabel *tmpLastCall = new QLabel(this);
-        tmpLastCall->setAlignment(AlignVCenter);
-        lastcall.append(tmpLastCall);
-
-        statusInfoStruct *tmpSInfo = new statusInfoStruct;
-        tmpSInfo->lastchange = QDateTime::currentDateTime().toTime_t();
-        tmpSInfo->paused = 0;
-        tmpSInfo->status = 0;
-        statusinfo.append(tmpSInfo);
 
         if (!strcmp(curUser().agentID, query.value(1).toString())) {
             myPosition = i;
@@ -297,21 +355,6 @@ AgentStatus::AgentStatus
     QGridLayout *wl = new QGridLayout(2, agentCount * 3, 2);
     int curRow = 0;
     for (i = 0; i < agentCount; i++) {
-        wl->addMultiCellWidget(guistatus.at(i), curRow, curRow+1, 0, 0, AlignLeft|AlignVCenter);
-        wl->addWidget(names.at(i),          curRow, 1, AlignLeft|AlignTop);
-        wl->addWidget(locations.at(i),      curRow, 2, AlignLeft|AlignTop);
-        curRow++;
-        wl->addWidget(status.at(i),         curRow, 1, AlignLeft|AlignTop);
-        wl->addWidget(timeinstate.at(i),    curRow, 2, AlignRight|AlignTop);
-        curRow++;
-        wl->addMultiCellWidget(callstaken.at(i),    curRow, curRow, 1, 2, AlignLeft|AlignTop);
-        curRow++;
-        wl->addMultiCellWidget(lastcall.at(i),      curRow, curRow, 1, 2, AlignLeft|AlignTop);
-        curRow++;
-        HorizLine *tmpLine = new HorizLine(this);
-        wl->addMultiCellWidget(tmpLine, curRow,curRow,0,2);
-        curRow++;
-
         wl->addMultiCellWidget(agentList.at(i), curRow, curRow, 0, 2);
         curRow++;
 
@@ -519,36 +562,23 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
     if (newStatus.isEmpty()) return;
 
     for (int i = 0; i < agentCount; i++) {
-        if (!strcasecmp(locations.at(i)->text(), loc)) {
+        // Update the agent class
+        AgentInfo *tmpAgent = agentList.at(i);
+        if (!strcasecmp(tmpAgent->agentLocation(), loc)) {
             // Found them.
-            status.at(i)->setText(newStatus);
-            switch (newGuiStatus) {
-                case AGENT_STATUS_AVAILABLE:
-                    guistatus.at(i)->setPixmap(avail);
-                    break;
-                case AGENT_STATUS_ONBREAK:
-                    guistatus.at(i)->setPixmap(onbreak);
-                    break;
-                case AGENT_STATUS_SIGNEDOUT:
-                default:
-                    guistatus.at(i)->setPixmap(signedout);
-                    break;
-            }
+            tmpAgent->setStatus(newGuiStatus, (const char *)newStatus);
             if (calls >= 0) {
-                sprintf(tmpStr, "Calls Taken: %d", calls);
-                callstaken.at(i)->setText(tmpStr);
+                tmpAgent->setCallsTaken(calls);
             }
             if (lastcalltime > 0) {
-                QDateTime   tmpTime;
-                tmpTime.setTime_t(lastcalltime);
-                sprintf(tmpStr, "Last Call: %s", (const char *)tmpTime.toString("h:mm:ssap"));
-                lastcall.at(i)->setText(tmpStr);
+                tmpAgent->setLastCallTime(lastcalltime);
             }
             // Reset the time, but only if its not us.
-            if ((newGuiStatus != statusinfo.at(i)->status) && (i != myPosition)) {
-                statusinfo.at(i)->status = newGuiStatus;
-                statusinfo.at(i)->lastchange = curDateTime.toTime_t();
+            if ((newGuiStatus != tmpAgent->getStatus()) && (i != myPosition)) {
+                //statusinfo.at(i)->status = newGuiStatus;
+                tmpAgent->setLastStatusChange(curDateTime.toTime_t());
             }
+
         }
     }
 
@@ -574,7 +604,8 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
         }
 
         //fprintf(stderr, "Checking to see if I need to update myself, myPosition = %d.\n", myPosition);
-        if (newGuiStatus != statusinfo.at(myPosition)->status) {
+        if (newGuiStatus != agentList.at(myPosition)->getStatus()) {
+        //if (newGuiStatus != statusinfo.at(myPosition)->status) {
             // Update the database with this change.
             //fprintf(stderr, "Inserting agent change into the database...\n");
             QSqlDatabase        *myDB;
@@ -590,11 +621,12 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
                 QSqlQuery query(myDB);
 
                 QDateTime   startTime;
-                startTime.setTime_t(statusinfo.at(myPosition)->lastchange);
+                //startTime.setTime_t(statusinfo.at(myPosition)->lastchange);
+                startTime.setTime_t(agentList.at(myPosition)->getLastStatusChange());
                 char        tmpStr[1024];
                 sprintf(tmpStr, "replace into AgentStatus (LoginID, State, StartTime, EndTime, ElapsedSeconds) values ('%s', %d, '%s', '%s', %ld)",
                         curUser().userName,
-                        statusinfo.at(myPosition)->status,
+                        agentList.at(myPosition)->getStatus(),
                         (const char *) startTime.toString("yyyy-MM-dd hh:mm:ss"),
                         (const char *) curDateTime.toString("yyyy-MM-dd hh:mm:ss"),
                         startTime.secsTo(curDateTime));
@@ -603,8 +635,8 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
 
             //fprintf(stderr, "Finished inserting agent change into the database...\n");
 
-            statusinfo.at(myPosition)->status = newGuiStatus;
-            statusinfo.at(myPosition)->lastchange = curDateTime.toTime_t();
+            agentList.at(myPosition)->setStatus(newGuiStatus, newStatus);
+            agentList.at(myPosition)->setLastStatusChange(curDateTime.toTime_t());
         }
     }
 }
@@ -631,7 +663,19 @@ void AgentStatus::agentSetStatus(int ext)
         state++;
         ext = ext - 1000;
     }
-    am->setAgentStatus(ext, ext, state);
+    // Get the queue name out of the database.
+
+    ADB     db;
+    char    queue[1024];
+    strcpy(queue, "");
+
+    db.query("select QueueName from Staff where AgentID = %d", ext);
+    if (db.rowCount) {
+        db.getrow();
+        strcpy(queue, db.curRow["QueueName"]);
+    }
+
+    am->setAgentStatus(ext, ext, state, queue);
 }
 
 /** updateTimeInState - Refreshes the time in state for each of the agents.
@@ -643,7 +687,8 @@ void AgentStatus::updateTimeInState()
     char        tmpSt[1024];
     int         h, m, s, secs;
     for (int i = 0; i < agentCount; i++) {
-        startTime.setTime_t(statusinfo.at(i)->lastchange);
+        AgentInfo *tmpAgent = agentList.at(i);
+        startTime.setTime_t(tmpAgent->getLastStatusChange());
         h = m = s = secs = 0;
         secs = startTime.secsTo(curTime);
 
@@ -657,7 +702,7 @@ void AgentStatus::updateTimeInState()
         }
         s = secs;
         sprintf(tmpSt, "%d:%02d:%02d", h, m, s);
-        timeinstate.at(i)->setText(tmpSt);
+        tmpAgent->setTimeInState(h, m, s);
     }
 }
 

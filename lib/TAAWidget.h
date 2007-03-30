@@ -46,6 +46,9 @@ public:
     TAAWidget(QWidget *parent = NULL, const char *name = NULL, WFlags f = WDestructiveClose);
     virtual ~TAAWidget();
 
+    void        setUserPref(const char *key, const char *subkey, const char *val);
+    const char *getUserPref(const char *key, const char *subkey);
+
 signals:
     // Status signals.
     void    setStatus(const char *);

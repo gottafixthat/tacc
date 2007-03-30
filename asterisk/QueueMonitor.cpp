@@ -326,10 +326,12 @@ void QueueMonitor::callPopupMenu( QListViewItem* item, const QPoint & point, int
         i = xferTargets->insertItem(db.curRow["LoginID"], atoi(db.curRow["Extension"]));
         xferTargets->connectItem(i, this, SLOT(menuItemSelected(int)));
         xferTargets->setItemParameter(i, i);
+        /*
         if (!strcasecmp(curUser().userName, db.curRow["LoginID"])) {
             // We can't transfer to ourselves.
             xferTargets->setItemEnabled(i, false);
         }
+        */
         // Now for voice mail targets
         i = vmTargets->insertItem(db.curRow["LoginID"], atoi(db.curRow["Extension"]));
         vmTargets->connectItem(i, this, SLOT(menuItemSelected(int)));
