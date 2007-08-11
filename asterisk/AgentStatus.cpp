@@ -377,15 +377,15 @@ AgentStatus::AgentStatus
                 int i;
                 QPopupMenu *agent = new QPopupMenu(this);
 
-                i = agent->insertItem(avail, "Available", atoi(db.curRow["Extension"])+1000);
+                i = agent->insertItem(avail, "Available", atoi(db.curRow["Extension"])+10000);
                 agent->connectItem(i, this, SLOT(agentSetStatus(int)));
                 agent->setItemParameter(i, i);
 
-                i = agent->insertItem(onbreak, "On Break", atoi(db.curRow["Extension"])+2000);
+                i = agent->insertItem(onbreak, "On Break", atoi(db.curRow["Extension"])+20000);
                 agent->connectItem(i, this, SLOT(agentSetStatus(int)));
                 agent->setItemParameter(i, i);
 
-                i = agent->insertItem(signedout, "Signed Out", atoi(db.curRow["Extension"])+3000);
+                i = agent->insertItem(signedout, "Signed Out", atoi(db.curRow["Extension"])+30000);
                 agent->connectItem(i, this, SLOT(agentSetStatus(int)));
                 agent->setItemParameter(i, i);
 
@@ -659,9 +659,9 @@ void AgentStatus::agentSetStatus(int ext)
 {
     int     state  = 0;
     //fprintf(stderr, "AgentStatus::agentSetStatus(%d) called.\n", ext);
-    while (ext > 1000) {
+    while (ext > 10000) {
         state++;
-        ext = ext - 1000;
+        ext = ext - 10000;
     }
     // Get the queue name out of the database.
 

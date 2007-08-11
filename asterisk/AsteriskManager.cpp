@@ -149,7 +149,7 @@ void AsteriskManager::parseLine(const char *line)
     if (key.isEmpty() || val.isEmpty()) return;     // Missing something.
     keylower = key.lower();
 
-    //fprintf(stderr, "Key: '%s', Val: '%s'\n", (const char *)key, (const char *)val);
+    fprintf(stderr, "Key: '%s', Val: '%s'\n", (const char *)key, (const char *)val);
     
     // Check for "Event" or "Response", if it is neither of those, then
     // its extra data that we add to our data list and leave up to any
@@ -223,7 +223,8 @@ void AsteriskManager::signMeIn()
     char    authStr[2048];
     sprintf(authStr, "Action: QueuePause\nQueue: %s\nInterface: %s\nPaused: false\n\n", curUser().queue, curUser().agentID);
     mySocket->writeBlock(authStr, strlen(authStr));
-    sprintf(authStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %s\nExten: %s\nPaused: false\n\n", curUser().queue, curUser().extension, curUser().extension);
+    sprintf(authStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %s\nExten: %s\nPaused: false\nContext: %s\n\n", curUser().queue, curUser().extension, curUser().extension, cfgVal("QueueContext"));
+    fprintf(stderr, "Sending:\n%s", authStr);
     mySocket->writeBlock(authStr, strlen(authStr));
 }
 
@@ -245,9 +246,11 @@ void AsteriskManager::setAgentStatus(int ext, int agent, int state, const char *
 
     switch (state) {
         case 1:             // Sign in the agent
-            sprintf(actStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %d\nExten: %d\nPaused: false\n\n", queue, agent, ext);
+            sprintf(actStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %d\nExten: %d\nPaused: false\nContext: %s\n\n", queue, agent, ext, cfgVal("QueueContext"));
+    	    fprintf(stderr, "Sending:\n%s", actStr);
             mySocket->writeBlock(actStr, strlen(actStr));
             sprintf(actStr, "Action: QueuePause\nQueue: %s\nInterface: Agent/%d\nPaused: false\n\n", queue, agent);
+    	    fprintf(stderr, "Sending:\n%s", actStr);
             mySocket->writeBlock(actStr, strlen(actStr));
             break;
 
