@@ -54,10 +54,15 @@ protected:
     QComboBox       *accessLevel;
     QLineEdit       *password1;
     QLineEdit       *password2;
+    QLineEdit       *telephone;
+    QLineEdit       *agentID;
+    QLineEdit       *extension;
+    QLineEdit       *queueName;
     QPushButton     *delButton;
     QPushButton     *newButton;
     QPushButton     *addSave;
     QCheckBox       *sendTicketNotifications;
+    QCheckBox       *userActive;
 
     long            myCurrentID;
 
