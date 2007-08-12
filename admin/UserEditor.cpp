@@ -54,6 +54,10 @@ UserEditor::UserEditor
     accessLevel->insertItem("Manager");
     accessLevel->insertItem("Staff");
 
+    userActive = new QCheckBox(this, "Account Active");
+    userActive->setText("Account Active");
+    userActive->setChecked(false);
+
     QLabel  *passwordLabel1 = new QLabel(this);
     passwordLabel1->setText("Password:");
     passwordLabel1->setAlignment(AlignRight);
@@ -70,10 +74,37 @@ UserEditor::UserEditor
     password2->setMaxLength(32);
     password2->setEchoMode(QLineEdit::Password);
 
+    QLabel *telephoneLabel  = new QLabel(this);
+    telephoneLabel->setText("Phone ID:");
+    telephoneLabel->setAlignment(AlignRight);
+
+    telephone = new QLineEdit(this, "telephone");
+    telephone->setMaxLength(60);
+
+    QLabel *extensionLabel = new QLabel(this);
+    extensionLabel->setText("Extension:");
+    extensionLabel->setAlignment(AlignRight);
+
+    extension = new QLineEdit(this, "extension");
+    extension->setMaxLength(10);
+
+    QLabel *agentIDLabel = new QLabel(this);
+    agentIDLabel->setText("Agent ID:");
+    agentIDLabel->setAlignment(AlignRight);
+
+    agentID = new QLineEdit(this, "agentID");
+    agentID->setMaxLength(20);
+
+    QLabel *queueNameLabel = new QLabel(this);
+    queueNameLabel->setText("Queue Name:");
+    queueNameLabel->setAlignment(AlignRight);
+
+    queueName = new QLineEdit(this, "queueName");
+    queueName->setMaxLength(60);
+
     sendTicketNotifications = new QCheckBox(this, "Ticket Notifications");
     sendTicketNotifications->setText("Ticket Notifications");
     sendTicketNotifications->setChecked(false);
-
 
     // We also need an Add/Save button
     QHButtonGroup *bg = new QHButtonGroup(this);
@@ -114,6 +145,10 @@ UserEditor::UserEditor
     formLayout->setRowStretch(curRow, 0);
     curRow++;
 
+    formLayout->addWidget(userActive,       curRow, 1);
+    formLayout->setRowStretch(curRow, 0);
+    curRow++;
+
     formLayout->addWidget(passwordLabel1,   curRow, 0);
     formLayout->addWidget(password1,        curRow, 1);
     formLayout->setRowStretch(curRow, 0);
@@ -121,6 +156,26 @@ UserEditor::UserEditor
 
     formLayout->addWidget(passwordLabel2,   curRow, 0);
     formLayout->addWidget(password2,        curRow, 1);
+    formLayout->setRowStretch(curRow, 0);
+    curRow++;
+
+    formLayout->addWidget(telephoneLabel,   curRow, 0);
+    formLayout->addWidget(telephone,        curRow, 1);
+    formLayout->setRowStretch(curRow, 0);
+    curRow++;
+
+    formLayout->addWidget(extensionLabel,   curRow, 0);
+    formLayout->addWidget(extension,        curRow, 1);
+    formLayout->setRowStretch(curRow, 0);
+    curRow++;
+
+    formLayout->addWidget(agentIDLabel,     curRow, 0);
+    formLayout->addWidget(agentID,          curRow, 1);
+    formLayout->setRowStretch(curRow, 0);
+    curRow++;
+
+    formLayout->addWidget(queueNameLabel,   curRow, 0);
+    formLayout->addWidget(queueName,        curRow, 1);
     formLayout->setRowStretch(curRow, 0);
     curRow++;
 
@@ -156,8 +211,13 @@ void UserEditor::loadUser(long userID)
     // Clear our form, first.
     loginID->setText("");
     accessLevel->setCurrentItem(2);         // Clerk
+    userActive->setChecked(false);
     password1->setText("");
     password2->setText("");
+    telephone->setText("");
+    extension->setText("");
+    agentID->setText("");
+    queueName->setText("");
     addSave->setText("&Add");
     delButton->setEnabled(false);
     newButton->setEnabled(false);
@@ -171,10 +231,15 @@ void UserEditor::loadUser(long userID)
             // Got it.  Fill in the form.
             loginID->setText(alDB.getStr("LoginID"));
             accessLevel->setCurrentItem(alDB.getInt("AccessLevel")-1);
+            userActive->setChecked(alDB.getInt("Active"));
             addSave->setText("S&ave");
             delButton->setEnabled(true);
             newButton->setEnabled(true);
             sendTicketNotifications->setChecked(alDB.getInt("TicketNotifications"));
+            telephone->setText(alDB.getStr("Telephone"));
+            extension->setText(alDB.getStr("Extension"));
+            agentID->setText(alDB.getStr("AgentID"));
+            queueName->setText(alDB.getStr("QueueName"));
             myCurrentID = userID;
         }
     }
@@ -209,6 +274,13 @@ void UserEditor::saveUser()
 
         alDB.get(myCurrentID);
         alDB.setValue("AccessLevel", accessLevel->currentItem()+1);
+
+        if (userActive->isChecked()) {
+            alDB.setValue("Active", 1);
+        } else {
+            alDB.setValue("Active", 0);
+        }
+
         // This is an edit, first, make sure that the login ID is the
         // same.  If its not, make sure that it is unique.
         strcpy(oldLogin, alDB.getStr("LoginID"));
@@ -238,6 +310,12 @@ void UserEditor::saveUser()
             alDB.setValue("TicketNotifications", 0);
         }
 
+        // We should probably verify this data a bit more
+        alDB.setValue("Telephone",      (const char *)telephone->text());
+        alDB.setValue("Extension",      (const char *)extension->text());
+        alDB.setValue("AgentID",        (const char *)agentID->text());
+        alDB.setValue("QueueName",      (const char *)queueName->text());
+
         alDB.upd();
 
         // Check to see if we need to update the Staff table as well.
@@ -251,6 +329,11 @@ void UserEditor::saveUser()
     } else {
         // The access level is okay regardless.
         alDB.setValue("AccessLevel", accessLevel->currentItem()+1);
+        if (userActive->isChecked()) {
+            alDB.setValue("Active", 1);
+        } else {
+            alDB.setValue("Active", 0);
+        }
         if (sendTicketNotifications->isChecked()) {
             alDB.setValue("TicketNotifications", 1);
         } else {
@@ -266,6 +349,12 @@ void UserEditor::saveUser()
         }
 
         alDB.setValue("LoginID", (const char *)loginID->text());
+
+        alDB.setValue("Telephone",      (const char *)telephone->text());
+        alDB.setValue("Extension",      (const char *)extension->text());
+        alDB.setValue("AgentID",        (const char *)agentID->text());
+        alDB.setValue("QueueName",      (const char *)queueName->text());
+
 
         // If we're creating a new user, they must give a password.
         if (!password1->text().length()) {
