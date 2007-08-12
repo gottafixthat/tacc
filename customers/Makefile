@@ -26,8 +26,7 @@ endif
 SUBDIRS =	
 
 SOURCES =	Customers.cpp NewCustomer.cpp\
-		NewCustomerData.cpp CallBackVerify.cpp CallBackVerifyData.cpp\
-		DupPhones.cpp DupPhonesData.cpp\
+		NewCustomerData.cpp\
 		EditCustomer.cpp\
 		ReceivePayment.cpp\
 		CustChargeEdit.cpp\
@@ -65,8 +64,7 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 
 
 HEADERS =	Customers.h NewCustomer.h\
-		NewCustomerData.h CallBackVerify.h CallBackVerifyData.h\
-		DupPhones.h DupPhonesData.h\
+		NewCustomerData.h\
 		CustRegister.h\
 		EditCustomer.h\
 		ReceivePayment.h\
@@ -106,8 +104,6 @@ OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_Customers.cpp \
 		moc_NewCustomer.cpp moc_NewCustomerData.cpp \
-		moc_CallBackVerify.cpp moc_CallBackVerifyData.cpp\
-		moc_DupPhones.cpp moc_DupPhonesData.cpp\
 		moc_CustRegister.cpp\
 		moc_EditCustomer.cpp\
 		moc_ReceivePayment.cpp\
@@ -194,18 +190,6 @@ moc_NewCustomer.cpp: NewCustomer.h
 
 moc_NewCustomerData.cpp: NewCustomerData.h
 	$(MOC) NewCustomerData.h -o moc_NewCustomerData.cpp
-
-moc_CallBackVerify.cpp: CallBackVerify.h
-	$(MOC) CallBackVerify.h -o moc_CallBackVerify.cpp
-
-moc_CallBackVerifyData.cpp: CallBackVerifyData.h
-	$(MOC) CallBackVerifyData.h -o moc_CallBackVerifyData.cpp
-
-moc_DupPhones.cpp: DupPhones.h
-	$(MOC) DupPhones.h -o moc_DupPhones.cpp
-
-moc_DupPhonesData.cpp: DupPhonesData.h
-	$(MOC) DupPhonesData.h -o moc_DupPhonesData.cpp
 
 moc_CustRegister.cpp: CustRegister.h
 	$(MOC) CustRegister.h -o moc_CustRegister.cpp

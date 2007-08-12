@@ -25,8 +25,6 @@
 #include "NewCustomer.h"
 #include "BlargDB.h"
 #include "BString.h"
-#include "CallBackVerify.h"
-#include "DupPhones.h"
 #include "EditCustomer.h"
 #include "LoginEdit.h"
 #include <Cfg.h>
@@ -131,7 +129,6 @@ void NewCustomer::addCustomer()
 	NotesDB		    ndb;
 	RatePlansDB		rpdb;
 	BillingCyclesDB	bcdb;
-	CallBackVerify * cbv;
 	QString	PhoneQuery;
 	char	PhoneQueryFMT[128];
 	char	calledBackAt[128];
@@ -345,27 +342,6 @@ void NewCustomer::addCustomer()
         }
     }
 
-    if (PhoneQuery.length()) {
-    	strcpy(tmpstr, PhoneQuery);
-		QApplication::setOverrideCursor(waitCursor);
-		DB.query("select DISTINCT RefID, PhoneNumber from PhoneNumbers where %s and RefFrom = %d order by Tag", tmpstr, REF_CUSTOMER);
-		QApplication::restoreOverrideCursor();
-		if (DB.rowCount) {
-			CustomersDB tmpCust;
-			DupPhones * dupes;
-			dupes = new DupPhones;
-			QApplication::setOverrideCursor(waitCursor);
-			while(DB.getrow()) {
-				sprintf(tmpstr, "%s\t%s", DB.curRow["RefID"], DB.curRow["PhoneNumber"]);
-				tmpCust.get(atoi(DB.curRow["RefID"]));
-				matchList.append(tmpstr);
-				dupes->AddDupeEntry(atol(DB.curRow["RefID"]), tmpCust.getStr("FullName"), DB.curRow["PhoneNumber"], tmpCust.getFloat("CurrentBalance"));
-			}
-			QApplication::restoreOverrideCursor();
-			if (dupes->exec()) done(0);
-		}
-	}
-	
 	// Now, make sure that at least one phone number has been entered.
 	if (!strlen(dayPhone->text()) && !strlen(evePhone->text()) &&
 	    !strlen(faxPhone->text()) && !strlen(altPhone->text())) {
@@ -401,20 +377,7 @@ void NewCustomer::addCustomer()
 	cdb.setValue("RatePlanDate", theDate);
 	cdb.setValue("AccountOpened", theDate);
 	cdb.setValue("BillingAddress", "Billing");
-	
 
-
-
-    fprintf(stderr, "Setting up the callback verify form...\n");
-	cbv = new CallBackVerify();
-	if (strlen(dayPhone->text())) cbv->setDayPhoneText((const char *) dayPhone->text());
-	if (strlen(evePhone->text())) cbv->setEvePhoneText((const char *) evePhone->text());
-	if (strlen(faxPhone->text())) cbv->setFaxPhoneText((const char *) faxPhone->text());
-	if (strlen(altPhone->text())) cbv->setAltPhoneText((const char *) altPhone->text());
-	if (!cbv->exec()) return;
-	strcpy(calledBackAt, cbv->getSelected());
-	
-	
     fprintf(stderr, "Inserting the new customer into the database...\n");
 	// Finally, check to see if the user really wants to add this customer.
 	// Insert the record and get the new customer ID
