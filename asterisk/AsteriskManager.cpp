@@ -50,6 +50,7 @@ AsteriskManager::~AsteriskManager()
 void AsteriskManager::reconnect()
 {
     //fprintf(stderr, "AsteriskManager::reconnect() - Attempting to reconnect to Asterisk Server...\n");
+    debug(5, "AsteriskManager::reconnect() - Attempting reconnect...\n");
     mySocket->connectToHost(cfgVal("AsteriskHost"), atoi(cfgVal("AsteriskPort")));
     // Check after 5 seconds, if we're not connected try again.
     QTimer::singleShot(5000, this, SLOT(checkConnection()));
@@ -83,6 +84,7 @@ void AsteriskManager::socketError(int err)
 void AsteriskManager::checkConnection()
 {
     if (mySocket->state() != QSocket::Connected) {
+        debug(5, "AsteriskManager::checkConnection() - Not connected.  Will attempt to reconnect...\n");
         // Abort everything and close the connection.
         mySocket->clearPendingData();
         mySocket->close();
@@ -96,6 +98,7 @@ void AsteriskManager::checkConnection()
 void AsteriskManager::authenticate()
 {
     char    authStr[2048];
+    debug(5, "AsteriskManager::authenticate() - Connected.  Attempting to authenticate...\n");
     sprintf(authStr, "Action: login\nUsername: %s\nSecret: %s\n\n", cfgVal("AsteriskUser"), cfgVal("AsteriskPass"));
     //fprintf(stderr, "Sending:\n%s", authStr);
     mySocket->writeBlock(authStr, strlen(authStr));
@@ -149,7 +152,7 @@ void AsteriskManager::parseLine(const char *line)
     if (key.isEmpty() || val.isEmpty()) return;     // Missing something.
     keylower = key.lower();
 
-    fprintf(stderr, "Key: '%s', Val: '%s'\n", (const char *)key, (const char *)val);
+    debug(8, "Key: '%s', Val: '%s'\n", (const char *)key, (const char *)val);
     
     // Check for "Event" or "Response", if it is neither of those, then
     // its extra data that we add to our data list and leave up to any
@@ -224,7 +227,7 @@ void AsteriskManager::signMeIn()
     sprintf(authStr, "Action: QueuePause\nQueue: %s\nInterface: %s\nPaused: false\n\n", curUser().queue, curUser().agentID);
     mySocket->writeBlock(authStr, strlen(authStr));
     sprintf(authStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %s\nExten: %s\nPaused: false\nContext: %s\n\n", curUser().queue, curUser().extension, curUser().extension, cfgVal("QueueContext"));
-    fprintf(stderr, "Sending:\n%s", authStr);
+    debug(8, "Sending:\n%s", authStr);
     mySocket->writeBlock(authStr, strlen(authStr));
 }
 
@@ -247,10 +250,10 @@ void AsteriskManager::setAgentStatus(int ext, int agent, int state, const char *
     switch (state) {
         case 1:             // Sign in the agent
             sprintf(actStr, "Action: AgentCallbackLogin\nQueue: %s\nAgent: %d\nExten: %d\nPaused: false\nContext: %s\n\n", queue, agent, ext, cfgVal("QueueContext"));
-    	    fprintf(stderr, "Sending:\n%s", actStr);
+    	    debug(8, "Sending:\n%s", actStr);
             mySocket->writeBlock(actStr, strlen(actStr));
             sprintf(actStr, "Action: QueuePause\nQueue: %s\nInterface: Agent/%d\nPaused: false\n\n", queue, agent);
-    	    fprintf(stderr, "Sending:\n%s", actStr);
+    	    debug(8, "Sending:\n%s", actStr);
             mySocket->writeBlock(actStr, strlen(actStr));
             break;
 
@@ -265,7 +268,7 @@ void AsteriskManager::setAgentStatus(int ext, int agent, int state, const char *
             break;
 
         default:            // Unknown action
-            fprintf(stderr, "AsteriskManager::setAgentStatus() unknown state (%d) for extension %d, agent ID %d for queue %s!\n", state, ext, agent, queue);
+            debug(1, "AsteriskManager::setAgentStatus() unknown state (%d) for extension %d, agent ID %d for queue %s!\n", state, ext, agent, queue);
             break;
     }
     // After we're all done, referesh the queue again.

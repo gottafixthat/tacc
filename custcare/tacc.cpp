@@ -133,7 +133,12 @@ int main( int argc, char ** argv )
         }
     }
     
-    
+    if (strlen(cfgVal("DebugLevel"))) {
+        setDebugLevel(atoi(cfgVal("DebugLevel")));
+    } else {
+        setDebugLevel(0);
+    }
+
     // Set the database defaults
     //ADB::setDebugLevel(9);
     ADB::setDefaultHost(cfgVal("TAAMySQLHost"));

@@ -81,6 +81,9 @@ void        showAbout();
 
 void        emailAdmins(const char *subj, const char *body);
 
+void        setDebugLevel(int newLevel);
+void        debug(int level, const char *format, ... );
+
 const char *stripHTML(const char *src);
 
 #endif // TAATools_included
