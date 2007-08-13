@@ -96,10 +96,12 @@ NewCustomer::NewCustomer
 
 	QApplication::restoreOverrideCursor();
 
+    /*
     dayPhone->setInputMask("000/000-0000 xxxxxxxxxx");
     evePhone->setInputMask("000/000-0000 xxxxxxxxxx");
     faxPhone->setInputMask("000/000-0000 xxxxxxxxxx");
     altPhone->setInputMask("000/000-0000 xxxxxxxxxx");
+    */
 }
 
 

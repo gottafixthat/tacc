@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/time.h>
+#include <stdarg.h>
 
 #include <qapp.h>
 #include <qdatetm.h>
@@ -45,6 +46,8 @@ static char* t_MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
 taa_User        myCurrentUser;
 
 QWidget         *intMainWin;
+
+int      debugLevel = 0;
 
 /*
 ** mainWin      - Returns a pointer to the main widget for the purpose of
@@ -462,4 +465,30 @@ void emailAdmins(const char *subj, const char *body)
     
     delete(tmpstr);
 }
+
+/*
+ * setDebugLevel - Sets the current debug level
+ */
+
+void setDebugLevel(int newLevel)
+{
+    debugLevel = newLevel;
+}
+
+/*
+ * debug - Spits out debugging information if the level is high enough
+ */
+void debug(int level, const char *format, ...)
+{
+    //fprintf(stderr, "Debug Level = %d, requested level = %d\n", debugLevel, level);
+    if (level <= debugLevel) {
+        va_list     ap;
+        va_start(ap, format);
+        char    *outstr = new char[265536];
+        vsprintf(outstr, format, ap);
+        fprintf(stderr, "%s", outstr);
+        fflush(stderr);
+    }
+}
+
 
