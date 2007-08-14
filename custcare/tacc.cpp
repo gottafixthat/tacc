@@ -95,6 +95,7 @@ int main( int argc, char ** argv )
     CustomerCare    *aw;
     TAALogin        *lw;
     uid_t           myUID;
+    int             opt;
     passwd          *pent;
     char            homeCfg[1024];
     a.setDesktopSettingsAware(true);
@@ -138,6 +139,20 @@ int main( int argc, char ** argv )
     } else {
         setDebugLevel(0);
     }
+
+    // Check our command line arguments.
+	while((opt = getopt(argc, argv, "d:")) != EOF) {
+	    switch(opt) {
+	        case    'd':
+	            setDebugLevel(atoi(optarg));
+	            break;
+	            
+	        default:
+	            fprintf(stderr, "Invalid argument.\n");
+	            exit(-1);
+	            break;
+	    }
+	}
 
     // Set the database defaults
     //ADB::setDebugLevel(9);

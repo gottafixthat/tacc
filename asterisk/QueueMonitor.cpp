@@ -139,6 +139,7 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
             else if (!strcasecmp(event.data[i].key, "position")) strcpy(pos, event.data[i].val);
         }
         removeChannel(chan);
+        debug(2, "QueueMonitor::asteriskEvent('%s') - Adding channel for queue '%s', channel '%s', position '%s', member '%s', agent '%s'\n", event.msgVal, callqueue, chan, pos, member, agent);
         QListViewItem *newItem = new ColorListViewItem(callq, queued_rgb, chan, state, cid, callqueue, pos, member, agent, "0:00");
         sprintf(tmpStr, "%ld", QDateTime::currentDateTime().toTime_t());
         newItem->setText((QMColumnNames)TimerHidden, tmpStr);
@@ -149,7 +150,10 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
             else if (!strcasecmp(event.data[i].key, "channel")) strcpy(chan, event.data[i].val);
         }
         // Now, remove the channel we found from the list.
-        if (strlen(chan)) removeChannel(chan);
+        if (strlen(chan)) {
+            debug(2, "QueueMonitor::asteriskEvent('%s') - Removing channel for queue '%s', channel '%s'\n", event.msgVal, callqueue, chan);
+            removeChannel(chan);
+        }
     } else if (!strcasecmp(event.msgVal, "AgentCalled")) {
         // An agent is being offered a queue call
         for (int i = 0; i < event.count; i++) {
@@ -175,6 +179,7 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
         }
 
         removeChannel(chan);
+        debug(2, "QueueMonitor::asteriskEvent('%s') - Adding channel for queue '%s', channel '%s', position '%s', member '%s', agent '%s'\n", event.msgVal, callqueue, chan, pos, member, agent);
         QListViewItem *newItem = new ColorListViewItem(callq, connect_rgb, chan, state, cid, callqueue, pos, member, agent, "0:00");
         sprintf(tmpStr, "%ld", QDateTime::currentDateTime().toTime_t());
         newItem->setText((QMColumnNames)TimerHidden, tmpStr);
@@ -187,7 +192,10 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
             else if (!strcasecmp(event.data[i].key, "member")) strcpy(member, event.data[i].val);
         }
         // Now, remove the channel we found from the list.
-        if (strlen(chan)) removeChannel(chan);
+        if (strlen(chan)) {
+            debug(2, "QueueMonitor::asteriskEvent('%s') - Removing channel for queue '%s', channel '%s', member '%s'\n", event.msgVal, callqueue, chan, member);
+            removeChannel(chan);
+        }
     } else if (!strcasecmp(event.msgVal, "Unlink")) {
         // A queue call is being ended.  Find it in the list and remove it.
         // Walk through the event records first
@@ -247,6 +255,11 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
         }
         QListViewItem   *tmpItem = findChannel(oldname);
         if (tmpItem) setColumnText(oldname, Channel, newname);
+    } else {
+        debug(2, "QueueMonitor::asteriskEvent('%s') Ignoring Event:\n", event.msgVal);
+        for (int i = 0; i < event.count; i++) {
+            debug(2, "\t%s: %s\n", event.data[i].key, event.data[i].val);
+        }
     }
     /*
     for (int i = 0; i < event.count; i++) {
@@ -279,9 +292,20 @@ QListViewItem *QueueMonitor::findChannel(const char *chan)
   */
 void QueueMonitor::removeChannel(const char *chan)
 {
+    callq->addColumn("Channel");
+    callq->addColumn("State");
+    callq->addColumn("Caller ID");
+    callq->addColumn("Queue");
+    callq->addColumn("Position");
+    callq->addColumn("Location");
+    callq->addColumn("Agent");
+    callq->addColumn("Time");
+
     QListViewItem           *curItem;
     curItem = findChannel(chan);
     while (curItem) {
+        debug(2, "QueueMonitor::removeChannel() - Removing Channel:%s State:%s CID: %s Queue:%s Position:%s Location:%s Agent:%s\n",
+                (const char *)curItem->text(0),(const char *)curItem->text(1),(const char *)curItem->text(2),(const char *)curItem->text(3),(const char *)curItem->text(4),(const char *)curItem->text(5),(const char *)curItem->text(6));
         callq->removeItem(curItem);
         curItem = findChannel(chan);
     }
