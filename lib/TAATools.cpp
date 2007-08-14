@@ -488,6 +488,7 @@ void debug(int level, const char *format, ...)
         vsprintf(outstr, format, ap);
         fprintf(stderr, "%s", outstr);
         fflush(stderr);
+        delete (outstr);
     }
 }
 
