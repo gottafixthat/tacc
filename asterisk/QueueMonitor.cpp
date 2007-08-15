@@ -292,15 +292,6 @@ QListViewItem *QueueMonitor::findChannel(const char *chan)
   */
 void QueueMonitor::removeChannel(const char *chan)
 {
-    callq->addColumn("Channel");
-    callq->addColumn("State");
-    callq->addColumn("Caller ID");
-    callq->addColumn("Queue");
-    callq->addColumn("Position");
-    callq->addColumn("Location");
-    callq->addColumn("Agent");
-    callq->addColumn("Time");
-
     QListViewItem           *curItem;
     curItem = findChannel(chan);
     while (curItem) {
