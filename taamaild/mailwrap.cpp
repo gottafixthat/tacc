@@ -47,10 +47,11 @@
 #define MAXMSGS     1000
 #define SLEEPTIME   10
 #define INBUFSIZE   1024
-#define SMTPHOST    "mail.avvanta.com"
+#define DEFAULTSMTPHOST    "mail.avvanta.com"
 #define BIGBUFSIZE  262144
 
 int msgCount = 0;
+char smtpHost[1024];
 
 void scanDir(void);
 void scanDb(void);
@@ -74,7 +75,23 @@ int main ()
         }
         sleep(SLEEPTIME);
     }
+    strcpy(smtpHost, DEFAULTSMTPHOST);
     // The child picks up here.
+
+    // Load our configuration file first.
+    if (!loadCfg("/etc/taa.cf")) {
+        if (!loadCfg("/usr/local/etc/taa.cf")) {
+            if (!loadCfg("/usr/local/lib/taa.cf")) {
+                syslog(LOG_INFO, "Unable to load taa.cf.  Aborting.");
+                exit(0);
+            }
+        }
+    }
+
+    if (strlen(cfgVal("SMTPServer"))) {
+        strcpy(smtpHost, cfgVal("SMTPServer"));
+    }
+
     scanDir();
     scanDb();
     //syslog(LOG_INFO, "Sent %d messages.", msgCount);
@@ -110,14 +127,14 @@ void scanDir(void)
         // Make sure its a file and at least 300 seconds old
         if (fi->isFile() && (fi->lastModified().secsTo(curDateTime) > 300)) {
             if (!smtp.IsOpen()) {
-                if (!smtp.Open(SMTPHOST)) {
-                    syslog(LOG_INFO, "Unable to connect to mail host '%s'", SMTPHOST);
+                if (!smtp.Open(smtpHost)) {
+                    syslog(LOG_INFO, "Unable to connect to mail host '%s'", smtpHost);
                     return;
                 } else {
                     respCode = smtp.Helo();
                     if (!respCode || respCode >= 500) {
                         smtp.Close();
-                        syslog(LOG_INFO, "HELO command failed when talking to mail host '%s'", SMTPHOST);
+                        syslog(LOG_INFO, "HELO command failed when talking to mail host '%s'", smtpHost);
                         return;
                     }
                 }
@@ -125,7 +142,7 @@ void scanDir(void)
             
             // One more check to make sure...
             if (!smtp.IsOpen()) {
-                syslog(LOG_INFO, "Our SMTP connection to '%s' was pulled out from under us", SMTPHOST);
+                syslog(LOG_INFO, "Our SMTP connection to '%s' was pulled out from under us", smtpHost);
             }
         
             // printf("%10i %s\n", fi->size(), fi->fileName().data());
@@ -230,7 +247,7 @@ void scanDir(void)
                     // Tell the server we're about to start sending data.
                     respCode = smtp.Data();
                     if (!respCode || respCode >= 500) {
-                        syslog(LOG_INFO, "The SMTP server '%s' rejected our DATA command", SMTPHOST);
+                        syslog(LOG_INFO, "The SMTP server '%s' rejected our DATA command", smtpHost);
                         smtp.Close();
                         return;
                     }
@@ -239,7 +256,7 @@ void scanDir(void)
                     // message.
                     respCode = smtp.SendData(bigbuf, strlen(bigbuf));
                     if (!respCode || respCode >= 500) {
-                        syslog(LOG_INFO, "The SMTP server '%s' had an error with our message body", SMTPHOST);
+                        syslog(LOG_INFO, "The SMTP server '%s' had an error with our message body", smtpHost);
                         smtp.Close();
                         return;
                     }
@@ -285,18 +302,6 @@ void scanDb(void)
     char     *bigbuf;
     int      respCode;
     
-    // load the file configuration first.  These settings can be
-    // overridden by the database settings.
-    if (!loadCfg("/etc/taa.cf")) {
-        if (!loadCfg("/usr/local/etc/taa.cf")) {
-            if (!loadCfg("/usr/local/lib/taa.cf")) {
-                syslog(LOG_INFO, "Unable to load taa.cf.  Skipping database email.");
-                return;
-            }
-        }
-    }
-    
-    
     // Set the database defaults
     //ADB::setDebugLevel(9);
     ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
@@ -322,14 +327,14 @@ void scanDb(void)
         // Perhaps later.
 
         if (!smtp.IsOpen()) {
-            if (!smtp.Open(SMTPHOST)) {
-                syslog(LOG_INFO, "Unable to connect to mail host '%s'", SMTPHOST);
+            if (!smtp.Open(smtpHost)) {
+                syslog(LOG_INFO, "Unable to connect to mail host '%s'", smtpHost);
                 return;
             } else {
                 respCode = smtp.Helo();
                 if (!respCode || respCode >= 500) {
                     smtp.Close();
-                    syslog(LOG_INFO, "HELO command failed when talking to mail host '%s'", SMTPHOST);
+                    syslog(LOG_INFO, "HELO command failed when talking to mail host '%s'", smtpHost);
                     return;
                 }
             }
@@ -337,7 +342,7 @@ void scanDb(void)
             
         // One more check to make sure...
         if (!smtp.IsOpen()) {
-            syslog(LOG_INFO, "Our SMTP connection to '%s' was pulled out from under us", SMTPHOST);
+            syslog(LOG_INFO, "Our SMTP connection to '%s' was pulled out from under us", smtpHost);
         }
     
         // printf("%10i %s\n", fi->size(), fi->fileName().data());
@@ -402,7 +407,7 @@ void scanDb(void)
             // Tell the server we're about to start sending data.
             respCode = smtp.Data();
             if (!respCode || respCode >= 500) {
-                syslog(LOG_INFO, "The SMTP server '%s' rejected our DATA command", SMTPHOST);
+                syslog(LOG_INFO, "The SMTP server '%s' rejected our DATA command", smtpHost);
                 smtp.Close();
                 return;
             }
@@ -411,7 +416,7 @@ void scanDb(void)
             // message.
             respCode = smtp.SendData(bigbuf, strlen(bigbuf));
             if (!respCode || respCode >= 500) {
-                syslog(LOG_INFO, "The SMTP server '%s' had an error with our message body", SMTPHOST);
+                syslog(LOG_INFO, "The SMTP server '%s' had an error with our message body", smtpHost);
                 smtp.Close();
                 return;
             }
