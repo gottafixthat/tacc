@@ -18,7 +18,7 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-using namespace std;
+//using namespace std;
 #include <map>
 #include <ext/hash_map>
 #include <list>
@@ -34,30 +34,24 @@ using namespace std;
 #define lockFileName "/var/run/radimport.pid"
 
 
-namespace __gnu_cxx
+struct smapeq
 {
-    struct smapeq
+    bool operator()(const char *s1, const char *s2) const 
     {
-        bool operator()(const char *s1, const char *s2) const 
-        {
-            return strcmp(s1, s2) == 0;
-        };
+        return strcmp(s1, s2) == 0;
     };
 };
 
-namespace __gnu_cxx
+struct imapeq
 {
-    struct imapeq
+    bool operator()(int v1, int v2) const
     {
-        bool operator()(int v1, int v2) const
-        {
-            return (v1 == v2);
-        };
+        return (v1 == v2);
     };
-
-typedef hash_map<const char *, int, __gnu_cxx::hash<const char *>, smapeq> __gnu_cxx::StringMap;
 };
-__gnu_cxx::StringMap   strxlt;
+
+typedef __gnu_cxx::hash_map<const char *, int, __gnu_cxx::hash<const char *>, smapeq> StringMap;
+StringMap   strxlt;
 
 // Globals.  Mostly just used to make it shut up.
 int		QuietMode = 0;
@@ -152,8 +146,8 @@ void getRemoteDB(void)
 
     long        impCount = 0;
 
-    string      startDateTime;
-    string      stopDateTime;
+    std::string      startDateTime;
+    std::string      stopDateTime;
     char        startDateStr[1024];
     char        startTimeStr[1024];
     char        stopDateStr[1024];
@@ -163,7 +157,7 @@ void getRemoteDB(void)
     struct hostent  *hp;
     static char     hstname[128];
     unsigned int    n_ipaddr;
-    string          hostonly;
+    std::string          hostonly;
 
     // Load all of the stop records.  They contain everything we need.
     RadDB.query("select * from %s where AcctStopTime <> '0000-00-00 00:00:00' and exported = 0 limit %ld", cfgVal("RadiusTable"), MAXIMPORTROWS);
@@ -234,7 +228,7 @@ void getRemoteDB(void)
             // strip it off of this host name.
             if (strlen(cfgVal("DomainName"))) {
                 hostonly.assign(hstname);
-                if (hostonly.rfind(cfgVal("DomainName")) != string::npos) {
+                if (hostonly.rfind(cfgVal("DomainName")) != std::string::npos) {
                     // Found it, strip it.  Strip out one extra for the "."
                     hostonly.replace(hostonly.rfind(cfgVal("DomainName"))-1, strlen(cfgVal("DomainName")) + 1, "");
                     strcpy(hstname, hostonly.c_str());

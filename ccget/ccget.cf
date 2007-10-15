@@ -1,0 +1,26 @@
+
+# This is the encryption key, and needed for compatibility with
+# older algorithms used in TAA
+TACT_KEYFILE = /usr/local/lib/tact.key
+
+# The encode password for MySQL encoded transactions
+ENCODEKEY   = abcdefgh
+
+# The CCC Database definitions
+#REMOTEHOST  = guysmiley.blarg.net
+#REMOTEDBASE = CCC
+#REMOTEUSER  = nobody
+#REMOTEPASS  = 3H8a35J0
+
+REMOTEHOST  = gonk.corp.blarg.net
+REMOTEDBASE = CCC
+REMOTEUSER  = marc
+REMOTEPASS  = 808Frm!3
+
+# The TAA definitions
+LOCALHOST   = localhost
+LOCALDBASE  = bacct
+LOCALUSER   = marc
+LOCALPASS   = 9!!8110
+
+
