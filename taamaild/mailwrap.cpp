@@ -182,7 +182,7 @@ void scanDir(void)
                 rewind(src);
                 
                 // We need a large buffer to hold the message to scan it.
-                bigbuf = new(char[BIGBUFSIZE]);
+                bigbuf = (char *) calloc(BIGBUFSIZE, sizeof(char));
                 
                 // Read the file into our bigbuf
                 if (!fread(bigbuf, sizeof(char), BIGBUFSIZE, src)) {
@@ -239,7 +239,7 @@ void scanDir(void)
                     respCode = smtp.Rcpt(rcptaddrst.c_str());
                     //respCode = smtp.Rcpt(toaddr);
                     if (!respCode || respCode >= 400) {
-                        syslog(LOG_INFO, "The SMTP server did not accept the To address of '%s'", rcptaddrst.c_str());
+                        syslog(LOG_INFO, "The SMTP server did not accept the To address of '%s' in file %s", rcptaddrst.c_str(), (const char *) fi->fileName().data());
                         smtp.Close();
                         return;
                     }
@@ -269,7 +269,7 @@ void scanDir(void)
                     syslog(LOG_INFO, "message %s sent from %s to %s\n", (const char *) fi->fileName().data(), fromline, toaddr);
                     ++msgCount;
                 }                             
-                delete(bigbuf);
+                free((void *)bigbuf);
                 
             } else {
                 printf("Unable to open /var/spool/taamail/%s\n", fi->fileName().data());
@@ -353,7 +353,8 @@ void scanDb(void)
         strcpy(toaddr, qdb.curRow["EmailTo"]);
         
         // We need a large buffer to hold the message to scan it.
-        bigbuf = new(char[BIGBUFSIZE]);
+        //bigbuf = new(char[BIGBUFSIZE]);
+        bigbuf = (char *) calloc(BIGBUFSIZE, sizeof(char));
         
         sprintf(bigbuf, "From: %s\nTo: %s\nSubject: %s\n\n%s",
                 qdb.curRow["EmailFrom"],
@@ -427,7 +428,7 @@ void scanDb(void)
             ddb.dbcmd("delete from EmailQueue where QueueID = %s", qdb.curRow["QueueID"]);
             ++msgCount;
         }                             
-        delete(bigbuf);
+        free((void *)bigbuf);
         
         // sleep(1);
         if (msgCount > MAXMSGS) {
