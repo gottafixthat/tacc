@@ -9,7 +9,7 @@ CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
 LFLAGS  += -lstdc++
 LFLAGS  += -L/usr/local/lib -lBTools
 #LFLAGS	+= -L$(QTDIR)/lib -lqt -L/usr/X11R6/lib -lX11 -lXext -lqutil
-LFLAGS  += -L$(MYSQLDIR) -ladb -lmysqlclient -lz
+LFLAGS  += -L$(MYSQLDIR) -ladb -lmysqlclient
 #LFLAGS	+= -static
 
 
