@@ -118,23 +118,27 @@ int processRemoteCCards()
 
     LocCCDB.setEncryptedColumn("CardNo");    
 
-    RemCCDB.query("select * from CCPayments order by CustomerID");
+    //RemCCDB.query("select InternalID, CustomerID, LoginID, DateEntered, TimeEntered, WantsAutomatic, DECODE(CCData, '%s'), CCCVersion, NeedsExport from CCPayments where NeedsExport = 1 order by CustomerID", cfgVal("ENCODEKEY"));
+    RemCCDB.query("select DECODE(CCPayments.CCData, '%s'), CCPayments.* from CCPayments where NeedsExport = 1 order by CustomerID", cfgVal("ENCODEKEY"));
+    //fprintf(stderr, "Query was successful\n");
 
     if (RemCCDB.rowCount) {
+        //ADB::setDebugLevel(99);
         while (RemCCDB.getrow()) {
+            //fprintf(stderr, "Encode Key = '%s', CCData = '%s'\n", cfgVal("ENCODEKEY"), RemCCDB.curRow[0]);
             // Check to see what encryption/encoding version we are using
             // on the CCC Transaction data.
             if (RemCCDB.curRow.col("CCCVersion")->toInt() == 1) {
                 // It was "encoded" with the MySQL encode function and a 
                 // shared key.  Decode it.
-                LocTmpDB.query("select DECODE('%s', '%s')", LocTmpDB.escapeString(RemCCDB.curRow["CCData"]), cfgVal("ENCODEKEY"));
-                LocTmpDB.getrow();
-                strcpy(decStr, LocTmpDB.curRow[0]);
+                //LocTmpDB.query("select DECODE('%s', '%s')", RemCCDB.curRow["CCData"], cfgVal("ENCODEKEY"));
+                //LocTmpDB.getrow();
+                strcpy(decStr, RemCCDB.curRow[0]);
             } else {
                 strcpy(encStr, RemCCDB.curRow["CCData"]);
                 decrypt_string2((unsigned char *) encStr, (unsigned char *) decStr);
             }
-            fprintf(stderr, "Decoded data = '%s'\n", decStr);
+            //fprintf(stderr, "Decoded data = '%s'\n", decStr);
             
             //tmpList.clear();
             StrSplit(decStr, "\t", tmpList);
@@ -173,7 +177,7 @@ int processRemoteCCards()
             // Check to see if this is an actual payment, or if they are
             // just updating their automatic payment.
             if (atof(tmpList[8].c_str()) > 0.99) {
-                fprintf(stderr, "Inserting transaction...\n");
+                //fprintf(stderr, "Inserting transaction...\n");
                 insSuccess = LocCCDB.ins();
             } else {
                 // We don't want to insert the transaction, but we 
@@ -185,7 +189,7 @@ int processRemoteCCards()
             if (insSuccess) {
                 // We inserted okay.
                 // Did they want automatic?  If so, process that, too.
-                fprintf(stderr, "Checking for automatic...\n");
+                //fprintf(stderr, "Checking for automatic...\n");
                 if (RemCCDB.curRow.col("WantsAutomatic")->toInt()) {
                     ADB         DB(cfgVal("LOCALDBASE"), cfgVal("LOCALUSER"), cfgVal("LOCALPASS"), cfgVal("LOCALHOST"));
                     ADBTable    AutoDB("AutoPayments", cfgVal("LOCALDBASE"), cfgVal("LOCALUSER"), cfgVal("LOCALPASS"), cfgVal("LOCALHOST"));
@@ -204,10 +208,10 @@ int processRemoteCCards()
                     
                     // First, make sure that they only have one active 
                     // automatic payment -- this one.
-                    fprintf(stderr, "Removing old automatic payments...\n");
+                    //fprintf(stderr, "Removing old automatic payments...\n");
                     sprintf(dbcmd, "update AutoPayments set Active = 0 where CustomerID = %ld", RemCCDB.curRow.col("CustomerID")->toLong());
                     DB.dbcmd(dbcmd);
-                    fprintf(stderr, "Old automatic payments removed...\n");
+                    //fprintf(stderr, "Old automatic payments removed...\n");
                     
                     // Okay, set up the insert.
                     AutoDB.setValue("InternalID", (long) 0);
@@ -225,7 +229,7 @@ int processRemoteCCards()
                     AutoDB.setValue("PaymentType",      1);
                     AutoDB.setValue("CardType",         cardType);
                     
-                    fprintf(stderr, "Fixing up the expiration date...\n");
+                    //fprintf(stderr, "Fixing up the expiration date...\n");
                     // Fix the expiration date.
                     int     month, year;
                     string  tmpQStr;
@@ -235,7 +239,11 @@ int processRemoteCCards()
                     char    tmpDate[512];
                     int monthDays[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
                     month = atoi(tmpList[7].substr(0,2).c_str());
+                    //fprintf(stderr, "    month = %d...\n", month);
+
                     year  = atoi(tmpList[7].substr(2,2).c_str());
+                    //fprintf(stderr, "    year= %d...\n", year);
+
                     //tmpQStr.setStr(tmpList[7].c_str());
                     //month   = atoi(tmpQStr.left(2));
                     //year    = atoi(tmpQStr.right(2));
@@ -247,19 +255,20 @@ int processRemoteCCards()
                     //tmpDate1.setYMD(year, month, tmpDate1.daysInMonth());
                     //QDatetomyDate(tmpDate, tmpDate1);
                     
-                    fprintf(stderr, "Setting the Expiration Date...\n");
+                    //fprintf(stderr, "Setting the Expiration Date...\n");
                     AutoDB.setValue("ExpDate",          tmpDate);
-                    fprintf(stderr, "Setting the card number...\n");
+                    //fprintf(stderr, "Setting the card number...\n");
                     AutoDB.setValue("AcctNo",           tmpList[6].c_str());
                     
                     // All done...Now insert it...
-                    fprintf(stderr, "Inserting new automatic payment...\n");
+                    //fprintf(stderr, "Inserting new automatic payment...\n");
                     AutoDB.ins();
                 }
 
                 // All finished with this record.  Delete it from
                 // the remote server.
                 //RemCCDB2.dbcmd("delete from CCPayments where InternalID = %ld", RemCCDB.curRow.col("InternalID")->toLong());
+                RemCCDB2.dbcmd("update CCPayments set NeedsExport = 0 where InternalID = %ld", RemCCDB.curRow.col("InternalID")->toLong());
                 transCount++;
             } else {
                 // There was a problem.  Log it.
