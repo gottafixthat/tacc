@@ -34,7 +34,7 @@ endif
 SUBDIRS =	
 
 SOURCES =	BaseList.cpp BaseListData.cpp\
-		Accounts.cpp AccountsData.cpp\
+		Accounts.cpp\
 		AccountsEdit.cpp AccountsEditData.cpp\
 		RatePlans.cpp RatePlansData.cpp\
 		RatePlanEdit.cpp RatePlanEditData.cpp\
@@ -79,7 +79,7 @@ SOURCES =	BaseList.cpp BaseListData.cpp\
         admin.cpp
 
 HEADERS =	BaseList.h BaseListData.h\
-		Accounts.h AccountsData.h\
+		Accounts.h\
 		AccountsEdit.h AccountsEditData.h\
 		RatePlans.h RatePlansData.h\
 		RatePlanEdit.h RatePlanEditData.h\
@@ -126,7 +126,7 @@ HEADERS =	BaseList.h BaseListData.h\
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_BaseList.cpp moc_BaseListData.cpp\
-		moc_Accounts.cpp moc_AccountsData.cpp\
+		moc_Accounts.cpp\
 		moc_AccountsEdit.cpp moc_AccountsEditData.cpp\
 		moc_RatePlans.cpp moc_RatePlansData.cpp\
 		moc_RatePlanEdit.cpp moc_RatePlanEditData.cpp\
@@ -279,9 +279,6 @@ moc_RatePlanEditData.cpp: RatePlanEditData.h
 
 moc_Accounts.cpp: Accounts.h
 	$(MOC) Accounts.h -o moc_Accounts.cpp
-
-moc_AccountsData.cpp: AccountsData.h
-	$(MOC) AccountsData.h -o moc_AccountsData.cpp
 
 moc_AccountsEdit.cpp: AccountsEdit.h
 	$(MOC) AccountsEdit.h -o moc_AccountsEdit.cpp
