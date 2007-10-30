@@ -1,19 +1,25 @@
-/**********************************************************************
-
-	--- Dlgedit generated file ---
-
-	File: Accounts.h
-	Last generated: Thu Sep 18 19:35:23 1997
-
- *********************************************************************/
+/*
+** Accounts.cpp - Shows the user the list of GL accounts in the system.
+**
+***************************************************************************
+** Written by R. Marc Lewis, 
+**   (C)opyright 1998-2007, R. Marc Lewis and Blarg! Oline Services, Inc.
+**   All Rights Reserved.
+**
+**  Unpublished work.  No portion of this file may be reproduced in whole
+**  or in part by any means, electronic or otherwise, without the express
+**  written consent of Blarg! Online Services and R. Marc Lewis.
+***************************************************************************
+*/
 
 #ifndef Accounts_included
 #define Accounts_included
 
-#include "AccountsData.h"
+#include "TAAWidget.h"
 #include <qlistview.h>
+#include <qmenubar.h>
 
-class Accounts : public AccountsData
+class Accounts : public TAAWidget
 {
     Q_OBJECT
 
@@ -31,14 +37,18 @@ signals:
     void refreshAccountsList(int);
     
 public slots:
-    virtual void Hide();
-    virtual void refreshList(int);
-    virtual void editAccountL(int msg = 0);
+    void Hide();
+    void refreshList(int);
+    void editAccountL(int msg = 0);
 
 private slots:
-    virtual void newAccount();
-    virtual void editAccount();
-    virtual void deleteAccount();
+    void newAccount();
+    void editAccount();
+    void deleteAccount();
+
+protected:
+    QMenuBar    *menu;
+    QListView   *list;
 
 private:
     void addToList(int AcctNo, QListViewItem *parent);

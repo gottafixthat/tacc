@@ -28,6 +28,7 @@
 #include <mysql/mysql.h>
 #include <qkeycode.h>
 #include <qmessagebox.h>
+#include <qlayout.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ADB.h>
@@ -38,9 +39,7 @@ Accounts::Accounts
 (
 	QWidget* parent,
 	const char* name
-)
-	:
-	Inherited( parent, name )
+) : TAAWidget( parent, name )
 {
 	setCaption( "Chart of Accounts" );
 
@@ -52,12 +51,56 @@ Accounts::Accounts
     options->insertSeparator();
     options->insertItem("Close", this, SLOT(Hide()), CTRL+Key_C);
     
+    menu = new QMenuBar(this, "MainMenu");
     menu->insertItem("&Options", options);
+
+    // Create the buttons for the top of the window
+    QPushButton *newButton = new QPushButton(this, "NewButton");
+    newButton->setText("New");
+    connect(newButton, SIGNAL(clicked()), this, SLOT(newAccount()));
     
+    QPushButton *editButton = new QPushButton(this, "EditButton");
+    editButton->setText("Edit");
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editAccount()));
+
+    QPushButton *deleteButton = new QPushButton(this, "DeleteButton");
+    deleteButton->setText("Delete");
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteAccount()));
+
+    QPushButton *closeButton = new QPushButton(this, "CloseButton");
+    closeButton->setText("Close");
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(Hide()));
+
+    QPushButton *registerButton = new QPushButton(this, "RegisterButton");
+    registerButton->setText("Register");
+    registerButton->setEnabled(false);
+
+    list = new QListView(this, "AccountList");
+    list->addColumn("Number");
+    list->addColumn("Name");
+    list->addColumn("Type");
+    list->addColumn("Balance");
     list->setFocus();
     list->setAllColumnsShowFocus(TRUE);
     list->setRootIsDecorated(TRUE);
 
+    // Create our layout and add our widgets.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    ml->addWidget(menu, 0);
+    
+    // Add a widget for our menu buttons.
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    bl->addWidget(newButton, 0);
+    bl->addWidget(editButton, 0);
+    bl->addWidget(deleteButton, 0);
+    bl->addWidget(closeButton, 0);
+    bl->addWidget(registerButton, 0);
+    bl->addStretch(1);
+
+    ml->addLayout(bl, 0);
+    ml->addWidget(list, 1);
+
+    refreshList(1);
 }
 
 
@@ -68,7 +111,7 @@ Accounts::~Accounts()
 
 void Accounts::Hide()
 {
-    hide();
+    delete this;
 }
 
 // addToList   - Adds to the Accounts List.  This function is actually called
