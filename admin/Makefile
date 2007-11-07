@@ -36,7 +36,7 @@ SUBDIRS =
 SOURCES =	BaseList.cpp BaseListData.cpp\
 		Accounts.cpp\
 		AccountsEdit.cpp AccountsEditData.cpp\
-		RatePlans.cpp RatePlansData.cpp\
+		RatePlans.cpp\
 		RatePlanEdit.cpp RatePlanEditData.cpp\
 		BillingCycles.cpp\
 		BillingCycleEdit.cpp BillingCycleEditData.cpp\
@@ -81,7 +81,7 @@ SOURCES =	BaseList.cpp BaseListData.cpp\
 HEADERS =	BaseList.h BaseListData.h\
 		Accounts.h\
 		AccountsEdit.h AccountsEditData.h\
-		RatePlans.h RatePlansData.h\
+		RatePlans.h\
 		RatePlanEdit.h RatePlanEditData.h\
 		BillingCycles.h\
 		BillingCycleEdit.h BillingCycleEditData.h\
@@ -128,7 +128,7 @@ OBJECTS =	$(SOURCES:.cpp=.o)
 SRCMETA =	moc_BaseList.cpp moc_BaseListData.cpp\
 		moc_Accounts.cpp\
 		moc_AccountsEdit.cpp moc_AccountsEditData.cpp\
-		moc_RatePlans.cpp moc_RatePlansData.cpp\
+		moc_RatePlans.cpp\
 		moc_RatePlanEdit.cpp moc_RatePlanEditData.cpp\
 		moc_BillingCycles.cpp\
 		moc_BillingCycleEdit.cpp moc_BillingCycleEditData.cpp\
@@ -267,9 +267,6 @@ moc_BillingCycleEditData.cpp: BillingCycleEditData.h
 
 moc_RatePlans.cpp: RatePlans.h
 	$(MOC) RatePlans.h -o moc_RatePlans.cpp
-
-moc_RatePlansData.cpp: RatePlansData.h
-	$(MOC) RatePlansData.h -o moc_RatePlansData.cpp
 
 moc_RatePlanEdit.cpp: RatePlanEdit.h
 	$(MOC) RatePlanEdit.h -o moc_RatePlanEdit.cpp

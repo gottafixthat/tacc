@@ -1,18 +1,26 @@
-/**********************************************************************
-
-	--- Dlgedit generated file ---
-
-	File: RatePlans.h
-	Last generated: Tue Oct 14 16:04:44 1997
-
- *********************************************************************/
+/*
+** RatePlans.h - Creates the list of rate plans.
+**
+***************************************************************************
+** Written by R. Marc Lewis, 
+**   (C)opyright 1998-2007, R. Marc Lewis and Avvatel Corporation
+**   All Rights Reserved.
+**
+**  Unpublished work.  No portion of this file may be reproduced in whole
+**  or in part by any means, electronic or otherwise, without the express
+**  written consent of Blarg! Online Services and R. Marc Lewis.
+***************************************************************************
+*/
 
 #ifndef RatePlans_included
 #define RatePlans_included
 
-#include "RatePlansData.h"
+#include <qwidget.h>
+#include <qlistview.h>
+#include <qmenubar.h>
+#include "TAAWidget.h"
 
-class RatePlans : public RatePlansData
+class RatePlans : public TAAWidget
 {
     Q_OBJECT
 
@@ -33,11 +41,15 @@ public slots:
 private slots:
     virtual void newRatePlan();
     virtual void editRatePlan();
-    virtual void editRatePlanL(int msg = 0);
     virtual void deleteRatePlan();
+    void         editRatePlan(QListViewItem *);
     
 private:
-    int		*planIndex;
+    int		    internalIDColumn;
+
+protected:
+    QMenuBar    *menu;
+    QListView   *list;
 
 };
 #endif // RatePlans_included
