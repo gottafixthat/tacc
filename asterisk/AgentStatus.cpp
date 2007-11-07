@@ -65,7 +65,7 @@ AgentInfo::AgentInfo
     //QBoxLayout *ml = new QBoxLayout(QBoxLayout::TopToBottom, 4);
     
     // Create a layout for each agent
-    QGridLayout *wl = new QGridLayout(this, 3, 4, 2, 1);
+    QGridLayout *wl = new QGridLayout(this, 3, 4, 0, 0);
     wl->setColStretch(0, 0);
     wl->setColStretch(1, 1);
     wl->setColStretch(2, 1);
@@ -206,6 +206,7 @@ void AgentInfo::setStatus(int newStatus, const char *textStatus)
         case AGENT_STATUS_SIGNEDOUT:
         default:
             guistatus->setPixmap(signedout);
+            //guistatus->setPixmap(busy_icon);
             break;
     }
     status->setText(textStatus);
@@ -349,10 +350,10 @@ AgentStatus::AgentStatus
     VertLine *vertBar = new VertLine(this);
     cl->addWidget(vertBar, 0);
 
-    QBoxLayout *ml = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    QBoxLayout *ml = new QBoxLayout(QBoxLayout::TopToBottom, 0);
     
     // Create a layout for each agent
-    QGridLayout *wl = new QGridLayout(2, agentCount * 3, 2);
+    QGridLayout *wl = new QGridLayout(2, agentCount * 3, 0);
     int curRow = 0;
     for (i = 0; i < agentCount; i++) {
         wl->addMultiCellWidget(agentList.at(i), curRow, curRow, 0, 2);

@@ -29,17 +29,14 @@
 #include <stdlib.h>
 #include <qkeycode.h>
 #include <qmessagebox.h>
+#include <qlayout.h>
 #include <ADB.h>
-
-#define Inherited RatePlansData
 
 RatePlans::RatePlans
 (
 	QWidget* parent,
 	const char* name
-)
-	:
-	Inherited( parent, name )
+) : TAAWidget( parent, name )
 {
 	setCaption( "Rate Plans" );
 
@@ -51,11 +48,54 @@ RatePlans::RatePlans
     options->insertSeparator();
     options->insertItem("Close", this, SLOT(Hide()), CTRL+Key_C);
     
+    // Create the menu.
+    menu = new QMenuBar(this, "Menu Bar");
     menu->insertItem("&Options", options);
 
+    // Create the buttons for the top of the window.
+    QPushButton *newButton = new QPushButton(this, "NewButton");
+    newButton->setText("New");
+    connect(newButton, SIGNAL(clicked()), this, SLOT(newRatePlan()));
+
+    QPushButton *editButton = new QPushButton(this, "EditButton");
+    editButton->setText("Edit");
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editRatePlan()));
+
+    QPushButton *deleteButton = new QPushButton(this, "DeleteButton");
+    deleteButton->setText("Delete");
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteRatePlan()));
+
+    QPushButton *closeButton = new QPushButton(this, "CloseButton");
+    closeButton->setText("Close");
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(Hide()));
+
+    list = new QListView(this, "RatePlanList");
+    list->addColumn("Name");
+    list->addColumn("Description");
     list->setFocus();
+    list->setAllColumnsShowFocus(true);
+    list->setRootIsDecorated(false);
+    connect(list, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(editRatePlan(QListViewItem *)));
+    internalIDColumn = 2;   // Change this if changing the list columns
+
+    // Setup the layout and add our widgets
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    ml->addWidget(menu, 0);
+
+    // The buttons need thier own layout
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    bl->addWidget(newButton, 0);
+    bl->addWidget(editButton, 0);
+    bl->addWidget(deleteButton, 0);
+    bl->addWidget(closeButton, 0);
+    bl->addStretch(1);
     
-	planIndex = NULL;
+    ml->addLayout(bl, 0);
+
+    ml->addWidget(list, 1);
+
+    refreshList(0);
+    
 }
 
 
@@ -66,7 +106,7 @@ RatePlans::~RatePlans()
 
 void RatePlans::Hide()
 {
-    hide();
+    delete this;
 }
 
 
@@ -77,47 +117,14 @@ void RatePlans::Hide()
 void RatePlans::refreshList(int)
 {
     ADB     DB;
-    char    tmpstr[128]; 
-    char    tmpstr2[128];
-    int     tmpTop, tmpCur;
-    int     rowcnt;
     
-    // Save the state of the list.
-    tmpTop = list->topItem();
-    tmpCur = list->currentItem();
-    
-    list->setAutoUpdate(FALSE);
     list->clear();
 
-	// If we've got an index already, clear it.
-	if (planIndex != NULL) {
-		delete(planIndex);
-	}
-
     DB.query("select InternalID, PlanTag, Description from RatePlans order by PlanTag");
-    rowcnt = DB.rowCount;
-    planIndex = new(int[DB.rowCount + 1]);
-    int indexPtr = 0;
     while(DB.getrow()) {
-    	planIndex[indexPtr++] = atoi(DB.curRow["InternalID"]);
-        QString tmpStr1 = DB.curRow["Description"];
-        tmpStr1.truncate(53);
-        strcpy(tmpstr, tmpStr1);
-        sprintf (tmpstr2, "%-16s     %-53s", DB.curRow["PlanTag"], tmpstr);
-        list->insertItem(tmpstr2);
-    }
-    list->setAutoUpdate(TRUE);
-    list->repaint();
-    
-    rowcnt = DB.rowCount - 1;
-    // Restore the state of the list.
-    if (tmpTop > -1) {
-        while(tmpTop > rowcnt) tmpTop--;
-        while(tmpCur > rowcnt) tmpCur--;
-        list->setCurrentItem(tmpCur);
-        list->setTopItem(tmpTop);
-    }
 
+        QListViewItem *curItem = new QListViewItem(list, DB.curRow["PlanTag"], DB.curRow["Description"], DB.curRow["InternalID"]);
+    }
 
 }
 
@@ -139,21 +146,26 @@ void RatePlans::newRatePlan()
 
 void RatePlans::editRatePlan()
 {
-	RatePlanEdit *editPlan;
-	if (list->currentItem() >= 0) {
-		editPlan = new RatePlanEdit(0, "", planIndex[list->currentItem()]);
+    QListViewItem   *curItem;
+	RatePlanEdit    *editPlan;
+
+    curItem = list->currentItem();
+	if (curItem != NULL) {
+		editPlan = new RatePlanEdit(0, "", atoi(curItem->text(internalIDColumn)));
 		editPlan->show();
 	}
 }
 
-//
-// editRatePlanL  - Allows the user to edit a Billing RatePlan from the list
-//
-
-void RatePlans::editRatePlanL(int msg)
+/*
+ * editRatePlan - A protected slot that gets called when the user double
+ *                clicks on an item in the list.
+ */
+void RatePlans::editRatePlan(QListViewItem *curItem)
 {
-    msg = 0;
-    editRatePlan();
+    if (curItem == NULL) return;
+    RatePlanEdit    *editPlan;
+    editPlan = new RatePlanEdit(0, "", atoi(curItem->text(internalIDColumn)));
+    editPlan->show();
 }
 
 //
@@ -163,28 +175,31 @@ void RatePlans::editRatePlanL(int msg)
 void RatePlans::deleteRatePlan()
 {
 	ADB     DB;
+    QListViewItem   *curItem;
+   
+    curItem = list->currentItem();
+    if (curItem == NULL) return;
+
 	char	tmpstr[1024];
-	int		itemNo = list->currentItem();
+	long	itemNo = atoi(curItem->text(internalIDColumn));
 	int		count = 0;
 		
-	if (itemNo > -1) {
-		// First, we must ensure that the item is not in use by anything else
-		// Bad Things(tm) would happen if we were to blindly delete an item
-		// that was in use in a customer record.  Like we would lose money.
-		
-		DB.query("select CustomerID from Customers where RatePlan = %d", planIndex[itemNo]);
-		count += DB.rowCount;
-		
-		if (count) {
-			sprintf(tmpstr, "Unable to delete Rate Plan.\n\nIt has been used %d times in other tables.", count);
-            QMessageBox::critical(this, "Unable to Delete Rate Plan", tmpstr);
-		} else {
-            if (QMessageBox::warning(this, "Delete Current Rate Plan", "Are you sure you wish to delete\nthe current Rate Plan?", "&Yes", "&No", 0, 1) == 0) {
-				RatePlansDB	RPDB;
-				RPDB.del(planIndex[itemNo]);
-				refreshList(1);
-			}
-		}
-	}
+    // First, we must ensure that the item is not in use by anything else
+    // Bad Things(tm) would happen if we were to blindly delete an item
+    // that was in use in a customer record.  Like we would lose money.
+    
+    DB.query("select CustomerID from Customers where RatePlan = %ld", itemNo);
+    count += DB.rowCount;
+    
+    if (count) {
+        sprintf(tmpstr, "Unable to delete Rate Plan.\n\nIt has been used %d times in other tables.", count);
+        QMessageBox::critical(this, "Unable to Delete Rate Plan", tmpstr);
+    } else {
+        if (QMessageBox::warning(this, "Delete Current Rate Plan", "Are you sure you wish to delete\nthe current Rate Plan?", "&Yes", "&No", 0, 1) == 0) {
+            RatePlansDB	RPDB;
+            RPDB.del(itemNo);
+            refreshList(1);
+        }
+    }
 }
 
