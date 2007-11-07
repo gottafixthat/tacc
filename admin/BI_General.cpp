@@ -293,8 +293,10 @@ void BI_General::setItemNumber(long itemNumber)
                     idxPos++;
                 }
                 accountList->setEnabled(TRUE);
+                myAccount = acctIDX[accountList->currentItem()];
+            } else {
+                myAccount = 0;
             }
-            myAccount = acctIDX[accountList->currentItem()];
             
             // Now, find the setup item in the setupItemList
             if (setupIDX != NULL) {
@@ -306,8 +308,10 @@ void BI_General::setItemNumber(long itemNumber)
                     idxPos++;
                 }
                 setupItemList->setEnabled(TRUE);
+                mySetupItem = setupIDX[setupItemList->currentItem()];
+            } else {
+                mySetupItem = 0;
             }
-            mySetupItem = setupIDX[setupItemList->currentItem()];
 
             prioritySpin->setValue(BIDB.getInt("Priority"));
             prioritySpin->setEnabled(TRUE);
@@ -404,13 +408,19 @@ void BI_General::save()
     
     ADBTable    BIDB;
     BIDB.setTableName("Billables");
+
+    int myAcct = 0;
+    int mySetup = 0;
+
+    if (accountList->currentItem())   myAcct  = acctIDX[accountList->currentItem()];
+    if (setupItemList->currentItem()) mySetup = setupIDX[setupItemList->currentItem()];
     
     BIDB.get(myItemNumber);
     BIDB.setValue("ItemID", itemName->text());
     BIDB.setValue("Description", description->text());
     BIDB.setValue("ItemType", itemTypeList->currentItem());
-    BIDB.setValue("AccountNo", acctIDX[accountList->currentItem()]);
-    BIDB.setValue("SetupItem", setupIDX[setupItemList->currentItem()]);
+    BIDB.setValue("AccountNo", myAcct);
+    BIDB.setValue("SetupItem", mySetup);
     BIDB.setValue("Active", (int) isActive->isChecked());
     BIDB.setValue("Taxable", (int) isTaxable->isChecked());
     BIDB.setValue("Priority", prioritySpin->cleanText().toInt());
