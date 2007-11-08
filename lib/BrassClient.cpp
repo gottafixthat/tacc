@@ -103,17 +103,20 @@ int BrassClient::Connect(void)
 int BrassClient::Authenticate(void)
 {
     int     RetVal  = 0;
-    char    *dst    = (char *) calloc(65536, sizeof(char));
-    char    *src    = (char *) calloc(65536, sizeof(char));
+    //char    *dst    = (char *) calloc(65536, sizeof(char));
+    //char    *src    = (char *) calloc(65536, sizeof(char));
     
-    sprintf(src, "%ld %s %s", time(NULL), myUserName, myPassword);
+    //sprintf(src, "%ld %s %s", time(NULL), myUserName, myPassword);
     
-    encrypt_string2((unsigned char *) src, (unsigned char *) dst);
+    //encrypt_string2((unsigned char *) src, (unsigned char *) dst);
     
     mStatusCode = 0;
     mSingleLineResponse = mMultiLineResponse = "";
-    strcpy(mSendBuffer, "auth ");
-    strncat(mSendBuffer, dst, SEND_BUFFER_SIZE-32);
+    //strcpy(mSendBuffer, "auth ");
+    //strncat(mSendBuffer, dst, SEND_BUFFER_SIZE-32);
+    //strcat(mSendBuffer, "\r\n");
+    strcpy(mSendBuffer, "user ");
+    strcat(mSendBuffer, myUserName);
     strcat(mSendBuffer, "\r\n");
     int bufferLen = strlen(mSendBuffer);
     int numSent = Send(mSendBuffer, bufferLen);
@@ -121,10 +124,22 @@ int BrassClient::Authenticate(void)
         PGetSingleLineResponse();
     }
     
-    free(src);
-    free(dst);
+    //free(src);
+    //free(dst);
     
-    if (mStatusCode == '+') RetVal = 1;
+    if (mStatusCode == '+') {
+        // Now send the password.
+        strcpy(mSendBuffer, "pass ");
+        strcat(mSendBuffer, myPassword);
+        strcat(mSendBuffer, "\r\n");
+        int bufferLen = strlen(mSendBuffer);
+        int numSent = Send(mSendBuffer, bufferLen);
+        if (numSent == bufferLen) {
+            PGetSingleLineResponse();
+        }
+
+        if (mStatusCode == '+') RetVal = 1;
+    }
 
 	return RetVal;
 }

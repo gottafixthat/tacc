@@ -40,9 +40,10 @@ BillingCycleEdit::BillingCycleEdit
 	:
 	Inherited( parent, name )
 {
-    strcpy(myCycleID, CycleID);    
+    if (CycleID != NULL) strcpy(myCycleID, CycleID);    
+    else strcpy(myCycleID, "");
     
-    if (strlen(CycleID)) {
+    if (strlen(myCycleID)) {
     	setCaption("Edit Billing Cycle");
     } else {
         setCaption("New Billing Cycle");
@@ -51,7 +52,7 @@ BillingCycleEdit::BillingCycleEdit
     EditingCycle = 0;
     cycleID->setFocus();
     // We're editing one, so get the data for it.
-    if (strlen(CycleID)) {
+    if (strlen(myCycleID)) {
         EditingCycle = 1;
         BillingCyclesDB BCDB;
         BCDB.getByCycleID(CycleID);
