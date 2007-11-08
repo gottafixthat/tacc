@@ -112,6 +112,7 @@ protected slots:
     void            create_statements();
     void            billableitemslist();
     void            packagelist();
+    void            paymenttermslist();
     void            logintypelist();
     void            domaintypelist();
     void            dnstemplates();
