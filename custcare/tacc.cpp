@@ -57,6 +57,7 @@
 #include <CCMonetra.h>
 #include "RunStatements.h"
 #include "PKG_Main.h"
+#include "PaymentTerms.h"
 #include "BI_Main.h"
 #include "OverdueAccounts.h"
 #include "WipedAccounts.h"
@@ -345,6 +346,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
             otherMenu->insertItem("Billing Cycles", this, SLOT(billingCycleList()));
             otherMenu->insertItem("Company List", this, SLOT(openCompanyList()));
             otherMenu->insertItem("Package Editor", this, SLOT(packagelist()));
+            otherMenu->insertItem("Payment Terms", this, SLOT(paymenttermslist()));
             otherMenu->insertItem("Login Types", this, SLOT(logintypelist()));
             otherMenu->insertItem("Rate Plans", this, SLOT(ratePlanList()));
             otherMenu->insertItem("Server Groups", this, SLOT(serverGroupList()));
@@ -791,6 +793,13 @@ void CustomerCare::packagelist()
     PKG_Main    *pkgeditor = new PKG_Main();
     pkgeditor->show();
     pkgeditor->refreshPackages();
+}
+
+void CustomerCare::paymenttermslist()
+{
+    PaymentTerms *terms = new PaymentTerms();
+    terms->show();
+    terms->refreshList(1);
 }
 
 void CustomerCare::ratePlanList()
