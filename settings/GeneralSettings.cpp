@@ -58,12 +58,25 @@ GeneralSettings::~GeneralSettings()
 }
 
 /*
+ * validateSettings - Slot that gets called when the user clicks
+ * the Save button.
+ */
+int GeneralSettings::validateSettings()
+{
+    int retVal = 1;     // Assume success
+    
+    return retVal;
+}
+
+/*
  * saveSettings - Slot that gets called when the user clicks
  * the Save button.
  */
-void GeneralSettings::saveSettings()
+int GeneralSettings::saveSettings()
 {
-
+    int retVal = 1;     // Assume success
+    
+    return retVal;
 }
 
 
