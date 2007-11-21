@@ -34,7 +34,7 @@ ifdef USEDES
 endif
 
 SUBDIRS += voip voicemail ccards asterisk customers
-SUBDIRS += reports tickets admin custcare
+SUBDIRS += reports tickets admin settings custcare
 # SUBDIRS += sam taa
 #SUBDIRS += mbrassd 
 # SUBDIRS += gettraffic

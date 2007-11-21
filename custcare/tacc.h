@@ -135,6 +135,7 @@ protected slots:
     void            voipServiceTypeList();
     void            manageRateCenters();
     void            openCompanyList();
+    void            settings();
 
     void            asteriskEvent(const astEventRecord);
 

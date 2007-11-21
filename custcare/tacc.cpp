@@ -79,6 +79,7 @@
 #include "VendorTypes.h"
 #include "VoIPServiceTypes.h"
 #include "CompanyEditor.h"
+#include "SettingsManager.h"
 
 #include "UserPrivs.h"
 
@@ -326,6 +327,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
         domainMenu->insertItem("DNS &Templates", this, SLOT(dnstemplates()));
 
         QPopupMenu  *adminMenu = new QPopupMenu(this);
+        if (isAdmin()) adminMenu->insertItem("Settings", this, SLOT(settings()));
         if (isAdmin()) adminMenu->insertItem("&Domains", domainMenu);
         if (isAdmin()) adminMenu->insertItem("Staff Editor", this, SLOT(staffEditor()));
         //adminMenu->insertItem("More...", ccStack->adm->menu());
@@ -842,6 +844,12 @@ void CustomerCare::openCompanyList()
     CompanyList *cl = new CompanyList();
     cl->show();
     //cl->refreshList(1);
+}
+
+void CustomerCare::settings()
+{
+    SettingsManager *sm = new SettingsManager();
+    sm->show();
 }
 
 void CustomerCare::logintypelist()
