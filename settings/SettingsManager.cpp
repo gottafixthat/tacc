@@ -22,15 +22,34 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
 {
     setCaption("Settings Manager");
 
+    sectionCount = 0;
     sectionList = new QListBox(this, "sectionList");
     connect(sectionList, SIGNAL(selected(int)), this, SLOT(changeSection(int)));
     connect(sectionList, SIGNAL(highlighted(int)), this, SLOT(changeSection(int)));
 
+    header = new QLabel(this, "header");
+    header->setText("Settings");
+    header->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    header->setAlignment(AlignVCenter | AlignLeft);
+    header->setPaletteBackgroundColor(Qt::blue);
+    header->setPaletteForegroundColor(Qt::white);
+    QFont   tmpFont = header->font();
+    tmpFont.setBold(true);
+    tmpFont.setPointSize(tmpFont.pointSize()+1);
+    header->setFont(tmpFont);
+
+
     sections = new QWidgetStack(this, "sections");
 
-    general = new GeneralSettings(this, "generalSettings");
+    general = new GeneralSettings(this, "General");
     sectionList->insertItem("General");
-    sections->addWidget(general, 0);
+    sections->addWidget(general, sectionCount);
+    sectionCount++;
+
+    billing = new BillingSettings(this, "Billing");
+    sectionList->insertItem("Billing");
+    sections->addWidget(billing, sectionCount);
+    sectionCount++;
 
     HorizLine   *hLine = new HorizLine(this, "hLine");
     VertLine    *vLine = new VertLine(this, "vLine");
@@ -47,6 +66,7 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
     ml->addWidget(sectionList, 0);
 
     QBoxLayout *sl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    sl->addWidget(header, 0);
     sl->addWidget(sections, 1);
 
     QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
@@ -58,6 +78,8 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
     ml->addWidget(vLine, 0);
     ml->addLayout(sl, 1);
 
+    // Highlight the first entry in the list.
+    sectionList->setSelected(0, true);
 }
 
 /*
@@ -73,7 +95,31 @@ SettingsManager::~SettingsManager()
  */
 void SettingsManager::saveSettings()
 {
-    // Call each of the widgets one by one to save their settings
+    // Call each of the widgets one by one to validate their settings
+    if (!general->validateSettings()) {
+        sections->raiseWidget(general);
+        sectionList->setSelected(sectionList->findItem(general->name(), Qt::ExactMatch), true);
+        return;
+    }
+
+    if (!billing->validateSettings()) {
+        sections->raiseWidget(billing);
+        sectionList->setSelected(sectionList->findItem(billing->name(), Qt::ExactMatch), true);
+        return;
+    }
+
+    // Now call each of the widgets one by one to save their settings
+    if (!general->saveSettings()) {
+        sections->raiseWidget(general);
+        sectionList->setSelected(sectionList->findItem(general->name(), Qt::ExactMatch), true);
+        return;
+    }
+
+    if (!billing->saveSettings()) {
+        sections->raiseWidget(billing);
+        sectionList->setSelected(sectionList->findItem(billing->name(), Qt::ExactMatch), true);
+        return;
+    }
 
     // Close down the window
     delete this;
@@ -96,7 +142,12 @@ void SettingsManager::cancelChanges()
  */
 void SettingsManager::changeSection(int item)
 {
+    fprintf(stderr, "Raising item %d\n", item);
+    QString capStr;
     sections->raiseWidget(item);
+    capStr = sections->visibleWidget()->name();
+    capStr += " Settings";
+    header->setText(capStr);
 }
 
 

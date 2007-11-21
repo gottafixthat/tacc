@@ -27,7 +27,8 @@ public:
     GeneralSettings(QWidget *parent = NULL, const char *name = NULL);
     virtual ~GeneralSettings();
 
-    void            saveSettings();
+    int             validateSettings();
+    int             saveSettings();
 
 protected:
     QLineEdit       *emailDomain;

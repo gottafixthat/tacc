@@ -34,15 +34,18 @@ endif
 SUBDIRS =	
 
 SOURCES =	SettingsManager.cpp\
-		GeneralSettings.cpp
+		GeneralSettings.cpp\
+		BillingSettings.cpp
 
 HEADERS =	SettingsManager.h\
-		GeneralSettings.h
+		GeneralSettings.h\
+		BillingSettings.h
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_SettingsManager.cpp\
-		moc_GeneralSettings.cpp
+		moc_GeneralSettings.cpp\
+		moc_BillingSettings.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 
@@ -87,6 +90,9 @@ moc_SettingsManager.cpp: SettingsManager.h
 
 moc_GeneralSettings.cpp: GeneralSettings.h
 	$(MOC) GeneralSettings.h -o moc_GeneralSettings.cpp
+
+moc_BillingSettings.cpp: BillingSettings.h
+	$(MOC) BillingSettings.h -o moc_BillingSettings.cpp
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.

@@ -18,8 +18,10 @@
 #include <qlistbox.h>
 #include <qpushbutton.h>
 #include <qwidgetstack.h>
+#include <qlabel.h>
 #include "TAAWidget.h"
 #include "GeneralSettings.h"
+#include "BillingSettings.h"
 
 class SettingsManager : public TAAWidget
 {
@@ -32,10 +34,13 @@ public:
 protected:
     QListBox        *sectionList;
     QWidgetStack    *sections;
+    int             sectionCount;
+    QLabel          *header;
     QPushButton     *saveButton;
     QPushButton     *cancelButton;
 
     GeneralSettings *general;
+    BillingSettings *billing;
 
 protected slots:
     void            saveSettings();
