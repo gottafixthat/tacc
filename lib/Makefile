@@ -43,7 +43,8 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			DNSTemplatePicker.cpp\
 			DNSManager.cpp\
 			ServerGroups.cpp\
-			CollReport.cpp
+			CollReport.cpp\
+			wtpl2.cpp
 
 # HEADERS =	../include/BlargDB.h
 

@@ -69,3 +69,18 @@ void cfgInit(void)
     }
 }
 
+/*
+ * updateCfgVal - Stores the specified configuration value into the database.
+ */
+void updateCfgVal(const char *token, const char *val)
+{
+    ADB DB;
+    DB.query("select * from Settings where Token = '%s'", token);
+    if (DB.rowCount) {
+        DB.dbcmd("update Settings set Setting = '%s' where Token = '%s'", DB.escapeString(val), token);
+    } else {
+        DB.dbcmd("insert into Settings (Token, Setting) values ('%s', '%s')", token, DB.escapeString(val));
+    }
+    setCfgVal(token, val);
+}
+

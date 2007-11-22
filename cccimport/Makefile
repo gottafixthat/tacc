@@ -10,6 +10,7 @@ CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -DADBQT
 LFLAGS  += -L../lib -ltaa
 LFLAGS  += -L/usr/X11R6/lib -lXext
 LFLAGS  += -L/usr/local/lib -ladbqt
+LFLAGS  += -lpcre
 LFLAGS  += -L/usr/lib/mysql -lmysqlclient
 LFLAGS	+= -L$(QTDIR)/lib -lqt-mt
 #LFLAGS	+= -static

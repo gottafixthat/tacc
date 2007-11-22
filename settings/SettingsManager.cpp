@@ -142,7 +142,6 @@ void SettingsManager::cancelChanges()
  */
 void SettingsManager::changeSection(int item)
 {
-    fprintf(stderr, "Raising item %d\n", item);
     QString capStr;
     sections->raiseWidget(item);
     capStr = sections->visibleWidget()->name();

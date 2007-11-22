@@ -10,6 +10,7 @@ LFLAGS  += -L$(QTDIR)/lib -ltaa -ladbqt -lqt-mt -lcrypt -L../lib
 LFLAGS	+= -L/usr/X11R6/lib -lX11 -lXext -lXft -lSM -lICE -L/usr/lib64/mysql -L/usr/lib/mysql -lmysqlclient
 LFLAGS  += -lmimepp_util -lmimepp_net -lmimepp_core 
 LFLAGS  += -lmcve
+LFLAGS  += -lpcre
 ifdef USEQWT
 LFLAGS  += -lqwt
 endif

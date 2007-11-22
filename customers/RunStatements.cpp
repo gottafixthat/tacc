@@ -36,6 +36,7 @@
 #include "ParseFile.h"
 #include <ADB.h>
 #include "Cfg.h"
+#include "TAATools.h"
 
 /*
 ** RunStatements - Runs statements for all customers that need them.
@@ -787,7 +788,17 @@ void printStatement(long StNo, int Force = 0, int Dup = 0)
         if (!STDB.getInt("ToBePrinted")) return;
     }
 
-    STDB.print(NULL);
+    int useInternal = 1;
+    if (strlen(cfgVal("BuiltInPrintedStatements"))) {
+        if (!atoi(cfgVal("BuiltInPrintedStatements"))) {
+            useInternal = 0;
+        }
+    }
+    if (useInternal) {
+        STDB.print(NULL);
+    } else {
+        printStatementFromFile(StNo);
+    }
     STDB.setValue("PrintedOn", theDate);
     STDB.setValue("ToBePrinted", (int) 0);
     STDB.upd();

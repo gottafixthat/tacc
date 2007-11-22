@@ -16,6 +16,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+#include "TAAConfig.h"
 #include "Cfg.h"
 #include "GeneralSettings.h"
 
@@ -75,6 +76,8 @@ int GeneralSettings::validateSettings()
 int GeneralSettings::saveSettings()
 {
     int retVal = 1;     // Assume success
+
+    updateCfgVal("EmailDomain", (const char *)emailDomain->text());
     
     return retVal;
 }
