@@ -33,10 +33,12 @@
 #include <Cfg.h>
 #include <StrTools.h>
 
+#include "BlargDB.h"
 #include "TAATools.h"
 #include "version.h"
 #include "buildnum.h"
 #include "BString.h"
+#include "wtpl2.h"
 
 static char* t_MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
   "May", "Jun", "Jul", "Aug", "Sep", "Oct",
@@ -490,6 +492,58 @@ void debug(int level, const char *format, ...)
         fflush(stderr);
         delete (outstr);
     }
+}
+
+/*
+ * printStatementFromFile - Loads a statement from the database, loads
+ * a latex templat file and runs it.
+ */
+void printStatementFromFile(long statementNo)
+{
+    StatementsDB        STDB;
+    StatementsDataDB    SDDB;
+    ADB                 DB;
+    QDate               stDate;
+    float               balance = 0.0;
+    char                stStr[1024];
+    char                cidStr[1024];
+
+    STDB.get(statementNo);
+
+    wtpl *tpl = new wtpl(cfgVal("StatementLatexFile"));
+
+    myDatetoQDate(STDB.getStr("StatementDate"), &stDate);
+
+    // Parse the line items here
+    DB.query("select InternalID from StatementsData where StatementNo = %ld order by InternalID", statementNo);
+    while(DB.getrow()) {
+        SDDB.get(atol(DB.curRow[0]));
+        tpl->assign("Description",      SDDB.getStr("Description"));
+        tpl->assign("TransDate",        SDDB.getStr("TransDate"));
+        tpl->assign("StartDate",        SDDB.getStr("StartDate"));
+        tpl->assign("EndDate",          SDDB.getStr("EndDate"));
+        tpl->assign("LoginID",          SDDB.getStr("LoginID"));
+        tpl->assign("Amount",           SDDB.getStr("Amount"));
+        balance += SDDB.getFloat("Amount");
+        tpl->parse("statement.lineitem");
+    }
+
+    // Parse the main body items
+    sprintf(stStr, "%ld", statementNo);
+    sprintf(cidStr, "%ld", STDB.getLong("CustomerID"));
+    tpl->assign("StatementDate",    stDate.toString());
+    tpl->assign("StatementNumber",  stStr);
+    tpl->assign("CustomerID",       cidStr);
+    tpl->assign("CustomerName",     STDB.getStr("CustName"));
+    tpl->assign("CustomerAddr1",    STDB.getStr("CustAddr1"));
+    tpl->assign("CustomerAddr2",    STDB.getStr("CustAddr2"));
+    tpl->assign("CustomerAddr3",    STDB.getStr("CustAddr3"));
+    tpl->assign("CustomerAddr4",    STDB.getStr("CustAddr4"));
+
+    tpl->parse("statement");
+    FILE *fp = fopen("/tmp/statement.tex", "w");
+    fprintf(fp, "%s", tpl->text().c_str());
+    fclose(fp);
 }
 
 

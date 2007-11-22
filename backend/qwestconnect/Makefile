@@ -8,6 +8,7 @@ LFLAGS  = -L../../lib -L../../tickets -L$(QTDIR)/lib
 LFLAGS	+= -L/usr/local/lib -ltickets -ltaa -ladb
 LFLAGS  += -L/usr/lib/mysql -lmysqlclient -lqt-mt
 LFLAGS  += -lmimepp_core -lmimepp_util -lmimepp_net
+LFLAGS  += -lpcre
 
 SHELL   = /bin/sh
 CC	= g++
