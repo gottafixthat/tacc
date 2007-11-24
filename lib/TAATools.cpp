@@ -510,6 +510,7 @@ const QString latexEscapeString(QString s)
     retStr.replace(QRegExp("{"), "\\{");
     retStr.replace(QRegExp("}"), "\\}");
     retStr.replace(QRegExp("&"), "\\&");
+    retStr.replace(QRegExp("#"), "\\#");
     return retStr;
 }
 

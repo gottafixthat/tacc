@@ -209,22 +209,33 @@ Payment Due By: & \textbf{@--DueDate--@}\\
 \end{flushright}
 \end{minipage}}
 \vspace{1.5cm}
+% Summary of charges
+\section*{Summary}
+\begin{tabular}{ccc}
+ & & \\\hline
+Invoice date & Invoice \# & Customer\#\\
+%%    \vspace{0.2cm}
+\textbf{@--StatementDate--@} & \textbf{@--StatementNumber--@} & \textbf{@--CustomerID--@} \\\hline
+%%    \rule{0pt}{5ex} &~~ \huge{\textsc{Service Invoice}} & \\
+%%    \vspace{-0.2cm}
+%%     & & \\\hline
+\end{tabular}
 %
 \section*{\textsc{Charges}}
 \begin{longtable}{clr}
 \hline
-\rule{0pt}{2.5ex}
-\makebox[1.6cm]{\textbf{Date}} & 
-\makebox[12.6cm][l]{\textbf{Description}} & 
-\makebox[2.5cm][r]{\textbf{Amount}} \\
+\rule{0pt}{1.5ex}
+\makebox[1.2cm]{\textbf{Date}} & 
+\makebox[13.9cm][l]{\textbf{Description}} & 
+\makebox[1.6cm][r]{\textbf{Amount}} \\
 \hline
 \endfirsthead
 \multicolumn{3}{r}{\rule{0pt}{2.5ex}Continued from previous page}\\
 \hline
-\rule{0pt}{2.5ex}
-\makebox[1.6cm]{\textbf{Date}} & 
-\makebox[12.6cm][l]{\textbf{Description}} & 
-\makebox[2.5cm][r]{\textbf{Amount}} \\
+\rule{0pt}{1.5ex}
+\makebox[1.2cm]{\textbf{Date}} & 
+\makebox[13.9cm][l]{\textbf{Description}} & 
+\makebox[1.6cm][r]{\textbf{Amount}} \\
 \hline
 \endhead
 \multicolumn{3}{r}{\rule{0pt}{2.5ex}Continued on next page...}\\
