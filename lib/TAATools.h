@@ -86,6 +86,7 @@ void        debug(int level, const char *format, ... );
 
 const char *stripHTML(const char *src);
 
+const QString latexEscapeString(QString s);
 void        printStatementFromFile(long statementNo);
 
 #endif // TAATools_included

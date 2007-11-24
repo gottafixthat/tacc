@@ -27,6 +27,7 @@
 #include <qdatetm.h>
 #include <qmessagebox.h>
 #include <qwidget.h>
+#include <qregexp.h>
 
 #include <hash_map.h>
 #include <ADB.h>
@@ -495,6 +496,24 @@ void debug(int level, const char *format, ...)
 }
 
 /*
+ * latexEscapeString - Escapes a string for passing to LaTeX.
+ */
+const QString latexEscapeString(QString s)
+{
+    QString retStr;
+    retStr = s;
+    retStr.replace(QRegExp("\\"), "\\\\");
+    retStr.replace(QRegExp("\\$"), "\\dollar");
+    retStr.replace(QRegExp("\\["), "\\[");
+    retStr.replace(QRegExp("\\]"), "\\]");
+    retStr.replace(QRegExp("\\]"), "\\]");
+    retStr.replace(QRegExp("{"), "\\{");
+    retStr.replace(QRegExp("}"), "\\}");
+    retStr.replace(QRegExp("&"), "\\&");
+    return retStr;
+}
+
+/*
  * printStatementFromFile - Loads a statement from the database, loads
  * a latex templat file and runs it.
  */
@@ -502,36 +521,62 @@ void printStatementFromFile(long statementNo)
 {
     StatementsDB        STDB;
     StatementsDataDB    SDDB;
+    CustomersDB         CDB;
     ADB                 DB;
     QDate               stDate;
+    QDate               tmpDate;
+    QDate               startDate;
+    QDate               endDate;
     float               balance = 0.0;
     char                stStr[1024];
     char                cidStr[1024];
+    char                termsStr[1024];
 
     STDB.get(statementNo);
+    CDB.get(STDB.getLong("CustomerID"));
+    DB.query("select TermsDesc from PaymentTerms where InternalID = %d", CDB.getInt("Terms"));
+    if (DB.rowCount) {
+        DB.getrow();
+        strcpy(termsStr, DB.curRow["TermsDesc"]);
+    } else {
+        strcpy(termsStr, "");
+    }
 
     wtpl *tpl = new wtpl(cfgVal("StatementLatexFile"));
 
-    myDatetoQDate(STDB.getStr("StatementDate"), &stDate);
+    stDate = QDate::fromString(STDB.getStr("StatementDate"), Qt::ISODate);
+
+    //myDatetoQDate(STDB.getStr("StatementDate"), &stDate);
 
     // Parse the line items here
     DB.query("select InternalID from StatementsData where StatementNo = %ld order by InternalID", statementNo);
     while(DB.getrow()) {
         SDDB.get(atol(DB.curRow[0]));
-        tpl->assign("Description",      SDDB.getStr("Description"));
-        tpl->assign("TransDate",        SDDB.getStr("TransDate"));
-        tpl->assign("StartDate",        SDDB.getStr("StartDate"));
-        tpl->assign("EndDate",          SDDB.getStr("EndDate"));
+        tpl->assign("Description",      latexEscapeString(SDDB.getStr("Description")));
+        tmpDate = QDate::fromString(SDDB.getStr("TransDate"), Qt::ISODate);
+        tpl->assign("TransDate",        tmpDate.toString(cfgVal("LatexDateFormat")));
+        startDate = QDate::fromString(SDDB.getStr("StartDate"), Qt::ISODate);
+        tpl->assign("StartDate",        startDate.toString(cfgVal("LatexDateFormat")));
+        endDate = QDate::fromString(SDDB.getStr("EndDate"), Qt::ISODate);
+        tpl->assign("EndDate",          endDate.toString(cfgVal("LatexDateFormat")));
+        int hasDateRange = 1;
+        if (startDate == endDate) hasDateRange = 0;
         tpl->assign("LoginID",          SDDB.getStr("LoginID"));
         tpl->assign("Amount",           SDDB.getStr("Amount"));
         balance += SDDB.getFloat("Amount");
-        tpl->parse("statement.lineitem");
+        if (hasDateRange) {
+            tpl->parse("statement.lineitems.normalline");
+        } else {
+            tpl->parse("statement.lineitems.nodaterange");
+        }
+        tpl->parse("statement.lineitems");
     }
 
     // Parse the main body items
     sprintf(stStr, "%ld", statementNo);
     sprintf(cidStr, "%ld", STDB.getLong("CustomerID"));
-    tpl->assign("StatementDate",    stDate.toString());
+    tmpDate = QDate::fromString(STDB.getStr("DueDate"), Qt::ISODate);
+    tpl->assign("StatementDate",    stDate.toString(cfgVal("LatexDateFormat")));
     tpl->assign("StatementNumber",  stStr);
     tpl->assign("CustomerID",       cidStr);
     tpl->assign("CustomerName",     STDB.getStr("CustName"));
@@ -539,6 +584,16 @@ void printStatementFromFile(long statementNo)
     tpl->assign("CustomerAddr2",    STDB.getStr("CustAddr2"));
     tpl->assign("CustomerAddr3",    STDB.getStr("CustAddr3"));
     tpl->assign("CustomerAddr4",    STDB.getStr("CustAddr4"));
+    tpl->assign("Terms",            termsStr);
+    tpl->assign("DueDate",          tmpDate.toString(cfgVal("LatexDateFormat")));
+    tpl->assign("PreviousBalance",  STDB.getStr("PrevBalance"));
+    tpl->assign("Credits",          STDB.getStr("Credits"));
+    tpl->assign("FinaceRate",       STDB.getStr("FinanceRate"));
+    tpl->assign("FinaceCharge",     STDB.getStr("FinanceCharge"));
+    tpl->assign("NewCharges",       STDB.getStr("NewCharges"));
+    tpl->assign("TotalDue",         STDB.getStr("TotalDue"));
+    tpl->assign("HeaderMsg",        STDB.getStr("HeaderMsg"));
+    tpl->assign("FooterMsg",        STDB.getStr("FooterMsg"));
 
     tpl->parse("statement");
     FILE *fp = fopen("/tmp/statement.tex", "w");

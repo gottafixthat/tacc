@@ -44,6 +44,14 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     latexFile->setText(cfgVal("StatementLatexFile"));
     QToolTip::add(latexFile, "If billing is set to use LaTeX instead of the\ninternally generated statements, this is the\nsource file that will be used.");
 
+    QLabel *dateFormatLabel = new QLabel(this, "dateFormatLabel");
+    dateFormatLabel->setText("Date Format:");
+    dateFormatLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+
+    dateFormat = new QLineEdit(this, "dateFormat");
+    dateFormat->setText(cfgVal("LatexDateFormat"));
+    QToolTip::add(dateFormat, "If billing is set to use LaTeX instead of the\ninternally generated statements, this how the dates are formatted.\nThis follows the Qt date format options.");
+
     chooseFileButton = new QPushButton(this, "chooseFileButton");
     chooseFileButton->setText("...");
     chooseFileButton->setFixedWidth(20);
@@ -66,6 +74,11 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
 
     gl->addWidget(latexFileLabel,       curRow, 0);
     gl->addLayout(fbl,                  curRow, 1);
+    gl->setRowStretch(curRow, 0);
+    curRow++;
+
+    gl->addWidget(dateFormatLabel,      curRow, 0);
+    gl->addWidget(dateFormat,           curRow, 1);
     gl->setRowStretch(curRow, 0);
     curRow++;
 
@@ -117,6 +130,7 @@ int BillingSettings::saveSettings()
         // We've already validated the file.
         updateCfgVal("BuiltInPrintedStatements", "0");
         updateCfgVal("StatementLatexFile", (const char *)latexFile->text());
+        updateCfgVal("LatexDateFormat", (const char *)dateFormat->text());
     } else {
         updateCfgVal("BuiltInPrintedStatements", "1");
     }
@@ -136,6 +150,7 @@ void BillingSettings::builtInPrintedStatementChanged(bool on)
 
     latexFile->setEnabled(tmpBool);
     chooseFileButton->setEnabled(tmpBool);
+    dateFormat->setEnabled(tmpBool);
 }
 
 /*
