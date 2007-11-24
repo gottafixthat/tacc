@@ -22,7 +22,7 @@
 \documentclass[letterpaper]{article}
 
 \usepackage{fancyhdr,lastpage,ifthen,longtable,afterpage}
-\usepackage{graphicx}			% required for logo graphic
+\usepackage{colortbl,graphicx}			% required for logo graphic
 
 \addtolength{\voffset}{-0.0cm}		% top margin to top of header
 \addtolength{\hoffset}{-0.6cm}		% left margin on page
@@ -116,11 +116,11 @@ Bellevue, WA~~98004
     \begin{flushright}
     \huge{\textbf{Service Invoice}}
     \end{flushright}
-    \begin{tabular}{ccc}
-     & & \\\hline
-    Invoice date & Invoice \# & Customer\#\\
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Invoice Date} & \textbf{Invoice \#} & \textbf{Customer ID}\\\hline
 %%    \vspace{0.2cm}
-    \textbf{@--StatementDate--@} & \textbf{@--StatementNumber--@} & \textbf{@--CustomerID--@} \\\hline
+    @--StatementDate--@ & @--StatementNumber--@ & @--CustomerID--@ \\\hline
 %%    \rule{0pt}{5ex} &~~ \huge{\textsc{Service Invoice}} & \\
 %%    \vspace{-0.2cm}
 %%     & & \\\hline
@@ -128,9 +128,10 @@ Bellevue, WA~~98004
   }
   { % ... pages
     \small{
-      \begin{tabular}{lll}
-      Invoice date & Invoice \#& Customer\#\\
-      \textbf{@--StatementDate--@} & \textbf{@--StatementNumber--@} & \textbf{@--CustomerID--@}\\
+      \begin{tabular}{|c|c|c|}
+      \hline
+      \textbf{Invoice date} & \textbf{Invoice \#}& \textbf{Customer ID}\\\hline
+      @--StatementDate--@ & @--StatementNumber--@ & @--CustomerID--@\\\hline
       \end{tabular}
     }
   }
@@ -202,26 +203,29 @@ Bellevue, WA~~98004
 \begin{minipage}[t]{6.4cm}
 \begin{flushright}
 \begin{tabular}{rl}
-Terms: & @--Terms--@\\
-Payment Due By: & \textbf{@--DueDate--@}\\
+%Terms: & @--Terms--@\\
+%Payment Due By: & \textbf{@--DueDate--@}\\
 \end{tabular}
 %%XXpolineXX\\
 \end{flushright}
 \end{minipage}}
 \vspace{1.5cm}
 % Summary of charges
-\section*{Summary}
-\begin{tabular}{ccc}
- & & \\\hline
-Invoice date & Invoice \# & Customer\#\\
+\section*{\textbf{Invoice Summary}}\vspace{-0.65cm}
+%\hfill
+\begin{center}
+\begin{tabular}[t]{|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Invoice \#} & \textbf{Invoice Date} & \textbf{Terms} & \textbf{Due Date} & \textbf{Cust ID} & \textbf{Prev Bal.} & \textbf{Credits} & \textbf{New Charges} & \textbf{Balance Due} \\\hline
 %%    \vspace{0.2cm}
-\textbf{@--StatementDate--@} & \textbf{@--StatementNumber--@} & \textbf{@--CustomerID--@} \\\hline
+@--StatementNumber--@ & @--StatementDate--@ & @--Terms--@ & @--DueDate--@ & @--CustomerID--@ & \dollar@--PreviousBalance--@ & \dollar@--Credits--@ & \dollar@--NewCharges--@ & \textbf{\dollar@--TotalDue--@}\\\hline
 %%    \rule{0pt}{5ex} &~~ \huge{\textsc{Service Invoice}} & \\
 %%    \vspace{-0.2cm}
 %%     & & \\\hline
 \end{tabular}
+\end{center}
 %
-\section*{\textsc{Charges}}
+\section*{\textbf{Detailed Account Activity}}\vspace{-0.65cm}
 \begin{longtable}{clr}
 \hline
 \rule{0pt}{1.5ex}
@@ -294,10 +298,10 @@ Invoice date & Invoice \# & Customer\#\\
 %%
 %%      Add any customer specific notes in here
 %%
-\section*{\textsc{Notes}}
+\section*{\textbf{Notes}}\vspace{-0.35cm}
 \begin{enumerate}
 \item Please make your check payable to \textbf{Cheetah IS}.
-\item If you have any questions please email or telephone.
+\item If you have any questions please email \textbf{billing@CheetahIS.com}.
 \end{enumerate}
 \end{document}
 <!-- END: statement -->
