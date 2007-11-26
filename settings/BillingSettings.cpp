@@ -52,6 +52,13 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     dateFormat->setText(cfgVal("LatexDateFormat"));
     QToolTip::add(dateFormat, "If billing is set to use LaTeX instead of the\ninternally generated statements, this how the dates are formatted.\nThis follows the Qt date format options.");
 
+    latexDebug = new QCheckBox(this, "latexDebug");
+    latexDebug->setText("Enable LaTeX test mode");
+    QToolTip::add(latexDebug, "When this option is enabled, the LaTeX typesetter\nwill be run, but the statement will not be printed.\nThis will also leave the source file intact in /tmp.");
+    if (!strlen(cfgVal("StatementLatexDebug"))) latexDebug->setChecked(false);
+    else if (atoi(cfgVal("StatementLatexDebug"))) latexDebug->setChecked(true);
+    else latexDebug->setChecked(false);
+
     chooseFileButton = new QPushButton(this, "chooseFileButton");
     chooseFileButton->setText("...");
     chooseFileButton->setFixedWidth(20);
@@ -79,6 +86,10 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
 
     gl->addWidget(dateFormatLabel,      curRow, 0);
     gl->addWidget(dateFormat,           curRow, 1);
+    gl->setRowStretch(curRow, 0);
+    curRow++;
+
+    gl->addWidget(latexDebug,           curRow, 1);
     gl->setRowStretch(curRow, 0);
     curRow++;
 
@@ -131,6 +142,11 @@ int BillingSettings::saveSettings()
         updateCfgVal("BuiltInPrintedStatements", "0");
         updateCfgVal("StatementLatexFile", (const char *)latexFile->text());
         updateCfgVal("LatexDateFormat", (const char *)dateFormat->text());
+        if (latexDebug->isChecked()) {
+            updateCfgVal("StatementLatexDebug", "1");
+        } else {
+            updateCfgVal("StatementLatexDebug", "0");
+        }
     } else {
         updateCfgVal("BuiltInPrintedStatements", "1");
     }
@@ -151,6 +167,7 @@ void BillingSettings::builtInPrintedStatementChanged(bool on)
     latexFile->setEnabled(tmpBool);
     chooseFileButton->setEnabled(tmpBool);
     dateFormat->setEnabled(tmpBool);
+    latexDebug->setEnabled(tmpBool);
 }
 
 /*

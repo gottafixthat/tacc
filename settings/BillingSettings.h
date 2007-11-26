@@ -34,6 +34,7 @@ public:
 
 protected:
     QCheckBox       *builtInPrintedStatements;
+    QCheckBox       *latexDebug;
     QLineEdit       *latexFile;
     QLineEdit       *dateFormat;
     QPushButton     *chooseFileButton;

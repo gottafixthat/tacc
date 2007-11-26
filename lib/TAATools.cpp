@@ -532,6 +532,11 @@ void printStatementFromFile(long statementNo)
     char                stStr[1024];
     char                cidStr[1024];
     char                termsStr[1024];
+    char                fName[1024];
+    char                lfName[1024];
+    char                tmpFName[1024];
+    char                command[2048];
+    char                cwd[2048];
 
     STDB.get(statementNo);
     CDB.get(STDB.getLong("CustomerID"));
@@ -597,9 +602,51 @@ void printStatementFromFile(long statementNo)
     tpl->assign("FooterMsg",        STDB.getStr("FooterMsg"));
 
     tpl->parse("statement");
-    FILE *fp = fopen("/tmp/statement.tex", "w");
+    // Create the ouptut file.
+    sprintf(fName, "/tmp/statement-%ld-%ld-XXXXXX", STDB.getLong("CustomerID"), statementNo);
+    int fd;
+    fd = mkstemp(fName);
+    close(fd);
+    unlink(fName);
+    sprintf(lfName, "%s.tex", fName);
+
+    FILE *fp = fopen(lfName, "w");
     fprintf(fp, "%s", tpl->text().c_str());
     fclose(fp);
+
+    // Check to see if we need to run latex or if we are debuggin.
+    int debugMode = 0;
+    if (strlen(cfgVal("StatementLatexDebug")) && atoi(cfgVal("StatementLatexDebug"))) {
+        debugMode = 1;
+    }
+    
+    // Run latex.
+    strcpy(cwd, "/tmp");
+    getcwd(cwd, sizeof(cwd));
+    chdir("/tmp");
+    sprintf(command, "latex -interaction batchmode %s", lfName);
+    system(command);
+    // Run latex a second time to fix references
+    system(command);
+    // Change back to our working directory.
+    chdir(cwd);
+
+    // Are we in debug mode?  If not, finish processing.
+    if (!debugMode) {
+        // Not debugging, finish processing.
+        sprintf(command, "dvips %s.dvi", fName);
+        system(command);
+        sprintf(tmpFName, "%s.log", fName);
+        unlink(tmpFName);
+        sprintf(tmpFName, "%s.aux", fName);
+        unlink(tmpFName);
+        sprintf(tmpFName, "%s.dvi", fName);
+        unlink(tmpFName);
+        sprintf(tmpFName, "%s.tex", fName);
+        unlink(tmpFName);
+    }
+
+    // Finished
 }
 
 
