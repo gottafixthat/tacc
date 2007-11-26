@@ -24,7 +24,7 @@ endif
 # SUBDIRS += order2ps
 #SUBDIRS += taamaild qwestconnect openissues
 SUBDIRS += qwestconnect
-#SUBDIRS += openissues
+SUBDIRS += custstats
 
 SOURCES =	
 
