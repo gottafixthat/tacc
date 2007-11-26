@@ -946,22 +946,7 @@ void CustomerCare::printStatements()
     setProgressMW(0, stCount);
     while (DB.getrow()) {
         setProgressMW(++curSt, stCount);
-        StatementsDB    STDB;
-        STDB.get(atol(DB.curRow["StatementNo"]));
-        STDB.print(NULL);
-        STDB.setValue("ToBePrinted", (int) 0);
-        STDB.setValue("PrintedOn", theDate);
-        STDB.upd();
-
-        NotesDB         NDB;
-        NDB.setValue("AutoNote", 1);
-        NDB.setValue("LoginID", "");
-        NDB.setValue("CustomerID", STDB.getLong("CustomerID"));
-        NDB.setValue("NoteType", "Accounting");
-        NDB.setValue("AddedBy", "Accounting");
-        NDB.setValue("NoteText", "Printed statement number ");
-        NDB.appendStr("NoteText", STDB.getStr("StatementNo"));
-        NDB.ins();
+        printStatement(atol(DB.curRow["StatementNo"]), 0, 0);
     }
 
     setProgressMW(1,1);
