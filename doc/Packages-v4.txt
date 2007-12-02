@@ -1,0 +1,51 @@
+For TAA v4, the customer services and packages portion of the system
+will re-done.  They will be done a bit like Freeside does the packages,
+where the operator will add pacakges to a customer's account, and within
+those packages there are services that can be provisioned (i.e. logins,
+domains, etc).  The ability should be given to automatically expire
+packages as well, so when a customer calls on December 2nd and wants to
+close his account on December 31st, the system can automatically
+deprovision and close down the account base on the expiration date of a
+package.
+
+I start writing this now (12/2/07) because I had a thought about how
+DID's will integrate into multiple packages.  I didn't want to forget
+the concept I came up with for them.
+
+There will be two package types, fixed and variable.  Fixed package
+types have the pricing associated with the package and then individual
+services are included with the package itself.  For example:
+
+  Qwest DSL Plus Service  $21.95
+    - 1 Qwest DSL 1.5M Service Login
+    - 4 MyMail Logins
+
+The individual items would then be provisioned from within the package
+itself.  In other words, after adding the package to the customer's
+account, it would show the individual items listed and give the option
+to provision or deprovision each item.
+
+Variable packages will be a bit different than that and work in a manner
+similar to the way the current Subscriptions tab works.  For example, an
+"Additional DID's" package would be laid out something like this:
+
+   Additional DID's
+    - Allowed Service - DID   $0.75
+
+There would not be a limit to the number of DID's that could be added,
+and each DID would add $0.75 to the package charge.  Each individual DID
+would show as a line item under the main package, but would not have a
+price listed next to it.  When the operator selects the package in the
+packages tab, they would get the option to "Add DID".  The actual
+statement line item would look something like this:
+
+   Additional DID's                            $2.25
+     - DID 425.555.1212     DID 425.555.1213
+     - DID 425.555.1214
+
+There should probably be a way to show them the per item pricing, but
+since a package will be able to have multiple types of services at
+multiple different rates and charge them only for what is provisioned,
+that may be tricky.
+
+
