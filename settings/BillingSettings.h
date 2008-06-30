@@ -37,6 +37,7 @@ protected:
     QCheckBox       *latexDebug;
     QLineEdit       *latexFile;
     QLineEdit       *dateFormat;
+    QCheckBox       *qtyOneBlank;
     QPushButton     *chooseFileButton;
 
 protected slots:

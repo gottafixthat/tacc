@@ -52,6 +52,13 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     dateFormat->setText(cfgVal("LatexDateFormat"));
     QToolTip::add(dateFormat, "If billing is set to use LaTeX instead of the\ninternally generated statements, this how the dates are formatted.\nThis follows the Qt date format options.");
 
+    qtyOneBlank = new QCheckBox(this, "qtyOneBlank");
+    qtyOneBlank->setText("Use empty string for Quantity 1");
+    QToolTip::add(qtyOneBlank, "When this option is enabled, if the quantity of a statement item\nis exactly 1, the quantity and price will be\nset to an empty string.");
+    if (!strlen(cfgVal("StatementQtyOneBlank"))) qtyOneBlank->setChecked(false);
+    else if (atoi(cfgVal("StatementQtyOneBlank"))) qtyOneBlank->setChecked(true);
+    else qtyOneBlank->setChecked(false);
+
     latexDebug = new QCheckBox(this, "latexDebug");
     latexDebug->setText("Enable LaTeX test mode");
     QToolTip::add(latexDebug, "When this option is enabled, the LaTeX typesetter\nwill be run, but the statement will not be printed.\nThis will also leave the source file intact in /tmp.");
@@ -86,6 +93,10 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
 
     gl->addWidget(dateFormatLabel,      curRow, 0);
     gl->addWidget(dateFormat,           curRow, 1);
+    gl->setRowStretch(curRow, 0);
+    curRow++;
+
+    gl->addWidget(qtyOneBlank,          curRow, 1);
     gl->setRowStretch(curRow, 0);
     curRow++;
 
@@ -142,6 +153,11 @@ int BillingSettings::saveSettings()
         updateCfgVal("BuiltInPrintedStatements", "0");
         updateCfgVal("StatementLatexFile", (const char *)latexFile->text());
         updateCfgVal("LatexDateFormat", (const char *)dateFormat->text());
+        if (qtyOneBlank->isChecked()) {
+            updateCfgVal("StatementQtyOneBlank", "1");
+        } else {
+            updateCfgVal("StatementQtyOneBlank", "0");
+        }
         if (latexDebug->isChecked()) {
             updateCfgVal("StatementLatexDebug", "1");
         } else {
@@ -167,6 +183,7 @@ void BillingSettings::builtInPrintedStatementChanged(bool on)
     latexFile->setEnabled(tmpBool);
     chooseFileButton->setEnabled(tmpBool);
     dateFormat->setEnabled(tmpBool);
+    qtyOneBlank->setEnabled(tmpBool);
     latexDebug->setEnabled(tmpBool);
 }
 

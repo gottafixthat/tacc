@@ -570,6 +570,13 @@ void printStatementFromFile(long statementNo)
         tpl->assign("LoginID",          SDDB.getStr("LoginID"));
         tpl->assign("Amount",           SDDB.getStr("Amount"));
         balance += SDDB.getFloat("Amount");
+        if (SDDB.getFloat("Quantity") == 1.00 && atoi(cfgVal("StatementQtyOneBlank"))) {
+            tpl->assign("Quantity",         "");
+            tpl->assign("Price",            "");
+        } else {
+            tpl->assign("Quantity",         SDDB.getStr("Quantity"));
+            tpl->assign("Price",            SDDB.getStr("Price"));
+        }
         if (hasDateRange) {
             tpl->parse("statement.lineitems.normalline");
         } else {
