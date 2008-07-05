@@ -294,6 +294,7 @@ void showSubscriptionDetails()
     printf("\nStandalone subscriptions:\n");
     sbDB.query("select distinct(Subscriptions.ItemNumber), Billables.ItemID, Billables.Description from Subscriptions, Billables where Subscriptions.PackageNo = 0 and Subscriptions.Active > 0 and Subscriptions.ParentID = 0 and Billables.ItemNumber = Subscriptions.ItemNumber order by Billables.Description");
     if (sbDB.rowCount) while (sbDB.getrow()) {
+        int tmpQty = 0;
         // Get the name of the package
         strcpy(tmpName, sbDB.curRow["Description"]);
         printf("%-16s %-62s ", sbDB.curRow["ItemID"], tmpName);
@@ -301,9 +302,8 @@ void showSubscriptionDetails()
         // Get the dollar amounts from the type
         tmpAmount = 0.0;
         sumDB.query("select Subscriptions.InternalID, Subscriptions.ItemNumber, Subscriptions.Quantity, Subscriptions.AutoPrice, Customers.BillingCycle, Customers.RatePlan, BillablesData.Price from Subscriptions, Customers, BillablesData where Subscriptions.ItemNumber = %ld and Subscriptions.Active > 0 and Subscriptions.ParentID = 0 and Customers.CustomerID = Subscriptions.CustomerID and BillablesData.ItemNumber = Subscriptions.ItemNumber and BillablesData.CycleID = Customers.BillingCycle and BillablesData.RatePlanID = Customers.RatePlan", atol(sbDB.curRow["ItemNumber"]));
-        printf("%5ld ", sumDB.rowCount);
-        totCount += sumDB.rowCount;
         if (sumDB.rowCount) while (sumDB.getrow()) {
+            tmpQty += atoi(sumDB.curRow["Quantity"]);
             tmpPrice = atof(sumDB.curRow["Price"]);
             if (!atoi(sumDB.curRow["AutoPrice"])) {
                 tmpDB.query("select Price from Subscriptions where InternalID = %s", sumDB.curRow["InternalID"]);
@@ -328,6 +328,10 @@ void showSubscriptionDetails()
             }
 
         }
+        printf("%5ld ", tmpQty);
+        totCount += tmpQty;
+        //printf("%5ld ", sumDB.rowCount);
+        //totCount += sumDB.rowCount;
         totMonthly += tmpAmount;
         printf("%9.2f ", tmpAmount);
 
