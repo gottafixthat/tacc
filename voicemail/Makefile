@@ -4,7 +4,7 @@ USEDES	= 1
 
 INCDIR	=  $(QTDIR)/include
 # CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I.
-CFLAGS	= -O2 -fno-strength-reduce -I/usr/X11R6/include -I. -I../include/
+CFLAGS	= -O2 -fno-strength-reduce -I/usr/X11R6/include -I. -I../include/ -I../adb
 CFLAGS	+= -I../lib -DADBQT
 LFLAGS  = -lqt -lmysqlclient -lcrypt -L$(QTDIR)/lib
 SHELL   = /bin/sh

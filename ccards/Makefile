@@ -8,6 +8,7 @@ CFLAGS += -I../include
 CFLAGS += -I../customers
 CFLAGS += -I../qgtimespinbox
 CFLAGS += -I../lib
+CFLAGS += -I../adb
 LFLAGS  = -lqt -lmysqlclient -lcrypt -L$(QTDIR)/lib -shared
 LFLAGS += -L../lib -lblarg
 SHELL   = /bin/sh

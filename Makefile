@@ -19,15 +19,15 @@ CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I./include/
 LFLAGS  = -lqt -lmysqlclient -lblargdb -L./lib
 SHELL   = /bin/sh
 CC	= gcc
-MOC	= /usr/local/qt/bin/moc
 
 ####### Files
 
+export QTDIR=/usr/lib/qt-3.3
 export MYSQLLIB=/usr/lib/mysql
 export MYSQLINC=/usr/include/mysql
 BUILDNUM=scripts/buildnum
 #SUBDIRS	= qgtimespinbox lib
-SUBDIRS	= lib
+SUBDIRS	= bdes adb lib
 ifdef USEDES
 # SUBDIRS	+= libdes bdes
 	export USEDES=1

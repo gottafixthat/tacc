@@ -1,20 +1,23 @@
-/**********************************************************************
-
-	--- Dlgedit generated file ---
-
-	File: VendorTypes.h
-	Last generated: Tue Sep 16 19:21:54 1997
-
- *********************************************************************/
+/***************************************************************************
+** VendorTypes.h - Class definition for the VendorTypes widget.
+****************************************************************************
+** Written by R. Marc Lewis, 
+**   (C)opyright 1998-2008, R. Marc Lewis and Avvatel Corporation
+**   All Rights Reserved.
+**
+**  Unpublished work.  No portion of this file may be reproduced in whole
+**  or in part by any means, electronic or otherwise, without the express
+**  written consent of Avvatel Corporation and R. Marc Lewis.
+****************************************************************************/
 
 #ifndef VendorTypes_included
 #define VendorTypes_included
 
-#include <qapp.h>
-#include <qwidget.h>
-#include "VendorTypesData.h"
+#include <TAAWidget.h>
+#include <qlistview.h>
+#include <qmenubar.h>
 
-class VendorTypes : public VendorTypesData
+class VendorTypes : public TAAWidget
 {
     Q_OBJECT
 
@@ -40,12 +43,10 @@ private slots:
     virtual void editVendorType();
     virtual void editVendorTypeL(int msg = 0);
     virtual void deleteVendorType();
-    virtual int IntIDfromList(int ListNum);
 
-private:
-    void addToList(int IntID, int Level);
-
-    int *intIDIndex;
-    int indexPtr;
+protected:
+    void        addToList(long, QListViewItem *);
+    QListView   *list;
+    QMenuBar    *menu;
 };
 #endif // VendorTypes_included

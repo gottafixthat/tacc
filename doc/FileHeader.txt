@@ -1,24 +1,11 @@
-/*
-** $Id: FileHeader.txt,v 1.1 2003/12/22 20:02:11 marc Exp $
-**
-***************************************************************************
-**
-** FileName     - Overview of its main function.
-**
-***************************************************************************
+/***************************************************************************
+** VendorTypes.h - Class definition for the VendorTypes widget.
+****************************************************************************
 ** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
+**   (C)opyright 1998-2008, R. Marc Lewis and Avvatel Corporation
 **   All Rights Reserved.
 **
 **  Unpublished work.  No portion of this file may be reproduced in whole
 **  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: FileHeader.txt,v $
-** Revision 1.1  2003/12/22 20:02:11  marc
-** *** empty log message ***
-**
-**
-*/
-
-
+**  written consent of Avvatel Corporation and R. Marc Lewis.
+****************************************************************************/
