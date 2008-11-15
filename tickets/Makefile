@@ -8,6 +8,7 @@ CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
 CFLAGS += -I../customers
 CFLAGS += -I../qgtimespinbox
 CFLAGS += -I../lib
+CFLAGS += -I../adb
 CFLAGS += -DADBQT
 LFLAGS  = -lqt -lmysqlclient -lcrypt -L$(QTDIR)/lib -shared
 LFLAGS += -L../lib -ltaa

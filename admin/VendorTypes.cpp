@@ -29,19 +29,57 @@
 #include <stdio.h>
 #include <qkeycode.h>
 #include <qmessagebox.h>
+#include <qpushbutton.h>
+#include <qlayout.h>
 #include <ADB.h>
 
-#define Inherited VendorTypesData
 
 VendorTypes::VendorTypes
 (
 	QWidget* parent,
 	const char* name
-)
-	:
-	Inherited( parent, name )
+) : TAAWidget( parent, name )
 {
     setCaption("Vendor Types");
+
+    // Create our widgets
+    list = new QListView(this, "vendorTypesList");
+    list->addColumn("Vendor Type");
+    
+    menu = new QMenuBar(this, "menuBar");
+
+    // Create some buttons.
+    QPushButton *newButton = new QPushButton(this, "newButton");
+    newButton->setText("&New");
+    connect(newButton, SIGNAL(clicked()), this, SLOT(newVendorType()));
+
+    QPushButton *editButton = new QPushButton(this, "editButton");
+    editButton->setText("&Edit");
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editVendorType()));
+
+    QPushButton *deleteButton = new QPushButton(this, "deleteButton");
+    deleteButton->setText("&Delete");
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteVendorType()));
+
+
+    // Create our layout.
+    // Main layout is a box from top to bottom.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+
+    // Menu goes first.
+    ml->addWidget(menu, 0);
+
+    // Button bar
+    QBoxLayout *bb = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bb->addWidget(newButton, 0);
+    bb->addWidget(editButton, 0);
+    bb->addWidget(deleteButton, 0);
+    bb->addStretch(1);
+    ml->addLayout(bb, 0);
+
+    // The  list gets the rest of our space
+    ml->addWidget(list, true);
+
 
     // Set up the menu...
     
@@ -57,8 +95,7 @@ VendorTypes::VendorTypes
     
     list->setFocus();
 
-    intIDIndex = NULL;    
-    indexPtr   = 0;
+    refreshList(0);
 }
 
 
@@ -68,38 +105,25 @@ VendorTypes::~VendorTypes()
 
 void VendorTypes::Hide()
 {
-    hide();
+    delete this;
 }
 
-// addToList   - Adds to the Vendor List.  This function is actually called
-//               recursivly by the refreshList routine, and should not be
-//               called directly.
-//
-//   Args      - IntID should be the one we're getting sub types for.
-//
-
-void VendorTypes::addToList(int IntID, int Level)
+/* addToList - Adds vendor types to the list.  This function is called recursively
+ *             by the refreshList routine and should not be called directly.
+ *
+ * @param   parentID - The parent ID to run the query on
+ * @param   parent   - The QListViewItem that we should add to.
+ */
+void VendorTypes::addToList(long parentID, QListViewItem *parent)
 {
     ADB     DB;
-    char    lvl[128] = ""; 
-    char    tmpstr[128];
-    
-    DB.query("select * from VendorTypes where SubTypeOf = %d order by VendorType", IntID);
 
-    while(DB.getrow()) {
-        indexPtr++;
-        QString tmpStr1 = DB.curRow["InternalID"];
-        intIDIndex[indexPtr] = tmpStr1.toInt();
-        strncpy(lvl, "                                        ", Level * 2);
-        sprintf (tmpstr, "%s%-60s", lvl, DB.curRow["VendorType"]);
-        list->insertItem(tmpstr);
-        if (atoi(DB.curRow["HasSubTypes"])) {
-            addToList(intIDIndex[indexPtr], Level + 1);
-        }
+    DB.query("select * from VendorTypes where SubTypeOf = %ld order by VendorType", parentID);
+    if (DB.rowCount) while(DB.getrow()) {
+        QListViewItem *curItem = new QListViewItem(parent, DB.curRow["VendorType"], DB.curRow["InternalID"]);
+        if (atoi(DB.curRow["HasSubTypes"])) addToList(atoi(DB.curRow["InternalID"]), curItem);
     }
-    
 }
-
 
 // refreshList    - Connects to the database and refreshes the vendor types
 //                  list
@@ -108,44 +132,47 @@ void VendorTypes::refreshList(int)
 {
     ADB     DB;
     char    tmpstr[128]; 
-    int     tmpTop, tmpCur;
     int     rowcnt;
+
+    list->clear();
+    list->setRootIsDecorated(false);
+    DB.query("select * from VendorTypes where SubTypeOf = 0 order by VendorType");
+    if (DB.rowCount) while(DB.getrow()) {
+        QListViewItem *curItem = new QListViewItem(list, DB.curRow["VendorType"], DB.curRow["InternalID"]);
+        if (atoi(DB.curRow["HasSubTypes"])) {
+            list->setRootIsDecorated(true);
+            addToList(atoi(DB.curRow["InternalID"]), curItem);
+        }
+    }
+
+    /*
     
     // Save the state of the list.
-    tmpTop = list->topItem();
-    tmpCur = list->currentItem();
+    //tmpTop = list->topItem();
+    //tmpCur = list->currentItem();
     
-    list->setAutoUpdate(FALSE);
-    list->clear();
+    //list->setAutoUpdate(FALSE);
+    //list->clear();
     DB.query("select * from VendorTypes order by VendorType");
-    if (intIDIndex != NULL) {
-        delete(intIDIndex);
-    }
-    intIDIndex = new(int[DB.rowCount + 1]);
-    indexPtr = -1;
+    //intIDIndex = new(int[DB.rowCount + 1]);
+    //indexPtr = -1;
     rowcnt = DB.rowCount;
     DB.query("select * from VendorTypes where SubTypeOf = 0 order by VendorType");
     while(DB.getrow()) {
-        indexPtr++;
+        //indexPtr++;
         QString tmpStr1 = DB.curRow["InternalID"];
-        intIDIndex[indexPtr] = tmpStr1.toInt(); //atoi(DB.curRow[0]);
+        //intIDIndex[indexPtr] = tmpStr1.toInt(); //atoi(DB.curRow[0]);
         sprintf (tmpstr, "%-60s", DB.curRow["VendorType"]);
-        list->insertItem(tmpstr);
+        //list->insertItem(tmpstr);
         if (atoi(DB.curRow["HasSubTypes"])) {
-            addToList(intIDIndex[indexPtr], 1);
+            //addToList(intIDIndex[indexPtr], 1);
         }
     }
-    list->setAutoUpdate(TRUE);
-    list->repaint();
+    //list->setAutoUpdate(TRUE);
+    //list->repaint();
     
     rowcnt = DB.rowCount - 1;
-    // Restore the state of the list.
-    if (tmpTop > -1) {
-        while(tmpTop > rowcnt) tmpTop--;
-        while(tmpCur > rowcnt) tmpCur--;
-        list->setCurrentItem(tmpCur);
-        list->setTopItem(tmpTop);
-    }
+    */
 
 }
 
@@ -168,6 +195,7 @@ void VendorTypes::newVendorType()
 
 void VendorTypes::editVendorType()
 {
+    /*
     int itemNo = -1;
     VendorTypeEdit * newVendType;
     itemNo = list->currentItem();
@@ -176,6 +204,7 @@ void VendorTypes::editVendorType()
         newVendType->show();
         connect(newVendType, SIGNAL(refresh(int)),this, SLOT(refreshList(int)));
     }
+    */
 }
 
 //
@@ -194,6 +223,7 @@ void VendorTypes::editVendorTypeL(int msg)
 
 void VendorTypes::deleteVendorType()
 {
+    /*
     int    CurItem;
     char   tmpstr[256];
     ADB    DB;
@@ -216,21 +246,6 @@ void VendorTypes::deleteVendorType()
             }
         };
     }
+    */
 }
 
-//
-// IntIDfromList  - Gets a VendorType InternalID from a list entry.
-//
-
-int VendorTypes::IntIDfromList(int ListNum)
-{
-    int Ret = 0;
-
-    QString tmpStr1;
-    QString tmpStr2;    
-    
-    if (ListNum > -1) {
-        tmpStr1 = list->currentItem();
-    }
-    return (Ret);
-}
