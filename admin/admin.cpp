@@ -59,6 +59,7 @@
 // #include "Scheduler.h"
 #include "TE_Main.h"
 #include "EditCustomer.h"
+#include "LoginFlagList.h"
 
 #include <ADB.h>
 
@@ -137,6 +138,7 @@ Administration::Administration(QWidget *parent, const char *name)
     otherlists_menu->insertItem( "Payment &Terms", this, SLOT(paymenttermslist()));
     otherlists_menu->insertItem( "&Vendor Types", this, SLOT(vendortypeslist()));
     otherlists_menu->insertItem( "&Login Types", this, SLOT(logintypeslist()));
+    otherlists_menu->insertItem( "Login &Flags", this, SLOT(loginflagslist()));
     otherlists_menu->insertItem( "&Domain Types", this, SLOT(domaintypeslist()));
 
     QPopupMenu *lists_menu = new QPopupMenu();
@@ -346,6 +348,12 @@ void Administration::logintypeslist()
 {
     EditLoginTypes  *ELT = new EditLoginTypes();
     ELT->show();
+}
+
+void Administration::loginflagslist()
+{
+    LoginFlagList *LFL = new LoginFlagList();
+    LFL->show();
 }
 
 void Administration::domaintypeslist()

@@ -114,6 +114,7 @@ protected slots:
     void            packagelist();
     void            paymenttermslist();
     void            logintypelist();
+    void            loginflaglist();
     void            domaintypelist();
     void            dnstemplates();
     void            processOverdueAccounts();

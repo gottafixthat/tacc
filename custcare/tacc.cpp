@@ -62,6 +62,7 @@
 #include "OverdueAccounts.h"
 #include "WipedAccounts.h"
 #include "EditLoginTypes.h"
+#include "LoginFlagList.h"
 #include "DomainTypeEdit.h"
 #include "DNS_Templates.h"
 #include "TE_Main.h"
@@ -350,6 +351,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
             otherMenu->insertItem("Package Editor", this, SLOT(packagelist()));
             otherMenu->insertItem("Payment Terms", this, SLOT(paymenttermslist()));
             otherMenu->insertItem("Login Types", this, SLOT(logintypelist()));
+            otherMenu->insertItem("Login Flags", this, SLOT(loginflaglist()));
             otherMenu->insertItem("Rate Plans", this, SLOT(ratePlanList()));
             otherMenu->insertItem("Server Groups", this, SLOT(serverGroupList()));
             otherMenu->insertItem("Vendors", this, SLOT(vendorList()));
@@ -856,6 +858,12 @@ void CustomerCare::logintypelist()
 {
     EditLoginTypes *lteditor = new EditLoginTypes();
     lteditor->show();
+}
+
+void CustomerCare::loginflaglist()
+{
+    LoginFlagList *lfl = new LoginFlagList();
+    lfl->show();
 }
 
 void CustomerCare::domaintypelist()

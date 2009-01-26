@@ -31,6 +31,7 @@
 #include <qpushbutton.h>
 #include <qlabel.h>
 #include <qlistview.h>
+#include <qtable.h>
 #include <TAAWidget.h>
 
 class Tab_Logins : public TAAWidget
@@ -65,7 +66,7 @@ public slots:
 	virtual void modemUsageReport();
 	virtual void bandwidthUsageReport();
 	virtual void changePassword();
-    virtual void dialupChannelsClicked();
+    virtual void loginFlagsClicked();
     virtual void diskSpaceClicked();
 
 protected:
@@ -87,4 +88,34 @@ private:
 	
 	QPopupMenu  *adminMenu;
 };
+
+// Custom Flag Editor
+class CustomLoginFlagEditor : public TAAWidget
+{
+    Q_OBJECT
+
+public:
+
+    CustomLoginFlagEditor
+    (
+        QWidget* parent = NULL,
+        const char* name = NULL,
+        long CustID = 0,
+        const char *loginID = NULL
+    );
+
+    virtual ~CustomLoginFlagEditor();
+
+signals:
+	void refreshCust(int);
+    
+protected:
+    void    fillTable();
+
+    QTable  *flagTable;
+    char    myLoginID[64];
+    long    myCustID;
+};
+
+
 #endif // Tab_Logins_included

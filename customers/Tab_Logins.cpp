@@ -70,7 +70,7 @@ Tab_Logins::Tab_Logins
 	list->addColumn("Contact Name");
 	list->addColumn("Last Modified");
 	list->addColumn("Disk");
-	list->addColumn("DChan");
+	list->addColumn("Flags");
 	list->addColumn("Active");
 	list->setAllColumnsShowFocus(TRUE);
 	list->setColumnAlignment(4, AlignRight);
@@ -90,10 +90,9 @@ Tab_Logins::Tab_Logins
     passwdButton->setText("&Password");
     connect(passwdButton, SIGNAL(clicked()), this, SLOT(changePassword()));
 
-    QPushButton *dialupChannelsButton = new QPushButton(this, "DialupChannelsButton");
-    dialupChannelsButton->setText("&Dial Channels");
-    connect(dialupChannelsButton, SIGNAL(clicked()), this, SLOT(dialupChannelsClicked()));
-    dialupChannelsButton->setEnabled(false);
+    QPushButton *loginFlagsButton = new QPushButton(this, "LoginFlagsButton");
+    loginFlagsButton->setText("Fla&gs");
+    connect(loginFlagsButton, SIGNAL(clicked()), this, SLOT(loginFlagsClicked()));
 
     editButton = new QPushButton(this, "EditButton");
     editButton->setText("&Edit");
@@ -137,7 +136,7 @@ Tab_Logins::Tab_Logins
     bl->addWidget(newButton,            0, 0);
     bl->addWidget(openCloseButton,      0, 1);
     bl->addWidget(passwdButton,         0, 2);
-    bl->addWidget(dialupChannelsButton, 0, 3);
+    bl->addWidget(loginFlagsButton,     0, 3);
     bl->addWidget(adminMenuArea,        0, 5);
     
     bl->addWidget(editButton,           1, 0);
@@ -211,6 +210,14 @@ void Tab_Logins::refreshLoginList(int)
             
         }
 
+        // Count how many custom flags there are.
+        QString flagCount = "0";
+        DB2.query("select count(LoginFlag) from LoginFlagValues where LoginID = '%s'", DB.curRow["LoginID"]);
+        if (DB2.rowCount) {
+            DB2.getrow();
+            flagCount = DB2.curRow[0];
+        }
+
         showIt = true;
         if (hideWiped->isChecked() && !strncmp("W", DB.curRow["LoginID"], 1)) showIt = false;
         if (showIt) {
@@ -220,7 +227,7 @@ void Tab_Logins::refreshLoginList(int)
               DB.curRow["ContactName"],     // Contact Name
               dateStamp,                    // Last Modified Date
               DB.curRow["DiskSpace"],       // Disk Space
-              DB.curRow["DialupChannels"],  // Dialup Channels
+              flagCount,                    // Custom flags
               isActive                      // Active?
             );
         }
@@ -946,79 +953,21 @@ void Tab_Logins::transferLogin()
 
 
 /*
-** dialupChannelsClicked - Gets called when the user clicks on the Dial
-**                         channels button.  We use this to edit the number
-**                         if simultaneous dialup connections a user can make
-**                         at one time.
+** loginFlagsClicked - Gets called when the user clicks on the Login Flags
+**                     button.  We use this to assign custom key/value pairs
+**                     to individual logins.
 */
 
-void Tab_Logins::dialupChannelsClicked()
+void Tab_Logins::loginFlagsClicked()
 {
-	char		tmpstr[256];
-	char		tmpLogin[256];
-	QListViewItem   *curItem;
-    int         chanCount = 0;
-
+    QListViewItem   *curItem;
+    
     curItem = list->currentItem();
-
     if (curItem != NULL) {
-		QApplication::setOverrideCursor(waitCursor);
-		ADB		    DB;
-		NotesDB	    NDB;
-		BrassClient	*BC;
-		LoginsDB	LDB;
-		CustomersDB	CDB;
-		SubscriptionsDB SDB;
-
-		LDB.get(myCustID, (const char *) curItem->text(0));
-		
-		// First, check to see if this account has been wiped already.
-		// If so, let the user know and exit.
-		strcpy(tmpstr, LDB.getStr("Wiped"));
-		if (strcmp(tmpstr, "0000-00-00")) {
-			QApplication::restoreOverrideCursor();
-			QMessageBox::warning(this, "Unable to set flag.", "The selected login has been wiped, and no longer exists on the system.");
-			return;
-		} else {
-			// Okay, we aren't wiped, so check to see if this account is
-			// Active or not.  If its active, lock it.  If its inactive,
-			// unlock it.
-			// First, authenticate with the Brass server.
-			BC = new BrassClient();
-			if (!BC->Connect()) {
-				QApplication::restoreOverrideCursor();
-				QMessageBox::critical(this, "BRASS Error", "Error connecting to BRASS server.");
-				delete BC;
-				return;
-			} else {
-				if (!BC->Authenticate()) {
-					QApplication::restoreOverrideCursor();
-					QMessageBox::critical(this, "BRASS Error", "Error authenticating with BRASS server.");
-					delete BC;
-					return;
-				}
-			}
-
-			// If we've made it here, we're connected to the server.
-			strcpy(tmpLogin, LDB.getStr("LoginID"));
-			if (LDB.getInt("Active")) {
-                chanCount = LDB.getInt("DialupChannels");
-                LDB.setValue("DialupChannels", ++chanCount);
-                char    tmpChan[1024];
-                sprintf(tmpChan, "%d", chanCount);
-                if (!BC->SetFlag(tmpLogin, "DChan", tmpChan)) {
-					// We were unsuccessful.
-					QApplication::restoreOverrideCursor();
-					sprintf(tmpstr, "Unable to set flag.\n\n%s", BC->ResponseStr(NULL));
-					QMessageBox::critical(this, "BRASS Error", tmpstr);
-				} else {
-                    LDB.upd();
-                }
-                refreshLoginList(1);
-			}
-			delete BC;
-		}
-	}
+        CustomLoginFlagEditor   *clfe;
+        clfe = new CustomLoginFlagEditor(NULL, "flagEditor", myCustID, (const char *) curItem->text(0));
+		clfe->show();
+    }	
 }
 
 /*
@@ -1029,4 +978,100 @@ void Tab_Logins::dialupChannelsClicked()
 void Tab_Logins::diskSpaceClicked()
 {
 }
+
+
+/**
+ * CustomLoginFlagEditor::CustomLoginFlagEditor()
+ *
+ * Constructor for the Custom Login Flag Editor.
+ */
+CustomLoginFlagEditor::CustomLoginFlagEditor
+(
+	QWidget* parent,
+	const char* name,
+	long CustID,
+    const char *loginID
+
+) : TAAWidget ( parent, name )
+{
+
+	setCaption( "Login Flags" );
+	myCustID = CustID;
+    strcpy(myLoginID, loginID);
+
+
+    QStringList colHeaders;
+    colHeaders += "Flag";
+    colHeaders += "Value";
+    // Create all of our widgets.
+    flagTable = new QTable(0, 2, this, "flagTable");
+    flagTable->setColumnLabels(colHeaders);
+
+    QPushButton *saveButton = new QPushButton(this, "saveButton");
+    saveButton->setText("&Save");
+
+    QPushButton *cancelButton = new QPushButton(this, "cancelButton");
+    cancelButton->setText("&Cancel");
+
+    // Create the layout
+    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    ml->addWidget(flagTable, 1);
+
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    bl->addStretch(1);
+    bl->addWidget(saveButton, 0);
+    bl->addWidget(cancelButton, 0);
+
+    ml->addLayout(bl, 0);
+
+    fillTable();
+}
+
+/**
+ * CustomLoginFlagEditor::~CustomLoginFlagEditor()
+ *
+ * Destructor for the Custom Login Flag Editor.
+ */
+CustomLoginFlagEditor::~CustomLoginFlagEditor()
+{
+}
+
+/**
+ * CustomLoginFlagEditor::fillTable()
+ *
+ * Fills the table with the flags and values for the user.
+ */
+void CustomLoginFlagEditor::fillTable()
+{
+    ADB     db;
+    long    loginType;
+    QDict<QString> flagDict;
+
+    // Get the login type.
+    db.query("select LoginType from Logins where LoginID = '%s'", myLoginID);
+    if (!db.rowCount) return;
+    db.getrow();
+    loginType = atoi(db.curRow["LoginType"]);
+
+    // Get the available login flags for this login type
+    db.query("select Tag, Value from LoginTypeFlags where LoginTypeID = %ld", loginType);
+    if (!db.rowCount) return;
+
+    // Load the dictionary
+    while(db.getrow()) {
+        flagDict.insert(db.curRow["Tag"], new QString(db.curRow["Value"]));
+    }
+
+    // Get whatever data is in the LoginFlagValues that is custom for this user.
+
+    // Now put the stuff from our flagDict into the grid
+    QDictIterator<QString> it(flagDict);
+    for( ; it.current(); ++it ) {
+        flagTable->insertRows(flagTable->numRows(), 1);
+        flagTable->setText(flagTable->numRows()-1, 0, it.currentKey());
+        flagTable->setText(flagTable->numRows()-1, 1, it.current()->ascii());
+    }
+
+}
+
 

@@ -77,7 +77,7 @@ LoginTypeFlagAdd::LoginTypeFlagAdd
 	
 	myLoginTypeID = LoginTypeID;
 	
-	// Get the list of Dictionary Items that are already included.
+	// Get the list of Login Flags that are already included.
 	DB.query("select Tag from LoginTypeFlags where LoginTypeID = %d", myLoginTypeID);
 	if (DB.rowCount) {
 		while (DB.getrow()) {
@@ -85,15 +85,15 @@ LoginTypeFlagAdd::LoginTypeFlagAdd
 			tmplist.append(tmpstr);
 		}
 		joinString(&tmplist, ",", tmpstr);
-		DB.query("select Tag from Dictionary where Class = 0 and Tag not in (%s) order by Tag", tmpstr);
+		DB.query("select LoginFlag from LoginFlags where LoginFlag not in (%s) order by LoginFlag", tmpstr);
 	} else {
-		DB.query("select Tag from Dictionary where Class = 0 order by Tag");
+		DB.query("select LoginFlag from LoginFlags order by LoginFlag");
 	}
 	
 	// Fill the itemList with billable Items.
 	flagList->clear();
 	while (DB.getrow()) {
-		flagList->insertItem(DB.curRow["Tag"]);
+		flagList->insertItem(DB.curRow["LoginFlag"]);
 	}
 	flagList->setCurrentItem(0);
 	
@@ -116,7 +116,7 @@ void LoginTypeFlagAdd::addFlag()
 	char	tagval[1024];
 	
 	strcpy(tmptag, flagList->text(flagList->currentItem()));
-	DB.query("select DefaultValue from Dictionary where Class = 0 and Tag = '%s'", tmptag);
+	DB.query("select DefaultValue from LoginFlags where LoginFlag = '%s'", tmptag);
 	DB.getrow();
 	strcpy(tagval, DB.curRow["DefaultValue"]);
 	

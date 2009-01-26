@@ -1,3 +1,15 @@
+# v87 to v88
+alter table LoginFlags add column BaseType int NOT NULL DEFAULT '0';
+alter table LoginFlags add column DefaultValue blob NOT NULL DEFAULT '';
+alter table LoginFlags add column UserDefined int NOT NULL DEFAULT '0';
+CREATE TABLE LoginFlagValues (
+    LoginID             varchar(32) NOT NULL DEFAULT '',
+    LoginFlag           varchar(32) NOT NULL DEFAULT '',
+    FlagValue           text NOT NULL DEFAULT '',
+    PRIMARY KEY(LoginID, LoginFlag)
+);
+
+
 # v41 to v47
 
 alter table Companies change column CompanyNo CompanyID bigint(21) NOT NULL auto_increment;
