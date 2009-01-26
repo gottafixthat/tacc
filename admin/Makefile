@@ -77,6 +77,7 @@ SOURCES =	BaseList.cpp BaseListData.cpp\
 		MakeDeposits.cpp\
         UserEditor.cpp UserPrivs.cpp\
 		CompanyEditor.cpp\
+		LoginFlagList.cpp\
         admin.cpp
 
 HEADERS =	BaseList.h BaseListData.h\
@@ -122,6 +123,7 @@ HEADERS =	BaseList.h BaseListData.h\
 		TE_Cities.h TE_CitiesData.h\
 		UserEditor.h UserPrivs.h\
 		CompanyEditor.h\
+		LoginFlagList.h\
 		admin.h
 
 OBJECTS =	$(SOURCES:.cpp=.o)
@@ -169,6 +171,7 @@ SRCMETA =	moc_BaseList.cpp moc_BaseListData.cpp\
 		moc_TE_Cities.cpp moc_TE_CitiesData.cpp\
 		moc_UserEditor.cpp moc_UserPrivs.cpp\
 		moc_CompanyEditor.cpp\
+		moc_LoginFlagList.cpp\
 		moc_admin.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
@@ -370,6 +373,9 @@ moc_MakeDeposits.cpp: MakeDeposits.h
 
 moc_CompanyEditor.cpp: CompanyEditor.h
 	$(MOC) CompanyEditor.h -o moc_CompanyEditor.cpp
+
+moc_LoginFlagList.cpp: LoginFlagList.h
+	$(MOC) LoginFlagList.h -o moc_LoginFlagList.cpp
 
 moc_TE_Main.cpp: TE_Main.h
 	$(MOC) TE_Main.h -o moc_TE_Main.cpp

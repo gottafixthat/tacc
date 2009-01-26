@@ -57,6 +57,7 @@ public slots:
 	void generaljournalentry();
 	void customerlist();
 	void logintypeslist();
+	void loginflagslist();
 	void domaintypeslist();
 	void lockoverdue();
 	void dowiped();
