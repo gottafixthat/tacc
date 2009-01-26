@@ -999,6 +999,24 @@ CustomLoginFlagEditor::CustomLoginFlagEditor
 	myCustID = CustID;
     strcpy(myLoginID, loginID);
 
+    // Create labels to let the user know who we're editing
+    QLabel  *custIDLabel = new QLabel(this, "custIDLabel");
+    char    tmpStr[1024];
+    sprintf(tmpStr, "%ld", myCustID);
+    custIDLabel->setAlignment(AlignRight);
+    custIDLabel->setText("Customer ID:");
+
+    QLabel  *custIDValue = new QLabel(this, "custIDValue");
+    custIDValue->setAlignment(AlignLeft);
+    custIDValue->setText(tmpStr);
+
+    QLabel  *loginIDLabel = new QLabel(this, "loginIDLabel");
+    loginIDLabel->setAlignment(AlignRight);
+    loginIDLabel->setText("Login ID:");
+
+    QLabel  *loginIDValue = new QLabel(this, "loginIDValue");
+    loginIDValue->setAlignment(AlignLeft);
+    loginIDValue->setText(myLoginID);
 
     QStringList colHeaders;
     colHeaders += "Flag";
@@ -1013,8 +1031,21 @@ CustomLoginFlagEditor::CustomLoginFlagEditor
     QPushButton *cancelButton = new QPushButton(this, "cancelButton");
     cancelButton->setText("&Cancel");
 
+    // Label layout
+    QGridLayout *gl = new QGridLayout();
+    int curRow = 0;
+    gl->addWidget(custIDLabel,              curRow, 0);
+    gl->addWidget(custIDValue,              curRow, 1);
+    curRow++;
+    gl->addWidget(loginIDLabel,             curRow, 0);
+    gl->addWidget(loginIDValue,             curRow, 1);
+    curRow++;
+    gl->setColStretch(0, 0);
+    gl->setColStretch(1, 1);
+
     // Create the layout
     QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    ml->addLayout(gl, 0);
     ml->addWidget(flagTable, 1);
 
     QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
@@ -1025,6 +1056,10 @@ CustomLoginFlagEditor::CustomLoginFlagEditor
     ml->addLayout(bl, 0);
 
     fillTable();
+
+    // Connect our buttons
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveClicked()));
 }
 
 /**
@@ -1063,6 +1098,10 @@ void CustomLoginFlagEditor::fillTable()
     }
 
     // Get whatever data is in the LoginFlagValues that is custom for this user.
+    db.query("select * from LoginFlagValues where LoginID = '%s'", myLoginID);
+    if (db.rowCount) while (db.getrow()) {
+        flagDict.replace(db.curRow["LoginFlag"], new QString(db.curRow["FlagValue"]));
+    }
 
     // Now put the stuff from our flagDict into the grid
     QDictIterator<QString> it(flagDict);
@@ -1072,6 +1111,50 @@ void CustomLoginFlagEditor::fillTable()
         flagTable->setText(flagTable->numRows()-1, 1, it.current()->ascii());
     }
 
+    // Set column 0(1) to be read only
+    flagTable->setColumnReadOnly(0, true);
+    flagTable->adjustColumn(1);
+
 }
 
+/**
+ * CustomLoginFlagEditor::cancelClicked()
+ *
+ * Closes the window without saving.
+ */
+void CustomLoginFlagEditor::cancelClicked()
+{
+    delete this;
+}
+
+/**
+ * CustomLoginFlagEditor::saveClicked()
+ *
+ * Walks through the flagTable and saves the values.
+ */
+void CustomLoginFlagEditor::saveClicked()
+{
+    ADB db;
+
+    if (flagTable->numRows()) {
+        // Loop through the rows, grabbing the key/value pairs
+        for (int i = 0; i < flagTable->numRows(); i++) {
+            long        result;
+            QString     flag, val;
+            flag = flagTable->text(i-1,0);
+            val  = flagTable->text(i-1,1);
+            if (flag != NULL) {
+                result = db.dbcmd("replace into LoginFlagValues values ('%s', '%s', '%s')", myLoginID, flag.ascii(), val.ascii());
+                if (result < 0) {
+			        QMessageBox::warning(this, "Database Error", "Unable to save flag.");
+                }
+            }
+        }
+    }
+
+    // Let our parent know that something has changed
+    emit(refreshCust(myCustID));
+    emit(customerUpdated(myCustID));
+    delete this;
+}
 
