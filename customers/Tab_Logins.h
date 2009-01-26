@@ -108,7 +108,11 @@ public:
 
 signals:
 	void refreshCust(int);
-    
+   
+public slots:
+    void    cancelClicked();
+    void    saveClicked();
+
 protected:
     void    fillTable();
 

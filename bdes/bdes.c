@@ -74,7 +74,7 @@ void encrypt_string(unsigned char *source, unsigned char *dest, int UseUser)
 
 
 
-    src = (char *) calloc(strlen((char *) source) * 4, sizeof(char));
+    src = (unsigned char *) calloc(strlen((char *) source) * 4, sizeof(unsigned char));
     strcpy((char *)src, (const char *) source);
 
     
@@ -335,14 +335,14 @@ void encrypt2(unsigned char *source, unsigned char *dest, unsigned char *Key3)
     /* Okay, now we're going to prepend a timestamp onto our source string 
     ** Which will be a total of 14 characters long (for removal later).
     */
-    sprintf(src, "%02d%02d%02d%02d%02d%04d%s", 
+    sprintf((char *)src, "%02d%02d%02d%02d%02d%04d%s", 
       curTime->tm_sec, 
       curTime->tm_min, 
       curTime->tm_hour,
       curTime->tm_mday,
       curTime->tm_mon,
       curTime->tm_year,
-      (const char *) source);
+      (char *) source);
 
     for (i = 0; i < strlen((char *) src); i++) cksum += src[i];
     
