@@ -49,6 +49,7 @@
 #include <qlayout.h>
 #include <qmessagebox.h>
 #include <ADB.h>
+#include <QSqlDbPool.h>
 #include "TAATools.h"
 
 Tab_Logins::Tab_Logins
@@ -179,6 +180,9 @@ Tab_Logins::~Tab_Logins()
 
 void Tab_Logins::refreshLoginList(int)
 {
+    QSqlDbPool  dbp;
+    QSqlDatabase    *qsql = dbp.qsqldb();
+
     ADB     DB;
     QString tmpstr = "";
     QString tmpQItemID = "";

@@ -45,6 +45,7 @@
 #include "TAAConfig.h"
 #include <TAATools.h>
 #include <Cfg.h>
+#include <QSqlDbPool.h>
 
 #include "CallWizard.h"
 #include "EditCustomer.h"
@@ -164,6 +165,11 @@ int main( int argc, char ** argv )
     ADB::setDefaultUser(cfgVal("TAAMySQLUser"));
     ADB::setDefaultPass(cfgVal("TAAMySQLPass"));
     //ADB::setDebugLevel(9);
+    QSqlDbPool::setDefaultHost(cfgVal("TAAMySQLHost"));
+    QSqlDbPool::setDefaultName(cfgVal("TAAMySQLDB"));
+    QSqlDbPool::setDefaultUser(cfgVal("TAAMySQLUser"));
+    QSqlDbPool::setDefaultPass(cfgVal("TAAMySQLPass"));
+    QSqlDbPool::setDefaultDriver(cfgVal("TAASQLDriver"));
     
     // BlargDB DB;
     // Initialize the database...
