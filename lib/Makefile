@@ -25,6 +25,7 @@ SUBDIRS =	gl
 
 SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			IClient.cpp BString.cpp TAAWidget.cpp\
+			QSqlDbPool.cpp\
 			CustomerSearch.cpp\
 			TAATools.cpp BlargDB.cpp\
 			TAAConfig.cpp\
@@ -51,6 +52,7 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_TAAWidget.cpp\
+			moc_QSqlDbPool.cpp\
 			moc_CustomerSearch.cpp\
 			moc_AddressEditor.cpp moc_AddressEditorData.cpp\
 			moc_PhoneEditor.cpp moc_PhoneEditorData.cpp\
@@ -108,6 +110,9 @@ moc_TAAWidget.cpp: TAAWidget.h
 
 moc_CustomerSearch.cpp: CustomerSearch.h
 	$(MOC) CustomerSearch.h -o moc_CustomerSearch.cpp
+
+moc_QSqlDbPool.cpp: QSqlDbPool.h
+	$(MOC) QSqlDbPool.h -o moc_QSqlDbPool.cpp
 
 moc_AddressEditor.cpp: AddressEditor.h
 	$(MOC) AddressEditor.h -o moc_AddressEditor.cpp

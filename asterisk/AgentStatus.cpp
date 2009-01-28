@@ -23,6 +23,7 @@
 #include <TAAWidget.h>
 #include <TAATools.h>
 #include <TAAPixmaps.h>
+#include <QSqlDbPool.h>
 #include <qsqldatabase.h>
 #include <qpixmap.h>
 #include <qtimer.h>
@@ -296,7 +297,11 @@ AgentStatus::AgentStatus
     am = mgrptr;
 
     // Connect to the database and get the agents
-    QSqlDatabase        *myDB;
+    QSqlDbPool          pool;
+    QSqlDatabase        *myDB = pool.qsqldb();
+    QSqlDbPool          pool2;
+    QSqlDatabase        *myDB2 = pool2.qsqldb();
+    /*
     myDB = QSqlDatabase::addDatabase("QMYSQL3","asteriskagentstatus");
     myDB->setHostName(cfgVal("TAAMySQLHost"));
     myDB->setDatabaseName(cfgVal("TAAMySQLDB"));
@@ -307,6 +312,7 @@ AgentStatus::AgentStatus
         fprintf(stderr, "AgentStatus::AgentStatus() Unable to connect to the databse!\n");
         return;
     }
+    */
 
     // Get the agents out of the database.
     QSqlQuery query(myDB);
