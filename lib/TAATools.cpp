@@ -22,6 +22,9 @@
 #include <time.h>
 #include <sys/time.h>
 #include <stdarg.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <pwd.h>
 
 #include <qapp.h>
 #include <qdatetm.h>
@@ -73,6 +76,55 @@ QWidget *mainWin()
 void setMainWin(QWidget *newWinPtr)
 {
     intMainWin = newWinPtr;
+}
+
+/**
+ * loadTAAConfig()
+ *
+ * Called from main() for this or any other supporting program
+ * that needs to load the main taa.cf file.
+ *
+ * If isCritical is true, then we halt operation if we were 
+ * unable to load a config file.
+ *
+ * Returns true if we loaded it, false otherwise.
+ */
+bool loadTAAConfig(bool isCritical)
+{
+    bool retVal = true;
+    uid_t       myUID;
+    passwd      *pent;
+    char        homeCfg[1024];
+    
+    myUID = getuid();
+    pent = getpwuid(myUID);
+    if (pent == NULL) {
+        fprintf(stderr, "\nUnable to get user information.\n\n");
+        if (isCritical) exit(-1);
+        else return false;
+    }
+
+    // Create the file name for the users "local" configuration file.  This is
+    // mostly just used for development.  Keeps things local to the user only and not
+    // system wide.
+    strcpy(homeCfg, pent->pw_dir);
+    strcat(homeCfg, "/.taa/taa.cf");
+    
+    // load the file configuration first.  These settings can be
+    // overridden by the database settings.
+    if (!loadCfg(homeCfg)) {
+        if (!loadCfg("/etc/taa.cf")) {
+            if (!loadCfg("/usr/local/etc/taa.cf")) {
+                if (!loadCfg("/usr/local/lib/taa.cf")) {
+                    fprintf(stderr, "\nUnable to find a configuration file.\n");
+                    if (isCritical) exit(-1);
+                    else retVal = false;
+                }
+            }
+        }
+    }
+
+    return retVal;
 }
 
 /*
