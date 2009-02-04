@@ -47,7 +47,9 @@
 #include "CustSubscrList.h"
 #include "Tab_Logins.h"
 #include "Tab_Domains.h"
+#ifdef EXPERIMENTAL
 #include "Tab_VoIP.h"
+#endif
 #include "Tab_Notes.h"
 // #include "Tab_Accounts.h"
 #include "BlargDB.h"
@@ -100,8 +102,10 @@ EditCustomer::EditCustomer
     tab = new QTab("Domains");
     tabBar->addTab(tab);
 
+#ifdef EXPERIMENTAL
     tab = new QTab("VoIP");
     tabBar->addTab(tab);
+#endif
 
     tab = new QTab("Notes");
     tabBar->addTab(tab);
@@ -171,40 +175,44 @@ EditCustomer::EditCustomer
 	sprintf(tmpstr, "Edit Customer - %s (%s)", DB.curRow["FullName"], DB.curRow["CustomerID"]);
 	setCaption(tmpstr);
 	
+    int curTab = 0;
+    int totTabs = 7;
     //fprintf(stderr, "Creating Tab_ContactInfo...\n"); fflush(stderr);
-    emit(setProgress(1, 8));
+    emit(setProgress(curTab+1, totTabs));
 	contactInfoTab = new Tab_ContactInfo(qws, "Contact Info", CustID);
-	qws->addWidget(contactInfoTab, 0);
+	qws->addWidget(contactInfoTab, curTab++);
 
     //fprintf(stderr, "Creating Tab_BillingInfo...\n"); fflush(stderr);
-    emit(setProgress(2, 8));
+    emit(setProgress(curTab+1, totTabs));
 	billingInfoTab = new Tab_BillingInfo(qws, "Billing Info", CustID);
-	qws->addWidget(billingInfoTab, 1);
+	qws->addWidget(billingInfoTab, curTab++);
 	
     //fprintf(stderr, "Creating Tab_Subscriptions...\n"); fflush(stderr);
-    emit(setProgress(3, 8));
+    emit(setProgress(curTab+1, totTabs));
 	subscrsTab = new CustSubscrList(qws, "Subscriptions", CustID);
-	qws->addWidget(subscrsTab, 2);
+	qws->addWidget(subscrsTab, curTab++);
 	
     //fprintf(stderr, "Creating Tab_Logins...\n"); fflush(stderr);
-    emit(setProgress(4, 8));
+    emit(setProgress(curTab+1, totTabs));
 	loginsTab = new Tab_Logins(qws, "Logins", CustID);
-	qws->addWidget(loginsTab, 3);
+	qws->addWidget(loginsTab, curTab++);
 	
     //fprintf(stderr, "Creating Tab_Domains...\n"); fflush(stderr);
-    emit(setProgress(5, 8));
+    emit(setProgress(curTab+1, totTabs));
 	domainsTab = new Tab_Domains(qws, "Domains", CustID);
-	qws->addWidget(domainsTab, 4);
+	qws->addWidget(domainsTab, curTab++);
 	
+#ifdef EXPERIMENTAL
     //fprintf(stderr, "Creating Tab_VoIP...\n"); fflush(stderr);
-    emit(setProgress(6, 8));
+    emit(setProgress(curTab+1, totTabs));
 	voipTab = new Tab_VoIP(qws, "VoIP", CustID);
-	qws->addWidget(voipTab, 5);
+	qws->addWidget(voipTab, curTab++);
+#endif
 	
     //fprintf(stderr, "Creating Tab_Notes...\n"); fflush(stderr);
-    emit(setProgress(7, 8));
+    emit(setProgress(curTab+1, totTabs));
 	notesTab = new Tab_Notes(qws, "Notes", CustID);
-	qws->addWidget(notesTab, 6);
+	qws->addWidget(notesTab, curTab++);
 	
     /*
    	accountsTab = new Tab_Accounts(qws, "Accounts", CustID);
@@ -295,7 +303,9 @@ void EditCustomer::saveCustomer()
 void EditCustomer::refreshAll(int)
 {
 	subscrsTab->refreshCustomer(myCustID);
+#ifdef EXPERIMENTAL
 	voipTab->refreshVoIPList(myCustID);
+#endif
 	notesTab->refreshNotesList(myCustID);
 	billingInfoTab->refreshBillingInfo(myCustID);
 	emit(refreshCustList());

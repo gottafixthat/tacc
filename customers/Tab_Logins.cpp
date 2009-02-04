@@ -782,6 +782,9 @@ void Tab_Logins::updateDBForWipe(const char * LoginID)
     
 	DB.dbcmd("update Subscriptions set Active = 0 where LoginID = '%s' and CustomerID = %ld", tmpLogin, myCustID);
 	
+    // Remove any custom flags.
+    DB.dbcmd("delete from LoginFlagValues where LoginID = '%s'", tmpLogin);
+
 	wasActive = LDB.getInt("Active");
 	LDB.setValue("Active", (int) 0);
 	LDB.setValue("Wiped", today);
