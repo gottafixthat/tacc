@@ -26,6 +26,7 @@ SUBDIRS =	gl
 SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			IClient.cpp BString.cpp TAAWidget.cpp\
 			QSqlDbPool.cpp\
+			CSVParser.cpp\
 			CustomerSearch.cpp\
 			TAATools.cpp BlargDB.cpp\
 			TAAConfig.cpp\

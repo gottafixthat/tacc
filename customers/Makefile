@@ -19,6 +19,10 @@ ifdef USEDES
 	LFLAGS	+= -L/usr/local/lib -lbdes
 endif
 
+ifdef EXPERIMENTAL
+	CFLAGS	+= -DEXPERIMENTAL
+endif
+
 ####### End of automatically generated section
 
 ####### Files
@@ -39,7 +43,6 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		Tab_Domains.cpp\
 		DomainAliases.cpp\
 		Tab_Notes.cpp\
-		Tab_VoIP.cpp\
 		Tab_Accounts.cpp Tab_AccountsData.cpp\
 		LoginEdit.cpp\
 		NoteEdit.cpp\
@@ -62,6 +65,11 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		NCWAccount.cpp NCWAccountData.cpp\
 		NCWBilling.cpp NCWBillingData.cpp
 
+ifdef EXPERIMENTAL
+	SOURCES	+= Tab_VoIP.cpp
+endif
+
+
 
 HEADERS =	Customers.h NewCustomer.h\
 		NewCustomerData.h\
@@ -77,7 +85,6 @@ HEADERS =	Customers.h NewCustomer.h\
 		Tab_Domains.h\
 		DomainAliases.h\
 		Tab_Notes.h\
-		Tab_VoIP.h\
 		Tab_Accounts.h Tab_AccountsData.h\
 		LoginEdit.h\
 		NoteEdit.h\
@@ -100,6 +107,10 @@ HEADERS =	Customers.h NewCustomer.h\
 		NCWAccount.h NCWAccountData.h\
 		NCWBilling.h NCWBillingData.h
 
+ifdef EXPERIMENTAL
+	HEADERS	+= Tab_VoIP.h
+endif
+
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_Customers.cpp \
@@ -116,7 +127,6 @@ SRCMETA =	moc_Customers.cpp \
 		moc_Tab_Domains.cpp\
 		moc_DomainAliases.cpp\
 		moc_Tab_Notes.cpp\
-		moc_Tab_VoIP.cpp\
 		moc_Tab_Accounts.cpp moc_Tab_AccountsData.cpp\
 		moc_LoginEdit.cpp\
 		moc_NoteEdit.cpp\
@@ -138,6 +148,10 @@ SRCMETA =	moc_Customers.cpp \
 		moc_NCWContact.cpp moc_NCWContactData.cpp\
 		moc_NCWAccount.cpp moc_NCWAccountData.cpp\
 		moc_NCWBilling.cpp moc_NCWBillingData.cpp
+
+ifdef EXPERIMENTAL
+	SRCMETA	+= moc_Tab_VoIP.cpp
+endif
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 
