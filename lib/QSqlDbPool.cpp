@@ -17,6 +17,7 @@
 #include <QSqlDbPool.h>
 #include <qsqldatabase.h>
 #include <qptrlist.h>
+#include <qsqlerror.h>
 
 static QPtrList<sql_Connection_Info> connectionPool;
 
@@ -116,7 +117,7 @@ QSqlDbPool::~QSqlDbPool()
         }
     }
 
-    fprintf(stderr, "QSqlDbPool Connection count is now %d/%d\n", activeConnectionCount(), connectionPool.count());
+    //fprintf(stderr, "QSqlDbPool Connection count is now %d/%d\n", activeConnectionCount(), connectionPool.count());
 }
 
 /**
@@ -140,7 +141,7 @@ void QSqlDbPool::setDefaultDriver(const char *newDriver)
     if ((newDriver) && strlen(newDriver)) {
         // Make sure the driver they are requesting is available
         if (QSqlDatabase::isDriverAvailable(newDriver)) {
-            if (poolDefHost != NULL) delete poolDefHost;
+            if (poolDefDriver != NULL) delete poolDefDriver;
             poolDefDriver = new char[strlen(newDriver)+2];
             strcpy(poolDefDriver, newDriver);
         } else {
@@ -369,11 +370,20 @@ void QSqlDbPool::createNewConnection()
     conn->inUse = 1;
     myConnectionID = conn->connectionID;
     if (!conn->db->isOpen()) {
-        conn->db->open();
+        bool tmpRet;
+        tmpRet = conn->db->open();
+        if (!tmpRet) {
+            fprintf(stderr, "Error opening database connection %s://%s@%s\n", mydbDriver, mydbUser, mydbHost);
+            QSqlError lErr = conn->db->lastError();
+            fprintf(stderr, "driver: '%s'\n", lErr.driverText().ascii());
+            fprintf(stderr, "database: '%s'\n", lErr.databaseText().ascii());
+        }
+
+        conn->db->setDatabaseName(mydbName);
     }
 
     myConnection = conn;
 
-    fprintf(stderr, "QSqlDbPool Connection count is now %d/%d\n", activeConnectionCount(), connectionPool.count());
+    //fprintf(stderr, "QSqlDbPool Connection count is now %d/%d\n", activeConnectionCount(), connectionPool.count());
 }
 

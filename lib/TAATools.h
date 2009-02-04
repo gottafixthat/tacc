@@ -62,6 +62,7 @@ typedef struct taa_User {
 
 QWidget    *mainWin();
 void        setMainWin(QWidget *newWinPtr);
+bool        loadTAAConfig(bool isCritical = true);
 
 bool        dateValid(const char *tDate, bool showMessage = true);
 void        myDateToQDate(const char *srcDate, QDate &dstDate);
