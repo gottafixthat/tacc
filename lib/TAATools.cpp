@@ -37,6 +37,7 @@
 #include <Cfg.h>
 #include <StrTools.h>
 
+#include "QSqlDbPool.h"
 #include "BlargDB.h"
 #include "TAATools.h"
 #include "version.h"
@@ -125,6 +126,47 @@ bool loadTAAConfig(bool isCritical)
     }
 
     return retVal;
+}
+
+/**
+ * schemaVersion()
+ *
+ * Gets the current schema version from the database.
+ */
+int schemaVersion()
+{
+    QSqlDbPool  dbp;
+
+    QSqlQuery   q(dbp.qsqldb());
+
+    if (!q.exec("select SchemaVersion from SchemaVersion")) {
+        // If we can't query it, return false.
+        return 0;
+    };
+    if (q.size() < 1) {
+        // No records or an error, return false
+        return 0;
+    }
+    q.next();
+    if (q.value(0).toInt() < SCHEMA_VERSION_REQUIRED) {
+        // We need a newer schema
+        return 0;
+    }
+
+    // Schema version is okay, return true
+    return q.value(0).toInt();
+}
+
+/**
+ * schemaValid()
+ *
+ * Checks to see if the database schema version is valid.
+ * Returns true if it is, false otherwise.
+ */
+bool schemaValid()
+{
+    if (schemaVersion() < SCHEMA_VERSION_REQUIRED) return false;
+    else return true;
 }
 
 /*
@@ -484,8 +526,9 @@ void emailAdmins(const char *subj, const char *body)
 {
     char    *tmpstr;
     FILE    *fp;
-    char    mname[1024];
-    char    tmpstr2[1024];
+    int     tmpFP;
+    //char    mname[1024];
+    //char    tmpstr2[1024];
 
     QStrList    admins;         // The list of admins to mail.
     
@@ -498,8 +541,10 @@ void emailAdmins(const char *subj, const char *body)
     
     for (unsigned int i = 0; i < admins.count(); i++) {
         // Create the tmp files.
-        tmpnam(mname);
-        fp = fopen(mname, "w");
+        strcpy(tmpstr, "/var/spool/taamail/adminemail-XXXXXX");
+        tmpFP = mkstemp(tmpstr);
+        close(tmpFP);
+        fp = fopen(tmpstr, "w");
         if (fp != NULL) {
             fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
             fprintf(fp, "To: %s@avvanta.com\n", (const char *) admins.at(i));
@@ -510,11 +555,13 @@ void emailAdmins(const char *subj, const char *body)
             
             fclose(fp);
             
+            /*
             sprintf(tmpstr2, "/var/spool/taamail/%s-XXXXXX", (const char *) admins.at(i));
             sprintf(tmpstr, "cp %s %s", mname, mktemp(tmpstr2));
             system(tmpstr);
             
             unlink(mname);
+            */
         }
     }
     

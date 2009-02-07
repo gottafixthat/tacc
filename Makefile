@@ -38,6 +38,7 @@ SUBDIRS += reports tickets admin settings custcare
 # SUBDIRS += sam taa
 #SUBDIRS += mbrassd 
 # SUBDIRS += gettraffic
+SUBDIRS += taccupgrade
 SUBDIRS += taamaild
 SUBDIRS += seanetimport
 SUBDIRS += modembilling
