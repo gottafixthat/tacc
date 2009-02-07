@@ -19,7 +19,6 @@
 
 int main( int argc, char ** argv );
 void upgradeError(const QString &, const QString &);
-int  schemaVersion();
 void upgradeDatabase();
 
 #endif
