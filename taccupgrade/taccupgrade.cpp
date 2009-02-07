@@ -39,35 +39,6 @@ int main( int argc, char ** argv )
 }
 
 /**
- * schemaVersion()
- *
- * Gets the current schema version from the database.
- */
-int schemaVersion()
-{
-    QSqlDbPool  dbp;
-
-    QSqlQuery   q(dbp.qsqldb());
-
-    if (!q.exec("select SchemaVersion from SchemaVersion")) {
-        // If we can't query it, return false.
-        return 0;
-    };
-    if (q.size() < 1) {
-        // No records or an error, return false
-        return 0;
-    }
-    q.next();
-    if (q.value(0).toInt() < SCHEMA_VERSION_REQUIRED) {
-        // We need a newer schema
-        return 0;
-    }
-
-    // Schema version is okay, return true
-    return q.value(0).toInt();
-}
-
-/**
  * upgradeError()
  *
  * Aborts the execution of the program if there is an error.
