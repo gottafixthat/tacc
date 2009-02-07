@@ -186,6 +186,11 @@ int main( int argc, char ** argv )
     //a.setFont(awFont, true);
     //a.setPalette(qt_std_pal);
 
+    // Check the schema version.
+    if (!schemaValid()) {
+        QMessageBox::critical(NULL, "Invalid Database Schema", "This version of TACC is not compatible\nwith the current databse version.\n\nThe upgradetacc program will bring the version current.");
+        exit(-1);
+    }
 
     // Try logging in now.
     lw = new TAALogin();
