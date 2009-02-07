@@ -38,6 +38,7 @@
 #include <qdatetm.h>
 #include <time.h>
 
+#define SCHEMA_VERSION_REQUIRED 1
 
 enum t_TimeFormat {
     YYYY_MM_DD_HH_MM     = 0,
@@ -63,6 +64,8 @@ typedef struct taa_User {
 QWidget    *mainWin();
 void        setMainWin(QWidget *newWinPtr);
 bool        loadTAAConfig(bool isCritical = true);
+int         schemaVersion();
+bool        schemaValid();
 
 bool        dateValid(const char *tDate, bool showMessage = true);
 void        myDateToQDate(const char *srcDate, QDate &dstDate);
