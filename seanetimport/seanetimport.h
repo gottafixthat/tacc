@@ -18,6 +18,35 @@
 
 #define STARTING_CUSTOMERID 100000
 
+typedef struct domainRecord {
+    QString regNumber;
+    int     billingPeriod;
+    int     planStatus;
+    QString serviceStart;
+    QString nextBillDate;
+    QString domainName;
+    int     spamFilter;
+    QString mailType;
+};
+
+typedef struct dialupRecord {
+    QString regNumber;
+    int     billingPeriod;
+    int     planStatus;
+    QString serviceStart;
+    QString nextBillDate;
+    QString serviceType;
+    QString userName;
+    QString password;
+    QString virtDomain;
+    int     autoAssign;
+    QString dateAssigned;
+    QString netmask;
+    QString ipAddr;
+    QString mailType;
+
+};
+
 typedef struct serviceRecord {
     char    loginID[64];
     long    loginTypeID;
@@ -58,8 +87,13 @@ typedef struct customerRecord {
     QPtrList<billableRecord> billableList;
 };
 
+extern QPtrList<domainRecord> domainList;
+extern QPtrList<dialupRecord> dialupList;
 
 int main( int argc, char ** argv );
+void loadDomains();
+void loadDialupStatic();
+void loadDialupDynamic();
 void importLoginTypes();
 void importCustomers();
 void saveCustomer(customerRecord *);
