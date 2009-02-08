@@ -17,6 +17,9 @@
 
 #include "seanetimport.h"
 
+// Globals
+QPtrList<domainRecord> domainList;
+QPtrList<dialupRecord> dialupList;
 
 int main( int argc, char ** argv )
 {
@@ -37,9 +40,158 @@ int main( int argc, char ** argv )
     QSqlDbPool::setDefaultDriver(cfgVal("TAASQLDriver"));
 
     // Import the login types and billable items.
-    importLoginTypes();
-    importCustomers();
+    loadDomains();
+    loadDialupStatic();
+    loadDialupDynamic();
+    //importLoginTypes();
+    //importCustomers();
 
+}
+
+/**
+ * loadDomains()
+ *
+ * Loads the domain records from the CSV file into memory.
+ */
+void loadDomains()
+{
+    CSVParser   parser;
+    // Open our CSV file
+    if (!parser.openFile("SeanetDomainSet.csv", true)) {
+        fprintf(stderr, "Unable to open SeanetDomainSet.csv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("RegNumber");
+    int billingPeriodCol    = parser.header().findIndex("billingperiod");
+    int planStatusCol       = parser.header().findIndex("PlanStatus");
+    int serviceStartCol     = parser.header().findIndex("ServiceStart");
+    int nextBillDateCol     = parser.header().findIndex("NextBillingDate");
+    int domainNameCol       = parser.header().findIndex("ItemVal1");
+    int spamFilterCol       = parser.header().findIndex("ItemVal2");
+    int mailTypeCol         = parser.header().findIndex("ItemVal3");
+
+
+    while(parser.loadRecord()) {
+        domainRecord    *domRec = new domainRecord;
+        domRec->regNumber       = parser.row()[regNumberCol];
+        domRec->billingPeriod   = parser.row()[billingPeriodCol].toInt();
+        domRec->planStatus      = parser.row()[planStatusCol].toInt();
+        domRec->serviceStart    = parser.row()[serviceStartCol];
+        domRec->nextBillDate    = parser.row()[nextBillDateCol];
+        domRec->domainName      = parser.row()[domainNameCol];
+        domRec->spamFilter      = parser.row()[spamFilterCol].toInt();
+        domRec->mailType        = parser.row()[mailTypeCol];
+
+        domainList.append(domRec);
+        fprintf(stderr, "\e[KLoaded domain %s...\r", domRec->domainName.ascii());
+    }
+    fprintf(stderr, "\e[KLoaded %d domains into memory.\n", domainList.count());
+}
+
+/**
+ * loadDialupStatic()
+ *
+ * Loads the static dialup records from the CSV file into memory.
+ */
+void loadDialupStatic()
+{
+    CSVParser   parser;
+    // Open our CSV file
+    if (!parser.openFile("SeanetDialupStatics.csv", true)) {
+        fprintf(stderr, "Unable to open SeanetDialupStatics.csv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("RegNumber");
+    int billingPeriodCol    = parser.header().findIndex("BillingPeriod");
+    int planStatusCol       = parser.header().findIndex("PlanStatus");
+    int serviceStartCol     = parser.header().findIndex("ServiceStart");
+    int nextBillDateCol     = parser.header().findIndex("NextBillDate");
+    int serviceTypeCol      = parser.header().findIndex("Detail");
+    int userNameCol         = parser.header().findIndex("username");
+    int passwordCol         = parser.header().findIndex("password");
+    int virtDomainCol       = parser.header().findIndex("domainName");
+    int autoAssignCol       = parser.header().findIndex("autoAssign");
+    int dateAssignedCol     = parser.header().findIndex("dateAssigned");
+    int netmaskCol          = parser.header().findIndex("netmask");
+    int ipAddrCol           = parser.header().findIndex("startIPAddress");
+    int mailTypeCol         = parser.header().findIndex("mailTypeName");
+
+
+    int recCount = 0;
+    while(parser.loadRecord()) {
+        dialupRecord    *dialupRec = new dialupRecord;
+        dialupRec->regNumber       = parser.row()[regNumberCol];
+        dialupRec->billingPeriod   = parser.row()[billingPeriodCol].toInt();
+        dialupRec->planStatus      = parser.row()[planStatusCol].toInt();
+        dialupRec->serviceStart    = parser.row()[serviceStartCol];
+        dialupRec->nextBillDate    = parser.row()[nextBillDateCol];
+        dialupRec->serviceType     = parser.row()[serviceTypeCol];
+        dialupRec->userName        = parser.row()[userNameCol];
+        dialupRec->password        = parser.row()[passwordCol];
+        dialupRec->virtDomain      = parser.row()[virtDomainCol];
+        dialupRec->autoAssign      = parser.row()[autoAssignCol].toInt();
+        dialupRec->dateAssigned    = parser.row()[dateAssignedCol];
+        dialupRec->netmask         = parser.row()[netmaskCol];
+        dialupRec->ipAddr          = parser.row()[ipAddrCol];
+        dialupRec->mailType        = parser.row()[mailTypeCol];
+
+        dialupList.append(dialupRec);
+        recCount++;
+        fprintf(stderr, "\e[KLoaded static dialup %s...\r", dialupRec->userName.ascii());
+    }
+    fprintf(stderr, "\e[KLoaded %d static dialups into memory.\n", recCount);
+}
+
+/**
+ * loadDialupDynamic()
+ *
+ * Loads the non-static dialup records from the CSV file into memory.
+ */
+void loadDialupDynamic()
+{
+    CSVParser   parser;
+    // Open our CSV file
+    if (!parser.openFile("SeanetDialupDynamics.csv", true)) {
+        fprintf(stderr, "Unable to open SeanetDialupDynamics.csv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("RegNumber");
+    int billingPeriodCol    = parser.header().findIndex("BillingPeriod");
+    int planStatusCol       = parser.header().findIndex("PlanStatus");
+    int serviceStartCol     = parser.header().findIndex("ServiceStart");
+    int nextBillDateCol     = parser.header().findIndex("NextBillDate");
+    int serviceTypeCol      = parser.header().findIndex("Detail");
+    int userNameCol         = parser.header().findIndex("username");
+    int passwordCol         = parser.header().findIndex("password");
+    int virtDomainCol       = parser.header().findIndex("domainName");
+    int mailTypeCol         = parser.header().findIndex("mailTypeName");
+
+
+    int recCount = 0;
+    while(parser.loadRecord()) {
+        dialupRecord    *dialupRec = new dialupRecord;
+        dialupRec->regNumber       = parser.row()[regNumberCol];
+        dialupRec->billingPeriod   = parser.row()[billingPeriodCol].toInt();
+        dialupRec->planStatus      = parser.row()[planStatusCol].toInt();
+        dialupRec->serviceStart    = parser.row()[serviceStartCol];
+        dialupRec->nextBillDate    = parser.row()[nextBillDateCol];
+        dialupRec->serviceType     = parser.row()[serviceTypeCol];
+        dialupRec->userName        = parser.row()[userNameCol];
+        dialupRec->password        = parser.row()[passwordCol];
+        dialupRec->virtDomain      = parser.row()[virtDomainCol];
+        dialupRec->mailType        = parser.row()[mailTypeCol];
+
+        dialupList.append(dialupRec);
+        recCount++;
+        fprintf(stderr, "\e[KLoaded dynamic dialup %s...\r", dialupRec->userName.ascii());
+    }
+    fprintf(stderr, "\e[KLoaded %d dynamic dialups into memory.\n", recCount);
 }
 
 
