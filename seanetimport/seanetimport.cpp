@@ -18,8 +18,9 @@
 #include "seanetimport.h"
 
 // Globals
-QPtrList<domainRecord> domainList;
-QPtrList<dialupRecord> dialupList;
+QPtrList<customerRecord> customerList;
+QPtrList<domainRecord> domainListFull;
+QPtrList<dialupRecord> dialupListFull;
 
 int main( int argc, char ** argv )
 {
@@ -40,11 +41,12 @@ int main( int argc, char ** argv )
     QSqlDbPool::setDefaultDriver(cfgVal("TAASQLDriver"));
 
     // Import the login types and billable items.
+    importLoginTypes();
     loadDomains();
     loadDialupStatic();
     loadDialupDynamic();
-    //importLoginTypes();
-    //importCustomers();
+    loadCustomers();
+    importCustomers();
 
 }
 
@@ -84,10 +86,10 @@ void loadDomains()
         domRec->spamFilter      = parser.row()[spamFilterCol].toInt();
         domRec->mailType        = parser.row()[mailTypeCol];
 
-        domainList.append(domRec);
+        domainListFull.append(domRec);
         fprintf(stderr, "\e[KLoaded domain %s...\r", domRec->domainName.ascii());
     }
-    fprintf(stderr, "\e[KLoaded %d domains into memory.\n", domainList.count());
+    fprintf(stderr, "\e[KLoaded %d domains into memory.\n", domainListFull.count());
 }
 
 /**
@@ -123,23 +125,24 @@ void loadDialupStatic()
 
     int recCount = 0;
     while(parser.loadRecord()) {
-        dialupRecord    *dialupRec = new dialupRecord;
-        dialupRec->regNumber       = parser.row()[regNumberCol];
-        dialupRec->billingPeriod   = parser.row()[billingPeriodCol].toInt();
-        dialupRec->planStatus      = parser.row()[planStatusCol].toInt();
-        dialupRec->serviceStart    = parser.row()[serviceStartCol];
-        dialupRec->nextBillDate    = parser.row()[nextBillDateCol];
-        dialupRec->serviceType     = parser.row()[serviceTypeCol];
-        dialupRec->userName        = parser.row()[userNameCol];
-        dialupRec->password        = parser.row()[passwordCol];
-        dialupRec->virtDomain      = parser.row()[virtDomainCol];
-        dialupRec->autoAssign      = parser.row()[autoAssignCol].toInt();
-        dialupRec->dateAssigned    = parser.row()[dateAssignedCol];
-        dialupRec->netmask         = parser.row()[netmaskCol];
-        dialupRec->ipAddr          = parser.row()[ipAddrCol];
-        dialupRec->mailType        = parser.row()[mailTypeCol];
+        dialupRecord    *dialupRec  = new dialupRecord;
+        dialupRec->regNumber        = parser.row()[regNumberCol];
+        dialupRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
+        dialupRec->planStatus       = parser.row()[planStatusCol].toInt();
+        dialupRec->serviceStart     = parser.row()[serviceStartCol];
+        dialupRec->nextBillDate     = parser.row()[nextBillDateCol];
+        dialupRec->serviceType      = parser.row()[serviceTypeCol];
+        dialupRec->userName         = parser.row()[userNameCol];
+        dialupRec->password         = parser.row()[passwordCol];
+        dialupRec->virtDomain       = parser.row()[virtDomainCol];
+        dialupRec->autoAssign       = parser.row()[autoAssignCol].toInt();
+        dialupRec->dateAssigned     = parser.row()[dateAssignedCol];
+        dialupRec->netmask          = parser.row()[netmaskCol];
+        dialupRec->ipAddr           = parser.row()[ipAddrCol];
+        dialupRec->mailType         = parser.row()[mailTypeCol];
+        dialupRec->foundMatch       = 0;
 
-        dialupList.append(dialupRec);
+        dialupListFull.append(dialupRec);
         recCount++;
         fprintf(stderr, "\e[KLoaded static dialup %s...\r", dialupRec->userName.ascii());
     }
@@ -175,19 +178,20 @@ void loadDialupDynamic()
 
     int recCount = 0;
     while(parser.loadRecord()) {
-        dialupRecord    *dialupRec = new dialupRecord;
-        dialupRec->regNumber       = parser.row()[regNumberCol];
-        dialupRec->billingPeriod   = parser.row()[billingPeriodCol].toInt();
-        dialupRec->planStatus      = parser.row()[planStatusCol].toInt();
-        dialupRec->serviceStart    = parser.row()[serviceStartCol];
-        dialupRec->nextBillDate    = parser.row()[nextBillDateCol];
-        dialupRec->serviceType     = parser.row()[serviceTypeCol];
-        dialupRec->userName        = parser.row()[userNameCol];
-        dialupRec->password        = parser.row()[passwordCol];
-        dialupRec->virtDomain      = parser.row()[virtDomainCol];
-        dialupRec->mailType        = parser.row()[mailTypeCol];
+        dialupRecord    *dialupRec  = new dialupRecord;
+        dialupRec->regNumber        = parser.row()[regNumberCol];
+        dialupRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
+        dialupRec->planStatus       = parser.row()[planStatusCol].toInt();
+        dialupRec->serviceStart     = parser.row()[serviceStartCol];
+        dialupRec->nextBillDate     = parser.row()[nextBillDateCol];
+        dialupRec->serviceType      = parser.row()[serviceTypeCol];
+        dialupRec->userName         = parser.row()[userNameCol];
+        dialupRec->password         = parser.row()[passwordCol];
+        dialupRec->virtDomain       = parser.row()[virtDomainCol];
+        dialupRec->mailType         = parser.row()[mailTypeCol];
+        dialupRec->foundMatch       = 0;
 
-        dialupList.append(dialupRec);
+        dialupListFull.append(dialupRec);
         recCount++;
         fprintf(stderr, "\e[KLoaded dynamic dialup %s...\r", dialupRec->userName.ascii());
     }
@@ -374,11 +378,11 @@ void importLoginTypes()
 }
 
 /**
- * importCustomers()
+ * loadCustomers()
  *
  * Loads customer records from the SeanetPlansMain.csv file
  */
-void importCustomers()
+void loadCustomers()
 {
     CSVParser   parser;
     
@@ -440,8 +444,7 @@ void importCustomers()
         //if (!(numLines % 10)) fprintf(stderr, "\rProcessing line %d...", numLines);
         if (lastRegnum.compare(parser.row()[regNumCol])) {
             if (cust) {
-                saveCustomer(cust);
-                delete cust;
+                customerList.append(cust);
             }
             cust = new customerRecord;
             // We should save the current customer data here
@@ -449,6 +452,7 @@ void importCustomers()
             numCusts++;
 
             // Prime the customer record
+            cust->regNumber = parser.row()[regNumCol];
             cust->customerID = numCusts + STARTING_CUSTOMERID;
 
             // Set the contact name
@@ -465,6 +469,8 @@ void importCustomers()
                 if (cust->contactName.length()) cust->contactName += " ";
                 cust->contactName += parser.row()[lastNameCol];
             }
+
+            fprintf(stderr, "\e[KLoading customer %s...\r", cust->contactName.ascii());
 
             // Set the fullname/company name
             cust->fullName = "";
@@ -507,13 +513,21 @@ void importCustomers()
             }
 
             //fprintf(stderr, "Customer ID %ld %-50s\r", cust->customerID, cust->contactName.ascii());
+
+            // Add the dialups for this new customer record, if any.
+            for (unsigned int i = 0; i < dialupListFull.count(); i++) {
+                dialupRecord *dialup = dialupListFull.at(i);
+                if (dialup->regNumber == cust->regNumber) {
+                    cust->dialupList.append(dialup);
+                }
+            }
         }
 
         // At this point, regardless of whether or not we are on a
         // new customer, we should have a customer record.
         // Find the service we're looking for.
         QSqlQuery   q(db1);
-        q.prepare("select InternalID from LoginTypes where Description LIKE :svcplan");
+        q.prepare("select InternalID, LoginType, Description from LoginTypes where Description LIKE :svcplan");
         q.bindValue(":svcplan", parser.row()[svcPlanCol]);
         if (!q.exec()) {
             fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
@@ -528,8 +542,12 @@ void importCustomers()
             sprintf(svc->loginID, "sea%05d", numLines);
             // Set the loginTypeID
             svc->loginTypeID = q.value(0).toInt();
+            svc->loginType   = q.value(1).toString();
+            svc->loginTypeDesc = q.value(2).toString();
             svc->endsOn = parser.row()[nextBillDateCol];
             svc->closeDate = parser.row()[closeDateCol];
+            svc->foundMatch = 0;
+            svc->autoAssign = 1;
             cust->svcList.append(svc);
         } else {
             // No matching login type, search for a matching billable item instead.
@@ -552,24 +570,105 @@ void importCustomers()
             }
         }
 
-        
+        // Add dialups for this customer
         
     }
     // Save the last one we were working on.
-    saveCustomer(cust);
+    customerList.append(cust);
 
-    //fprintf(stderr, "\rProcessing line %d...\n", numLines);
-    fprintf(stderr, "Fixing dates...\r");
-    QSqlQuery   sql(db1);
-    sql.exec("update Subscriptions set EndsOn = '2009-02-28', LastDate = '2009-02-01'");
-    sql.exec("update Customers set RatePlanDate = '2009-02-01', BillingCycleDate = '2009-02-01', LastBilled = '0000-00-00', LastStatementNo = '0000-00-00', AccountExpires = '0000-00-00', AccountOpened = '0000-00-00', AccountClosed = '0000-00-00', AccountReOpened = '0000-00-00', GraceDate = '0000-00-00', PromotionGiven = '0000-00-00'");
+    fprintf(stderr, "\e[KParsed %d lines, loaded %d customer records into memory.\n", numLines, customerList.count());
 
-
-
-    printf("Customers:  Parsed %d lines, found %d customers.\n", numLines, numCusts);
+    //printf("Customers:  Parsed %d lines, found %d customers.\n", numLines, numCusts);
 
 
 }
+
+/**
+ * importCustomers()
+ *
+ * Walks through the in-memory customer list, assigns logins and
+ * domains, and then saves them to the database by calling 
+ * saveCustomer().
+ */
+void importCustomers()
+{
+
+    // Walk through the customer list and process the services they have,
+    // replacing any placeholders with entries from the other lists we have
+    // imported.
+    for (unsigned int c = 0; c < customerList.count(); c++) {
+        customerRecord  *cust = customerList.at(c);
+        fprintf(stderr, "\e[KProcessing customer %s...\r", cust->contactName.ascii());
+        for (unsigned int d = 0; d < cust->dialupList.count(); d++) {
+            dialupRecord    *dialup = cust->dialupList.at(d);
+            if (!dialup->foundMatch) {
+                // Find the placeholder
+                bool    foundIt = false;
+                for (unsigned int p = 0; p < cust->svcList.count(); p++) {
+                    serviceRecord   *svc = cust->svcList.at(p);
+                    if (!svc->foundMatch && !dialup->foundMatch) {
+                        // Compare this dialup record with this service
+                        // record to see if we want to override it.
+                        matchDialup(svc, dialup);
+                    }
+                }
+            }
+        }
+        // Save the customer in the database now.
+        saveCustomer(cust);
+    }
+    fprintf(stderr, "\e[KProcessed %d customers.\n", customerList.count());
+
+    /* FIXME:  Uncomment this block when ready to save to the database.
+    QSqlDbPool  pooldb;
+    //fprintf(stderr, "\rProcessing line %d...\n", numLines);
+    fprintf(stderr, "Fixing dates...\r");
+    QSqlQuery   sql(pooldb.qsqldb());
+    sql.exec("update Subscriptions set EndsOn = '2009-02-28', LastDate = '2009-02-01'");
+    sql.exec("update Customers set RatePlanDate = '2009-02-01', BillingCycleDate = '2009-02-01', LastBilled = '0000-00-00', LastStatementNo = '0000-00-00', AccountExpires = '0000-00-00', AccountOpened = '0000-00-00', AccountClosed = '0000-00-00', AccountReOpened = '0000-00-00', GraceDate = '0000-00-00', PromotionGiven = '0000-00-00'");
+    */
+}
+
+/**
+ * matchDialup()
+ *
+ * Attempts to match the passed in dialup record with the passed in
+ * service record.  If it is matched, the service record is updated
+ * with information from the dialup and both records are tagged as
+ * having found a match.
+ */
+void matchDialup(serviceRecord *svcRec, dialupRecord *dialRec)
+{
+    bool matchFound = false;
+    if ((svcRec->loginType == "POPLogin") && (dialRec->serviceType == "POPaccount")) {
+        fprintf(stderr, "Found matching service record/dialup record for dialup user %s\n", dialRec->userName.ascii());
+        matchFound = true;
+    } else if ((svcRec->loginType == "ExtraLogin") && (dialRec->serviceType == "DialupDynamic")) {
+        // WTF?  This doesn't seem right, but it matches.
+        fprintf(stderr, "Found matching service record/dialup record for dialup user %s\n", dialRec->userName.ascii());
+        matchFound = true;
+    } else if ((svcRec->loginType == "PPPBasic") && (dialRec->serviceType == "DialupStatic")) {
+        // WTF?  This doesn't seem right, but it matches.
+        fprintf(stderr, "Found matching service record/dialup record for dialup user %s\n", dialRec->userName.ascii());
+        matchFound = true;
+    }
+
+    if (matchFound) {
+        // Copy the data over since this one matches.
+        strcpy(svcRec->loginID, dialRec->userName.ascii());
+        svcRec->userName = dialRec->userName;
+        svcRec->password = dialRec->password;
+        svcRec->virtDomain = dialRec->virtDomain;
+        svcRec->autoAssign = dialRec->autoAssign;
+        svcRec->dateAssigned = dialRec->dateAssigned;
+        svcRec->netmask = dialRec->netmask;
+        svcRec->ipAddr = dialRec->ipAddr;
+        svcRec->mailType = dialRec->mailType;
+        svcRec->foundMatch = 1;
+        dialRec->foundMatch = 1;
+    }
+}
+
 
 /**
  * saveCustomer()
