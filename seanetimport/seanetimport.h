@@ -44,14 +44,25 @@ typedef struct dialupRecord {
     QString netmask;
     QString ipAddr;
     QString mailType;
-
+    int     foundMatch;
 };
 
 typedef struct serviceRecord {
     char    loginID[64];
     long    loginTypeID;
+    QString loginType;
+    QString loginTypeDesc;
+    int     foundMatch;
     QString endsOn;
     QString closeDate;
+    QString userName;
+    QString password;
+    QString virtDomain;
+    int     autoAssign;
+    QString dateAssigned;
+    QString netmask;
+    QString ipAddr;
+    QString mailType;
 };
 
 typedef struct billableRecord {
@@ -62,6 +73,7 @@ typedef struct billableRecord {
 
 
 typedef struct customerRecord {
+    QString regNumber;
     uint    customerID;
     QString fullName;
     QString contactName;
@@ -85,17 +97,21 @@ typedef struct customerRecord {
     QString password;
     QPtrList<serviceRecord> svcList;
     QPtrList<billableRecord> billableList;
+    QPtrList<dialupRecord> dialupList;
 };
 
-extern QPtrList<domainRecord> domainList;
-extern QPtrList<dialupRecord> dialupList;
+extern QPtrList<customerRecord> customerList;
+extern QPtrList<domainRecord> domainListFull;
+extern QPtrList<dialupRecord> dialupListFull;
 
 int main( int argc, char ** argv );
 void loadDomains();
 void loadDialupStatic();
 void loadDialupDynamic();
 void importLoginTypes();
+void loadCustomers();
 void importCustomers();
+void matchDialup(serviceRecord *, dialupRecord *);
 void saveCustomer(customerRecord *);
 
 #endif
