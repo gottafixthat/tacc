@@ -15,7 +15,7 @@
 #include <qintdict.h>
 #include <qlist.h>
 
-typedef struct HostInfoStruct {
+struct HostInfoStruct {
     int     HostID;
     char    HostName[128];
 };

@@ -14,7 +14,7 @@
 
 // Okay, first off, we need to define the information we need to keep
 // track of and create two lists for them.
-typedef struct AREntry {
+struct AREntry {
     long IntID;
     float Amount;
     float ClearedAmount;

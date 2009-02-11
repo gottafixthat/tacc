@@ -37,7 +37,7 @@ class QMouseEvent;
 class QPaintEvent;
 class QResizeEvent;
 
-typedef enum { NoColor, Color1, Color2, Color3 } DayColors;
+enum DayColors { NoColor, Color1, Color2, Color3 };
 
 class Calendar : public QWidget {
   Q_OBJECT

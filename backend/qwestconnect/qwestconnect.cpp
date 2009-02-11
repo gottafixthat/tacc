@@ -58,7 +58,7 @@
 #include <Cfg.h>
 #include <Ticket.h>
 
-typedef struct ConnectNotice {
+struct ConnectNotice {
     long    noticeID;
     long    customerID;
     long    ticketNo;

@@ -43,7 +43,7 @@
 #define INITIAL_TIME 750
 #define REPEAT_TIME 100
 
-static char* months[] = { "Jan", "Feb", "Mar", "Apr",
+static const char* months[] = { "Jan", "Feb", "Mar", "Apr",
   "May", "Jun", "Jul", "Aug", "Sep", "Oct",
   "Nov", "Dec" 
 };
@@ -181,7 +181,7 @@ void Calendar::paintEvent(QPaintEvent*)
   QFont font1("Helvetica",FONT_SIZE);
   paint.setFont(font1);
   int w=width()/7;
-  static char* dow[]={"Su","M","Tu","W","Th","F","Sa"};
+  static const char* dow[]={"Su","M","Tu","W","Th","F","Sa"};
   for (int j=0;j<7;j++) {
     paint.drawText(j*w+2,TITLE_HEIGHT,w,ROW_HEIGHT,AlignCenter,dow[j],
       strlen(dow[j]));

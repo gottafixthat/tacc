@@ -18,8 +18,8 @@
 
 #include "holiday.h"
 
-typedef enum {Sun, Mon, Tue, Wed, Thu, Fri, Sat} DOW;
-typedef enum {WorkDay, Weekend, Holiday, HolidayObserved} DTYPE;
+enum DOW {Sun, Mon, Tue, Wed, Thu, Fri, Sat};
+enum DTYPE {WorkDay, Weekend, Holiday, HolidayObserved};
 
 struct DAY {
   unsigned int dow:4;

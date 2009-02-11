@@ -44,7 +44,7 @@
 #include "BString.h"
 #include "wtpl2.h"
 
-static char* t_MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
+static const char* t_MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
   "May", "Jun", "Jul", "Aug", "Sep", "Oct",
   "Nov", "Dec" 
 };

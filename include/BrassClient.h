@@ -14,7 +14,7 @@
 #include <netdb.h>
 #include "IClient.h"
 
-typedef struct LoginDumpStruct {
+struct LoginDumpStruct {
     char    loginID[64];
     int     uid;
     int     gid;

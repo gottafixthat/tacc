@@ -26,7 +26,7 @@
 #ifndef TicketsCommon_H
 #define TicketsCommon_H
 
-typedef enum TicketTypes {
+enum TicketTypes {
     Support         = 0,
     Accounting      = 1,
     PreSales        = 2,
@@ -46,7 +46,7 @@ const char TicketTypeStrings[7][40] = {
 };
 
 
-typedef enum TicketStatusTypes {
+enum TicketStatusTypes {
     Closed          = 0,
     BlargPending    = 1,
     CustPending     = 2,

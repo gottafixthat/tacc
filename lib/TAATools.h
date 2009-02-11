@@ -49,9 +49,9 @@ enum t_TimeFormat {
     YYYY_MM_DD           = 5
 };
 
-typedef enum AccessLevels {Admin = 1, Manager = 2, Staff = 3};
+enum AccessLevels {Admin = 1, Manager = 2, Staff = 3};
 
-typedef struct taa_User {
+struct taa_User {
     char            userName[64];
     char            location[64];       // Telephone Extension, i.e. SIP/x113
     char            agentID[64];        // Agent ID

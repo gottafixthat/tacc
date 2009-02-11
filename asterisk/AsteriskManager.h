@@ -36,15 +36,15 @@
 #include <qvaluevector.h>
 
 // Define the key/value entries
-typedef struct astKVPair {
+struct astKVPair {
     char        key[ASTMAXKEYLENGTH];
     char        val[ASTMAXVALLENGTH];
 };
 
-typedef enum astMsgTypes {Unknown = 0, Event = 1, Response = 2};
+enum astMsgTypes {Unknown = 0, Event = 1, Response = 2};
 
 // Define the event structure that will be passed in our signal
-typedef struct astEventRecord {
+struct astEventRecord {
     astMsgTypes             msgType;
     char                    msgVal[ASTMAXVALLENGTH];
     int                     responseID;

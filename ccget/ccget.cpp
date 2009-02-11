@@ -23,7 +23,7 @@
 
 #include <bdes.h>
 
-typedef struct ProgramKeyStruct {
+struct ProgramKeyStruct {
     char    CompanyName[32];
     char    CompanyAddr1[32];
     char    CompanyAddr2[32];

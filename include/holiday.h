@@ -19,9 +19,9 @@
 // Max chars in holiday string
 #define MAXHOLIDAY 50
 
-typedef enum { _NewYearsDay, _MartinLutherKingDay, _WashingtonsBirthday,
+enum HolidayType { _NewYearsDay, _MartinLutherKingDay, _WashingtonsBirthday,
   _GoodFriday, _Easter, _MemorialDay, _IndependenceDay, _LaborDay,
-  _ThanksgivingDay, _ChristmasDay } HolidayType ;
+  _ThanksgivingDay, _ChristmasDay };
 
 extern const char* holidayText[];
 

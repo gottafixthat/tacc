@@ -42,7 +42,7 @@ char LOCALPASS   [1024];
 
 // Our data structures
 
-typedef struct RemoteCustomer {
+struct RemoteCustomer {
     long    CustomerID;
     char    PrimaryLogin[20];
     float   CurrentBalance;
@@ -62,7 +62,7 @@ typedef struct RemoteCustomer {
     int     Status;
 };
 
-typedef struct RemoteLogin {
+struct RemoteLogin {
     long    InternalID;
     long    CustomerID;
     char    LoginID[20];
@@ -73,7 +73,7 @@ typedef struct RemoteLogin {
     int     Status;
 };
 
-typedef struct RemoteDomain {
+struct RemoteDomain {
     long    InternalID;
     long    CustomerID;
     char    LoginID[20];
@@ -85,7 +85,7 @@ typedef struct RemoteDomain {
     int     Status;
 };
 
-typedef struct AutoPayments {
+struct AutoPayments {
     long    InternalID;
     long    CustomerID;
     char    TransType;
@@ -93,14 +93,14 @@ typedef struct AutoPayments {
     char    LastFour[12];
 };
 
-typedef struct PendingPayments {
+struct PendingPayments {
     long    CustomerID;
     int     CardType;
     float   Amount;
     char    TransDate[12];
 };
 
-typedef struct RemoteRegister {
+struct RemoteRegister {
     long    InternalID;
     long    CustomerID;
     char    LoginID[20];
@@ -118,7 +118,7 @@ typedef struct RemoteRegister {
     int     Status;
 };
 
-typedef struct RemoteLoginType {
+struct RemoteLoginType {
     long    InternalID;
     char    LoginType[40];
     char    Description[1024];
@@ -130,7 +130,7 @@ typedef struct RemoteLoginType {
     int     Status;
 };
 
-typedef struct ProgramKeyStruct {
+struct ProgramKeyStruct {
     char    CompanyName[32];
     char    CompanyAddr1[32];
     char    CompanyAddr2[32];

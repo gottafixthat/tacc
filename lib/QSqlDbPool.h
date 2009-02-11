@@ -19,7 +19,7 @@
 
 #include <qsqldatabase.h>
 
-typedef struct sql_Connection_Info {
+struct sql_Connection_Info {
     int             inUse;
     int             connectionID;
     QSqlDatabase    *db;
@@ -38,7 +38,7 @@ public:
             const char *dbDriver = NULL,
             const char *dbOpts = NULL
             );
-    virtual ~QSqlDbPool();
+    ~QSqlDbPool();
 
     static const char *defaultDriver();
     static  void       setDefaultDriver(const char *newDriver);
