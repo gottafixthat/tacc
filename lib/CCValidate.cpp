@@ -27,6 +27,7 @@
 
 using namespace std;
 #include <string>
+#include <string.h>
 
 #include "CCValidate.h"
 
