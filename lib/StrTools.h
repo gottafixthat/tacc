@@ -29,6 +29,7 @@
 using namespace std;
 #include <ext/hash_map>
 #include <string>
+#include <string.h>
 
 
 namespace __gnu_cxx

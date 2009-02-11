@@ -8,7 +8,7 @@
 #ifdef DW_USE_ANSI_IOSTREAM
 #  include <iostream>
 #else
-#  include <iostream.h>
+#  include <iostream>
 #endif
 
 #include "IClient.h"
