@@ -105,6 +105,8 @@ extern QPtrList<domainRecord> domainListFull;
 extern QPtrList<dialupRecord> dialupListFull;
 
 int main( int argc, char ** argv );
+void csvImport(const char *, const char *);
+void loadFlags();
 void loadDomains();
 void loadDialupStatic();
 void loadDialupDynamic();
