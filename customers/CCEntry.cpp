@@ -248,7 +248,8 @@ CCEntry::CCEntry
 
     curRow++; curCol = 2;
     ewl->setRowStretch(curRow, 0);
-    ewl->addMultiCellWidget(chargeDateGroup, curRow, curRow, curCol, ++curCol);
+    ewl->addMultiCellWidget(chargeDateGroup, curRow, curRow, curCol, curCol+1);
+    curCol++;
 
     
     ml->addLayout(ewl,0);
