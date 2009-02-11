@@ -32,7 +32,6 @@
 #include <qwidget.h>
 #include <qregexp.h>
 
-#include <hash_map>
 #include <ADB.h>
 #include <Cfg.h>
 #include <StrTools.h>
