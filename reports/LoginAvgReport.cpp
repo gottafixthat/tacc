@@ -17,7 +17,7 @@
 #include <BString.h>
 
 
-typedef struct AvgRepStruct {
+struct AvgRepStruct {
     long    Min;
     long    Max;
     long    Total;

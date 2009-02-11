@@ -37,7 +37,7 @@
 #include "bdes.h"
 #endif
 
-typedef struct PackageItem {
+struct PackageItem {
     long    InternalID;
     long    ItemNumber;
     int     LoginGroup;

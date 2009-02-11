@@ -16,7 +16,7 @@
 #include <qintdict.h>
 #include <qstrlist.h>
 
-typedef struct ModemTotalStruct {
+struct ModemTotalStruct {
     int  loginCount;
     long totalTime;
 };

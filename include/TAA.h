@@ -48,7 +48,7 @@ enum ServerTypes {
     Aliases             = 5
 };
 
-typedef struct server_type {
+struct server_type {
     int         servertype;
     char        description[80];
 };
@@ -64,7 +64,7 @@ static struct server_type server_types[] = {
     {-1,        ""}
 };
 
-typedef struct voicemail_disposition {
+struct voicemail_disposition {
     int     dispid;
     char    code[32];
     char    description[80];

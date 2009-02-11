@@ -7,7 +7,7 @@
 
 #define TACT_KEYFILE "/usr/local/lib/tact.key"
 
-char *gKey[] = {"7756cb8af52d2479cfa70bb201ede82ef7600c7b14da128053eb148e0986",
+const char *gKey[] = {"7756cb8af52d2479cfa70bb201ede82ef7600c7b14da128053eb148e0986",
                 "6514e5d6b24e6b4ebe0d3ca3faf165c67ef41f1cc74268e9f5211fb5b9ecd631059b",
                 "151a8ad8b22c2416d1066aad46fc02e7e3e0131f2f4bfa1c6ad7624089ddb1800400",
                 "775fc694f77a7153fbcd3058e8db1424eee946fd716447dfcde78201c72c18b80634",
@@ -36,7 +36,7 @@ void loadKey(void)
 {
     //set_user_key((unsigned char *) "213434ak");
     //return;
-    FILE        *fp;
+    //FILE        *fp;
     int         Success = 1;
     int         LineNo  = 0;
     unsigned    char *src;

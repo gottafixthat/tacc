@@ -29,7 +29,7 @@
 #include <qpopupmenu.h>
 #include "AsteriskManager.h"
 
-typedef struct statusInfoStruct {
+struct statusInfoStruct {
     time_t      lastchange;
     int         paused;
     int         status;

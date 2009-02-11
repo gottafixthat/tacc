@@ -17,7 +17,7 @@
 // and variables are designed around this data type.  It consists of a name
 // and a value (simple, no?).
 
-typedef struct SElement {
+struct SElement {
     char    *Name;
     char    *Value;
 };
@@ -36,11 +36,11 @@ void    parseEmail(const char *tmplName, long CustomerID, const char *LoginID,
 
 // The Element List, which contains a single "row" of data for a list.
 // Each item in an EList contains another list with SElements in it.
-typedef struct EList {
+struct EList {
     QList<SElement> columns;
 };
 
-typedef struct LList {
+struct LList {
     char            *Name;
     QList<EList>    rows;
 };
