@@ -14,6 +14,7 @@
 #include <Cfg.h>
 #include <BlargDB.h>
 #include <AcctsRecv.h>
+#include <qregexp.h>
 
 #include "seanetimport.h"
 
@@ -40,13 +41,142 @@ int main( int argc, char ** argv )
     QSqlDbPool::setDefaultPass(cfgVal("TAAMySQLPass"));
     QSqlDbPool::setDefaultDriver(cfgVal("TAASQLDriver"));
 
+    // Transfer our CSV files into tables
+    csvImport("PLANS_AccessSet.csv", "import_access_set");
+    csvImport("PLANS_dialup_NONstatic.csv", "import_dialup_nonstatic");
+    csvImport("PLANS_dialup_static.csv", "import_dialup_static");
+    csvImport("PLANS_main_billable.csv", "import_main_billable");
+    csvImport("PLANS_nailedset1.csv", "import_nailedset1");
+    csvImport("PLANS_nailedset_2.csv", "import_nailedset2");
+    csvImport("PLANS_virtmail_1.csv", "import_virtmail1");
+    csvImport("PLANS_virtmail_2.csv", "import_virtmail2");
+    csvImport("PLANS_websets.csv", "import_websets");
+
     // Import the login types and billable items.
+    loadFlags();
     importLoginTypes();
     loadDomains();
     loadDialupStatic();
     loadDialupDynamic();
     loadCustomers();
     importCustomers();
+
+}
+
+/**
+ * csvImport()
+ *
+ * Given a CSV file and a table name, this migrates all of the columns
+ * found in the CSV into a SQL database.
+ */
+void csvImport(const char *csvFile, const char *tableName)
+{
+    CSVParser   parser;
+    // Open our CSV file
+    if (!parser.openFile(csvFile, true)) {
+        fprintf(stderr, "Unable to open '%s', aborting\n", csvFile);
+        exit(-1);
+    }
+
+    QSqlDbPool  dbpool;
+    QSqlQuery   q(dbpool.qsqldb());
+    QString     qstr;
+
+    fprintf(stderr, "\e[KLoading table '%s' from '%s'\r", tableName, csvFile);
+    qstr = "drop table if exists ";
+    qstr += tableName;
+    if (!q.exec(qstr)) {
+        fprintf(stderr, "Error dropping table '%s'\n", tableName);
+        fprintf(stderr, "Query: '%s'\n", q.lastQuery().ascii());
+        exit(-1);
+    }
+
+    qstr = "create table ";
+    qstr += tableName;
+    qstr += "(id bigint(21) not null auto_increment, processed int(11) not null default '0', ";
+
+    for (uint i = 0; i < parser.header().count(); i++) {
+        qstr += parser.header()[i];
+        qstr += " varchar(255) NOT NULL default '', ";
+    }
+    qstr += " PRIMARY KEY(id))";
+
+    if (!q.exec(qstr)) {
+        fprintf(stderr, "Error creating table '%s'\n", tableName);
+        fprintf(stderr, "Query: '%s'\n", q.lastQuery().ascii());
+        exit(-1);
+    }
+
+    int rowCount = 0;
+    while(parser.loadRecord()) {
+        rowCount++;
+        if (!(rowCount % 10)) fprintf(stderr, "\e[KLoading table '%s' from '%s'...Row %d...\r", tableName, csvFile, rowCount);
+        QSqlQuery   iq(dbpool.qsqldb());
+        QString tmpStr;
+        qstr = "insert into ";
+        qstr += tableName;
+        qstr += " values(0, 0, ";
+        for (uint i = 0; i < parser.row().count(); i++) {
+            qstr += "'";
+            tmpStr = parser.row()[i];
+            tmpStr.replace("\\", "");
+            tmpStr.replace(QRegExp("'"), "\\'");
+            qstr += tmpStr;
+            qstr += "'";
+            if (i < parser.row().count() -1) qstr += ", ";
+        }
+        qstr += ")";
+        if (!iq.exec(qstr)) {
+            fprintf(stderr, "Error inserting row.\n");
+            fprintf(stderr, "Query: '%s'\n", iq.lastQuery().ascii());
+            exit(-1);
+        }
+    }
+    fprintf(stderr, "\e[KFinished loading table '%s' from '%s'...%d Rows...\n", tableName, csvFile, rowCount);
+}
+
+/**
+ * loadFlags()
+ *
+ * Loads the flags we need from the CSV file Flags.csv
+ */
+void loadFlags()
+{
+    CSVParser   parser;
+    if (!parser.openFile("Flags.csv", true)) {
+        fprintf(stderr, "Unable to open Flags.csv.  Aborting.\n");
+        exit(-1);
+    }
+    int flagCol     = parser.header().findIndex("Flag");
+    int descCol     = parser.header().findIndex("Description");
+    int isBoolCol   = parser.header().findIndex("IsBool");
+    int baseTypeCol = parser.header().findIndex("BaseType");
+    int defValCol   = parser.header().findIndex("DefaultValue");
+    int userDefCol  = parser.header().findIndex("UserDefined");
+
+    QSqlDbPool  pool;
+    QSqlCursor  flags("LoginFlags", true, pool.qsqldb());
+    QSqlRecord  *buf;
+    fprintf(stderr, "\e[KPopulating flag definitions...\r");
+    int flagCount = 0;
+    while(parser.loadRecord()) {
+        if (parser.row()[flagCol] != NULL) {
+            buf = flags.primeInsert();
+            QString defVal = parser.row()[defValCol];
+            if (defVal.isEmpty()) defVal = " ";
+            buf->setValue("InternalID",     0);
+            buf->setValue("LoginFlag",      parser.row()[flagCol]);
+            buf->setValue("Description",    parser.row()[descCol]);
+            buf->setValue("IsBool",         parser.row()[isBoolCol]);
+            buf->setValue("BaseType",       parser.row()[baseTypeCol]);
+            buf->setValue("DefaultValue",   defVal);
+            buf->setValue("UserDefined",    parser.row()[userDefCol]);
+            flagCount += flags.insert();
+            fprintf(stderr, "\e[KQuery = '%s'\n", flags.lastQuery().ascii());
+            
+        }
+    }
+    fprintf(stderr, "\e[KDefined %d flags.\n", flagCount);
 
 }
 
@@ -59,8 +189,8 @@ void loadDomains()
 {
     CSVParser   parser;
     // Open our CSV file
-    if (!parser.openFile("SeanetDomainSet.csv", true)) {
-        fprintf(stderr, "Unable to open SeanetDomainSet.csv, aborting\n");
+    if (!parser.openFile("PLANS_domainSet.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_domainSet.csv, aborting\n");
         exit(-1);
     }
 
@@ -101,8 +231,8 @@ void loadDialupStatic()
 {
     CSVParser   parser;
     // Open our CSV file
-    if (!parser.openFile("SeanetDialupStatics.csv", true)) {
-        fprintf(stderr, "Unable to open SeanetDialupStatics.csv, aborting\n");
+    if (!parser.openFile("PLANS_dialup_static.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_dialup_static.csv, aborting\n");
         exit(-1);
     }
 
@@ -158,8 +288,8 @@ void loadDialupDynamic()
 {
     CSVParser   parser;
     // Open our CSV file
-    if (!parser.openFile("SeanetDialupDynamics.csv", true)) {
-        fprintf(stderr, "Unable to open SeanetDialupDynamics.csv, aborting\n");
+    if (!parser.openFile("PLANS_dialup_NONstatic.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_dialup_NONstatic.csv, aborting\n");
         exit(-1);
     }
 
@@ -398,8 +528,8 @@ void loadCustomers()
     }
 
     // Open the CSV file
-    if (!parser.openFile("SeanetPlansMain.csv", true)) {
-        fprintf(stderr, "Unable to open SeanetPlansMain.csv, aborting\n");
+    if (!parser.openFile("PLANS_main_billable.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_main_billable.csv, aborting\n");
         exit(-1);
     }
 
