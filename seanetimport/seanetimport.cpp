@@ -21,7 +21,7 @@
 // Globals
 QPtrList<customerRecord> customerList;
 QPtrList<domainRecord> domainListFull;
-QPtrList<dialupRecord> dialupListFull;
+QPtrList<loginRecord> loginListFull;
 
 int main( int argc, char ** argv )
 {
@@ -59,6 +59,7 @@ int main( int argc, char ** argv )
     loadDomains();
     loadDialupStatic();
     loadDialupDynamic();
+    loadDSLAccessSet();
     loadCustomers();
     importCustomers();
 
@@ -215,22 +216,22 @@ void loadDialupStatic()
 
     int recCount = 0;
     while(parser.loadRecord()) {
-        dialupRecord    *dialupRec  = new dialupRecord;
-        dialupRec->regNumber        = parser.row()[regNumberCol];
-        dialupRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
-        dialupRec->planStatus       = parser.row()[planStatusCol].toInt();
-        dialupRec->serviceStart     = parser.row()[serviceStartCol];
-        dialupRec->nextBillDate     = parser.row()[nextBillDateCol];
-        dialupRec->serviceType      = parser.row()[serviceTypeCol];
-        dialupRec->userName         = parser.row()[userNameCol];
-        dialupRec->password         = parser.row()[passwordCol];
-        dialupRec->virtDomain       = parser.row()[virtDomainCol];
-        dialupRec->autoAssign       = parser.row()[autoAssignCol];
-        dialupRec->dateAssigned     = parser.row()[dateAssignedCol];
-        dialupRec->netmask          = parser.row()[netmaskCol];
-        dialupRec->ipAddr           = parser.row()[ipAddrCol];
-        dialupRec->mailType         = parser.row()[mailTypeCol];
-        dialupRec->foundMatch       = 0;
+        loginRecord    *loginRec  = new loginRecord;
+        loginRec->regNumber        = parser.row()[regNumberCol];
+        loginRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
+        loginRec->planStatus       = parser.row()[planStatusCol].toInt();
+        loginRec->serviceStart     = parser.row()[serviceStartCol];
+        loginRec->nextBillDate     = parser.row()[nextBillDateCol];
+        loginRec->serviceType      = parser.row()[serviceTypeCol];
+        loginRec->userName         = parser.row()[userNameCol];
+        loginRec->password         = parser.row()[passwordCol];
+        loginRec->virtDomain       = parser.row()[virtDomainCol];
+        loginRec->autoAssign       = parser.row()[autoAssignCol];
+        loginRec->dateAssigned     = parser.row()[dateAssignedCol];
+        loginRec->netmask          = parser.row()[netmaskCol];
+        loginRec->ipAddr           = parser.row()[ipAddrCol];
+        loginRec->mailType         = parser.row()[mailTypeCol];
+        loginRec->foundMatch       = 0;
 
         // Get the loginTypeID
         q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
@@ -241,12 +242,12 @@ void loadDialupStatic()
         }
         if (q.size()) {
             q.next();
-            dialupRec->loginTypeID = q.value(0).toInt();
+            loginRec->loginTypeID = q.value(0).toInt();
         }
-        dialupListFull.append(dialupRec);
+        loginListFull.append(loginRec);
 
         recCount++;
-        fprintf(stderr, "\e[KLoaded static dialup %s...\r", dialupRec->userName.ascii());
+        fprintf(stderr, "\e[KLoaded static dialup %s...\r", loginRec->userName.ascii());
     }
     fprintf(stderr, "\e[KLoaded %d static dialups into memory.\n", recCount);
 }
@@ -282,19 +283,19 @@ void loadDialupDynamic()
 
     int recCount = 0;
     while(parser.loadRecord()) {
-        dialupRecord    *dialupRec  = new dialupRecord;
-        dialupRec->regNumber        = parser.row()[regNumberCol];
-        dialupRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
-        dialupRec->planStatus       = parser.row()[planStatusCol].toInt();
-        dialupRec->serviceStart     = parser.row()[serviceStartCol];
-        dialupRec->nextBillDate     = parser.row()[nextBillDateCol];
-        dialupRec->serviceType      = parser.row()[serviceTypeCol];
-        dialupRec->userName         = parser.row()[userNameCol];
-        dialupRec->password         = parser.row()[passwordCol];
-        dialupRec->virtDomain       = parser.row()[virtDomainCol];
-        dialupRec->mailType         = parser.row()[mailTypeCol];
-        dialupRec->foundMatch       = 0;
-        dialupRec->loginTypeID      = 0;
+        loginRecord    *loginRec  = new loginRecord;
+        loginRec->regNumber        = parser.row()[regNumberCol];
+        loginRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
+        loginRec->planStatus       = parser.row()[planStatusCol].toInt();
+        loginRec->serviceStart     = parser.row()[serviceStartCol];
+        loginRec->nextBillDate     = parser.row()[nextBillDateCol];
+        loginRec->serviceType      = parser.row()[serviceTypeCol];
+        loginRec->userName         = parser.row()[userNameCol];
+        loginRec->password         = parser.row()[passwordCol];
+        loginRec->virtDomain       = parser.row()[virtDomainCol];
+        loginRec->mailType         = parser.row()[mailTypeCol];
+        loginRec->foundMatch       = 0;
+        loginRec->loginTypeID      = 0;
 
         // Get the loginTypeID
         q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
@@ -305,14 +306,85 @@ void loadDialupDynamic()
         }
         if (q.size()) {
             q.next();
-            dialupRec->loginTypeID = q.value(0).toInt();
+            loginRec->loginTypeID = q.value(0).toInt();
         }
 
-        dialupListFull.append(dialupRec);
+        loginListFull.append(loginRec);
         recCount++;
-        fprintf(stderr, "\e[KLoaded dynamic dialup %s...\r", dialupRec->userName.ascii());
+        fprintf(stderr, "\e[KLoaded dynamic dialup %s...\r", loginRec->userName.ascii());
     }
     fprintf(stderr, "\e[KLoaded %d dynamic dialups into memory.\n", recCount);
+}
+
+/**
+ * loadDSLAccessSet()
+ *
+ * Loads the non-static dialup records from the CSV file into memory.
+ */
+void loadDSLAccessSet()
+{
+    CSVParser   parser;
+    // Open our CSV file
+    if (!parser.openFile("PLANS_AccessSet.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_AccessSet.csv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("RegNumber");
+    int billingPeriodCol    = parser.header().findIndex("BillPeriod");
+    int planStatusCol       = parser.header().findIndex("Status");
+    int serviceStartCol     = parser.header().findIndex("ServiceStart");
+    int nextBillDateCol     = parser.header().findIndex("NextBilldate");
+    int serviceTypeCol      = parser.header().findIndex("Detail");
+    int providerCol         = parser.header().findIndex("Expr1");
+    int circuitIDCol        = parser.header().findIndex("customerCircuitID");
+    int vpiCol              = parser.header().findIndex("vpi");
+    int vciCol              = parser.header().findIndex("vci");
+    int cpeCol              = parser.header().findIndex("Expr2");
+    int requirePVCCol       = parser.header().findIndex("requiresPVC");
+    char    userName[1024];
+
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+
+    int recCount = 0;
+    while(parser.loadRecord()) {
+        recCount++;
+        sprintf(userName, "dslset%05d", recCount);
+        loginRecord    *loginRec  = new loginRecord;
+        loginRec->regNumber        = parser.row()[regNumberCol];
+        loginRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
+        loginRec->planStatus       = parser.row()[planStatusCol].toInt();
+        loginRec->serviceStart     = parser.row()[serviceStartCol];
+        loginRec->nextBillDate     = parser.row()[nextBillDateCol];
+        loginRec->serviceType      = parser.row()[serviceTypeCol];
+        loginRec->userName         = userName;
+        loginRec->provider          = parser.row()[providerCol];
+        loginRec->circuitID         = parser.row()[circuitIDCol];
+        loginRec->vpi               = parser.row()[vpiCol];
+        loginRec->vci               = parser.row()[vciCol];
+        loginRec->cpeName           = parser.row()[cpeCol];
+        loginRec->requirePVC        = parser.row()[requirePVCCol];
+        loginRec->foundMatch       = 0;
+        loginRec->loginTypeID      = 0;
+
+        // Get the loginTypeID
+        q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
+        q.bindValue(":svctype", parser.row()[serviceTypeCol]);
+        if (!q.exec()) {
+            fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+            exit(-1);
+        }
+        if (q.size()) {
+            q.next();
+            loginRec->loginTypeID = q.value(0).toInt();
+        }
+
+        loginListFull.append(loginRec);
+        fprintf(stderr, "\e[KLoaded DSLset %s...\r", loginRec->userName.ascii());
+    }
+    fprintf(stderr, "\e[KLoaded %d DSLset entries into memory.\n", recCount);
 }
 
 /**
@@ -812,11 +884,11 @@ void loadCustomers()
 
             //fprintf(stderr, "Customer ID %ld %-50s\r", cust->customerID, cust->contactName.ascii());
 
-            // Add the dialups for this new customer record, if any.
-            for (unsigned int i = 0; i < dialupListFull.count(); i++) {
-                dialupRecord *dialup = dialupListFull.at(i);
-                if (dialup->regNumber == cust->regNumber) {
-                    cust->dialupList.append(dialup);
+            // Add the logins for this new customer record, if any.
+            for (unsigned int i = 0; i < loginListFull.count(); i++) {
+                loginRecord *login = loginListFull.at(i);
+                if (login->regNumber == cust->regNumber) {
+                    cust->loginList.append(login);
                 }
             }
         }
@@ -873,7 +945,7 @@ void loadCustomers()
             }
         /*}*/
 
-        // Add dialups for this customer
+        // Add logins for this customer
         
     }
     // Save the last one we were working on.
@@ -902,17 +974,16 @@ void importCustomers()
     for (unsigned int c = 0; c < customerList.count(); c++) {
         customerRecord  *cust = customerList.at(c);
         fprintf(stderr, "\e[KProcessing customer ID %d - '%s'...\r", cust->customerID, cust->contactName.ascii());
-        for (unsigned int d = 0; d < cust->dialupList.count(); d++) {
-            dialupRecord    *dialup = cust->dialupList.at(d);
-            if (!dialup->foundMatch) {
+        for (unsigned int d = 0; d < cust->loginList.count(); d++) {
+            loginRecord    *login = cust->loginList.at(d);
+            if (!login->foundMatch) {
                 // Find the placeholder
                 bool    foundIt = false;
                 for (unsigned int p = 0; p < cust->svcList.count(); p++) {
                     serviceRecord   *svc = cust->svcList.at(p);
-                    if (!svc->foundMatch && !dialup->foundMatch) {
+                    if (!svc->foundMatch && !login->foundMatch) {
                         // Compare this dialup record with this service
                         // record to see if we want to override it.
-                        matchDialup(svc, dialup);
                     }
                 }
             }
@@ -930,46 +1001,6 @@ void importCustomers()
     sql.exec("update Subscriptions set EndsOn = '2009-02-28', LastDate = '2009-02-01'");
     sql.exec("update Customers set RatePlanDate = '2009-02-01', BillingCycleDate = '2009-02-01', LastBilled = '0000-00-00', LastStatementNo = '0000-00-00', AccountExpires = '0000-00-00', AccountOpened = '0000-00-00', AccountClosed = '0000-00-00', AccountReOpened = '0000-00-00', GraceDate = '0000-00-00', PromotionGiven = '0000-00-00'");
     */
-}
-
-/**
- * matchDialup()
- *
- * Attempts to match the passed in dialup record with the passed in
- * service record.  If it is matched, the service record is updated
- * with information from the dialup and both records are tagged as
- * having found a match.
- */
-void matchDialup(serviceRecord *svcRec, dialupRecord *dialRec)
-{
-    bool matchFound = false;
-    if ((svcRec->loginType == "POPLogin") && (dialRec->serviceType == "POPaccount")) {
-        fprintf(stderr, "Found matching service record/dialup record for dialup user %s\n", dialRec->userName.ascii());
-        matchFound = true;
-    } else if ((svcRec->loginType == "ExtraLogin") && (dialRec->serviceType == "DialupDynamic")) {
-        // WTF?  This doesn't seem right, but it matches.
-        fprintf(stderr, "Found matching service record/dialup record for dialup user %s\n", dialRec->userName.ascii());
-        matchFound = true;
-    } else if ((svcRec->loginType == "PPPBasic") && (dialRec->serviceType == "DialupStatic")) {
-        // WTF?  This doesn't seem right, but it matches.
-        fprintf(stderr, "Found matching service record/dialup record for dialup user %s\n", dialRec->userName.ascii());
-        matchFound = true;
-    }
-
-    if (matchFound) {
-        // Copy the data over since this one matches.
-        strcpy(svcRec->loginID, dialRec->userName.ascii());
-        svcRec->userName = dialRec->userName;
-        svcRec->password = dialRec->password;
-        svcRec->virtDomain = dialRec->virtDomain;
-        svcRec->autoAssign = dialRec->autoAssign;
-        svcRec->dateAssigned = dialRec->dateAssigned;
-        svcRec->netmask = dialRec->netmask;
-        svcRec->ipAddr = dialRec->ipAddr;
-        svcRec->mailType = dialRec->mailType;
-        svcRec->foundMatch = 1;
-        dialRec->foundMatch = 1;
-    }
 }
 
 
@@ -1128,13 +1159,13 @@ void saveCustomer(customerRecord *cust)
         AR.SaveTrans();
     }
 
-    // Add the dialups.
-    for (uint i = 0; i < cust->dialupList.count(); i++) {
-        dialupRecord   *dialRec = cust->dialupList.at(i);
+    // Add the logins
+    for (uint i = 0; i < cust->loginList.count(); i++) {
+        loginRecord   *loginRec = cust->loginList.at(i);
         LoginsDB    ldb;
         ldb.setValue("CustomerID",      (long int)cust->customerID);
-        ldb.setValue("LoginID",         dialRec->userName);
-        ldb.setValue("LoginType",       dialRec->loginTypeID);
+        ldb.setValue("LoginID",         loginRec->userName);
+        ldb.setValue("LoginType",       loginRec->loginTypeID);
         ldb.setValue("ContactName",     fullName.ascii());
         ldb.setValue("DiskSpace",       0);
         ldb.setValue("DialupChannels",  0);
@@ -1146,30 +1177,37 @@ void saveCustomer(customerRecord *cust)
         CDB.get((long int)cust->customerID);
         if (!strlen((const char *) CDB.getStr("PrimaryLogin")) ||
                 !strncmp(CDB.getStr("PrimaryLogin"), "W", 1)) {
-            CDB.setValue("PrimaryLogin", dialRec->userName);
+            CDB.setValue("PrimaryLogin", loginRec->userName);
             CDB.upd();
         }
         // Set the flags for this user
         // MARC
-        if (dialRec->serviceType == "DialupDynamic") {
-            setLoginFlag(dialRec->userName, "Username",     dialRec->userName);
-            setLoginFlag(dialRec->userName, "Password",     dialRec->password);
-            setLoginFlag(dialRec->userName, "VirtDomain",   dialRec->virtDomain);
-            setLoginFlag(dialRec->userName, "MailType",     dialRec->mailType);
-        } else if (dialRec->serviceType == "DialupStatic") {
-            setLoginFlag(dialRec->userName, "Username",     dialRec->userName);
-            setLoginFlag(dialRec->userName, "Password",     dialRec->password);
-            setLoginFlag(dialRec->userName, "VirtDomain",   dialRec->virtDomain);
-            setLoginFlag(dialRec->userName, "MailType",     dialRec->mailType);
-            setLoginFlag(dialRec->userName, "AutoAssign",   dialRec->autoAssign);
-            setLoginFlag(dialRec->userName, "DateAssigned", dialRec->dateAssigned);
-            setLoginFlag(dialRec->userName, "IPaddress",    dialRec->ipAddr);
-            setLoginFlag(dialRec->userName, "Netmask",      dialRec->netmask);
-        } else if (dialRec->serviceType == "POPaccount") {
-            setLoginFlag(dialRec->userName, "Popname",      dialRec->userName);
-            setLoginFlag(dialRec->userName, "Password",     dialRec->password);
-            setLoginFlag(dialRec->userName, "VirtDomain",   dialRec->virtDomain);
-            setLoginFlag(dialRec->userName, "MailType",     dialRec->mailType);
+        if (loginRec->serviceType == "DialupDynamic") {
+            setLoginFlag(loginRec->userName, "Username",     loginRec->userName);
+            setLoginFlag(loginRec->userName, "Password",     loginRec->password);
+            setLoginFlag(loginRec->userName, "VirtDomain",   loginRec->virtDomain);
+            setLoginFlag(loginRec->userName, "MailType",     loginRec->mailType);
+        } else if (loginRec->serviceType == "DialupStatic") {
+            setLoginFlag(loginRec->userName, "Username",     loginRec->userName);
+            setLoginFlag(loginRec->userName, "Password",     loginRec->password);
+            setLoginFlag(loginRec->userName, "VirtDomain",   loginRec->virtDomain);
+            setLoginFlag(loginRec->userName, "MailType",     loginRec->mailType);
+            setLoginFlag(loginRec->userName, "AutoAssign",   loginRec->autoAssign);
+            setLoginFlag(loginRec->userName, "DateAssigned", loginRec->dateAssigned);
+            setLoginFlag(loginRec->userName, "IPaddress",    loginRec->ipAddr);
+            setLoginFlag(loginRec->userName, "Netmask",      loginRec->netmask);
+        } else if (loginRec->serviceType == "DSLset") {
+            setLoginFlag(loginRec->userName, "Provider",     loginRec->provider);
+            setLoginFlag(loginRec->userName, "CircuitID",    loginRec->circuitID);
+            setLoginFlag(loginRec->userName, "VPI",          loginRec->vpi);
+            setLoginFlag(loginRec->userName, "VCI",          loginRec->vci);
+            setLoginFlag(loginRec->userName, "CPEname",      loginRec->cpeName);
+            setLoginFlag(loginRec->userName, "RequirePVC",   loginRec->requirePVC);
+        } else if (loginRec->serviceType == "POPaccount") {
+            setLoginFlag(loginRec->userName, "Popname",      loginRec->userName);
+            setLoginFlag(loginRec->userName, "Password",     loginRec->password);
+            setLoginFlag(loginRec->userName, "VirtDomain",   loginRec->virtDomain);
+            setLoginFlag(loginRec->userName, "MailType",     loginRec->mailType);
         }
         //CDB.doSubscriptions();
         //ldb.addSubscriptions();

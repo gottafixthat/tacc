@@ -30,7 +30,7 @@ struct domainRecord {
     QString mailType;
 };
 
-struct dialupRecord {
+struct loginRecord {
     QString regNumber;
     int     loginTypeID;
     int     billingPeriod;
@@ -46,6 +46,12 @@ struct dialupRecord {
     QString netmask;
     QString ipAddr;
     QString mailType;
+    QString provider;
+    QString circuitID;
+    QString vpi;
+    QString vci;
+    QString cpeName;
+    QString requirePVC;
     int     foundMatch;
 };
 
@@ -101,25 +107,25 @@ struct customerRecord {
     QString password;
     QPtrList<serviceRecord> svcList;
     QPtrList<billableRecord> billableList;
-    QPtrList<dialupRecord> dialupList;
+    QPtrList<loginRecord> loginList;
 };
 
 extern QPtrList<customerRecord> customerList;
 extern QPtrList<domainRecord> domainListFull;
-extern QPtrList<dialupRecord> dialupListFull;
+extern QPtrList<loginRecord> loginListFull;
 
 int main( int argc, char ** argv );
 void csvImport(const char *, const char *);
 void loadDomains();
 void loadDialupStatic();
 void loadDialupDynamic();
+void loadDSLAccessSet();
 void addLoginType(const char *loginType);
 void addLoginTypeFlag(const char *loginType, const char *flagName);
 void setLoginFlag(const QString userName, const char *flagName, const QString val);
 void importLoginTypes();
 void loadCustomers();
 void importCustomers();
-void matchDialup(serviceRecord *, dialupRecord *);
 void saveCustomer(customerRecord *);
 const QDate dateConvert(const QString src);
 
