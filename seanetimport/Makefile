@@ -3,7 +3,8 @@
 INCDIRS	=  -I. -I/usr/local/include -I../include -I../lib -I$(QTDIR)/include -I../adb -I../bdes
 CFLAGS= -O2 -fno-strength-reduce -Wall
 LFLAGS  = -L/usr/local/lib -L/usr/lib/mysql -L../lib -L../adb -L../bdes -L$(QTDIR)/lib -L/usr/X11R6/lib/
-LFLAGS += -ltaa -ladbqt -lqt-mt -lmysqlclient -lXext -lX11 -lSM -ldl -lpcre
+LFLAGS += -ltaa -ladbqt -lqt-mt -lmysqlclient -lpcre
+#LFLAGS += -lXext -lX11 -lSM -ldl
 #LFLAGS += -static
 SHELL   = /bin/sh
 CC	= g++

@@ -42,6 +42,7 @@ int main( int argc, char ** argv )
     QSqlDbPool::setDefaultDriver(cfgVal("TAASQLDriver"));
 
     // Transfer our CSV files into tables
+    /*
     csvImport("PLANS_AccessSet.csv", "import_access_set");
     csvImport("PLANS_dialup_NONstatic.csv", "import_dialup_nonstatic");
     csvImport("PLANS_dialup_static.csv", "import_dialup_static");
@@ -51,9 +52,9 @@ int main( int argc, char ** argv )
     csvImport("PLANS_virtmail_1.csv", "import_virtmail1");
     csvImport("PLANS_virtmail_2.csv", "import_virtmail2");
     csvImport("PLANS_websets.csv", "import_websets");
+    */
 
     // Import the login types and billable items.
-    loadFlags();
     importLoginTypes();
     loadDomains();
     loadDialupStatic();
@@ -135,50 +136,6 @@ void csvImport(const char *csvFile, const char *tableName)
     fprintf(stderr, "\e[KFinished loading table '%s' from '%s'...%d Rows...\n", tableName, csvFile, rowCount);
 }
 
-/**
- * loadFlags()
- *
- * Loads the flags we need from the CSV file Flags.csv
- */
-void loadFlags()
-{
-    CSVParser   parser;
-    if (!parser.openFile("Flags.csv", true)) {
-        fprintf(stderr, "Unable to open Flags.csv.  Aborting.\n");
-        exit(-1);
-    }
-    int flagCol     = parser.header().findIndex("Flag");
-    int descCol     = parser.header().findIndex("Description");
-    int isBoolCol   = parser.header().findIndex("IsBool");
-    int baseTypeCol = parser.header().findIndex("BaseType");
-    int defValCol   = parser.header().findIndex("DefaultValue");
-    int userDefCol  = parser.header().findIndex("UserDefined");
-
-    QSqlDbPool  pool;
-    QSqlCursor  flags("LoginFlags", true, pool.qsqldb());
-    QSqlRecord  *buf;
-    fprintf(stderr, "\e[KPopulating flag definitions...\r");
-    int flagCount = 0;
-    while(parser.loadRecord()) {
-        if (parser.row()[flagCol] != NULL) {
-            buf = flags.primeInsert();
-            QString defVal = parser.row()[defValCol];
-            if (defVal.isEmpty()) defVal = " ";
-            buf->setValue("InternalID",     0);
-            buf->setValue("LoginFlag",      parser.row()[flagCol]);
-            buf->setValue("Description",    parser.row()[descCol]);
-            buf->setValue("IsBool",         parser.row()[isBoolCol]);
-            buf->setValue("BaseType",       parser.row()[baseTypeCol]);
-            buf->setValue("DefaultValue",   defVal);
-            buf->setValue("UserDefined",    parser.row()[userDefCol]);
-            flagCount += flags.insert();
-            fprintf(stderr, "\e[KQuery = '%s'\n", flags.lastQuery().ascii());
-            
-        }
-    }
-    fprintf(stderr, "\e[KDefined %d flags.\n", flagCount);
-
-}
 
 /**
  * loadDomains()
@@ -253,6 +210,9 @@ void loadDialupStatic()
     int mailTypeCol         = parser.header().findIndex("mailTypeName");
 
 
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+
     int recCount = 0;
     while(parser.loadRecord()) {
         dialupRecord    *dialupRec  = new dialupRecord;
@@ -265,14 +225,26 @@ void loadDialupStatic()
         dialupRec->userName         = parser.row()[userNameCol];
         dialupRec->password         = parser.row()[passwordCol];
         dialupRec->virtDomain       = parser.row()[virtDomainCol];
-        dialupRec->autoAssign       = parser.row()[autoAssignCol].toInt();
+        dialupRec->autoAssign       = parser.row()[autoAssignCol];
         dialupRec->dateAssigned     = parser.row()[dateAssignedCol];
         dialupRec->netmask          = parser.row()[netmaskCol];
         dialupRec->ipAddr           = parser.row()[ipAddrCol];
         dialupRec->mailType         = parser.row()[mailTypeCol];
         dialupRec->foundMatch       = 0;
 
+        // Get the loginTypeID
+        q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
+        q.bindValue(":svctype", parser.row()[serviceTypeCol]);
+        if (!q.exec()) {
+            fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+            exit(-1);
+        }
+        if (q.size()) {
+            q.next();
+            dialupRec->loginTypeID = q.value(0).toInt();
+        }
         dialupListFull.append(dialupRec);
+
         recCount++;
         fprintf(stderr, "\e[KLoaded static dialup %s...\r", dialupRec->userName.ascii());
     }
@@ -305,6 +277,8 @@ void loadDialupDynamic()
     int virtDomainCol       = parser.header().findIndex("domainName");
     int mailTypeCol         = parser.header().findIndex("mailTypeName");
 
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
 
     int recCount = 0;
     while(parser.loadRecord()) {
@@ -320,6 +294,19 @@ void loadDialupDynamic()
         dialupRec->virtDomain       = parser.row()[virtDomainCol];
         dialupRec->mailType         = parser.row()[mailTypeCol];
         dialupRec->foundMatch       = 0;
+        dialupRec->loginTypeID      = 0;
+
+        // Get the loginTypeID
+        q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
+        q.bindValue(":svctype", parser.row()[serviceTypeCol]);
+        if (!q.exec()) {
+            fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+            exit(-1);
+        }
+        if (q.size()) {
+            q.next();
+            dialupRec->loginTypeID = q.value(0).toInt();
+        }
 
         dialupListFull.append(dialupRec);
         recCount++;
@@ -328,6 +315,120 @@ void loadDialupDynamic()
     fprintf(stderr, "\e[KLoaded %d dynamic dialups into memory.\n", recCount);
 }
 
+/**
+ * addLoginType - Given the login type, this creates an entry for it.
+ */
+void addLoginType(const char *loginType)
+{
+    QSqlDbPool  pool;
+    QSqlCursor  logins("LoginTypes", true, pool.qsqldb());
+    QSqlRecord  *buf;
+
+    buf = logins.primeInsert();
+    buf->setValue("InternalID",             0);
+    buf->setValue("LoginType",              loginType);
+    buf->setValue("Description",            loginType);
+    buf->setValue("DiskSpace",              0);
+    buf->setValue("DiskSpaceBillable",      0);
+    buf->setValue("DialupChannels",         0);
+    buf->setValue("DialupChannelsBillable", 0);
+    buf->setValue("Active",                 1);
+    buf->setValue("AdditionalMailboxes",    0);
+    buf->setValue("LoginClass",             loginType);
+    logins.insert();
+}
+
+/**
+ * addLoginTypeFlag - Given the login type, and a flag name, this associates
+ * the specified flag with the specified login type.
+ * If the flag doesn't exist, it is added.
+ */
+void addLoginTypeFlag(const char *loginType, const char *flagName)
+{
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+    QSqlCursor  logins("LoginTypes", true, pool.qsqldb());
+    QSqlCursor  loginTypeFlags("LoginTypeFlags", true, pool.qsqldb());
+    QSqlRecord  *buf;
+    int         loginTypeID;
+    int         flagID;
+
+    // First things first, get the login type ID
+    q.prepare("select InternalID from LoginTypes where LoginType = :loginType");
+    q.bindValue(":loginType",   loginType);
+    if (!q.exec()) {
+        fprintf(stderr, "addLoginTypeFlag()\n");
+        fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+        exit(-1);
+    }
+    if (!q.size()) {
+        fprintf(stderr, "addLoginTypeFlag() - No matching login type '%s'\n", loginType);
+        exit(-1);
+    }
+    q.next();
+    loginTypeID = q.value(0).toInt();
+
+    // Check to see if the login flag has already been defined or not.
+    q.prepare("select InternalID from LoginFlags where LoginFlag = :loginFlag");
+    q.bindValue(":loginFlag",   flagName);
+    if (!q.exec()) {
+        fprintf(stderr, "addLoginTypeFlag()\n");
+        fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+        exit(-1);
+    }
+    if (!q.size()) {
+        // Not found, insert it.
+        QSqlCursor  lFlags("LoginFlags", true, pool.qsqldb());
+        buf = lFlags.primeInsert();
+        buf->setValue("InternalID",         0);
+        buf->setValue("LoginFlag",          flagName);
+        buf->setValue("Description",        flagName);
+        buf->setValue("IsBool",             0);
+        buf->setValue("BaseType",           0);
+        buf->setValue("DefaultValue",       " ");
+        buf->setValue("UserDefined",        1);
+        lFlags.insert();
+        // Get the flag ID
+        q.prepare("select InternalID from LoginFlags where LoginFlag = :loginFlag");
+        q.bindValue(":loginFlag",   flagName);
+        if (!q.exec()) {
+            fprintf(stderr, "addLoginTypeFlag()\n");
+            fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+            exit(-1);
+        }
+        if (!q.size()) {
+            fprintf(stderr, "addLoginTypeFlag() - Error adding flag '%s'\n", flagName);
+            exit(-1);
+        }
+        // We'll grab the value after we exit this nesting level
+    }
+
+    q.next();
+    flagID = q.value(0).toInt();
+
+    buf = loginTypeFlags.primeInsert();
+    buf->setValue("InternalID",             0);
+    buf->setValue("LoginTypeID",            loginTypeID);
+    buf->setValue("Tag",                    flagName);
+    buf->setValue("Value",                  " ");
+    loginTypeFlags.insert();
+}
+
+/**
+ * setLoginFlag()
+ *
+ * Given a username, flag name and value, this sets the flag.
+ */
+void setLoginFlag(const QString userName, const char *flagName, const QString val)
+{
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+    q.prepare("replace into LoginFlagValues values(:loginID, :loginFlag, :flagValue)");
+    q.bindValue(":loginID",     userName);
+    q.bindValue(":loginFlag",   flagName);
+    q.bindValue(":flagValue",   val);
+    q.exec();
+}
 
 /**
  * importLoginTypes()
@@ -416,6 +517,7 @@ void importLoginTypes()
     QSqlCursor  billablesData("BillablesData", true, db1);
     QSqlRecord  *buf;
     while(parser.loadRecord()) {
+        /*
         if (parser.row()[loginTypeCol] != NULL) {
             buf = logins.primeInsert();
             buf->setValue("InternalID",     0);
@@ -424,6 +526,7 @@ void importLoginTypes()
             buf->setValue("LoginClass",     parser.row()[classCol]);
             loginTypeIns += logins.insert();
         }
+        */
 
         // Prepare for a new billable to be inserted.
         if (parser.row()[billableCol] != NULL) {
@@ -490,6 +593,12 @@ void importLoginTypes()
 
     // Now, walk through the login types we've just added and create
     // a billable item for each one we find.
+    /*
+     * We don't want to associate billables with login types anymore.
+     * Severing that link will make it so the billable items that we insert
+     * won't insert billable records for this customer, which is the only
+     * way to make the seanet import "match" what was in the old Admiral
+     * system.
     QSqlQuery   subq(dbconn2.qsqldb());
     q.exec("select InternalID, LoginType from LoginTypes");
     while (q.next()) {
@@ -503,8 +612,64 @@ void importLoginTypes()
             subq.exec();
         }
     }
+    */
 
-    printf("Imported %d LoginTypes, %d BillableItems and %d Billable Prices for %d Rate Plans and %d Billing Cycles\n", loginTypeIns, billablesIns, billablePricesIns, planCount, cycleCount);
+    // Login types are statically defined
+    addLoginType("DialupStatic");
+    addLoginTypeFlag("DialupStatic",    "Username");
+    addLoginTypeFlag("DialupStatic",    "Password");
+    addLoginTypeFlag("DialupStatic",    "VirtDomain");
+    addLoginTypeFlag("DialupStatic",    "AutoAssign");
+    addLoginTypeFlag("DialupStatic",    "DateAssigned");
+    addLoginTypeFlag("DialupStatic",    "IPaddress");
+    addLoginTypeFlag("DialupStatic",    "Netmask");
+    addLoginTypeFlag("DialupStatic",    "MailType");
+
+    addLoginType("DialupDynamic");
+    addLoginTypeFlag("DialupDynamic",    "Username");
+    addLoginTypeFlag("DialupDynamic",    "Password");
+    addLoginTypeFlag("DialupDynamic",    "VirtDomain");
+    addLoginTypeFlag("DialupDynamic",    "MailType");
+
+    addLoginType("POPaccount");
+    addLoginTypeFlag("POPaccount",    "Popname");
+    addLoginTypeFlag("POPaccount",    "Password");
+    addLoginTypeFlag("POPaccount",    "VirtDomain");
+    addLoginTypeFlag("POPaccount",    "MailType");
+
+    addLoginType("DomainSet");
+    addLoginTypeFlag("DomainSet",    "SpamFilter");
+    addLoginTypeFlag("DomainSet",    "VirtDomain");
+    addLoginTypeFlag("DomainSet",    "MailType");
+
+    addLoginType("VirtualSet");
+    addLoginTypeFlag("VirtualSet",    "VirtUser");
+    addLoginTypeFlag("VirtualSet",    "VirtDomain");
+    addLoginTypeFlag("VirtualSet",    "VirtDest");
+
+    addLoginType("DSLset");
+    addLoginTypeFlag("DSLset",    "Provider");
+    addLoginTypeFlag("DSLset",    "CircuitID");
+    addLoginTypeFlag("DSLset",    "VPI");
+    addLoginTypeFlag("DSLset",    "VCI");
+    addLoginTypeFlag("DSLset",    "CPEname");
+    addLoginTypeFlag("DSLset",    "RequirePVC");
+
+    addLoginType("NailedSet");
+    addLoginTypeFlag("NailedSet",    "NailedType");
+    addLoginTypeFlag("NailedSet",    "ActivationDate");
+    addLoginTypeFlag("NailedSet",    "RouteSwitch");
+    addLoginTypeFlag("NailedSet",    "PortDLCI");
+    addLoginTypeFlag("NailedSet",    "IPaddress");
+    addLoginTypeFlag("NailedSet",    "Netmask");
+
+    addLoginType("Webset");
+    addLoginTypeFlag("Webset",    "WebServiceType");
+    addLoginTypeFlag("Webset",    "HostingUsername");
+    addLoginTypeFlag("Webset",    "HostingPassword");
+    addLoginTypeFlag("Webset",    "VirtDomain");
+
+    printf("Imported %d BillableItems and %d Billable Prices for %d Rate Plans and %d Billing Cycles\n", billablesIns, billablePricesIns, planCount, cycleCount);
 }
 
 /**
@@ -642,6 +807,9 @@ void loadCustomers()
                 cust->cardExpYear   = parser.row()[expYearCol].toInt();
             }
 
+            // A few dates.
+            cust->accountOpened     = dateConvert(parser.row()[serviceStartCol]);
+
             //fprintf(stderr, "Customer ID %ld %-50s\r", cust->customerID, cust->contactName.ascii());
 
             // Add the dialups for this new customer record, if any.
@@ -657,6 +825,7 @@ void loadCustomers()
         // new customer, we should have a customer record.
         // Find the service we're looking for.
         QSqlQuery   q(db1);
+        /*
         q.prepare("select InternalID, LoginType, Description from LoginTypes where Description LIKE :svcplan");
         q.bindValue(":svcplan", parser.row()[svcPlanCol]);
         if (!q.exec()) {
@@ -679,7 +848,7 @@ void loadCustomers()
             svc->foundMatch = 0;
             svc->autoAssign = 1;
             cust->svcList.append(svc);
-        } else {
+        } else {*/
             // No matching login type, search for a matching billable item instead.
             q.prepare("select ItemNumber from Billables where Description LIKE :svcplan");
             q.bindValue(":svcplan", parser.row()[svcPlanCol]);
@@ -693,12 +862,16 @@ void loadCustomers()
                 billableRecord  *billable = new billableRecord;
                 billable->billableItemID = q.value(0).toInt();
                 billable->endsOn = parser.row()[nextBillDateCol];
+                // Parse the date.
+                billable->endsOnDate = dateConvert(billable->endsOn);
+                billable->endsOnDate = billable->endsOnDate.addDays(-1);
+
                 billable->closeDate = parser.row()[closeDateCol];
                 cust->billableList.append(billable);
             } else {
                 fprintf(stderr, "Unable to find match for service plan '%s' on line %d.  Skipping.\n", parser.row()[svcPlanCol].ascii(), numLines);
             }
-        }
+        /*}*/
 
         // Add dialups for this customer
         
@@ -728,7 +901,7 @@ void importCustomers()
     // imported.
     for (unsigned int c = 0; c < customerList.count(); c++) {
         customerRecord  *cust = customerList.at(c);
-        fprintf(stderr, "\e[KProcessing customer %s...\r", cust->contactName.ascii());
+        fprintf(stderr, "\e[KProcessing customer ID %d - '%s'...\r", cust->customerID, cust->contactName.ascii());
         for (unsigned int d = 0; d < cust->dialupList.count(); d++) {
             dialupRecord    *dialup = cust->dialupList.at(d);
             if (!dialup->foundMatch) {
@@ -807,7 +980,7 @@ void matchDialup(serviceRecord *svcRec, dialupRecord *dialRec)
  */
 void saveCustomer(customerRecord *cust)
 {
-    fprintf(stderr, "\e[KSaving Customer ID %d %s\r", cust->customerID, cust->contactName.ascii());
+    //fprintf(stderr, "\e[KSaving Customer ID %d %s\r", cust->customerID, cust->contactName.ascii());
 
     QSqlDbPool  custPool;
     QSqlDbPool  addrPool;
@@ -842,9 +1015,9 @@ void saveCustomer(customerRecord *cust)
     buf->setValue("AddedBy",            0);
     buf->setValue("SalesRep",           0);
     buf->setValue("ReferredBy",         "");
-    buf->setValue("AccountOpened",      timeToStr(rightNow(), YYYY_MM_DD));
-    buf->setValue("AccountClosed",      timeToStr(rightNow(), YYYY_MM_DD));  // FIXME
-    buf->setValue("AccountReOpened",    timeToStr(rightNow(), YYYY_MM_DD));  // FIXME
+    buf->setValue("AccountOpened",      cust->accountOpened.toString("yyyy-MM-dd").ascii());
+    buf->setValue("AccountClosed",      cust->accountOpened.toString("yyyy-MM-dd").ascii());
+    buf->setValue("AccountReOpened",    cust->accountOpened.toString("yyyy-MM-dd").ascii());
     buf->setValue("GraceDate",          timeToStr(rightNow(), YYYY_MM_DD));
     buf->setValue("PromotionGiven",     timeToStr(rightNow(), YYYY_MM_DD));
     buf->setValue("CurrentBalance",     cust->currentBalance);
@@ -854,9 +1027,9 @@ void saveCustomer(customerRecord *cust)
     // Set the rate plan, billing cycle and terms
     buf->setValue("Terms",              1);     // FIXME
     buf->setValue("RatePlan",           1);     // FIXME
-    buf->setValue("RatePlanDate",       timeToStr(rightNow(), YYYY_MM_DD));
+    buf->setValue("RatePlanDate",       cust->accountOpened.toString("yyyy-MM-dd").ascii());
     buf->setValue("BillingCycle",       1);     // FIXME
-    buf->setValue("BillingCycleDate",   timeToStr(rightNow(), YYYY_MM_DD));
+    buf->setValue("BillingCycleDate",   cust->accountOpened.toString("yyyy-MM-dd").ascii());
     buf->setValue("LastBilled",         timeToStr(rightNow(), YYYY_MM_DD)); // FIXME
 
 
@@ -901,6 +1074,7 @@ void saveCustomer(customerRecord *cust)
         ldb.setValue("DiskSpace",       0);
         ldb.setValue("DialupChannels",  0);
         ldb.setValue("Active",          1);
+        ldb.setValue("LastModified",    timeToStr(rightNow(), YYYY_MM_DD_HH_MM_SS));
         ldb.ins();
         ldb.setValue("Active",          1);
         ldb.upd(0);
@@ -931,7 +1105,10 @@ void saveCustomer(customerRecord *cust)
         sdb.setValue("AutoPrice",       1);
         sdb.setValue("AutoRenew",       1);
         sdb.setValue("SetupCharged",    1);
+        sdb.setValue("EndsOn",          billRec->endsOnDate.toString("yyyy-MM-dd").ascii());
+        sdb.setValue("LastDate",        billRec->endsOnDate.toString("yyyy-MM-dd").ascii());
         sdb.ins();
+        //fprintf(stderr, "Subscription ends on date = '%s'\n", billRec->endsOnDate.toString("YYYY-MM-DD").ascii());
     }
 
     // If they have an opening balance, create an AR charge for them.
@@ -950,5 +1127,73 @@ void saveCustomer(customerRecord *cust)
         AR.ARDB->setValue("Memo",           "Transferred balance");
         AR.SaveTrans();
     }
+
+    // Add the dialups.
+    for (uint i = 0; i < cust->dialupList.count(); i++) {
+        dialupRecord   *dialRec = cust->dialupList.at(i);
+        LoginsDB    ldb;
+        ldb.setValue("CustomerID",      (long int)cust->customerID);
+        ldb.setValue("LoginID",         dialRec->userName);
+        ldb.setValue("LoginType",       dialRec->loginTypeID);
+        ldb.setValue("ContactName",     fullName.ascii());
+        ldb.setValue("DiskSpace",       0);
+        ldb.setValue("DialupChannels",  0);
+        ldb.setValue("Active",          1);
+        ldb.setValue("LastModified",    timeToStr(rightNow(), YYYY_MM_DD_HH_MM_SS));
+        ldb.ins();
+        ldb.setValue("Active",          1);
+        ldb.upd(0);
+        CDB.get((long int)cust->customerID);
+        if (!strlen((const char *) CDB.getStr("PrimaryLogin")) ||
+                !strncmp(CDB.getStr("PrimaryLogin"), "W", 1)) {
+            CDB.setValue("PrimaryLogin", dialRec->userName);
+            CDB.upd();
+        }
+        // Set the flags for this user
+        // MARC
+        if (dialRec->serviceType == "DialupDynamic") {
+            setLoginFlag(dialRec->userName, "Username",     dialRec->userName);
+            setLoginFlag(dialRec->userName, "Password",     dialRec->password);
+            setLoginFlag(dialRec->userName, "VirtDomain",   dialRec->virtDomain);
+            setLoginFlag(dialRec->userName, "MailType",     dialRec->mailType);
+        } else if (dialRec->serviceType == "DialupStatic") {
+            setLoginFlag(dialRec->userName, "Username",     dialRec->userName);
+            setLoginFlag(dialRec->userName, "Password",     dialRec->password);
+            setLoginFlag(dialRec->userName, "VirtDomain",   dialRec->virtDomain);
+            setLoginFlag(dialRec->userName, "MailType",     dialRec->mailType);
+            setLoginFlag(dialRec->userName, "AutoAssign",   dialRec->autoAssign);
+            setLoginFlag(dialRec->userName, "DateAssigned", dialRec->dateAssigned);
+            setLoginFlag(dialRec->userName, "IPaddress",    dialRec->ipAddr);
+            setLoginFlag(dialRec->userName, "Netmask",      dialRec->netmask);
+        } else if (dialRec->serviceType == "POPaccount") {
+            setLoginFlag(dialRec->userName, "Popname",      dialRec->userName);
+            setLoginFlag(dialRec->userName, "Password",     dialRec->password);
+            setLoginFlag(dialRec->userName, "VirtDomain",   dialRec->virtDomain);
+            setLoginFlag(dialRec->userName, "MailType",     dialRec->mailType);
+        }
+        //CDB.doSubscriptions();
+        //ldb.addSubscriptions();
+    }
 }
 
+/**
+ * dateConvert()
+ *
+ * Converts a date in m/d/yyyy format to a QDate object.
+*/
+
+const QDate dateConvert(const QString src)
+{
+    QString     delim = "/";
+    QStringList parts;
+    int         y = 0, m = 0, d = 0;
+    char        workStr[1024];
+
+    parts = QStringList::split(delim, src);
+    m = parts[0].toInt();
+    d = parts[1].toInt();
+    y = parts[2].toInt();
+    
+    sprintf(workStr, "%04d-%02d-%02d", y, m, d);
+    return QDate::fromString(workStr, Qt::ISODate);
+}

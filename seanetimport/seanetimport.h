@@ -14,6 +14,7 @@
 #define SEANETIMPORT_H
 
 #include <qstring.h>
+#include <qdatetime.h>
 #include <qptrlist.h>
 
 #define STARTING_CUSTOMERID 100000
@@ -31,6 +32,7 @@ struct domainRecord {
 
 struct dialupRecord {
     QString regNumber;
+    int     loginTypeID;
     int     billingPeriod;
     int     planStatus;
     QString serviceStart;
@@ -39,7 +41,7 @@ struct dialupRecord {
     QString userName;
     QString password;
     QString virtDomain;
-    int     autoAssign;
+    QString autoAssign;
     QString dateAssigned;
     QString netmask;
     QString ipAddr;
@@ -58,7 +60,7 @@ struct serviceRecord {
     QString userName;
     QString password;
     QString virtDomain;
-    int     autoAssign;
+    QString autoAssign;
     QString dateAssigned;
     QString netmask;
     QString ipAddr;
@@ -68,6 +70,7 @@ struct serviceRecord {
 struct billableRecord {
     long    billableItemID;
     QString endsOn;
+    QDate   endsOnDate;
     QString closeDate;
 };
 
@@ -80,6 +83,7 @@ struct customerRecord {
     QString altContact;
     QString email;
     float   currentBalance;
+    QDate   accountOpened;
     QString accountExpires;
     QString street;
     QString city;
@@ -106,15 +110,18 @@ extern QPtrList<dialupRecord> dialupListFull;
 
 int main( int argc, char ** argv );
 void csvImport(const char *, const char *);
-void loadFlags();
 void loadDomains();
 void loadDialupStatic();
 void loadDialupDynamic();
+void addLoginType(const char *loginType);
+void addLoginTypeFlag(const char *loginType, const char *flagName);
+void setLoginFlag(const QString userName, const char *flagName, const QString val);
 void importLoginTypes();
 void loadCustomers();
 void importCustomers();
 void matchDialup(serviceRecord *, dialupRecord *);
 void saveCustomer(customerRecord *);
+const QDate dateConvert(const QString src);
 
 #endif
 

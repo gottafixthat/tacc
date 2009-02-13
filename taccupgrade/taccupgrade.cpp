@@ -139,6 +139,60 @@ void upgradeDatabase()
         sql = "insert into SchemaVersion values(1)";
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
         
+        vers = 1;
+    }
+
+    if (vers < 2) {
+        printf("Updating to Schema Version 2...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "alter table Logins change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Subscriptions change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table AcctsRecv change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table CallLog change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Customers change column PrimaryLogin PrimaryLogin varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table ModemUsage change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table TrafficUsage change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Notes change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table UserNotes change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table VoiceMail change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table UserActivities change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table LoginFlags change column LoginFlag LoginFlag varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table LoginFlagValues change column LoginID LoginID varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table LoginFlagValues change column LoginFlag LoginFlag varchar(64) NOT NULL DEFAULT ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update SchemaVersion set SchemaVersion = 2";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+        
+        vers = 2;
     }
 }
 
