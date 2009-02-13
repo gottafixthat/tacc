@@ -119,6 +119,7 @@ extern QPtrList<loginRecord> loginListFull;
 
 int main( int argc, char ** argv );
 void csvImport(const char *, const char *);
+void cleanDatabase();
 void loadDomains();
 void loadDialupStatic();
 void loadDialupDynamic();
