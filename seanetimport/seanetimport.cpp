@@ -15,6 +15,7 @@
 #include <BlargDB.h>
 #include <AcctsRecv.h>
 #include <qregexp.h>
+#include <getopt.h>
 
 #include "seanetimport.h"
 
@@ -28,6 +29,7 @@ int main( int argc, char ** argv )
     // Load the main config file and setup our QApplication.
     loadTAAConfig();
     QApplication    a( argc, argv );
+    bool            scrubDB = true;
 
     // Setup the database pool
     ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
@@ -53,6 +55,21 @@ int main( int argc, char ** argv )
     csvImport("PLANS_virtmail_2.csv", "import_virtmail2");
     csvImport("PLANS_websets.csv", "import_websets");
     */
+
+    int c;
+    while(1) {
+        c = getopt(argc,argv,"s");
+        if (c == -1) break;
+        switch(c) {
+            case    's':
+                scrubDB = false;
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (scrubDB) cleanDatabase();
 
     // Import the login types and billable items.
     importLoginTypes();
@@ -138,6 +155,55 @@ void csvImport(const char *csvFile, const char *tableName)
     fprintf(stderr, "\e[KFinished loading table '%s' from '%s'...%d Rows...\n", tableName, csvFile, rowCount);
 }
 
+/**
+ * cleanDatabase()
+ *
+ * Scrubs all of the tables needed for a clean import.
+ */
+void cleanDatabase()
+{
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+    QStringList tables;
+    tables  += "AcctsRecv";
+    tables  += "Addresses";
+    tables  += "AutoPayments";
+    tables  += "Billables";
+    tables  += "BillablesData";
+    tables  += "CCTrans";
+    tables  += "Contacts";
+    tables  += "Customers";
+    tables  += "DomainTypeBillables";
+    tables  += "DomainTypes";
+    tables  += "Domains";
+    tables  += "GL";
+    tables  += "GLIndex";
+    tables  += "LoginFlagValues";
+    tables  += "LoginTypeBillables";
+    tables  += "LoginTypeFlags";
+    tables  += "LoginTypes";
+    tables  += "Logins";
+    tables  += "Notes";
+    tables  += "PackageContents";
+    tables  += "Packages";
+    tables  += "PackagesData";
+    tables  += "PhoneNumbers";
+    tables  += "RegisterSplits";
+    tables  += "Statements";
+    tables  += "StatementsData";
+    tables  += "Subscriptions";
+
+    QString tmpStr;
+    for ( QStringList::Iterator it = tables.begin(); it != tables.end(); ++it ) {
+        tmpStr = *it;
+        fprintf(stderr, "\e[KScrubbing table %s...\r", tmpStr.ascii());
+
+        tmpStr = "delete from ";
+        tmpStr += *it;
+        q.exec(tmpStr);
+    }
+    fprintf(stderr, "\e[KFinished scrubbing %d tables...\n", tables.count());
+}
 
 /**
  * loadDomains()
