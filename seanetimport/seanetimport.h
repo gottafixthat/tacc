@@ -52,6 +52,9 @@ struct loginRecord {
     QString vci;
     QString cpeName;
     QString requirePVC;
+    QString nailedType;
+    QString routeSwitch;
+    QString portDLCI;
     int     foundMatch;
 };
 
@@ -120,6 +123,7 @@ void loadDomains();
 void loadDialupStatic();
 void loadDialupDynamic();
 void loadDSLAccessSet();
+void loadNailedSet();
 void addLoginType(const char *loginType);
 void addLoginTypeFlag(const char *loginType, const char *flagName);
 void setLoginFlag(const QString userName, const char *flagName, const QString val);

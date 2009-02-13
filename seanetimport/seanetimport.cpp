@@ -60,6 +60,7 @@ int main( int argc, char ** argv )
     loadDialupStatic();
     loadDialupDynamic();
     loadDSLAccessSet();
+    loadNailedSet();
     loadCustomers();
     importCustomers();
 
@@ -385,6 +386,75 @@ void loadDSLAccessSet()
         fprintf(stderr, "\e[KLoaded DSLset %s...\r", loginRec->userName.ascii());
     }
     fprintf(stderr, "\e[KLoaded %d DSLset entries into memory.\n", recCount);
+}
+
+/**
+ * loadNailedSet()
+ *
+ * Loads the nailed set records from the CSV file into the logins list.
+ */
+void loadNailedSet()
+{
+    CSVParser   parser;
+    // Open our CSV file
+    if (!parser.openFile("PLANS_nailedset1.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_nailedset1.csv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("accountNumber");
+    int billingPeriodCol    = parser.header().findIndex("BillingPeriod");
+    int planStatusCol       = parser.header().findIndex("PlanStatus");
+    int serviceStartCol     = parser.header().findIndex("ServiceStart");
+    int nextBillDateCol     = parser.header().findIndex("NextBillDate");
+    int serviceTypeCol      = parser.header().findIndex("Detail");
+    int nailedTypeCol       = parser.header().findIndex("componentSetName");
+    int routeSwitchCol      = parser.header().findIndex("routerOrSwitch");
+    int portDLCICol         = parser.header().findIndex("portOrDLCI");
+    int ipAddrCol           = parser.header().findIndex("startIPAddress");
+    int netmaskCol          = parser.header().findIndex("netmask");
+    char    userName[1024];
+
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+
+    int recCount = 0;
+    while(parser.loadRecord()) {
+        recCount++;
+        sprintf(userName, "nailedset%05d", recCount);
+        loginRecord    *loginRec  = new loginRecord;
+        loginRec->regNumber        = parser.row()[regNumberCol];
+        loginRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
+        loginRec->planStatus       = parser.row()[planStatusCol].toInt();
+        loginRec->serviceStart     = parser.row()[serviceStartCol];
+        loginRec->nextBillDate     = parser.row()[nextBillDateCol];
+        loginRec->serviceType      = parser.row()[serviceTypeCol];
+        loginRec->userName         = userName;
+        loginRec->nailedType        = parser.row()[nailedTypeCol];
+        loginRec->routeSwitch       = parser.row()[routeSwitchCol];
+        loginRec->ipAddr            = parser.row()[ipAddrCol];
+        loginRec->netmask           = parser.row()[netmaskCol];
+        loginRec->portDLCI          = parser.row()[portDLCICol];
+        loginRec->foundMatch       = 0;
+        loginRec->loginTypeID      = 0;
+
+        // Get the loginTypeID
+        q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
+        q.bindValue(":svctype", parser.row()[serviceTypeCol]);
+        if (!q.exec()) {
+            fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+            exit(-1);
+        }
+        if (q.size()) {
+            q.next();
+            loginRec->loginTypeID = q.value(0).toInt();
+        }
+
+        loginListFull.append(loginRec);
+        fprintf(stderr, "\e[KLoaded NailedSet %s...\r", loginRec->userName.ascii());
+    }
+    fprintf(stderr, "\e[KLoaded %d NailedSet entries into memory.\n", recCount);
 }
 
 /**
@@ -1203,6 +1273,13 @@ void saveCustomer(customerRecord *cust)
             setLoginFlag(loginRec->userName, "VCI",          loginRec->vci);
             setLoginFlag(loginRec->userName, "CPEname",      loginRec->cpeName);
             setLoginFlag(loginRec->userName, "RequirePVC",   loginRec->requirePVC);
+        } else if (loginRec->serviceType == "NailedSet") {
+            setLoginFlag(loginRec->userName, "NailedType",   loginRec->nailedType);
+            setLoginFlag(loginRec->userName, "ActivationDate", loginRec->serviceStart);
+            setLoginFlag(loginRec->userName, "RouteSwitch",  loginRec->routeSwitch);
+            setLoginFlag(loginRec->userName, "PortDLCI",     loginRec->portDLCI);
+            setLoginFlag(loginRec->userName, "IPaddress",    loginRec->ipAddr);
+            setLoginFlag(loginRec->userName, "Netmask",      loginRec->netmask);
         } else if (loginRec->serviceType == "POPaccount") {
             setLoginFlag(loginRec->userName, "Popname",      loginRec->userName);
             setLoginFlag(loginRec->userName, "Password",     loginRec->password);
