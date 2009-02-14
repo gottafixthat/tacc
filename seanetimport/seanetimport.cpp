@@ -74,6 +74,8 @@ int main( int argc, char ** argv )
     // Import the login types and billable items.
     importLoginTypes();
     loadDomains();
+    loadWebSet();
+    loadVirtualSet();
     loadDialupStatic();
     loadDialupDynamic();
     loadDSLAccessSet();
@@ -223,30 +225,179 @@ void loadDomains()
     int regNumberCol        = parser.header().findIndex("RegNumber");
     int billingPeriodCol    = parser.header().findIndex("billingperiod");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
+    int serviceTypeCol      = parser.header().findIndex("Detail");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
     int nextBillDateCol     = parser.header().findIndex("NextBillingDate");
     int domainNameCol       = parser.header().findIndex("ItemVal1");
     int spamFilterCol       = parser.header().findIndex("ItemVal2");
     int mailTypeCol         = parser.header().findIndex("ItemVal3");
 
+    char    userName[1024];
 
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+
+    int recCount = 0;
     while(parser.loadRecord()) {
-        domainRecord    *domRec = new domainRecord;
-        domRec->regNumber       = parser.row()[regNumberCol];
-        domRec->billingPeriod   = parser.row()[billingPeriodCol].toInt();
-        domRec->planStatus      = parser.row()[planStatusCol].toInt();
-        domRec->serviceStart    = parser.row()[serviceStartCol];
-        domRec->nextBillDate    = parser.row()[nextBillDateCol];
-        domRec->domainName      = parser.row()[domainNameCol];
-        domRec->spamFilter      = parser.row()[spamFilterCol].toInt();
-        domRec->mailType        = parser.row()[mailTypeCol];
+        recCount++;
+        sprintf(userName, "domainset%05d", recCount);
+        loginRecord   *loginRec = new loginRecord;
+        loginRec->regNumber     = parser.row()[regNumberCol];
+        loginRec->billingPeriod = parser.row()[billingPeriodCol].toInt();
+        loginRec->planStatus    = parser.row()[planStatusCol].toInt();
+        loginRec->serviceType   = parser.row()[serviceTypeCol];
+        loginRec->serviceStart  = parser.row()[serviceStartCol];
+        loginRec->nextBillDate  = parser.row()[nextBillDateCol];
+        loginRec->virtDomain    = parser.row()[domainNameCol];
+        loginRec->spamFilter    = parser.row()[spamFilterCol];
+        loginRec->mailType      = parser.row()[mailTypeCol];
+        loginRec->userName      = userName;
 
-        domainListFull.append(domRec);
-        fprintf(stderr, "\e[KLoaded domain %s...\r", domRec->domainName.ascii());
+        // Get the loginTypeID
+        q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
+        q.bindValue(":svctype", parser.row()[serviceTypeCol]);
+        if (!q.exec()) {
+            fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+            exit(-1);
+        }
+        if (q.size()) {
+            q.next();
+            loginRec->loginTypeID = q.value(0).toInt();
+        }
+
+        loginListFull.append(loginRec);
+        fprintf(stderr, "\e[KLoaded domain %s...\r", loginRec->virtDomain.ascii());
     }
-    fprintf(stderr, "\e[KLoaded %d domains into memory.\n", domainListFull.count());
+    fprintf(stderr, "\e[KLoaded %d domains into memory.\n", recCount);
 }
 
+/**
+ * loadWebSet()
+ *
+ * Loads the web set records from the CSV file into memory.
+ */
+void loadWebSet()
+{
+    CSVParser   parser;
+    // Open our CSV file
+    if (!parser.openFile("PLANS_websets.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_websets.csv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("accountNumber");
+    int billingPeriodCol    = parser.header().findIndex("BillingPeriod");
+    int planStatusCol       = parser.header().findIndex("PlanStatus");
+    int serviceTypeCol      = parser.header().findIndex("Detail");
+    int webSvcTypeCol       = parser.header().findIndex("webServiceTypeName");
+    int hostingUserCol      = parser.header().findIndex("username");
+    int hostingPassCol      = parser.header().findIndex("password");
+    int domain1Col          = parser.header().findIndex("domain1");
+    int domain2Col          = parser.header().findIndex("domain2");
+
+    char    userName[1024];
+
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+
+    int recCount = 0;
+    while(parser.loadRecord()) {
+        recCount++;
+        sprintf(userName, "webset%05d", recCount);
+        loginRecord   *loginRec = new loginRecord;
+        loginRec->regNumber     = parser.row()[regNumberCol];
+        loginRec->userName      = userName;
+        loginRec->billingPeriod = parser.row()[billingPeriodCol].toInt();
+        loginRec->planStatus    = parser.row()[planStatusCol].toInt();
+        loginRec->serviceType   = parser.row()[serviceTypeCol];
+        loginRec->webSvcType    = parser.row()[webSvcTypeCol];
+        loginRec->hostingUserName = parser.row()[hostingUserCol];
+        loginRec->password      = parser.row()[hostingPassCol];
+        loginRec->virtDomain    = parser.row()[domain1Col];
+        loginRec->virtDomain2   = parser.row()[domain2Col];
+
+        // Get the loginTypeID
+        q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
+        q.bindValue(":svctype", parser.row()[serviceTypeCol]);
+        if (!q.exec()) {
+            fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+            exit(-1);
+        }
+        if (q.size()) {
+            q.next();
+            loginRec->loginTypeID = q.value(0).toInt();
+        }
+
+        loginListFull.append(loginRec);
+        fprintf(stderr, "\e[KLoaded webset domain %s...\r", loginRec->virtDomain.ascii());
+    }
+    fprintf(stderr, "\e[KLoaded %d webset domains into memory.\n", recCount);
+}
+
+/**
+ * loadVirtualSet()
+ *
+ * Loads the domain records from the CSV file into memory.
+ */
+void loadVirtualSet()
+{
+    CSVParser   parser;
+    // Open our CSV file
+    if (!parser.openFile("PLANS_virtmail_2.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_virtmail_2.csv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("RegNumber");
+    int billingPeriodCol    = parser.header().findIndex("billingperiod");
+    int planStatusCol       = parser.header().findIndex("PlanStatus");
+    int serviceTypeCol      = parser.header().findIndex("Detail");
+    int serviceStartCol     = parser.header().findIndex("ServiceStart");
+    int nextBillDateCol     = parser.header().findIndex("NextBillingDate");
+    int virtUserNameCol     = parser.header().findIndex("ItemVal1");
+    int domainNameCol       = parser.header().findIndex("ItemVal2");
+    int virtDestCol         = parser.header().findIndex("ItemVal3");
+
+    char    userName[1024];
+
+    QSqlDbPool  pool;
+    QSqlQuery   q(pool.qsqldb());
+
+    int recCount = 0;
+    while(parser.loadRecord()) {
+        recCount++;
+        sprintf(userName, "virtualset%05d", recCount);
+        loginRecord   *loginRec = new loginRecord;
+        loginRec->regNumber     = parser.row()[regNumberCol];
+        loginRec->userName      = userName;
+        loginRec->billingPeriod = parser.row()[billingPeriodCol].toInt();
+        loginRec->planStatus    = parser.row()[planStatusCol].toInt();
+        loginRec->serviceType   = parser.row()[serviceTypeCol];
+        loginRec->serviceStart  = parser.row()[serviceStartCol];
+        loginRec->nextBillDate  = parser.row()[nextBillDateCol];
+        loginRec->virtDomain    = parser.row()[domainNameCol];
+        loginRec->virtUser      = parser.row()[virtUserNameCol];
+        loginRec->virtDest      = parser.row()[virtDestCol];
+
+        // Get the loginTypeID
+        q.prepare("select InternalID, LoginType, Description from LoginTypes where LoginType LIKE :svctype");
+        q.bindValue(":svctype", parser.row()[serviceTypeCol]);
+        if (!q.exec()) {
+            fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+            exit(-1);
+        }
+        if (q.size()) {
+            q.next();
+            loginRec->loginTypeID = q.value(0).toInt();
+        }
+
+        loginListFull.append(loginRec);
+        fprintf(stderr, "\e[KLoaded virtual domain %s...\r", loginRec->virtDomain.ascii());
+    }
+    fprintf(stderr, "\e[KLoaded %d virtual domains into memory.\n", recCount);
+}
 /**
  * loadDialupStatic()
  *
@@ -710,13 +861,13 @@ void importLoginTypes()
     }
 
     // Get the index of certain columns from our header row.
-    int loginTypeCol    = parser.header().findIndex("ServiceType");
+    //int loginTypeCol    = parser.header().findIndex("ServiceType");
     int billableCol     = parser.header().findIndex("BillableItem");
     int descriptionCol  = parser.header().findIndex("PlanName");
-    int classCol        = parser.header().findIndex("Category");
+    //int classCol        = parser.header().findIndex("Category");
     int priceCol        = parser.header().findIndex("monthlyFee");
 
-    int loginTypeIns = 0;
+    //int loginTypeIns = 0;
     int billablesIns = 0;
     int billablePricesIns = 0;
 
@@ -871,11 +1022,12 @@ void importLoginTypes()
     addLoginTypeFlag("NailedSet",    "IPaddress");
     addLoginTypeFlag("NailedSet",    "Netmask");
 
-    addLoginType("Webset");
-    addLoginTypeFlag("Webset",    "WebServiceType");
-    addLoginTypeFlag("Webset",    "HostingUsername");
-    addLoginTypeFlag("Webset",    "HostingPassword");
-    addLoginTypeFlag("Webset",    "VirtDomain");
+    addLoginType("WebSet");
+    addLoginTypeFlag("WebSet",    "WebServiceType");
+    addLoginTypeFlag("WebSet",    "HostingUsername");
+    addLoginTypeFlag("WebSet",    "HostingPassword");
+    addLoginTypeFlag("WebSet",    "VirtDomain");
+    addLoginTypeFlag("WebSet",    "VirtDomain2");
 
     printf("Imported %d BillableItems and %d Billable Prices for %d Rate Plans and %d Billing Cycles\n", billablesIns, billablePricesIns, planCount, cycleCount);
 }
@@ -931,7 +1083,7 @@ void loadCustomers()
     int expMonthCol     = parser.header().findIndex("ExpM");
     int expYearCol      = parser.header().findIndex("ExpYY");
     int svcPlanCol      = parser.header().findIndex("ServicePlan");
-    int periodCol       = parser.header().findIndex("BillingPeriod");
+    //int periodCol       = parser.header().findIndex("BillingPeriod");
     int serviceStartCol = parser.header().findIndex("ServiceStart");
     int nextBillDateCol = parser.header().findIndex("NextBillDate");
     int closeDateCol    = parser.header().findIndex("SchClose");
@@ -1033,8 +1185,7 @@ void loadCustomers()
         // new customer, we should have a customer record.
         // Find the service we're looking for.
         QSqlQuery   q(db1);
-        /*
-        q.prepare("select InternalID, LoginType, Description from LoginTypes where Description LIKE :svcplan");
+        q.prepare("select ItemNumber from Billables where Description LIKE :svcplan");
         q.bindValue(":svcplan", parser.row()[svcPlanCol]);
         if (!q.exec()) {
             fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
@@ -1042,46 +1193,19 @@ void loadCustomers()
         }
         if (q.size()) {
             q.next();
-            // Create a new Login record for this line and append it
-            // to the list stored in the customer record.
-            serviceRecord   *svc = new serviceRecord;
-            // Set the "Login ID"
-            sprintf(svc->loginID, "sea%05d", numLines);
-            // Set the loginTypeID
-            svc->loginTypeID = q.value(0).toInt();
-            svc->loginType   = q.value(1).toString();
-            svc->loginTypeDesc = q.value(2).toString();
-            svc->endsOn = parser.row()[nextBillDateCol];
-            svc->closeDate = parser.row()[closeDateCol];
-            svc->foundMatch = 0;
-            svc->autoAssign = 1;
-            cust->svcList.append(svc);
-        } else {*/
-            // No matching login type, search for a matching billable item instead.
-            q.prepare("select ItemNumber from Billables where Description LIKE :svcplan");
-            q.bindValue(":svcplan", parser.row()[svcPlanCol]);
-            if (!q.exec()) {
-                fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
-                exit(-1);
-            }
-            if (q.size()) {
-                q.next();
-                // Got one.  Create a new billable record.
-                billableRecord  *billable = new billableRecord;
-                billable->billableItemID = q.value(0).toInt();
-                billable->endsOn = parser.row()[nextBillDateCol];
-                // Parse the date.
-                billable->endsOnDate = dateConvert(billable->endsOn);
-                billable->endsOnDate = billable->endsOnDate.addDays(-1);
+            // Got one.  Create a new billable record.
+            billableRecord  *billable = new billableRecord;
+            billable->billableItemID = q.value(0).toInt();
+            billable->endsOn = parser.row()[nextBillDateCol];
+            // Parse the date.
+            billable->endsOnDate = dateConvert(billable->endsOn);
+            billable->endsOnDate = billable->endsOnDate.addDays(-1);
 
-                billable->closeDate = parser.row()[closeDateCol];
-                cust->billableList.append(billable);
-            } else {
-                fprintf(stderr, "Unable to find match for service plan '%s' on line %d.  Skipping.\n", parser.row()[svcPlanCol].ascii(), numLines);
-            }
-        /*}*/
-
-        // Add logins for this customer
+            billable->closeDate = parser.row()[closeDateCol];
+            cust->billableList.append(billable);
+        } else {
+            fprintf(stderr, "Unable to find match for service plan '%s' on line %d.  Skipping.\n", parser.row()[svcPlanCol].ascii(), numLines);
+        }
         
     }
     // Save the last one we were working on.
@@ -1110,20 +1234,6 @@ void importCustomers()
     for (unsigned int c = 0; c < customerList.count(); c++) {
         customerRecord  *cust = customerList.at(c);
         fprintf(stderr, "\e[KProcessing customer ID %d - '%s'...\r", cust->customerID, cust->contactName.ascii());
-        for (unsigned int d = 0; d < cust->loginList.count(); d++) {
-            loginRecord    *login = cust->loginList.at(d);
-            if (!login->foundMatch) {
-                // Find the placeholder
-                bool    foundIt = false;
-                for (unsigned int p = 0; p < cust->svcList.count(); p++) {
-                    serviceRecord   *svc = cust->svcList.at(p);
-                    if (!svc->foundMatch && !login->foundMatch) {
-                        // Compare this dialup record with this service
-                        // record to see if we want to override it.
-                    }
-                }
-            }
-        }
         // Save the customer in the database now.
         saveCustomer(cust);
     }
@@ -1230,32 +1340,7 @@ void saveCustomer(customerRecord *cust)
 
     
     CustomersDB CDB;
-    // Add the "logins" in the service records
-    for (uint i = 0; i < cust->svcList.count(); i++) {
-        serviceRecord   *svcRec = cust->svcList.at(i);
-        LoginsDB    ldb;
-        ldb.setValue("CustomerID",      (long int)cust->customerID);
-        ldb.setValue("LoginID",         svcRec->loginID);
-        ldb.setValue("LoginType",       svcRec->loginTypeID);
-        ldb.setValue("ContactName",     fullName.ascii());
-        ldb.setValue("DiskSpace",       0);
-        ldb.setValue("DialupChannels",  0);
-        ldb.setValue("Active",          1);
-        ldb.setValue("LastModified",    timeToStr(rightNow(), YYYY_MM_DD_HH_MM_SS));
-        ldb.ins();
-        ldb.setValue("Active",          1);
-        ldb.upd(0);
-        CDB.get((long int)cust->customerID);
-        if (!strlen((const char *) CDB.getStr("PrimaryLogin")) ||
-                !strncmp(CDB.getStr("PrimaryLogin"), "W", 1)) {
-            CDB.setValue("PrimaryLogin", svcRec->loginID);
-            CDB.upd();
-        }
-        //CDB.doSubscriptions();
-        //ldb.addSubscriptions();
-    }
-
-    // Add any extra billables
+    // Add the billables
     for (uint i = 0; i < cust->billableList.count(); i++) {
         billableRecord  *billRec = cust->billableList.at(i);
         CDB.get((long int)cust->customerID);
@@ -1346,6 +1431,20 @@ void saveCustomer(customerRecord *cust)
             setLoginFlag(loginRec->userName, "PortDLCI",     loginRec->portDLCI);
             setLoginFlag(loginRec->userName, "IPaddress",    loginRec->ipAddr);
             setLoginFlag(loginRec->userName, "Netmask",      loginRec->netmask);
+        } else if (loginRec->serviceType == "DomainSet") {
+            setLoginFlag(loginRec->userName, "VirtDomain",   loginRec->virtDomain);
+            setLoginFlag(loginRec->userName, "SpamFilter",   loginRec->spamFilter);
+            setLoginFlag(loginRec->userName, "MailType",     loginRec->mailType);
+        } else if (loginRec->serviceType == "VirtualSet") {
+            setLoginFlag(loginRec->userName, "VirtDomain",   loginRec->virtDomain);
+            setLoginFlag(loginRec->userName, "VirtUser",     loginRec->virtUser);
+            setLoginFlag(loginRec->userName, "VirtDest",     loginRec->virtDest);
+        } else if (loginRec->serviceType == "WebSet") {
+            setLoginFlag(loginRec->userName, "WebServiceType",  loginRec->webSvcType);
+            setLoginFlag(loginRec->userName, "HostingUsername", loginRec->hostingUserName);
+            setLoginFlag(loginRec->userName, "HostingPassword", loginRec->password);
+            setLoginFlag(loginRec->userName, "VirtDomain",      loginRec->virtDomain);
+            if (loginRec->virtDomain2.length() > 0) setLoginFlag(loginRec->userName, "VirtDomain2",      loginRec->virtDomain2);
         } else if (loginRec->serviceType == "POPaccount") {
             setLoginFlag(loginRec->userName, "Popname",      loginRec->userName);
             setLoginFlag(loginRec->userName, "Password",     loginRec->password);

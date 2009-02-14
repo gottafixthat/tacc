@@ -41,6 +41,7 @@ struct loginRecord {
     QString userName;
     QString password;
     QString virtDomain;
+    QString virtDomain2;
     QString autoAssign;
     QString dateAssigned;
     QString netmask;
@@ -55,25 +56,12 @@ struct loginRecord {
     QString nailedType;
     QString routeSwitch;
     QString portDLCI;
+    QString spamFilter;
+    QString hostingUserName;
+    QString webSvcType;
+    QString virtUser;
+    QString virtDest;
     int     foundMatch;
-};
-
-struct serviceRecord {
-    char    loginID[64];
-    long    loginTypeID;
-    QString loginType;
-    QString loginTypeDesc;
-    int     foundMatch;
-    QString endsOn;
-    QString closeDate;
-    QString userName;
-    QString password;
-    QString virtDomain;
-    QString autoAssign;
-    QString dateAssigned;
-    QString netmask;
-    QString ipAddr;
-    QString mailType;
 };
 
 struct billableRecord {
@@ -108,7 +96,6 @@ struct customerRecord {
     int     cardExpMonth;
     int     cardExpYear;
     QString password;
-    QPtrList<serviceRecord> svcList;
     QPtrList<billableRecord> billableList;
     QPtrList<loginRecord> loginList;
 };
@@ -121,6 +108,8 @@ int main( int argc, char ** argv );
 void csvImport(const char *, const char *);
 void cleanDatabase();
 void loadDomains();
+void loadWebSet();
+void loadVirtualSet();
 void loadDialupStatic();
 void loadDialupDynamic();
 void loadDSLAccessSet();
