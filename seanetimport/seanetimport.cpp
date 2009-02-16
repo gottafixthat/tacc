@@ -16,6 +16,7 @@
 #include <AcctsRecv.h>
 #include <qregexp.h>
 #include <getopt.h>
+#include <CustomerContactsDB.h>
 
 #include "seanetimport.h"
 
@@ -1264,6 +1265,7 @@ void saveCustomer(customerRecord *cust)
     
     QSqlCursor  customer("Customers", true, custPool.qsqldb());
     QSqlCursor  addr("Addresses", true, addrPool.qsqldb());
+    QSqlCursor  phones("PhoneNumbers", true, addrPool.qsqldb());
     QSqlRecord  *buf;
 
     QString     fullName = "";
@@ -1338,6 +1340,65 @@ void saveCustomer(customerRecord *cust)
     buf->setValue("Active",         1);
     addr.insert();
 
+    CustomerContactsDB  contact;
+
+    if (cust->homePhone.length() > 0) {
+        buf = phones.primeInsert();
+        buf->setValue("InternalID",     0);
+        buf->setValue("RefFrom",        0);
+        buf->setValue("RefID",          (uint)cust->customerID);
+        buf->setValue("Tag",            "Home");
+        buf->setValue("International",  0);
+        buf->setValue("PhoneNumber",    cust->homePhone);
+        buf->setValue("Active",         1);
+        buf->setValue("LastModifiedBy", "IMPORT");
+        phones.insert();
+        contact.clear();
+        contact.setTag("Home");
+        contact.setName(fullName);
+        contact.setPhoneNumber(cust->homePhone);
+        contact.setCustomerID(cust->customerID);
+        contact.setActive(1);
+        contact.insert();
+    }
+    if (cust->workPhone.length() > 0) {
+        buf = phones.primeInsert();
+        buf->setValue("InternalID",     0);
+        buf->setValue("RefFrom",        0);
+        buf->setValue("RefID",          (uint)cust->customerID);
+        buf->setValue("Tag",            "Work");
+        buf->setValue("International",  0);
+        buf->setValue("PhoneNumber",    cust->workPhone);
+        buf->setValue("Active",         1);
+        buf->setValue("LastModifiedBy", "IMPORT");
+        phones.insert();
+        contact.clear();
+        contact.setTag("Work");
+        contact.setName(fullName);
+        contact.setPhoneNumber(cust->workPhone);
+        contact.setCustomerID(cust->customerID);
+        contact.setActive(1);
+        contact.insert();
+    }
+    if (cust->faxPhone.length() > 0) {
+        buf = phones.primeInsert();
+        buf->setValue("InternalID",     0);
+        buf->setValue("RefFrom",        0);
+        buf->setValue("RefID",          (uint)cust->customerID);
+        buf->setValue("Tag",            "Fax");
+        buf->setValue("International",  0);
+        buf->setValue("PhoneNumber",    cust->faxPhone);
+        buf->setValue("Active",         1);
+        buf->setValue("LastModifiedBy", "IMPORT");
+        phones.insert();
+        contact.clear();
+        contact.setTag("Fax");
+        contact.setName(fullName);
+        contact.setPhoneNumber(cust->faxPhone);
+        contact.setCustomerID(cust->customerID);
+        contact.setActive(1);
+        contact.insert();
+    }
     
     CustomersDB CDB;
     // Add the billables

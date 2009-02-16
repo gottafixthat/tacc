@@ -1938,4 +1938,24 @@ CREATE TABLE DID_Inventory (
     INDEX CustomerIDIDX (CustomerID)
 );
 
-
+# CustomerContacts - Replaces the old PhoneNumbers table.  This allows
+# users to put in as many contacts and phone numbers for a customer
+# as they like, including a "tag" and generic "Access" value so they
+# know when a customer calls what sort of permission they have on the
+# account.
+CREATE TABLE CustomerContacts (
+    ContactID       bigint(21) NOT NULL auto_increment,
+    CustomerID      bigint(21) NOT NULL DEFAULT '0',
+    Tag             varchar(64) DEFAULT '',
+    Name            varchar(64) DEFAULT '',
+    Access          varchar(64) DEFAULT '',
+    International   tinyint(4) DEFAULT '0',
+    PhoneNumber     varchar(32) DEFAULT '',
+    EmailAddress    varchar(64) DEFAULT '',
+    Active          tinyint(4) DEFAULT '1',
+    Flags           int(11) DEFAULT '0',
+    LastModifiedBy  varchar(64) DEFAULT '',
+    LastModified    timestamp DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(ContactID),
+    INDEX CustomerIDIDX (CustomerID)
+);

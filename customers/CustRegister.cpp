@@ -556,18 +556,19 @@ void CustRegister::printHeader(QPainter *p, CustomersDB *cust, AddressesDB *cont
     p->drawText(rect, AlignLeft|AlignVCenter, tmpSt);
     p->setFont(QFont("courier", 10, QFont::Normal));
 
-    PhoneNumbersDB  PDB;
+    //PhoneNumbersDB  PDB;
+    // FIXME:  This should list all available phone numbers for this customer
 
     rect.setCoords(350,100,450,113);
     p->drawText(rect, AlignRight|AlignVCenter, "Day Phone:");
     rect.setCoords(460,100,600,113);
-    PDB.get(REF_CUSTOMER, CustID, "Daytime");
-    p->drawText(rect, AlignLeft|AlignVCenter, PDB.PhoneNumber);
+    //PDB.get(REF_CUSTOMER, CustID, "Daytime");
+    //p->drawText(rect, AlignLeft|AlignVCenter, PDB.PhoneNumber);
     rect.setCoords(350,110,450,123);
     p->drawText(rect, AlignRight|AlignVCenter, "Eve Phone:");
-    PDB.get(REF_CUSTOMER, CustID, "Evening");
+    //PDB.get(REF_CUSTOMER, CustID, "Evening");
     rect.setCoords(460,110,600,123);
-    p->drawText(rect, AlignLeft|AlignVCenter, PDB.PhoneNumber);
+    //p->drawText(rect, AlignLeft|AlignVCenter, PDB.PhoneNumber);
 
 }
 

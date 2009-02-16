@@ -30,12 +30,15 @@ int main( int argc, char ** argv )
 
     // Import the login types and billable items.
     //importLoginTypes();
+    upgradeDatabase();
+    /*
     if (!schemaValid()) {
         upgradeDatabase();
         fprintf(stderr, "\nDone\n");
     } else {
         fprintf(stderr, "The TACC schema version is up to date.\n");
     }
+    */
 }
 
 /**
@@ -193,6 +196,45 @@ void upgradeDatabase()
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
         
         vers = 2;
+    }
+
+    if (vers < 3) {
+        printf("Updating to Schema Version 3...\n");
+        QSqlDbPool  dbp2;
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "drop table if exists Contacts";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "drop table if exists CustomerContacts";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "create table CustomerContacts (ContactID bigint(21) NOT NULL auto_increment, CustomerID  bigint(21) NOT NULL DEFAULT '0', Tag varchar(64) DEFAULT '', Name varchar(64) DEFAULT '', Access varchar(64) DEFAULT '', International tinyint(4) DEFAULT '0', PhoneNumber varchar(32) DEFAULT '', EmailAddress varchar(64) DEFAULT '', Active tinyint(4) DEFAULT '1', Flags int(11) DEFAULT '0', LastModifiedBy varchar(64) DEFAULT '', LastModified timestamp DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY(ContactID), INDEX CustomerIDIDX (CustomerID))";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        // Import the current phone numbers into the new Contacts table.
+        QSqlCursor  contacts("CustomerContacts", true, dbp2.qsqldb());
+        QSqlRecord  *buf;
+        sql = "select RefID, Tag, International, PhoneNumber, Active, LastModifiedBy, LastModified from PhoneNumbers where RefFrom = 0";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+        if (q.size()) while (q.next()) {
+            buf = contacts.primeInsert();
+            buf->setValue("ContactID",      0);
+            buf->setValue("CustomerID",     q.value(0).toInt());
+            buf->setValue("Tag",            q.value(1));
+            buf->setValue("International",  q.value(2).toInt());
+            buf->setValue("PhoneNumber",    q.value(3));
+            buf->setValue("Active",         q.value(4).toInt());
+            buf->setValue("LastModifiedBy", q.value(5));
+            buf->setValue("LastModified",   q.value(6));
+            contacts.insert();
+        }
+
+        sql = "update SchemaVersion set SchemaVersion = 3";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+        
+        vers = 3;
     }
 }
 

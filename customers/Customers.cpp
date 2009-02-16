@@ -571,11 +571,11 @@ void Customers::refreshList(long)
                 tmpWorkStr += numbersOnly.mid(6,4);
                 tmpWorkStr += "%%";
             }
-            DB.query("select distinct RefID from PhoneNumbers where PhoneNumber LIKE '%s'", (const char *) tmpWorkStr);
+            DB.query("select distinct CustomerID from CustomerContacts where PhoneNumber LIKE '%s'", (const char *) tmpWorkStr);
             rowcnt = DB.rowCount;
             if (rowcnt) {
                 while (DB.getrow()) {
-                    curCustID = atol(DB.curRow["RefID"]);
+                    curCustID = atol(DB.curRow["CustomerID"]);
                     // Load them into our loadedCusts map
                     if (loadedCusts[curCustID] != curCustID) loadedCusts.insert(curCustID, curCustID);
                 }

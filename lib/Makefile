@@ -26,6 +26,7 @@ SUBDIRS =	gl
 SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			IClient.cpp BString.cpp TAAWidget.cpp\
 			QSqlDbPool.cpp\
+			CustomerContactsDB.cpp\
 			CSVParser.cpp\
 			CustomerSearch.cpp\
 			TAATools.cpp BlargDB.cpp\
@@ -35,7 +36,6 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			VHostUtils.cpp\
 			GenLedger.cpp AcctsRecv.cpp BrassClient.cpp\
 			AddressEditor.cpp AddressEditorData.cpp\
-			PhoneEditor.cpp PhoneEditorData.cpp\
 			ParseFile.cpp SelectionList.cpp\
 			TAALogin.cpp buildnum.cpp\
 			calendar.cpp holiday.cpp worktime.cpp\
@@ -56,7 +56,6 @@ SRCMETA =	moc_TAAWidget.cpp\
 			moc_QSqlDbPool.cpp\
 			moc_CustomerSearch.cpp\
 			moc_AddressEditor.cpp moc_AddressEditorData.cpp\
-			moc_PhoneEditor.cpp moc_PhoneEditorData.cpp\
 			moc_SelectionList.cpp\
 			moc_TAALogin.cpp\
 			moc_calendar.cpp\
@@ -120,12 +119,6 @@ moc_AddressEditor.cpp: AddressEditor.h
 
 moc_AddressEditorData.cpp: AddressEditorData.h
 	$(MOC) AddressEditorData.h -o moc_AddressEditorData.cpp
-
-moc_PhoneEditor.cpp: PhoneEditor.h
-	$(MOC) PhoneEditor.h -o moc_PhoneEditor.cpp
-
-moc_PhoneEditorData.cpp: PhoneEditorData.h
-	$(MOC) PhoneEditorData.h -o moc_PhoneEditorData.cpp
 
 moc_SelectionList.cpp: SelectionList.h
 	$(MOC) SelectionList.h -o moc_SelectionList.cpp
