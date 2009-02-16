@@ -124,7 +124,6 @@ LoginEdit::LoginEdit
     
 	LoginsDB	    LDB;
 	CustomersDB	    CDB;
-	PhoneNumbersDB  PDB;
 	ADB		        DB;
 	char            tmpaddr[64];
 	

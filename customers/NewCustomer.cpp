@@ -27,6 +27,7 @@
 #include "BString.h"
 #include "EditCustomer.h"
 #include "LoginEdit.h"
+#include <CustomerContactsDB.h>
 #include <Cfg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -132,7 +133,7 @@ void NewCustomer::addCustomer()
 	int		defaultYes = 1;
 	CustomersDB     cdb;
 	AddressesDB     adb;
-	PhoneNumbersDB  pdb;
+	CustomerContactsDB  contactsDB;
 	NotesDB		    ndb;
 	RatePlansDB		rpdb;
 	BillingCyclesDB	bcdb;
@@ -400,32 +401,41 @@ void NewCustomer::addCustomer()
 	adb.ins();
 	
 	// Add the various phone numbers that were entered...
-	pdb.InternalID = 0;
-	pdb.RefFrom.setNum(REF_CUSTOMER);
-	pdb.RefID.setNum(newCustID);
-	pdb.International.setNum(0);
-	pdb.Active.setNum(1);
-	pdb.LastModifiedBy = curUser().userName;
-	
 	if (strlen(cdayPhone)) {
-	    pdb.Tag = "Daytime";
-	    pdb.PhoneNumber = cdayPhone;
-	    pdb.ins();
+        contactsDB.clear();
+        contactsDB.setTag("Daytime");
+        contactsDB.setPhoneNumber(cdayPhone);
+        contactsDB.setCustomerID(newCustID);
+        contactsDB.setActive(1);
+        contactsDB.setLastModifiedBy(curUser().userName);
+        contactsDB.insert();
 	}
 	if (strlen(cevePhone)) {
-	    pdb.Tag = "Evening";
-	    pdb.PhoneNumber = cevePhone;
-	    pdb.ins();
+        contactsDB.clear();
+        contactsDB.setTag("Evening");
+        contactsDB.setPhoneNumber(cevePhone);
+        contactsDB.setCustomerID(newCustID);
+        contactsDB.setActive(1);
+        contactsDB.setLastModifiedBy(curUser().userName);
+        contactsDB.insert();
 	}
 	if (strlen(cfaxPhone)) {
-	    pdb.Tag = "Fax";
-	    pdb.PhoneNumber = cfaxPhone;
-	    pdb.ins();
+        contactsDB.clear();
+        contactsDB.setTag("Fax");
+        contactsDB.setPhoneNumber(cfaxPhone);
+        contactsDB.setCustomerID(newCustID);
+        contactsDB.setActive(1);
+        contactsDB.setLastModifiedBy(curUser().userName);
+        contactsDB.insert();
 	}
 	if (strlen(caltPhone)) {
-	    pdb.Tag = "Alternate";
-	    pdb.PhoneNumber = caltPhone;
-	    pdb.ins();
+        contactsDB.clear();
+        contactsDB.setTag("Alternate");
+        contactsDB.setPhoneNumber(caltPhone);
+        contactsDB.setCustomerID(newCustID);
+        contactsDB.setActive(1);
+        contactsDB.setLastModifiedBy(curUser().userName);
+        contactsDB.insert();
 	}
 	
 

@@ -58,7 +58,7 @@ void    parseFile(const char *SrcFile, const char *DstFile, long CustomerID, con
 	// Since there is no default phone number, grab the first one from
 	// the database.
 	strcpy(phoneNumber, "");
-	DB.query("select PhoneNumber from PhoneNumbers where Active <> 0 and RefFrom = %d and RefID = %ld", REF_CUSTOMER, CustomerID);
+	DB.query("select PhoneNumber from CustomerContacts where Active <> 0 and CustomerID = %ld", CustomerID);
 	if (DB.rowCount) {
 	    DB.getrow();
 	    strcpy(phoneNumber, DB.curRow["PhoneNumber"]);
@@ -189,7 +189,7 @@ void    parseEmail(const char *tmplName, long CustomerID, const char *LoginID, c
 	// Since there is no default phone number, grab the first one from
 	// the database.
 	strcpy(phoneNumber, "");
-	DB.query("select PhoneNumber from PhoneNumbers where Active <> 0 and RefFrom = %d and RefID = %ld", REF_CUSTOMER, CustomerID);
+	DB.query("select PhoneNumber from CustomerContacts where Active <> 0 and CustomerID = %ld", CustomerID);
 	if (DB.rowCount) {
 	    DB.getrow();
 	    strcpy(phoneNumber, DB.curRow["PhoneNumber"]);

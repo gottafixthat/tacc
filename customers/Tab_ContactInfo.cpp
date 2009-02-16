@@ -29,7 +29,6 @@
 #include "Tab_ContactInfo.h"
 #include "BlargDB.h"
 #include "AddressEditor.h"
-#include "PhoneEditor.h"
 #include <stdio.h>
 #include <qapp.h>
 #include <qpixmap.h>
@@ -39,6 +38,9 @@
 #include <TAATools.h>
 #include <ADB.h>
 #include <qmessagebox.h>
+#include <TAAStructures.h>
+#include <CustomerContactsDB.h>
+#include <CustomerContactEditor.h>
 
 Tab_ContactInfo::Tab_ContactInfo
 (
@@ -100,44 +102,27 @@ Tab_ContactInfo::Tab_ContactInfo
     lastModified->setAlignment(AlignLeft|AlignVCenter);
 
     // Now, the contact list.
-    contactList = new QListView(this, "Phone List");
-    contactList->addColumn("Name");
+    contactList = new QListView(this, "contactList");
     contactList->addColumn("Tag");
+    contactList->addColumn("Name");
+    contactList->addColumn("Phone");
+    contactList->addColumn("Email");
     contactList->addColumn("Access");
+    contactList->addColumn("Flags");
     contactList->setAllColumnsShowFocus(true);
+    contactIDCol = 6;
 
     QPushButton *addContactButton = new QPushButton(this, "AddContactButton");
     addContactButton->setText("Add");
-    addContactButton->setEnabled(false);
-    //connect(addContactButton, SIGNAL(clicked()), this, SLOT(addNewContactess()));
+    connect(addContactButton, SIGNAL(clicked()), this, SLOT(addNewContact()));
 
     editContactButton = new QPushButton(this, "EditContactButton");
     editContactButton->setText("Edit");
-    editContactButton->setEnabled(false);
-    //connect(editContactButton, SIGNAL(clicked()), this, SLOT(editCurrentContactess()));
+    connect(editContactButton, SIGNAL(clicked()), this, SLOT(editCurrentContact()));
 
     deleteContactButton = new QPushButton(this, "DeleteContactButton");
     deleteContactButton->setText("Delete");
-    deleteContactButton->setEnabled(false);
-    //connect(deleteContactButton, SIGNAL(clicked()), this, SLOT(deleteCurrentContactess()));
-
-    // Now, the phone number list.
-    phoneList = new QListView(this, "Phone List");
-    phoneList->addColumn("Phone");
-    phoneList->addColumn("Tag");
-    phoneList->setAllColumnsShowFocus(true);
-
-    addPhoneButton = new QPushButton(this, "AddPhoneButton");
-    addPhoneButton->setText("Add");
-    connect(addPhoneButton, SIGNAL(clicked()), this, SLOT(addNewPhone()));
-
-    editPhoneButton = new QPushButton(this, "EditPhoneButton");
-    editPhoneButton->setText("Edit");
-    connect(editPhoneButton, SIGNAL(clicked()), this, SLOT(editCurrentPhone()));
-
-    deletePhoneButton = new QPushButton(this, "DeletePhoneButton");
-    deletePhoneButton->setText("Delete");
-    connect(deletePhoneButton, SIGNAL(clicked()), this, SLOT(deleteCurrentPhone()));
+    connect(deleteContactButton, SIGNAL(clicked()), this, SLOT(deleteCurrentContact()));
 
     // Now, do the contact list.
     
@@ -221,17 +206,6 @@ Tab_ContactInfo::Tab_ContactInfo
     cabl->addWidget(deleteContactButton, 0);
     cpbl->addLayout(cabl, 0);
 
-    // Add some space between the contact list and the phone list
-    cpbl->addSpacing(8);
-
-    // The list of customer phone numbers
-    cpbl->addWidget(phoneList, 1);
-    QBoxLayout *pabl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
-    pabl->addStretch(1);
-    pabl->addWidget(addPhoneButton, 0);
-    pabl->addWidget(editPhoneButton, 0);
-    pabl->addWidget(deletePhoneButton, 0);
-    cpbl->addLayout(pabl, 0);
 
     ml->addLayout(cpbl, 1);
     
@@ -255,7 +229,6 @@ Tab_ContactInfo::Tab_ContactInfo
 	
 	if (!isManager()) {
 		deleteAddrButton->hide();
-		deletePhoneButton->hide();
 	}
 
     connect(this, SIGNAL(customerChanged(long)), mainWin(), SLOT(customerChanged(long)));
@@ -276,8 +249,17 @@ void Tab_ContactInfo::loadCustInfo()
 {
 	CustomersDB cdb;
 	AddressesDB adb;
-	PhoneNumbersDB pdb;
+    customerContactList contacts;
 	
+    contacts = CustomerContactsDB::allCustomerContacts((uint)myCustID);
+    contactList->clear();
+    for (uint i = 0; i < contacts.count(); i++) {
+        customerContactRecord *ctc = contacts.at(i);
+        QString tmpSt = QString::number(ctc->contactID);
+        QString tmpFlags = ctc->flagList.join(",");
+        (void) new QListViewItem(contactList, ctc->tag, ctc->name, ctc->phoneNumber, ctc->emailAddress, ctc->access, tmpFlags, tmpSt);
+    }
+    fprintf(stderr, "Loaded %d contacts...\n", contacts.count());
 	cdb.get(myCustID);
 	
 	fullName->setText(cdb.getStr("FullName"));
@@ -289,10 +271,6 @@ void Tab_ContactInfo::loadCustInfo()
 	// Load the addresses for the customers into a list that the
 	// user can select.
 	refreshAddrList();
-
-	// Load the Phone numbers for the customers into a list that the
-	// user can select.
-	refreshPhoneList();
 
 	primaryLogin->setText(cdb.getStr("PrimaryLogin"));
 	lastModified->setText(cdb.getDateTime("LastModified").toString());
@@ -422,85 +400,42 @@ void Tab_ContactInfo::addrRefreshSlot(int RefFrom, long RefID)
 
 
 
-// Phone Number routines...
+// Contact routines...
 
-
-
-void Tab_ContactInfo::editCurrentPhone()
+void Tab_ContactInfo::editCurrentContact()
 {
-    QListViewItem   *curItem = phoneList->currentItem();
+    QListViewItem   *curItem = contactList->currentItem();
     if (curItem) {
-        PhoneEditor	*PE;
-        PE = new(PhoneEditor);
-        connect(PE, SIGNAL(phoneUpdated(int, long)), SLOT(phoneRefreshSlot(int, long)));
-        PE->editPhone(REF_CUSTOMER, myCustID, (const char *) curItem->key(1,0));
+        CustomerContactEditor *CE;
+        CE = new CustomerContactEditor();
+        CE->setContactID(curItem->key(contactIDCol, 0).toInt());
+        CE->show();
     }
 }
 
-
-void Tab_ContactInfo::editCurrentPhoneL(const QString &tag)
+void Tab_ContactInfo::addNewContact()
 {
-	PhoneEditor	*PE;
-	PE = new(PhoneEditor);
-	connect(PE, SIGNAL(phoneUpdated(int, long)), SLOT(phoneRefreshSlot(int, long)));
-	PE->editPhone(REF_CUSTOMER, myCustID, (const char *) tag);
+	CustomerContactEditor *CE;
+	CE = new CustomerContactEditor();
+    CE->setCustomerID(myCustID);
+    CE->show();
+
+	//connect(PE, SIGNAL(phoneUpdated(int, long)), SLOT(phoneRefreshSlot(int, long)));
 }
 
-
-void Tab_ContactInfo::addNewPhone()
+void Tab_ContactInfo::deleteCurrentContact()
 {
-	PhoneEditor	*PE;
-	PE = new(PhoneEditor);
-	connect(PE, SIGNAL(phoneUpdated(int, long)), SLOT(phoneRefreshSlot(int, long)));
-	PE->newPhone(REF_CUSTOMER, myCustID);
-}
-
-
-void Tab_ContactInfo::deleteCurrentPhone()
-{
-    QListViewItem   *curItem = phoneList->currentItem();
+    QListViewItem   *curItem = contactList->currentItem();
     if (curItem) {
-        PhoneNumbersDB	PDB;
+        CustomerContactsDB  CDB;
         
-        if (QMessageBox::warning(this, "Delete Phone Number", "Are you sure you want to delete\nthe currently selected phone number?", "&Yes", "&No", 0, 1) == 0) {
-            PDB.get(REF_CUSTOMER, myCustID, (const char *) curItem->key(1,0));
-            if (PDB.InternalID) {
-                PDB.del();
+        if (QMessageBox::warning(this, "Delete Contact", "Are you sure you want to delete\nthe currently selected contact?", "&Yes", "&No", 0, 1) == 0) {
+            if (CDB.loadContact(curItem->key(contactIDCol,0).toInt()) == curItem->key(contactIDCol,0).toInt()) {
+                CDB.del();
+                emit(customerChanged(myCustID));
             }
-            emit(customerChanged(myCustID));
         }
     }
-}
-
-/*
-** refreshPhoneList - Refreshes the Phone Listing.
-**
-*/
-
-void Tab_ContactInfo::refreshPhoneList(void)
-{
-    ADB             DB;
-    phoneList->clear();
-
-    DB.query("select * from PhoneNumbers where RefFrom = %d and RefID = %ld", REF_CUSTOMER, myCustID);
-    if (DB.rowCount) while (DB.getrow()) {
-        (void) new QListViewItem(phoneList, DB.curRow["PhoneNumber"], DB.curRow["Tag"]);
-    }
-}
-
-
-
-/*
-** phoneRefreshSlot - A slot for connecting to the address editor so we know
-**					 when an address has been updated.
-**
-*/
-
-void Tab_ContactInfo::phoneRefreshSlot(int RefFrom, long RefID)
-{
-	if ((RefFrom == REF_CUSTOMER) && (RefID == myCustID)) {
-		refreshPhoneList();
-	}
 }
 
 

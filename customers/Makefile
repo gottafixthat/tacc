@@ -36,6 +36,7 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		CustChargeEdit.cpp\
 		SubscriptionEdit.cpp\
 		CustRegister.cpp\
+		CustomerContactEditor.cpp\
 		Tab_ContactInfo.cpp\
 		Tab_BillingInfo.cpp\
 		CustSubscrList.cpp\
@@ -78,6 +79,7 @@ HEADERS =	Customers.h NewCustomer.h\
 		ReceivePayment.h\
 		CustChargeEdit.h\
 		SubscriptionEdit.h\
+		CustomerContactEditor.h\
 		Tab_ContactInfo.h\
 		Tab_BillingInfo.h\
 		CustSubscrList.h\
@@ -120,6 +122,7 @@ SRCMETA =	moc_Customers.cpp \
 		moc_ReceivePayment.cpp\
 		moc_CustChargeEdit.cpp\
 		moc_SubscriptionEdit.cpp\
+		moc_CustomerContactEditor.cpp\
 		moc_Tab_ContactInfo.cpp\
 		moc_Tab_BillingInfo.cpp\
 		moc_CustSubscrList.cpp\
@@ -219,6 +222,9 @@ moc_CustChargeEdit.cpp: CustChargeEdit.h
 
 moc_SubscriptionEdit.cpp: SubscriptionEdit.h
 	$(MOC) SubscriptionEdit.h -o moc_SubscriptionEdit.cpp
+
+moc_CustomerContactEditor.cpp: CustomerContactEditor.h
+	$(MOC) CustomerContactEditor.h -o moc_CustomerContactEditor.cpp
 
 moc_Tab_ContactInfo.cpp: Tab_ContactInfo.h
 	$(MOC) Tab_ContactInfo.h -o moc_Tab_ContactInfo.cpp

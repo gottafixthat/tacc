@@ -66,12 +66,11 @@ protected slots:
 	virtual void deleteCurrentAddress();
     virtual void DeactiveAddress();
     virtual void loadCustInfo();
-	virtual void addNewPhone();
-	virtual void editCurrentPhone();
-	virtual void deleteCurrentPhone();
+	virtual void addNewContact();
+	virtual void editCurrentContact();
+	virtual void deleteCurrentContact();
 
 	virtual void editCurrentAddressL(const QString &tag);
-	virtual void editCurrentPhoneL(const QString &tag);
 
 protected:
     QLineEdit   *fullName;
@@ -82,25 +81,20 @@ protected:
     QLabel      *lastModified;
     QPushButton *editAddrButton;
     QPushButton *deleteAddrButton;
-    QPushButton *addPhoneButton;
-    QPushButton *editPhoneButton;
-    QPushButton *deletePhoneButton;
     QPushButton *addContactButton;
     QPushButton *editContactButton;
     QPushButton *deleteContactButton;
     QListView   *addressList;
-    QListView   *phoneList;
     QListView   *contactList;
     
 private:
 	long		myCustID;
+    int         contactIDCol;
 	char		myBillingTag[20];
 	void		refreshAddrList(void);
-	void		refreshPhoneList(void);
 	
 private slots:
 	void	addrRefreshSlot(int RefFrom, long RefID);
-	void	phoneRefreshSlot(int RefFrom, long RefID);
 	
 };
 #endif // Tab_ContactInfo_included

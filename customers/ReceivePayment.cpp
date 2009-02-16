@@ -207,7 +207,6 @@ void ReceivePayment::loadCustInfo()
     ADB             DB;
     CustomersDB     CDB;
     AddressesDB     addrDB;
-    PhoneNumbersDB  PDB;
     QDate           theDate;
     char            tmpstr[1024];
     
@@ -233,7 +232,7 @@ void ReceivePayment::loadCustInfo()
     addressLabel2->setText(tmpstr);
 
 	// There is no default phone number, so get the first one from the DB.
-	DB.query("select PhoneNumber, Tag from PhoneNumbers where RefFrom = %d and RefID = %ld", REF_CUSTOMER, myCustID);
+	DB.query("select PhoneNumber, Tag from CustomerContacts where CustomerID = %ld", myCustID);
 	if (DB.rowCount) {
 		DB.getrow();
 		sprintf(tmpstr, "%s (%s)", DB.curRow["PhoneNumber"], DB.curRow["Tag"]);

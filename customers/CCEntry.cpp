@@ -268,7 +268,6 @@ CCEntry::CCEntry
 	ADB			    DB;
 	CustomersDB		CDB;
 	AddressesDB		addrDB;
-	PhoneNumbersDB	PDB;
 	QDate			theDate;
 	char			tmpstr[1024];
 
@@ -281,7 +280,7 @@ CCEntry::CCEntry
 	addrDB.get(REF_CUSTOMER, myCustID, tmpstr);
 	
 	// There is no default phone number, so get the first one from the DB.
-	DB.query("select PhoneNumber from PhoneNumbers where RefFrom = %d and RefID = %ld", REF_CUSTOMER, myCustID);
+	DB.query("select PhoneNumber from CustomerContacts where Active > 0 and CustomerID = %ld", myCustID);
 	if (DB.rowCount) {
 		DB.getrow();
 		phone->setText(DB.curRow["PhoneNumber"]);
