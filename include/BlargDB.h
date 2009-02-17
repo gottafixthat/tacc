@@ -244,6 +244,7 @@ public:
 
 	long	InternalID;
     QString CycleID;
+    QString CycleType;
     QString Description;
     QString Jan;
     QString Feb;
@@ -259,6 +260,7 @@ public:
     QString Dece;
     QString Day;
     QString DefaultCycle;
+    QString AnniversaryPeriod;
 
 };
 

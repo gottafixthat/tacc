@@ -44,11 +44,10 @@ public slots:
     virtual void refreshList(int);
 
 protected slots:
-    virtual void Hide();
+    virtual void closeClicked();
     virtual void newCycle();
     virtual void editCycle();
     virtual void deleteCycle();
-    virtual void editCycleL(int msg = 0);
 
 protected:
     QListView   *list;

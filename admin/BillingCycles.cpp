@@ -44,6 +44,7 @@ BillingCycles::BillingCycles
     // Create our widgets.
     list = new QListView(this, "Cycle List");
     list->addColumn("Cycle ID");
+    list->addColumn("Type");
     list->addColumn("Description");
     list->setAllColumnsShowFocus(true);
 
@@ -62,7 +63,7 @@ BillingCycles::BillingCycles
 
     QPushButton *closeButton = new QPushButton(this, "Close");
     closeButton->setText("&Close");
-    connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
     // Our layout.  Very simple.
     QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
@@ -91,10 +92,14 @@ BillingCycles::~BillingCycles()
 {
 }
 
-
-void BillingCycles::Hide()
+/**
+ * closeClicked()
+ *
+ * Called when the user clicks the close button.
+ */
+void BillingCycles::closeClicked()
 {
-    hide();
+    delete this;
 }
 
 
@@ -110,9 +115,9 @@ void BillingCycles::refreshList(int)
     // Save the state of the list.
     list->clear();
 
-    DB.query("select CycleID, Description from BillingCycles order by CycleID");
+    DB.query("select CycleID, CycleType, Description from BillingCycles order by CycleID");
     if (DB.rowCount) while(DB.getrow()) {
-        curItem = new QListViewItem(list, DB.curRow["CycleID"], DB.curRow["Description"]);
+        curItem = new QListViewItem(list, DB.curRow["CycleID"], DB.curRow["CycleType"], DB.curRow["Description"]);
     }
     list->repaint();
 }
@@ -144,22 +149,14 @@ void BillingCycles::editCycle()
     if (curItem != NULL) {
         strcpy(tmpCycle, curItem->key(0,0));
         if (strlen(tmpCycle)) {
-            newBillingCycle = new BillingCycleEdit(0,"",tmpCycle);
+            newBillingCycle = new BillingCycleEdit();
+            newBillingCycle->setCycleID(tmpCycle);
             newBillingCycle->show();
             connect(newBillingCycle, SIGNAL(refresh(int)),this, SLOT(refreshList(int)));
         }
     }
 }
 
-//
-// editCycleL  - Allows the user to edit a Billing Cycle from the list
-//
-
-void BillingCycles::editCycleL(int msg)
-{
-    msg = 0;
-    editCycle();
-}
 
 //
 // deleteCycle  - Allows the user to delete a Billing Cycle

@@ -13,10 +13,12 @@
 #include <qsqlrecord.h>
 #include <Cfg.h>
 #include <BlargDB.h>
+#include <CCValidate.h>
 #include <AcctsRecv.h>
 #include <qregexp.h>
 #include <getopt.h>
 #include <CustomerContactsDB.h>
+#include <loadKey.h>
 
 #include "seanetimport.h"
 
@@ -43,6 +45,8 @@ int main( int argc, char ** argv )
     QSqlDbPool::setDefaultUser(cfgVal("TAAMySQLUser"));
     QSqlDbPool::setDefaultPass(cfgVal("TAAMySQLPass"));
     QSqlDbPool::setDefaultDriver(cfgVal("TAASQLDriver"));
+
+    loadKey();
 
     // Transfer our CSV files into tables
     /*
@@ -176,6 +180,7 @@ void cleanDatabase()
     tables  += "CCTrans";
     tables  += "Contacts";
     tables  += "Customers";
+    tables  += "CustomerContacts";
     tables  += "DomainTypeBillables";
     tables  += "DomainTypes";
     tables  += "Domains";
@@ -190,7 +195,6 @@ void cleanDatabase()
     tables  += "PackageContents";
     tables  += "Packages";
     tables  += "PackagesData";
-    tables  += "PhoneNumbers";
     tables  += "RegisterSplits";
     tables  += "Statements";
     tables  += "StatementsData";
@@ -1080,7 +1084,7 @@ void loadCustomers()
     int debitCol        = parser.header().findIndex("DebitSum");
     int creditCol       = parser.header().findIndex("CreditSum");
     int paymentTypeCol  = parser.header().findIndex("PaymentType");
-    int creditCardCol   = parser.header().findIndex("CreditCard");
+    int creditCardCol   = parser.header().findIndex("cardNumber");
     int expMonthCol     = parser.header().findIndex("ExpM");
     int expYearCol      = parser.header().findIndex("ExpYY");
     int svcPlanCol      = parser.header().findIndex("ServicePlan");
@@ -1164,6 +1168,7 @@ void loadCustomers()
             // If they're a credit card customer, get that info too
             if (cust->paymentType == 3) {
                 cust->creditCard    = parser.row()[creditCardCol];
+                cust->creditCard.replace(QRegExp("[^0-9]"), "");
                 cust->cardExpMonth  = parser.row()[expMonthCol].toInt();
                 cust->cardExpYear   = parser.row()[expYearCol].toInt();
             }
@@ -1265,7 +1270,6 @@ void saveCustomer(customerRecord *cust)
     
     QSqlCursor  customer("Customers", true, custPool.qsqldb());
     QSqlCursor  addr("Addresses", true, addrPool.qsqldb());
-    QSqlCursor  phones("PhoneNumbers", true, addrPool.qsqldb());
     QSqlRecord  *buf;
 
     QString     fullName = "";
@@ -1301,7 +1305,7 @@ void saveCustomer(customerRecord *cust)
     buf->setValue("PromotionGiven",     timeToStr(rightNow(), YYYY_MM_DD));
     buf->setValue("CurrentBalance",     cust->currentBalance);
     buf->setValue("CreditLimit",        cust->currentBalance);
-    if (cust->statementType == 3) buf->setValue("PrintedStatement", 1);
+    if (cust->statementType == 3 || cust->statementType == 5) buf->setValue("PrintedStatement", 1);
 
     // Set the rate plan, billing cycle and terms
     buf->setValue("Terms",              1);     // FIXME
@@ -1343,59 +1347,32 @@ void saveCustomer(customerRecord *cust)
     CustomerContactsDB  contact;
 
     if (cust->homePhone.length() > 0) {
-        buf = phones.primeInsert();
-        buf->setValue("InternalID",     0);
-        buf->setValue("RefFrom",        0);
-        buf->setValue("RefID",          (uint)cust->customerID);
-        buf->setValue("Tag",            "Home");
-        buf->setValue("International",  0);
-        buf->setValue("PhoneNumber",    cust->homePhone);
-        buf->setValue("Active",         1);
-        buf->setValue("LastModifiedBy", "IMPORT");
-        phones.insert();
         contact.clear();
         contact.setTag("Home");
         contact.setName(fullName);
         contact.setPhoneNumber(cust->homePhone);
         contact.setCustomerID(cust->customerID);
+        contact.setEmailAddress(cust->email);
         contact.setActive(1);
         contact.insert();
     }
     if (cust->workPhone.length() > 0) {
-        buf = phones.primeInsert();
-        buf->setValue("InternalID",     0);
-        buf->setValue("RefFrom",        0);
-        buf->setValue("RefID",          (uint)cust->customerID);
-        buf->setValue("Tag",            "Work");
-        buf->setValue("International",  0);
-        buf->setValue("PhoneNumber",    cust->workPhone);
-        buf->setValue("Active",         1);
-        buf->setValue("LastModifiedBy", "IMPORT");
-        phones.insert();
         contact.clear();
         contact.setTag("Work");
         contact.setName(fullName);
         contact.setPhoneNumber(cust->workPhone);
         contact.setCustomerID(cust->customerID);
+        contact.setEmailAddress(cust->email);
         contact.setActive(1);
         contact.insert();
     }
     if (cust->faxPhone.length() > 0) {
-        buf = phones.primeInsert();
-        buf->setValue("InternalID",     0);
-        buf->setValue("RefFrom",        0);
-        buf->setValue("RefID",          (uint)cust->customerID);
-        buf->setValue("Tag",            "Fax");
-        buf->setValue("International",  0);
-        buf->setValue("PhoneNumber",    cust->faxPhone);
-        buf->setValue("Active",         1);
-        buf->setValue("LastModifiedBy", "IMPORT");
-        phones.insert();
         contact.clear();
         contact.setTag("Fax");
         contact.setName(fullName);
         contact.setPhoneNumber(cust->faxPhone);
         contact.setCustomerID(cust->customerID);
+        contact.setEmailAddress(cust->email);
         contact.setActive(1);
         contact.insert();
     }
@@ -1439,6 +1416,60 @@ void saveCustomer(customerRecord *cust)
         AR.ARDB->setValue("EndDate",        timeToStr(rightNow(), YYYY_MM_DD));
         AR.ARDB->setValue("Memo",           "Transferred balance");
         AR.SaveTrans();
+    }
+
+    // If they have a credit card, create the AutoPayments entry
+    if (cust->creditCard.length()) {
+        AutoPaymentsDB      APDB;
+        APDB.setValue("CustomerID",         (long)cust->customerID);
+        APDB.setValue("AuthorizedOn",       timeToStr(rightNow(), YYYY_MM_DD));
+        APDB.setValue("AuthorizedBy",       "IMPORT");
+        APDB.setValue("EnteredBy",          "IMPORT");
+        APDB.setValue("Active",             1);
+        APDB.setValue("TransDate",          timeToStr(rightNow(), YYYY_MM_DD));
+        APDB.setValue("ChargeDay",          0); // The day of the statement
+        APDB.setValue("Name",               fullName);
+        APDB.setValue("Address",            cust->street);
+        APDB.setValue("ZIP",                cust->zip);
+        APDB.setValue("AuthName",           fullName);
+        APDB.setValue("PaymentType",        1);
+        int cardType = CCTYPE_UNKNOWN;
+        QString tmpCard;
+        tmpCard = cust->creditCard.left(2);
+        if (tmpCard.toInt() >= 51 && tmpCard.toInt() <= 55) {
+            cardType = CCTYPE_MC;
+        }
+
+        tmpCard = cust->creditCard.left(1);
+        if (tmpCard.toInt() == 4) {
+            cardType = CCTYPE_VISA;
+        }
+
+        tmpCard = cust->creditCard.left(2);
+        if (tmpCard.toInt() == 34 || tmpCard.toInt() == 37) {
+            cardType = CCTYPE_MC;
+        }
+
+        tmpCard = cust->creditCard.left(4);
+        if (tmpCard.toInt() == 6011) {
+            cardType = CCTYPE_DISC;
+        }
+
+        APDB.setValue("CardType",       cardType);
+        
+        if (cardType == CCTYPE_UNKNOWN) {
+            fprintf(stderr, "\nUnknown credit card type for customer ID %d\n", cust->customerID);
+        }
+
+        // Fix the date.
+        QDate   tmpDate;
+        tmpDate.setYMD(cust->cardExpYear, cust->cardExpMonth, 1);
+        tmpDate.setYMD(cust->cardExpYear, cust->cardExpMonth, tmpDate.daysInMonth());
+        
+        APDB.setValue("ExpDate",    tmpDate.toString("yyyy-MM-dd"));
+        APDB.setValue("AcctNo",     cust->creditCard);
+        APDB.ins();
+    
     }
 
     // Add the logins
