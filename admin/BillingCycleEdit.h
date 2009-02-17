@@ -20,12 +20,19 @@
 */
 
 
-#ifndef BillingCycleEdit_included
-#define BillingCycleEdit_included
+#ifndef BILLINGCYCLEEDIT_H
+#define BILLINGCYCLEEDIT_H
 
-#include "BillingCycleEditData.h"
+#include <TAAWidget.h>
+#include <qlineedit.h>
+#include <qcheckbox.h>
+#include <qspinbox.h>
+#include <qstring.h>
+#include <qlabel.h>
+#include <qcombobox.h>
 
-class BillingCycleEdit : public BillingCycleEditData
+
+class BillingCycleEdit : public TAAWidget
 {
     Q_OBJECT
 
@@ -34,24 +41,45 @@ public:
     BillingCycleEdit
     (
         QWidget* parent = NULL,
-        const char* name = NULL,
-        const char* CycleID = NULL
+        const char* name = NULL
     );
 
     virtual ~BillingCycleEdit();
 
-public slots:
-    void refreshCycleList(int);
-    
+    void    setCycleID(const QString);
+
 signals:
     void refresh(int);
     
 private slots:
-    virtual void saveCycle();
-    virtual void cancelCycle();
+    virtual void cycleTypeChanged(int);
+    virtual void saveClicked();
+    virtual void cancelClicked();
 
-private:    
-    char myCycleID[20];
-    int  EditingCycle;
+protected:    
+    QString     myCycleID;
+    int         EditingCycle;
+    QLineEdit   *cycleID;
+    QLineEdit   *description;
+
+    QLabel      *dayOfMonthLabel;
+    QSpinBox    *dayOfMonth;
+    QLabel      *monthsLabel;
+    QCheckBox   *january;
+    QCheckBox   *february;
+    QCheckBox   *march;
+    QCheckBox   *april;
+    QCheckBox   *may;
+    QCheckBox   *june;
+    QCheckBox   *july;
+    QCheckBox   *august;
+    QCheckBox   *september;
+    QCheckBox   *october;
+    QCheckBox   *november;
+    QCheckBox   *december;
+    QCheckBox   *defaultCycle;
+    QComboBox   *cycleType;
+    QLabel      *anniversaryPeriodLabel;
+    QSpinBox    *anniversaryPeriod;
 };
 #endif // BillingCycleEdit_included

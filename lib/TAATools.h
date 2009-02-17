@@ -38,7 +38,7 @@
 #include <qdatetm.h>
 #include <time.h>
 
-#define SCHEMA_VERSION_REQUIRED 3
+#define SCHEMA_VERSION_REQUIRED 4
 
 enum t_TimeFormat {
     YYYY_MM_DD_HH_MM     = 0,

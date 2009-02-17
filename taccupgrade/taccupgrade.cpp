@@ -236,5 +236,23 @@ void upgradeDatabase()
         
         vers = 3;
     }
+
+    if (vers < 4) {
+        printf("Updating to Schema Version 4...\n");
+        QSqlDbPool  dbp2;
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "alter table BillingCycles add column CycleType enum('Day','Anniversary') DEFAULT 'Day'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table BillingCycles add column AnniversaryPeriod int(11) DEFAULT '1'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update SchemaVersion set SchemaVersion = 4";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+        
+        vers = 4;
+    }
 }
 

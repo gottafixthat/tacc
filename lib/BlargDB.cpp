@@ -946,6 +946,8 @@ BillingCyclesDB::BillingCyclesDB(void)
     Dece		= "";
     Day			= "";
     DefaultCycle= "";
+    CycleType   = "";
+    AnniversaryPeriod = "";
 }
 
 BillingCyclesDB::~BillingCyclesDB()
@@ -988,6 +990,8 @@ int BillingCyclesDB::get(long internalID)
         Dece		= DB.curRow["Dece"];
         Day			= DB.curRow["Day"];
         DefaultCycle= DB.curRow["DefaultCycle"];
+        CycleType   = DB.curRow["CycleType"];
+        AnniversaryPeriod = DB.curRow["AnniversaryPeriod"];
         Ret = 1;
     }
     return(Ret);
@@ -1032,6 +1036,8 @@ int BillingCyclesDB::getByCycleID(const char * cycleID)
         Dece		= DB.curRow["Dece"];
         Day			= DB.curRow["Day"];
         DefaultCycle= DB.curRow["DefaultCycle"];
+        CycleType   = DB.curRow["CycleType"];
+        AnniversaryPeriod = DB.curRow["AnniversaryPeriod"];
         Ret = 1;
     }
     return(Ret);
@@ -1070,6 +1076,8 @@ long BillingCyclesDB::ins(void)
     bcDB.setValue("Nov",            Nov.toInt());
     bcDB.setValue("Dece",           Dece.toInt());
     bcDB.setValue("DefaultCycle",   DefaultCycle.toInt());
+    bcDB.setValue("CycleType",      DefaultCycle.ascii());
+    bcDB.setValue("AnniversaryPeriod", AnniversaryPeriod.toInt());
     Ret = bcDB.ins();
 
     InternalID = Ret;
@@ -1111,6 +1119,8 @@ int BillingCyclesDB::upd(void)
     bcDB.setValue("Nov",            Nov.toInt());
     bcDB.setValue("Dece",           Dece.toInt());
     bcDB.setValue("DefaultCycle",   DefaultCycle.toInt());
+    bcDB.setValue("CycleType",      CycleType.ascii());
+    bcDB.setValue("AnniversaryPeriod", AnniversaryPeriod.toInt());
     Ret = bcDB.upd();
 
     return(Ret);
@@ -1320,6 +1330,8 @@ int BillingCyclesDB::getDefaultCycle(void)
         Dece		= DB.curRow["Dece"];
         Day			= DB.curRow["Day"];
         DefaultCycle= DB.curRow["DefaultCycle"];
+        CycleType   = DB.curRow["CycleType"];
+        AnniversaryPeriod = DB.curRow["AnniversaryPeriod"];
         Ret = 1;
     } else {
         fprintf(stderr, "Warning! No default billing cycle found.");

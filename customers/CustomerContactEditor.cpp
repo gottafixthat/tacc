@@ -70,7 +70,7 @@ CustomerContactEditor::CustomerContactEditor(QWidget *parent, const char * name)
     //PhoneNumber->setInputMask("(999) 999-9999");
 
     QLabel      *emailAddressLabel = new QLabel(this, "emailAddressLabel");
-    emailAddressLabel->setText("Phone Number:");
+    emailAddressLabel->setText("Email Address:");
     emailAddressLabel->setAlignment(Qt::AlignRight);
 
     EmailAddress = new QLineEdit(this, "EmailAddress");

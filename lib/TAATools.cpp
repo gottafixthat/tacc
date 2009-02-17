@@ -147,10 +147,10 @@ int schemaVersion()
         return 0;
     }
     q.next();
-    if (q.value(0).toInt() < SCHEMA_VERSION_REQUIRED) {
+    /*if (q.value(0).toInt()  SCHEMA_VERSION_REQUIRED) {
         // We need a newer schema
         return 0;
-    }
+    }*/
 
     // Schema version is okay, return true
     return q.value(0).toInt();
@@ -164,7 +164,7 @@ int schemaVersion()
  */
 bool schemaValid()
 {
-    if (schemaVersion() < SCHEMA_VERSION_REQUIRED) return false;
+    if (schemaVersion() != SCHEMA_VERSION_REQUIRED) return false;
     else return true;
 }
 
