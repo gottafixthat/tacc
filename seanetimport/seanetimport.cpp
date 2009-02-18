@@ -1088,7 +1088,7 @@ void loadCustomers()
     int expMonthCol     = parser.header().findIndex("ExpM");
     int expYearCol      = parser.header().findIndex("ExpYY");
     int svcPlanCol      = parser.header().findIndex("ServicePlan");
-    //int periodCol       = parser.header().findIndex("BillingPeriod");
+    int billPeriodCol   = parser.header().findIndex("BillingPeriod");
     int serviceStartCol = parser.header().findIndex("ServiceStart");
     int nextBillDateCol = parser.header().findIndex("NextBillDate");
     int closeDateCol    = parser.header().findIndex("SchClose");
@@ -1175,6 +1175,8 @@ void loadCustomers()
 
             // A few dates.
             cust->accountOpened     = dateConvert(parser.row()[serviceStartCol]);
+            cust->nextBillDate      = dateConvert(parser.row()[nextBillDateCol]);
+            cust->billingPeriod     = parser.row()[billPeriodCol].toInt();
 
             //fprintf(stderr, "Customer ID %ld %-50s\r", cust->customerID, cust->contactName.ascii());
 
@@ -1274,6 +1276,8 @@ void saveCustomer(customerRecord *cust)
 
     QString     fullName = "";
     QString     contactName = "";
+    QDate       cycleStartDate;
+    QDate       cycleEndDate;
     if (!cust->altContact) cust->altContact = "";
 
     if (cust->fullName.length()) {
@@ -1314,7 +1318,16 @@ void saveCustomer(customerRecord *cust)
     buf->setValue("BillingCycle",       1);     // FIXME
     buf->setValue("BillingCycleDate",   cust->accountOpened.toString("yyyy-MM-dd").ascii());
     buf->setValue("LastBilled",         timeToStr(rightNow(), YYYY_MM_DD)); // FIXME
-
+    // Setup our billing dates.
+    cycleStartDate = cust->nextBillDate;
+    cycleStartDate = cycleStartDate.addMonths(-1 * cust->billingPeriod);
+    cust->nextBillDate = cust->nextBillDate.addDays(1);
+    buf->setValue("NextStatementDate",  cust->nextBillDate.toString("yyyy-MM-dd").ascii());
+    // Subtract 2 days from the next statement date and we'll have the end date.
+    // subscriptions get run on the day before statements.
+    cycleEndDate  = cust->nextBillDate.addDays(-2);
+    buf->setValue("CycleStartDate", cycleStartDate.toString("yyyy-MM-dd").ascii());
+    buf->setValue("CycleEndDate",   cycleEndDate.toString("yyyy-MM-dd").ascii());
 
     
     // Finally, insert the customer

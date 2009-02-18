@@ -81,6 +81,8 @@ struct customerRecord {
     QString email;
     float   currentBalance;
     QDate   accountOpened;
+    QDate   nextBillDate;
+    int     billingPeriod;
     QString accountExpires;
     QString street;
     QString city;
