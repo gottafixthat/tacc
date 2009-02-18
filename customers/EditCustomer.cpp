@@ -254,6 +254,7 @@ EditCustomer::EditCustomer
         QPopupMenu  *admMenu = new QPopupMenu();
         admMenu->insertItem("Change &Rate Plan", billingInfoTab, SLOT(changeRatePlan()));
         admMenu->insertItem("Change &Billing Cycle", billingInfoTab, SLOT(changeBillingCycle()));
+        admMenu->insertItem("&Run Subscriptions", billingInfoTab, SLOT(runSubscriptions()));
         admMenu->insertItem("&Process a Statement", billingInfoTab, SLOT(generateStatement()));
 
         stMenu = new QPopupMenu();

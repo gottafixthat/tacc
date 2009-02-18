@@ -32,6 +32,7 @@
 #include <TAATools.h>
 #include <Cfg.h>
 #include <CCValidate.h>
+#include <SubscriptionEngine.h>
 
 #ifdef USEDES
 #include "bdes.h"
@@ -1679,9 +1680,9 @@ int CustomersDB::doSubscriptions(void)
 	if (!getLong("CustomerID")) return 1;
 
 	int				RetVal = 0;
+    int             anniversaryBilling = 0;
 	ADB			    DB;
 	ADB             DB2;
-	BillingCyclesDB	BCDB;
 	SubscriptionsDB	SDB;
 	PackagesDB		PDB;
 	BillablesDB		BDB;
@@ -1712,12 +1713,18 @@ int CustomersDB::doSubscriptions(void)
 	fflush(stdout);
     #endif
 	RPDB.get(getLong("RatePlan"));
+
+	BillingCyclesDB	BCDB;
 	#ifdef DBDEBUG
 	printf("Getting the Billing Cycle...\n");
 	fflush(stdout);
     #endif
 	BCDB.get(getLong("BillingCycle"));
-		
+    if (BCDB.CycleType == "Anniversary") {
+        anniversaryBilling = 1;
+    }
+
+
 	#ifdef DBDEBUG
 	printf("Getting the Billing Cycle Dates...\n");
 	fflush(stdout);
@@ -1812,7 +1819,14 @@ int CustomersDB::doSubscriptions(void)
 	        myDatetoQDate((const char *)SDB.getStr("EndsOn"), &TmpDate);
 	        ChargeDate = TmpDate.addDays(1);
 	        QDatetomyDate(sChargeDate, ChargeDate);
-	        DaysLeft   = ChargeDate.daysTo(CycleEnd);
+            DaysLeft   = ChargeDate.daysTo(CycleEnd);
+            if (anniversaryBilling) {
+                CycleEnd = ChargeDate.addMonths(BCDB.AnniversaryPeriod.toInt());
+                CycleEnd = CycleEnd.addDays(-1);
+                CycleDays = ChargeDate.daysTo(CycleEnd);
+                DaysLeft = CycleDays;
+	            QDatetomyDate(sCycleEnd, CycleEnd);
+            }
 	        
 			AR.ARDB->setValue("CustomerID", getLong("CustomerID"));
 			AR.ARDB->setValue("LoginID", SDB.getStr("LoginID")); //"Package");
@@ -1857,7 +1871,7 @@ int CustomersDB::doSubscriptions(void)
 			AR.SaveTrans();
 			// GrandTotal += AR.ARDB->Amount.toFloat();
 			
-			SDB.setValue("LastDate", Today);
+			SDB.setValue("LastDate", sChargeDate);
 			SDB.setValue("EndsOn", sCycleEnd);
 			
 			// See if we've ever charged a setup charge for this package, and
@@ -1967,7 +1981,7 @@ int CustomersDB::doSubscriptions(void)
                 }
 				// GrandTotal += AR2.ARDB->Amount.toFloat();
 				
-				SDB.setValue("LastDate", Today);
+				SDB.setValue("LastDate", sChargeDate);
 				SDB.setValue("EndsOn", sCycleEnd);
 
 	            // Check for setup charges...
@@ -2044,6 +2058,14 @@ int CustomersDB::doSubscriptions(void)
             ChargeDate = TmpDate.addDays(1);
             QDatetomyDate(sChargeDate, ChargeDate);
             DaysLeft   = ChargeDate.daysTo(CycleEnd);
+            //MARC
+            if (anniversaryBilling) {
+                CycleEnd = ChargeDate.addMonths(BCDB.AnniversaryPeriod.toInt());
+                CycleEnd = CycleEnd.addDays(-1);
+                CycleDays = ChargeDate.daysTo(CycleEnd);
+                DaysLeft = CycleDays;
+	            QDatetomyDate(sCycleEnd, CycleEnd);
+            }
 
 			AR.ARDB->setValue("CustomerID", getLong("CustomerID"));
 			AR.ARDB->setValue("LoginID", SDB.getStr("LoginID"));
@@ -2105,7 +2127,7 @@ int CustomersDB::doSubscriptions(void)
 			AR.SaveTrans();
 			// GrandTotal += AR.ARDB->Amount.toFloat();
 			
-			SDB.setValue("LastDate", Today);
+			SDB.setValue("LastDate", sChargeDate);
 			SDB.setValue("EndsOn", sCycleEnd);
 
             // Check for setup charges...
