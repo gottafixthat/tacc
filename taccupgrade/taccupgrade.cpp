@@ -251,8 +251,29 @@ void upgradeDatabase()
 
         sql = "update SchemaVersion set SchemaVersion = 4";
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
-        
+
         vers = 4;
+    }
+
+    if (vers < 5) {
+        printf("Updating to Schema Version 5...\n");
+        QSqlDbPool  dbp2;
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "alter table Customers add column CycleStartDate date default '0000-00-00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Customers add column CycleEndDate date default '0000-00-00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Customers add column NextStatementDate date DEFAULT '0000-00-00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update SchemaVersion set SchemaVersion = 5";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 5;
     }
 }
 
