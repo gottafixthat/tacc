@@ -733,6 +733,10 @@ void printStatementFromFile(long statementNo)
     system(command);
     // Run latex a second time to fix references
     system(command);
+    // Turn it into a pdf
+    sprintf(command, "dvipdf %s.dvi %s.pdf", fName, fName);
+    system(command);
+
     // Change back to our working directory.
     chdir(cwd);
 
@@ -748,6 +752,8 @@ void printStatementFromFile(long statementNo)
         sprintf(tmpFName, "%s.dvi", fName);
         unlink(tmpFName);
         sprintf(tmpFName, "%s.tex", fName);
+        unlink(tmpFName);
+        sprintf(tmpFName, "%s.pdf", fName);
         unlink(tmpFName);
     }
 
