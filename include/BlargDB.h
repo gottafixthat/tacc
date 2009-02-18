@@ -261,7 +261,6 @@ public:
     QString Day;
     QString DefaultCycle;
     QString AnniversaryPeriod;
-
 };
 
 // Billables

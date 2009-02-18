@@ -69,6 +69,7 @@ public slots:
     virtual void changeRatePlan();
     virtual void changeBillingCycle();
     virtual void generateStatement();
+    virtual void runSubscriptions();
 	void refreshBillingInfo(int);
 	void viewStatement(QListViewItem *curItem);
 
