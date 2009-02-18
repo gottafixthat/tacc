@@ -1,33 +1,14 @@
-/*
-** $Id: TAATools.h,v 1.3 2004/02/27 01:33:33 marc Exp $
-**
-***************************************************************************
-**
-** TAATools - A few global functions to make development of TAA easier.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: TAATools.h,v $
-** Revision 1.3  2004/02/27 01:33:33  marc
-** The Customers table now tracks how many mailboxes are allowed.  LoginTypes
-** and Packages were both updated to include how many mailboxes are allowed with
-** each package or login type.
-**
-** Revision 1.2  2004/01/22 21:00:55  marc
-** Added new dateToStr format
-**
-** Revision 1.1  2003/12/07 01:47:05  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/**
+ * TAATools.h - Common global functions and tools.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef TAATools_included
@@ -38,7 +19,7 @@
 #include <qdatetm.h>
 #include <time.h>
 
-#define SCHEMA_VERSION_REQUIRED 4
+#define SCHEMA_VERSION_REQUIRED 5
 
 enum t_TimeFormat {
     YYYY_MM_DD_HH_MM     = 0,
