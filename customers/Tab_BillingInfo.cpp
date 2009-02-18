@@ -56,7 +56,6 @@
 
 #include <TAATools.h>
 #include <ADB.h>
-#include <SubscriptionEngine.h>
 
 Tab_BillingInfo::Tab_BillingInfo
 (
@@ -606,7 +605,7 @@ void Tab_BillingInfo::runSubscriptions()
     CDB.get(myCustID);
     CDB.doSubscriptions();
     QApplication::restoreOverrideCursor();
-	refreshBillingInfo(myCustID);
+    emit(customerChanged(myCustID));
 }
 
 
