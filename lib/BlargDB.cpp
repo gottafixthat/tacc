@@ -1076,7 +1076,7 @@ long BillingCyclesDB::ins(void)
     bcDB.setValue("Nov",            Nov.toInt());
     bcDB.setValue("Dece",           Dece.toInt());
     bcDB.setValue("DefaultCycle",   DefaultCycle.toInt());
-    bcDB.setValue("CycleType",      DefaultCycle.ascii());
+    bcDB.setValue("CycleType",      CycleType.ascii());
     bcDB.setValue("AnniversaryPeriod", AnniversaryPeriod.toInt());
     Ret = bcDB.ins();
 

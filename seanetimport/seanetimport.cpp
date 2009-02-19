@@ -26,6 +26,7 @@
 QPtrList<customerRecord> customerList;
 QPtrList<domainRecord> domainListFull;
 QPtrList<loginRecord> loginListFull;
+QPtrList<billingCycleRecord> billingCycleList;
 
 int main( int argc, char ** argv )
 {
@@ -77,6 +78,7 @@ int main( int argc, char ** argv )
     if (scrubDB) cleanDatabase();
 
     // Import the login types and billable items.
+    loadBillingCycles();
     importLoginTypes();
     loadDomains();
     loadWebSet();
@@ -213,6 +215,51 @@ void cleanDatabase()
 }
 
 /**
+ * loadBillingCycles()
+ *
+ * Loads the billing cycles into memory.  All it really loads is
+ * the InternalID and Period for billing cycles with type Anniversary.
+ */
+void loadBillingCycles()
+{
+    QSqlDbPool  dbpool;
+    QSqlQuery   q(dbpool.qsqldb());
+
+    if (!q.exec("select InternalID, AnniversaryPeriod from BillingCycles where CycleType = 'Anniversary'")) {
+        fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
+        exit(-1);
+    }
+    if (q.size()) {
+        while(q.next()) {
+            billingCycleRecord  *rec = new billingCycleRecord;
+            rec->cycleID = q.value(0).toInt();
+            rec->period  = q.value(1).toInt();
+            billingCycleList.append(rec);
+        }
+    }
+}
+
+/**
+ * getBillingCycleID()
+ *
+ * Given a billing period, this will return the InternalID of the billing
+ * cycle or zero if it wasn't found.
+ */
+long getBillingCycleID(int period)
+{
+    long    retVal = 0;
+    billingCycleRecord  *rec;
+    for (unsigned int c = 0; c < billingCycleList.count(); c++) {
+        rec = billingCycleList.at(c);
+        if (rec->period == period) {
+            retVal = rec->cycleID;
+        }
+    }
+    
+    return retVal;
+}
+
+/**
  * loadDomains()
  *
  * Loads the domain records from the CSV file into memory.
@@ -228,7 +275,6 @@ void loadDomains()
 
     // Get the index of certain columns from our header row.
     int regNumberCol        = parser.header().findIndex("RegNumber");
-    int billingPeriodCol    = parser.header().findIndex("billingperiod");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
@@ -248,7 +294,6 @@ void loadDomains()
         sprintf(userName, "domainset%05d", recCount);
         loginRecord   *loginRec = new loginRecord;
         loginRec->regNumber     = parser.row()[regNumberCol];
-        loginRec->billingPeriod = parser.row()[billingPeriodCol].toInt();
         loginRec->planStatus    = parser.row()[planStatusCol].toInt();
         loginRec->serviceType   = parser.row()[serviceTypeCol];
         loginRec->serviceStart  = parser.row()[serviceStartCol];
@@ -292,7 +337,6 @@ void loadWebSet()
 
     // Get the index of certain columns from our header row.
     int regNumberCol        = parser.header().findIndex("accountNumber");
-    int billingPeriodCol    = parser.header().findIndex("BillingPeriod");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int webSvcTypeCol       = parser.header().findIndex("webServiceTypeName");
@@ -313,7 +357,6 @@ void loadWebSet()
         loginRecord   *loginRec = new loginRecord;
         loginRec->regNumber     = parser.row()[regNumberCol];
         loginRec->userName      = userName;
-        loginRec->billingPeriod = parser.row()[billingPeriodCol].toInt();
         loginRec->planStatus    = parser.row()[planStatusCol].toInt();
         loginRec->serviceType   = parser.row()[serviceTypeCol];
         loginRec->webSvcType    = parser.row()[webSvcTypeCol];
@@ -356,7 +399,6 @@ void loadVirtualSet()
 
     // Get the index of certain columns from our header row.
     int regNumberCol        = parser.header().findIndex("RegNumber");
-    int billingPeriodCol    = parser.header().findIndex("billingperiod");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
@@ -377,7 +419,6 @@ void loadVirtualSet()
         loginRecord   *loginRec = new loginRecord;
         loginRec->regNumber     = parser.row()[regNumberCol];
         loginRec->userName      = userName;
-        loginRec->billingPeriod = parser.row()[billingPeriodCol].toInt();
         loginRec->planStatus    = parser.row()[planStatusCol].toInt();
         loginRec->serviceType   = parser.row()[serviceTypeCol];
         loginRec->serviceStart  = parser.row()[serviceStartCol];
@@ -419,7 +460,6 @@ void loadDialupStatic()
 
     // Get the index of certain columns from our header row.
     int regNumberCol        = parser.header().findIndex("RegNumber");
-    int billingPeriodCol    = parser.header().findIndex("BillingPeriod");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
     int nextBillDateCol     = parser.header().findIndex("NextBillDate");
@@ -441,7 +481,6 @@ void loadDialupStatic()
     while(parser.loadRecord()) {
         loginRecord    *loginRec  = new loginRecord;
         loginRec->regNumber        = parser.row()[regNumberCol];
-        loginRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
         loginRec->planStatus       = parser.row()[planStatusCol].toInt();
         loginRec->serviceStart     = parser.row()[serviceStartCol];
         loginRec->nextBillDate     = parser.row()[nextBillDateCol];
@@ -491,7 +530,6 @@ void loadDialupDynamic()
 
     // Get the index of certain columns from our header row.
     int regNumberCol        = parser.header().findIndex("RegNumber");
-    int billingPeriodCol    = parser.header().findIndex("BillingPeriod");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
     int nextBillDateCol     = parser.header().findIndex("NextBillDate");
@@ -508,7 +546,6 @@ void loadDialupDynamic()
     while(parser.loadRecord()) {
         loginRecord    *loginRec  = new loginRecord;
         loginRec->regNumber        = parser.row()[regNumberCol];
-        loginRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
         loginRec->planStatus       = parser.row()[planStatusCol].toInt();
         loginRec->serviceStart     = parser.row()[serviceStartCol];
         loginRec->nextBillDate     = parser.row()[nextBillDateCol];
@@ -555,7 +592,6 @@ void loadDSLAccessSet()
 
     // Get the index of certain columns from our header row.
     int regNumberCol        = parser.header().findIndex("RegNumber");
-    int billingPeriodCol    = parser.header().findIndex("BillPeriod");
     int planStatusCol       = parser.header().findIndex("Status");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
     int nextBillDateCol     = parser.header().findIndex("NextBilldate");
@@ -577,7 +613,6 @@ void loadDSLAccessSet()
         sprintf(userName, "dslset%05d", recCount);
         loginRecord    *loginRec  = new loginRecord;
         loginRec->regNumber        = parser.row()[regNumberCol];
-        loginRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
         loginRec->planStatus       = parser.row()[planStatusCol].toInt();
         loginRec->serviceStart     = parser.row()[serviceStartCol];
         loginRec->nextBillDate     = parser.row()[nextBillDateCol];
@@ -626,7 +661,6 @@ void loadNailedSet()
 
     // Get the index of certain columns from our header row.
     int regNumberCol        = parser.header().findIndex("accountNumber");
-    int billingPeriodCol    = parser.header().findIndex("BillingPeriod");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
     int nextBillDateCol     = parser.header().findIndex("NextBillDate");
@@ -647,7 +681,6 @@ void loadNailedSet()
         sprintf(userName, "nailedset%05d", recCount);
         loginRecord    *loginRec  = new loginRecord;
         loginRec->regNumber        = parser.row()[regNumberCol];
-        loginRec->billingPeriod    = parser.row()[billingPeriodCol].toInt();
         loginRec->planStatus       = parser.row()[planStatusCol].toInt();
         loginRec->serviceStart     = parser.row()[serviceStartCol];
         loginRec->nextBillDate     = parser.row()[nextBillDateCol];
@@ -805,8 +838,6 @@ void importLoginTypes()
     CSVParser   parser;
     int         *ratePlans = NULL;
     int         planCount = 0;
-    int         *billingCycles = NULL;
-    int         cycleCount = 0;
     
     QSqlDbPool      dbconn1;
     QSqlDbPool      dbconn2;
@@ -843,20 +874,9 @@ void importLoginTypes()
     }
     
     // Get the list of billing cycles
-    if (!q.exec("select InternalID from BillingCycles")) {
-        fprintf(stderr, "Error loading billing cycle list\n");
-        exit(-1);
-    }
-    if (q.size() < 1) {
+    if (!billingCycleList.count()) {
         fprintf(stderr, "No billing cycles have been defined.\n");
         exit(-1);
-    }
-    cycleCount = q.size();
-    billingCycles = new int[cycleCount+1];
-    int curCycle = 0;
-    while(q.next()) {
-        billingCycles[curCycle] = q.value(0).toInt();
-        curCycle++;
     }
     
     // Open our CSV file
@@ -912,19 +932,28 @@ void importLoginTypes()
             // Now, walk through each of the rate plans and billing
             // cycles and add the pricing data.
             for (int r = 0; r < planCount; r++) {
-                for (int b = 0; b < cycleCount; b++) {
+                billingCycleRecord  *cycle;
+                for (uint b = 0; b < billingCycleList.count(); b++) {
+                    cycle = billingCycleList.at(b);
                     int rowCount = 0;
                     QString tmpPrice = parser.row()[priceCol];
+                    float   actPrice;
                     tmpPrice.replace('$', "");
+                    actPrice = tmpPrice.toFloat();
+                    actPrice = actPrice * cycle->period;
+                    QString units = "Month";
+                    if (cycle->period == 3) units = "Quarter";
+                    if (cycle->period == 6) units = "Semi-Annual";
+                    if (cycle->period == 12) units = "Annual";
                     buf = billablesData.primeInsert();
                     buf->setValue("InternalID",     0);
                     buf->setValue("ItemNumber",     itemNo);
                     buf->setValue("RatePlanID",     ratePlans[r]);
-                    buf->setValue("CycleID",        billingCycles[b]);
+                    buf->setValue("CycleID",        (uint)cycle->cycleID);
                     buf->setValue("Description",    "");
-                    buf->setValue("Price",          tmpPrice);
-                    buf->setValue("SecondaryPrice", tmpPrice);
-                    buf->setValue("Units",          "Month");
+                    buf->setValue("Price",          actPrice);
+                    buf->setValue("SecondaryPrice", actPrice);
+                    buf->setValue("Units",          units);
                     rowCount = billablesData.insert();
                     billablePricesIns += rowCount;
                     //fprintf(stderr, "r[%d] = %d, b[%d] = %d, rowCount = %d\n", r, ratePlans[r], b, billingCycles[b], rowCount);
@@ -1034,7 +1063,7 @@ void importLoginTypes()
     addLoginTypeFlag("WebSet",    "VirtDomain");
     addLoginTypeFlag("WebSet",    "VirtDomain2");
 
-    printf("Imported %d BillableItems and %d Billable Prices for %d Rate Plans and %d Billing Cycles\n", billablesIns, billablePricesIns, planCount, cycleCount);
+    printf("Imported %d BillableItems and %d Billable Prices for %d Rate Plans and %d Billing Cycles\n", billablesIns, billablePricesIns, planCount, billingCycleList.count());
 }
 
 /**
@@ -1177,6 +1206,11 @@ void loadCustomers()
             cust->accountOpened     = dateConvert(parser.row()[serviceStartCol]);
             cust->nextBillDate      = dateConvert(parser.row()[nextBillDateCol]);
             cust->billingPeriod     = parser.row()[billPeriodCol].toInt();
+            cust->billingCycleID    = getBillingCycleID(cust->billingPeriod);
+            if (!cust->billingCycleID) {
+                fprintf(stderr, "\e[KUnable to find a billing cycle for %d month period.  Aborting.\n", cust->billingPeriod);
+                exit(-1);
+            }
 
             //fprintf(stderr, "Customer ID %ld %-50s\r", cust->customerID, cust->contactName.ascii());
 
@@ -1193,7 +1227,7 @@ void loadCustomers()
         // new customer, we should have a customer record.
         // Find the service we're looking for.
         QSqlQuery   q(db1);
-        q.prepare("select ItemNumber from Billables where Description LIKE :svcplan");
+        q.prepare("select ItemNumber, Description from Billables where Description LIKE :svcplan");
         q.bindValue(":svcplan", parser.row()[svcPlanCol]);
         if (!q.exec()) {
             fprintf(stderr, "Error executing query: '%s'\n", q.lastQuery().ascii());
@@ -1208,8 +1242,11 @@ void loadCustomers()
             // Parse the date.
             billable->endsOnDate = dateConvert(billable->endsOn);
             billable->endsOnDate = billable->endsOnDate.addDays(-1);
-
+            billable->lastDate = billable->endsOnDate.addMonths(-1 * cust->billingPeriod);
+            billable->lastDate = billable->lastDate.addDays(1);
             billable->closeDate = parser.row()[closeDateCol];
+            // Add the description since they won't be AutoPrice
+            billable->description = parser.row()[svcPlanCol];
             cust->billableList.append(billable);
         } else {
             fprintf(stderr, "Unable to find match for service plan '%s' on line %d.  Skipping.\n", parser.row()[svcPlanCol].ascii(), numLines);
@@ -1315,7 +1352,7 @@ void saveCustomer(customerRecord *cust)
     buf->setValue("Terms",              1);     // FIXME
     buf->setValue("RatePlan",           1);     // FIXME
     buf->setValue("RatePlanDate",       cust->accountOpened.toString("yyyy-MM-dd").ascii());
-    buf->setValue("BillingCycle",       1);     // FIXME
+    buf->setValue("BillingCycle",       (uint)cust->billingCycleID);
     buf->setValue("BillingCycleDate",   cust->accountOpened.toString("yyyy-MM-dd").ascii());
     buf->setValue("LastBilled",         timeToStr(rightNow(), YYYY_MM_DD)); // FIXME
     // Setup our billing dates.
@@ -1402,14 +1439,14 @@ void saveCustomer(customerRecord *cust)
         sdb.setValue("Active",          1);
         sdb.setValue("PackageNo",       0);
         sdb.setValue("ItemNumber",      billRec->billableItemID);
+        sdb.setValue("ItemDesc",        billRec->description.ascii());
         sdb.setValue("ParentID",        0);
         sdb.setValue("Quantity",        1.0);
-        sdb.setValue("ItemDesc",        "");
         sdb.setValue("AutoPrice",       1);
         sdb.setValue("AutoRenew",       1);
         sdb.setValue("SetupCharged",    1);
         sdb.setValue("EndsOn",          billRec->endsOnDate.toString("yyyy-MM-dd").ascii());
-        sdb.setValue("LastDate",        billRec->endsOnDate.toString("yyyy-MM-dd").ascii());
+        sdb.setValue("LastDate",        billRec->lastDate.toString("yyyy-MM-dd").ascii());
         sdb.ins();
         //fprintf(stderr, "Subscription ends on date = '%s'\n", billRec->endsOnDate.toString("YYYY-MM-DD").ascii());
     }
