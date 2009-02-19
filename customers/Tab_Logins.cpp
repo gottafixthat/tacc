@@ -565,7 +565,7 @@ void Tab_Logins::updateARForLock(const char * LoginID)
 	CDB.get(myCustID);
 	LDB.get(myCustID, LoginID);
 	BCDB.get(CDB.getInt("BillingCycle"));
-	BCDB.getCycleDates(&CycleStart, &CycleEnd, &cycleDays, &daysLeft);
+	BCDB.getCycleDates(&CycleStart, &CycleEnd, &cycleDays, &daysLeft,NULL,myCustID);
 	sprintf(sCycleEnd, "%04d-%02d-%02d", CycleEnd.year(), CycleEnd.month(), CycleEnd.day());
 	
 	// Okay, the first thing we want/need to do is load up the entries

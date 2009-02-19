@@ -1168,11 +1168,12 @@ int BillingCyclesDB::del(long internalID)
 **                 date, the and the number of days in the current cycle.
 */
 
-void BillingCyclesDB::getCycleDates(QDate *StartDate, QDate *EndDate, int *TotalDays, int *DaysLeft, char *asOf)
+void BillingCyclesDB::getCycleDates(QDate *StartDate, QDate *EndDate, int *TotalDays, int *DaysLeft, char *asOf, uint custID)
 {
 	int	Y1, Y2, M1, M2, D1, D2 = 0;
 	int				looping = 0;
 	QDate			tmpDate;
+    QDate           asOfDate;
 	int				Months[13];
 
 	Months[1]  = Jan.toInt();
@@ -1192,13 +1193,43 @@ void BillingCyclesDB::getCycleDates(QDate *StartDate, QDate *EndDate, int *Total
 	// The end date will be the Next month and then Day - 1.
 	// Start out with the current date.
     if (asOf == NULL) {
-    	tmpDate	= QDate::currentDate();
+    	asOfDate	= QDate::currentDate();
     } else {
-        myDatetoQDate(asOf, &tmpDate);
+        myDatetoQDate(asOf, &asOfDate);
     }
-	Y1 = Y2 = tmpDate.year();
-	M1 = M2 = tmpDate.month();
-	D1 = D2 = tmpDate.day();
+
+    // Check to see if this cycle is an anniversary based cycle.
+    // If it is, we calculate our start and end dates from the customer's
+    // CycleEndDate 
+    if (CycleType == "Anniversary") {
+        CustomersDB CDB;
+        CDB.get((long)custID);
+        myDatetoQDate(CDB.getStr("CycleStartDate"), StartDate);
+        myDatetoQDate(CDB.getStr("CycleEndDate"), EndDate);
+        // We have the basic dates.  asOfDate needs to be between
+        // StartDate and EndDate.
+        int period = AnniversaryPeriod.toInt();
+        //if (period < 1) period = 1;
+        //fprintf(stderr, "getCycleDates.  asOfDate = '%s', StartDate = '%s', EndDate = '%s'\n", asOfDate.toString(Qt::ISODate).ascii(),StartDate->toString(Qt::ISODate).ascii(),EndDate->toString(Qt::ISODate).ascii());
+        while(asOfDate < *StartDate) {
+            //fprintf(stderr, "getCycleDates asOfDate <  asOfDate = '%s', StartDate = '%s', EndDate = '%s', subtracting %d months\n", asOfDate.toString(Qt::ISODate).ascii(),StartDate->toString(Qt::ISODate).ascii(),EndDate->toString(Qt::ISODate).ascii(), period);
+            *StartDate = StartDate->addMonths(-1 * period);
+            *EndDate = EndDate->addMonths(-1 * period);
+        }
+        while(asOfDate > *EndDate) {
+            //fprintf(stderr, "getCycleDates asOfDate >  asOfDate = '%s', StartDate = '%s', EndDate = '%s' adding %d months\n", asOfDate.toString(Qt::ISODate).ascii(),StartDate->toString(Qt::ISODate).ascii(),EndDate->toString(Qt::ISODate).ascii(), period);
+            *StartDate = StartDate->addMonths(period);
+            *EndDate = EndDate->addMonths(period);
+        }
+        // We should now be on the right cycle.
+        *TotalDays = StartDate->daysTo(*EndDate);
+        *DaysLeft = asOfDate.daysTo(*EndDate);
+        return;
+    }
+
+	Y1 = Y2 = asOfDate.year();
+	M1 = M2 = asOfDate.month();
+	D1 = D2 = asOfDate.day();
 
 	// If the day for the cycle is greater than the current day, but we
 	// are still in the same month, we need to back up the month for the
@@ -1729,7 +1760,7 @@ int CustomersDB::doSubscriptions(void)
 	fflush(stdout);
     #endif
 	// Find out the start and stop dates of the customers billing cycle.
-	BCDB.getCycleDates(&CycleStart, &CycleEnd, &CycleDays, &DaysLeft);
+	BCDB.getCycleDates(&CycleStart, &CycleEnd, &CycleDays, &DaysLeft, NULL, (uint)getLong("CustomerID"));
 	#ifdef DBDEBUG
 	printf("Getting the Current Date and Yesterdays date...\n");
 	fflush(stdout);
@@ -1819,6 +1850,7 @@ int CustomersDB::doSubscriptions(void)
 	        ChargeDate = TmpDate.addDays(1);
 	        QDatetomyDate(sChargeDate, ChargeDate);
             DaysLeft   = ChargeDate.daysTo(CycleEnd);
+            /*
             if (anniversaryBilling) {
                 CycleEnd = ChargeDate.addMonths(BCDB.AnniversaryPeriod.toInt());
                 CycleEnd = CycleEnd.addDays(-1);
@@ -1826,6 +1858,7 @@ int CustomersDB::doSubscriptions(void)
                 DaysLeft = CycleDays;
 	            QDatetomyDate(sCycleEnd, CycleEnd);
             }
+            */
 	        
 			AR.ARDB->setValue("CustomerID", getLong("CustomerID"));
 			AR.ARDB->setValue("LoginID", SDB.getStr("LoginID")); //"Package");
@@ -2058,6 +2091,7 @@ int CustomersDB::doSubscriptions(void)
             QDatetomyDate(sChargeDate, ChargeDate);
             DaysLeft   = ChargeDate.daysTo(CycleEnd);
             //MARC
+            /*
             if (anniversaryBilling) {
                 CycleEnd = ChargeDate.addMonths(BCDB.AnniversaryPeriod.toInt());
                 CycleEnd = CycleEnd.addDays(-1);
@@ -2065,6 +2099,7 @@ int CustomersDB::doSubscriptions(void)
                 DaysLeft = CycleDays;
 	            QDatetomyDate(sCycleEnd, CycleEnd);
             }
+            */
 
 			AR.ARDB->setValue("CustomerID", getLong("CustomerID"));
 			AR.ARDB->setValue("LoginID", SDB.getStr("LoginID"));
@@ -2908,7 +2943,7 @@ void LoginsDB::updateARForTypeChg(void)
 	
 	CDB.get(getLong("CustomerID"));
 	BCDB.get(CDB.getLong("BillingCycle"));
-	BCDB.getCycleDates(&CycleStart, &CycleEnd, &cycleDays, &daysLeft);
+	BCDB.getCycleDates(&CycleStart, &CycleEnd, &cycleDays, &daysLeft,NULL,(uint)getLong("CustomerID"));
 	sprintf(sCycleEnd, "%04d-%02d-%02d", CycleEnd.year(), CycleEnd.month(), CycleEnd.day());
 	
 	// Okay, the first thing we want/need to do is load up the entries
@@ -3256,7 +3291,7 @@ void DomainsDB::updateARForTypeChg(void)
 	
 	CDB.get(getLong("CustomerID"));
 	BCDB.get(CDB.getLong("BillingCycle"));
-	BCDB.getCycleDates(&CycleStart, &CycleEnd, &cycleDays, &daysLeft);
+	BCDB.getCycleDates(&CycleStart, &CycleEnd, &cycleDays, &daysLeft, NULL, (uint)getLong("CustomerID"));
 	sprintf(sCycleEnd, "%04d-%02d-%02d", CycleEnd.year(), CycleEnd.month(), CycleEnd.day());
 	
 	// Okay, the first thing we want/need to do is load up the entries

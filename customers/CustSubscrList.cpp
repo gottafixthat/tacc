@@ -1,35 +1,15 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CustSubscrList - A widget that allows the user to view and possibly
-**                  edit subscriptions.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CustSubscrList.cpp,v $
-** Revision 1.3  2004/04/15 17:58:17  marc
-** Fixed parent window relationships with package dialog.
-**
-** Revision 1.2  2004/02/27 01:33:33  marc
-** The Customers table now tracks how many mailboxes are allowed.  LoginTypes
-** and Packages were both updated to include how many mailboxes are allowed with
-** each package or login type.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/**
+ * CustSubscrList.h - A widget that allows the user to view and edit
+ * subscriptions.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include "CustSubscrList.h"
 #include "BlargDB.h"
@@ -65,7 +45,8 @@ CustSubscrList::CustSubscrList
     list->addColumn("Last Date");
     list->addColumn("Ends On");
     list->addColumn("Act");
-    list->addColumn("Sub ID");
+    list->addColumn("Description");
+    subscriptionIDCol = 8;
     list->setAllColumnsShowFocus(true);
     list->setMultiSelection(false);
     list->setRootIsDecorated(true);
@@ -202,8 +183,9 @@ void CustSubscrList::refreshCustomer(long custID)
 	          SDB.getStr("LastDate"),
 	          SDB.getStr("EndsOn"),
 	          tmpActive,
-	          SDB.getStr("InternalID")
+              PDB.getStr("Description")
 	        );
+            curItem->setText(subscriptionIDCol, SDB.getStr("InternalID"));
 
 	        // Now that we have the package in our list, get the contents
 	        // of the package.
@@ -216,7 +198,7 @@ void CustSubscrList::refreshCustomer(long custID)
 	            if (SDB.getInt("Active")) strcpy(tmpActive, "Y");
 	            else strcpy(tmpActive, "N");
 	            
-	            (void) new QListViewItem(curItem,
+	            QListViewItem *tmpItem = new QListViewItem(curItem,
 	              SDB.getStr("LoginID"),
 	              BDB.getStr("ItemID"),
 	              SDB.getStr("Quantity"),
@@ -224,8 +206,9 @@ void CustSubscrList::refreshCustomer(long custID)
 	              SDB.getStr("LastDate"),
 	              SDB.getStr("EndsOn"),
 	              tmpActive,
-	              SDB.getStr("InternalID")
+                  BDB.getStr("Description")
 	            );
+                tmpItem->setText(subscriptionIDCol, SDB.getStr("InternalID"));
 	        }
 	        
 	        // curItem->setOpen(TRUE);
@@ -266,7 +249,7 @@ void CustSubscrList::refreshCustomer(long custID)
 	        if (SDB.getInt("Active")) strcpy(tmpActive, "Y");
 	        else strcpy(tmpActive, "N");
 	    
-	        (void) new QListViewItem(list,
+	        QListViewItem *tmpItem = new QListViewItem(list,
 	          SDB.getStr("LoginID"),
 	          BDB.getStr("ItemID"),
 	          SDB.getStr("Quantity"),
@@ -274,8 +257,9 @@ void CustSubscrList::refreshCustomer(long custID)
 	          SDB.getStr("LastDate"),
 	          SDB.getStr("EndsOn"),
 	          tmpActive,
-	          SDB.getStr("InternalID")
+	          BDB.getStr("Description")
 	        );
+	        tmpItem->setText(subscriptionIDCol, SDB.getStr("InternalID"));
         }    
     }
     
@@ -312,7 +296,7 @@ void CustSubscrList::editSubscription()
 
     if (tmpItem != NULL) {
         SubscriptionEdit *editSubscr;
-        editSubscr = new SubscriptionEdit(0,"",myCustID, atol(tmpItem->key(7, 1)));
+        editSubscr = new SubscriptionEdit(0,"",myCustID, atol(tmpItem->key(subscriptionIDCol, 1)));
 	    // connect(editSubscr, SIGNAL(refresh(int)), SLOT(refreshSubscrList(int)));
     }
 }
@@ -335,8 +319,8 @@ void CustSubscrList::deleteSubscription()
         if (QMessageBox::warning(this, "Delete Subscription Item", tmpstr, "&Yes", "&No", 0, 1) == 0) {
             SubscriptionsDB SBDB;
             // For the auto package scan to work we have to get the item first
-            SBDB.get(atol(CurItem->key(7,1)));
-            if (SBDB.del(atol(CurItem->key(7,1))) < 1) {
+            SBDB.get(atol(CurItem->key(subscriptionIDCol,1)));
+            if (SBDB.del(atol(CurItem->key(subscriptionIDCol,1))) < 1) {
                 QMessageBox::critical(0, "Delete Subscription Item", "Unable to delete Subscription Item.  It is in use by another table.");
             } else {
                 refreshCustomer(myCustID);

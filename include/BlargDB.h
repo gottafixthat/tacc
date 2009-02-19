@@ -238,7 +238,7 @@ public:
     int upd(void);
     int del(long internalID);
     
-    void getCycleDates(QDate *StartDate, QDate *EndDate, int *TotalDays, int *DaysLeft, char *asOf = NULL);
+    void getCycleDates(QDate *StartDate, QDate *EndDate, int *TotalDays, int *DaysLeft, char *asOf = NULL, uint custID = 0);
     
     int getDefaultCycle(void);
 

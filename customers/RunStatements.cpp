@@ -142,13 +142,13 @@ int doStatement(long CustID)
 	BCDB.get(CDB.getLong("BillingCycle"));
 	
 	// Find out the start and stop dates of the customers billing cycle.
-	BCDB.getCycleDates(&CycleStart, &CycleEnd, &CycleDays, &DaysLeft);
+	BCDB.getCycleDates(&CycleStart, &CycleEnd, &CycleDays, &DaysLeft, NULL, (uint)CustID);
 	CurrentDate = QDate::currentDate();
 	
 	// Get the start date of the previous cycle.
 	tmpDate = CycleStart.addDays(-1);
 	QDatetomyDate(oldEndStr, tmpDate);
-	BCDB.getCycleDates(&prevCycleStart, &prevCycleEnd, &prevCycleDays, &prevDaysLeft, oldEndStr);
+	BCDB.getCycleDates(&prevCycleStart, &prevCycleEnd, &prevCycleDays, &prevDaysLeft, oldEndStr,(uint)CustID);
 	
 	// Load their payment terms, and set up the due date.
 	PTDB.get(CDB.getInt("Terms"));

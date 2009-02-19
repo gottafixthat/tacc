@@ -35,17 +35,20 @@ SUBDIRS =
 
 SOURCES =	SettingsManager.cpp\
 		GeneralSettings.cpp\
-		BillingSettings.cpp
+		BillingSettings.cpp\
+		TelephonySettings.cpp
 
 HEADERS =	SettingsManager.h\
 		GeneralSettings.h\
-		BillingSettings.h
+		BillingSettings.h\
+		TelephonySettings.h
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_SettingsManager.cpp\
 		moc_GeneralSettings.cpp\
-		moc_BillingSettings.cpp
+		moc_BillingSettings.cpp\
+		moc_TelephonySettings.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 
@@ -93,6 +96,9 @@ moc_GeneralSettings.cpp: GeneralSettings.h
 
 moc_BillingSettings.cpp: BillingSettings.h
 	$(MOC) BillingSettings.h -o moc_BillingSettings.cpp
+
+moc_TelephonySettings.cpp: TelephonySettings.h
+	$(MOC) TelephonySettings.h -o moc_TelephonySettings.cpp
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
