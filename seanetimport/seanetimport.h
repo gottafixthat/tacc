@@ -19,6 +19,11 @@
 
 #define STARTING_CUSTOMERID 100000
 
+struct billingCycleRecord {
+    long    cycleID;
+    int     period;
+};
+
 struct domainRecord {
     QString regNumber;
     int     billingPeriod;
@@ -33,7 +38,6 @@ struct domainRecord {
 struct loginRecord {
     QString regNumber;
     int     loginTypeID;
-    int     billingPeriod;
     int     planStatus;
     QString serviceStart;
     QString nextBillDate;
@@ -66,8 +70,10 @@ struct loginRecord {
 
 struct billableRecord {
     long    billableItemID;
+    QString description;
     QString endsOn;
     QDate   endsOnDate;
+    QDate   lastDate;
     QString closeDate;
 };
 
@@ -83,6 +89,7 @@ struct customerRecord {
     QDate   accountOpened;
     QDate   nextBillDate;
     int     billingPeriod;
+    long    billingCycleID;
     QString accountExpires;
     QString street;
     QString city;
@@ -105,10 +112,13 @@ struct customerRecord {
 extern QPtrList<customerRecord> customerList;
 extern QPtrList<domainRecord> domainListFull;
 extern QPtrList<loginRecord> loginListFull;
+extern QPtrList<billingCycleRecord> billingCycleList;
 
 int main( int argc, char ** argv );
 void csvImport(const char *, const char *);
 void cleanDatabase();
+void loadBillingCycles();
+long getBillingCycleID(int period);
 void loadDomains();
 void loadWebSet();
 void loadVirtualSet();
