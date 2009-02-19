@@ -67,6 +67,7 @@ protected:
 
 private:
 	long	myCustID;
+    int     subscriptionIDCol;
 	int     showInactive;
 
 };
