@@ -956,7 +956,7 @@ void StatementEngine::emailLatexStatement(uint StNo)
         stringstream   ostream(stringstream::in | stringstream::out);
         ostream << me;
         s = ostream.str();
-        debug(5,"ostream.s = '%s'\n", s.c_str());
+        //debug(5,"ostream.s = '%s'\n", s.c_str());
 
         // Write the file
         QFile   file(fName);

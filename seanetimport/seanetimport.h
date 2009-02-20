@@ -40,7 +40,6 @@ struct loginRecord {
     int     loginTypeID;
     int     planStatus;
     QString serviceStart;
-    QString nextBillDate;
     QString serviceType;
     QString userName;
     QString password;
@@ -72,6 +71,7 @@ struct billableRecord {
     long    billableItemID;
     QString description;
     QString endsOn;
+    int     subscriptionActive;
     QDate   endsOnDate;
     QDate   lastDate;
     QString closeDate;
