@@ -32,6 +32,7 @@ struct customerContactRecord {
     QString     emailAddress;
     uint        active;
     uint        flags;
+    uint        sendStatements;
     QStringList flagList;           // Read-only, set by datbase
     QString     lastModifiedBy;
     QDateTime   lastModified;

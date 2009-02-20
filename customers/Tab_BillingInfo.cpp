@@ -47,7 +47,6 @@
 #include "ChangeRatePlan.h"
 #include "ChangeBillingCycle.h"
 #include "StatementView.h"
-#include "RunStatements.h"
 #include "ExtendGraceDate.h"
 #include "CustRegister.h"
 #include <BString.h>
@@ -56,6 +55,7 @@
 
 #include <TAATools.h>
 #include <ADB.h>
+#include <StatementEngine.h>
 
 Tab_BillingInfo::Tab_BillingInfo
 (
@@ -387,7 +387,6 @@ void Tab_BillingInfo::refreshBillingInfo(int)
 	QString tmpqstr2;
 	char    tmpstr[1024];
 	QDate   tmpDate;
-    int     maxMailboxes = 0;
 	
     recountAllowedMailboxes(myCustID);
 	
@@ -546,7 +545,7 @@ void Tab_BillingInfo::refreshBillingInfo(int)
     // Mailbox counts
     char tmpStr[1024];
     DB.query("select LoginID from Logins where CustomerID = %ld and Active <> 0", myCustID);
-    sprintf(tmpStr, "%d/%d", DB.rowCount, cdb.getInt("MailboxesAllowed"));
+    sprintf(tmpStr, "%ld/%d", DB.rowCount, cdb.getInt("MailboxesAllowed"));
     mailboxTally->setText(tmpStr);
 	
     fillStatementList();
@@ -587,10 +586,11 @@ void Tab_BillingInfo::changeBillingCycle()
 void Tab_BillingInfo::generateStatement()
 {
     long StNo;
+    StatementEngine stEng;
     
-    StNo = doStatement(myCustID);
-    emailStatement(StNo, 0, 0);
-    printStatement(StNo, 0, 0);
+    StNo = stEng.doStatement(myCustID);
+    stEng.emailStatement(StNo, 0, 0);
+    stEng.printStatement(StNo, 0, 0);
 	refreshBillingInfo(myCustID);
 }
 

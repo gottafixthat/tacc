@@ -49,7 +49,6 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		NoteEdit.cpp\
 		CCEntry.cpp\
 		ChangePassword.cpp ChangePasswordData.cpp\
-		RunStatements.cpp\
 		DomainAdd.cpp\
 		DomainEdit.cpp DomainEditData.cpp\
 		DomainChecklist.cpp DomainChecklistData.cpp\
@@ -94,7 +93,6 @@ HEADERS =	Customers.h NewCustomer.h\
 		ChangePassword.h ChangePasswordData.h\
 		DomainAdd.h\
 		DomainEdit.h DomainEditData.h\
-		RunStatements.h\
 		DomainChecklist.h DomainChecklistData.h\
 		ChangeRatePlan.h ChangeRatePlanData.h\
 		ChangeBillingCycle.h ChangeBillingCycleData.h\
@@ -137,7 +135,6 @@ SRCMETA =	moc_Customers.cpp \
 		moc_ChangePassword.cpp moc_ChangePasswordData.cpp\
 		moc_DomainAdd.cpp\
 		moc_DomainEdit.cpp moc_DomainEditData.cpp\
-		moc_RunStatements.cpp\
 		moc_DomainChecklist.cpp moc_DomainChecklistData.cpp\
 		moc_ChangeRatePlan.cpp moc_ChangeRatePlanData.cpp\
 		moc_ChangeBillingCycle.cpp moc_ChangeBillingCycleData.cpp\
@@ -195,9 +192,6 @@ clean:
 FORCE:
 
 ####### Meta objects
-
-moc_RunStatements.cpp: RunStatements.h
-	$(MOC) RunStatements.h -o moc_RunStatements.cpp
 
 moc_Customers.cpp: Customers.h
 	$(MOC) Customers.h -o moc_Customers.cpp

@@ -2,15 +2,15 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../include
+INCDIRS	=  -I$(QTDIR)/include -I. -I../include -I../../lib -I../../adb -I../../bdes
 INCDIRS += -I/home/marc/src/taa/include
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
 #LFLAGS  += -lg++ -lstdc++
 #LFLAGS  += -lstdc++
-LFLAGS  += -lBTools
 LFLAGS  += -L/usr/X11R6/lib -lXext
-LFLAGS  += -L/home/marc/src/taa/lib -ladb
+LFLAGS  += -L../../lib -L../../adb -L../../bdes -ladbqt
 LFLAGS  += -L/usr/lib/mysql/ -lmysqlclient
+LFLAGS  += -ltaa -lbdes
 LFLAGS	+= -L$(QTDIR)/lib -lqt-mt
 #LFLAGS	+= -static
 

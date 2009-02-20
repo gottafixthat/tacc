@@ -32,6 +32,13 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     builtInPrintedStatements->setText("Use built in printed statement processing");
     QToolTip::add(builtInPrintedStatements, "If this option is checked, TACC will use its own\nbuilt in statement layout, otherwise TACC will\nuse LaTeX to typset and print statements using\nthe specified template.");
 
+    QLabel *fromAddressLabel = new QLabel(this, "fromAddressLabel");
+    fromAddressLabel->setText("From Address:");
+    fromAddressLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+
+    fromAddress = new QLineEdit(this, "latexFile");
+    fromAddress->setText(cfgVal("StatementFromAddress"));
+
     if (!strlen(cfgVal("BuiltInPrintedStatements"))) builtInPrintedStatements->setChecked(true);
     else if (atoi(cfgVal("BuiltInPrintedStatements"))) builtInPrintedStatements->setChecked(true);
     else builtInPrintedStatements->setChecked(false);
@@ -43,6 +50,14 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     latexFile = new QLineEdit(this, "latexFile");
     latexFile->setText(cfgVal("StatementLatexFile"));
     QToolTip::add(latexFile, "If billing is set to use LaTeX instead of the\ninternally generated statements, this is the\nsource file that will be used.");
+
+    QLabel *emailBodyLabel = new QLabel(this, "latexBodyLabel");
+    emailBodyLabel->setText("Email Body Template:");
+    emailBodyLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+
+    emailBodyFile = new QLineEdit(this, "emailBodyFile");
+    emailBodyFile->setText(cfgVal("StatementLatexEmailBody"));
+    QToolTip::add(emailBodyFile, "If billing is set to use LaTeX instead of the\ninternally generated statements, this is the\nsource file that will be used for the\nbody of the message.  A PDF file will be attached.");
 
     QLabel *dateFormatLabel = new QLabel(this, "dateFormatLabel");
     dateFormatLabel->setText("Date Format:");
@@ -71,6 +86,11 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     chooseFileButton->setFixedWidth(20);
     connect(chooseFileButton, SIGNAL(clicked()), this, SLOT(chooseLatexFile()));
 
+    chooseBodyFileButton = new QPushButton(this, "chooseBodyFileButton");
+    chooseBodyFileButton->setText("...");
+    chooseBodyFileButton->setFixedWidth(20);
+    connect(chooseBodyFileButton, SIGNAL(clicked()), this, SLOT(chooseEmailBodyFile()));
+
     QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 1, 1);
 
     QGridLayout *gl = new QGridLayout(2,2);
@@ -78,6 +98,11 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     gl->setColStretch(1, 1);
     int curRow = 0;
 
+    gl->addWidget(fromAddressLabel,     curRow, 0);
+    gl->addWidget(fromAddress,          curRow, 1);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
     gl->addWidget(builtInPrintedStatements, curRow, 1);
     gl->setRowStretch(curRow, 0);
     curRow++;
@@ -90,6 +115,16 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     gl->addLayout(fbl,                  curRow, 1);
     gl->setRowStretch(curRow, 0);
     curRow++;
+
+    QBoxLayout *bbl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    bbl->addWidget(emailBodyFile, 1);
+    bbl->addWidget(chooseBodyFileButton, 0);
+
+    gl->addWidget(emailBodyLabel,       curRow, 0);
+    gl->addLayout(bbl,                  curRow, 1);
+    gl->setRowStretch(curRow, 0);
+    curRow++;
+
 
     gl->addWidget(dateFormatLabel,      curRow, 0);
     gl->addWidget(dateFormat,           curRow, 1);
@@ -148,10 +183,12 @@ int BillingSettings::saveSettings()
 {
     int retVal = 1;     // Assume success
 
+    updateCfgVal("StatementFromAddress", fromAddress->text().ascii());
     if (!builtInPrintedStatements->isChecked()) {
         // We've already validated the file.
         updateCfgVal("BuiltInPrintedStatements", "0");
         updateCfgVal("StatementLatexFile", (const char *)latexFile->text());
+        updateCfgVal("StatementLatexEmailBody", (const char *)emailBodyFile->text());
         updateCfgVal("LatexDateFormat", (const char *)dateFormat->text());
         if (qtyOneBlank->isChecked()) {
             updateCfgVal("StatementQtyOneBlank", "1");
@@ -182,6 +219,8 @@ void BillingSettings::builtInPrintedStatementChanged(bool on)
 
     latexFile->setEnabled(tmpBool);
     chooseFileButton->setEnabled(tmpBool);
+    emailBodyFile->setEnabled(tmpBool);
+    chooseBodyFileButton->setEnabled(tmpBool);
     dateFormat->setEnabled(tmpBool);
     qtyOneBlank->setEnabled(tmpBool);
     latexDebug->setEnabled(tmpBool);
@@ -199,6 +238,22 @@ void BillingSettings::chooseLatexFile()
 
     if (file.length()) {
         latexFile->setText(file);
+    }
+
+}
+
+/*
+ * chooseEmailBodyFile - Opens a file dialog to allow the user
+ * to choose what file is going to be used.
+ */
+void BillingSettings::chooseEmailBodyFile()
+{
+    QString     file;
+
+    file = QFileDialog::getOpenFileName(emailBodyFile->text(), "Template files (*.tpl);;All Files (*)", this, "open file dialog", "Choose a template file");
+
+    if (file.length()) {
+        emailBodyFile->setText(file);
     }
 
 }

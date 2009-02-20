@@ -34,15 +34,19 @@ public:
 
 protected:
     QCheckBox       *builtInPrintedStatements;
+    QLineEdit       *fromAddress;
     QCheckBox       *latexDebug;
     QLineEdit       *latexFile;
+    QLineEdit       *emailBodyFile;
     QLineEdit       *dateFormat;
     QCheckBox       *qtyOneBlank;
     QPushButton     *chooseFileButton;
+    QPushButton     *chooseBodyFileButton;
 
 protected slots:
     void            builtInPrintedStatementChanged(bool);
     void            chooseLatexFile();
+    void            chooseEmailBodyFile();
 };
 
 #endif // GeneralSettings_included

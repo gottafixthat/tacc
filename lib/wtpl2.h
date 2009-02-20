@@ -25,6 +25,8 @@
 
 $Id: wtpl2.h,v 1.5 2004/01/14 11:55:53 werd Exp $ */
 
+#ifndef WTPL2_H
+#define WTPL2_H
 
 #include <string>
 #include <iostream>
@@ -160,3 +162,4 @@ public:
 	void showVars();
 };
 
+#endif

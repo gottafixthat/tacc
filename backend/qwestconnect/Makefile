@@ -1,11 +1,11 @@
 
 USEDES = 1
 
-INCDIRS	=  -I. -I../include -I../../tickets -I$(QTDIR)/include -I../../lib -I/usr/local/include
+INCDIRS	=  -I. -I../../include -I../../adb -I../../bdes -I../../tickets -I$(QTDIR)/include -I../../lib -I/usr/local/include
 CFLAGS= -O2 -fno-strength-reduce -Wall -W
 
-LFLAGS  = -L../../lib -L../../tickets -L$(QTDIR)/lib
-LFLAGS	+= -L/usr/local/lib -ltickets -ltaa -ladb
+LFLAGS  = -L../../adb -L../../bdes -L../../lib -L../../tickets -L$(QTDIR)/lib
+LFLAGS	+= -L/usr/local/lib -ltickets -ltaa -ladbqt
 LFLAGS  += -L/usr/lib/mysql -lmysqlclient -lqt-mt
 LFLAGS  += -lmimepp_core -lmimepp_util -lmimepp_net
 LFLAGS  += -lpcre

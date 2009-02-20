@@ -3,13 +3,14 @@
 USEDES = 1
 
 MYSQLDIR = /usr/lib/mysql
-INCDIRS	=  -I. -I../include
+INCDIRS	=  -I. -I../include -I../adb -I../lib -I../bdes
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
 #LFLAGS  += -lg++ -lstdc++
 LFLAGS  += -lstdc++
-LFLAGS  += -L/usr/local/lib -lBTools
+LFLAGS  += -L/usr/local/lib -L../lib -L../adb -L../bdes -ltaa -lbdes
 #LFLAGS	+= -L$(QTDIR)/lib -lqt -L/usr/X11R6/lib -lX11 -lXext -lqutil
-LFLAGS  += -L$(MYSQLDIR) -ladb -lmysqlclient
+LFLAGS  += -L$(MYSQLDIR) -ladbqt -lmysqlclient
+LFLAGS	+= -L$(QTDIR)/lib -lqt-mt
 #LFLAGS	+= -static
 
 

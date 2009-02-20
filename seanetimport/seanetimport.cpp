@@ -1403,6 +1403,7 @@ void saveCustomer(customerRecord *cust)
         contact.setPhoneNumber(cust->homePhone);
         contact.setCustomerID(cust->customerID);
         contact.setEmailAddress(cust->email);
+        contact.setSendStatements(1);
         contact.setActive(1);
         contact.insert();
     }
@@ -1413,6 +1414,7 @@ void saveCustomer(customerRecord *cust)
         contact.setPhoneNumber(cust->workPhone);
         contact.setCustomerID(cust->customerID);
         contact.setEmailAddress(cust->email);
+        contact.setSendStatements(1);
         contact.setActive(1);
         contact.insert();
     }
@@ -1423,6 +1425,7 @@ void saveCustomer(customerRecord *cust)
         contact.setPhoneNumber(cust->faxPhone);
         contact.setCustomerID(cust->customerID);
         contact.setEmailAddress(cust->email);
+        contact.setSendStatements(1);
         contact.setActive(1);
         contact.insert();
     }

@@ -55,7 +55,7 @@
 #include "RunSubscriptions.h"
 #include <CCBatch.h>
 #include <CCMonetra.h>
-#include "RunStatements.h"
+#include <StatementEngine.h>
 #include "PKG_Main.h"
 #include "PaymentTerms.h"
 #include "BI_Main.h"
@@ -754,6 +754,7 @@ void CustomerCare::export_ccbatch()
 
 void CustomerCare::create_statements()
 {
+    StatementEngine    stEng;
     switch(QMessageBox::information(this,
       "Create Statements",
       "Are you sure you wish to create\nstatements for all customers?",
@@ -762,7 +763,7 @@ void CustomerCare::create_statements()
       2         // Escape  == cancel, button 2
     )) {
         case 0:         // Run statements.
-            RunStatements();
+            stEng.runStatements();
             break;
             
         default:        // No/Cancel
@@ -913,6 +914,7 @@ void CustomerCare::printStatements()
     char    tmpSt[1024];
     char    theDate[32];
     QDate   tmpDate = QDate::currentDate();
+    StatementEngine stEng;
 
     sprintf(theDate, "%04d-%02d-%02d", tmpDate.year(), tmpDate.month(), tmpDate.day());
 
@@ -938,7 +940,7 @@ void CustomerCare::printStatements()
     setProgressMW(0, stCount);
     while (DB.getrow()) {
         setProgressMW(++curSt, stCount);
-        printStatement(atol(DB.curRow["StatementNo"]), 0, 0);
+        stEng.printStatement((uint)atol(DB.curRow["StatementNo"]), 0, 0);
     }
 
     setProgressMW(1,1);

@@ -42,6 +42,7 @@ public:
     void                    setEmailAddress(const QString val)  { custContact.emailAddress= val; };
     void                    setActive(uint val)                 { custContact.active = val; };
     void                    setFlags(uint val)                  { custContact.flags = val; };
+    void                    setSendStatements(uint val)         { custContact.sendStatements = val; };
     void                    setLastModifiedBy(const QString val) { custContact.lastModifiedBy = val; };
     void                    setLastModified(const QDateTime = QDateTime::currentDateTime());
 
@@ -55,6 +56,7 @@ public:
     const QString           emailAddress()      { return custContact.emailAddress; };
     uint                    active()            { return custContact.active; };           
     uint                    flags()             { return custContact.flags; };
+    uint                    sendStatements()    { return custContact.sendStatements; };
     const QString           lastModifiedBy()    { return custContact.lastModifiedBy; };
     const QDateTime         lastModified()      { return custContact.lastModified; };
 
