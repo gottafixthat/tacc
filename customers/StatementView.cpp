@@ -22,13 +22,13 @@
 */
 
 
-#include "StatementView.h"
-#include "BlargDB.h"
+#include <StatementView.h>
+#include <BlargDB.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "RunStatements.h"
+#include <StatementEngine.h>
 #include <ADB.h>
-#include "TAATools.h"
+#include <TAATools.h>
 #include <qapplication.h>
 
 #define Inherited StatementViewData
@@ -154,7 +154,8 @@ void StatementView::closeView()
 void StatementView::reEmailStatement()
 {
     QApplication::setOverrideCursor(waitCursor);
-    emailStatement(myStNo, 1, 1);
+    StatementEngine stEng;
+    stEng.emailStatement(myStNo, 1, 1);
     QApplication::restoreOverrideCursor();
 }
 
@@ -165,7 +166,8 @@ void StatementView::reEmailStatement()
 void StatementView::rePrintStatement()
 {
     QApplication::setOverrideCursor(waitCursor);
-    printStatement(myStNo, 1, 1);
+    StatementEngine stEng;
+    stEng.printStatement(myStNo, 1, 1);
     QApplication::restoreOverrideCursor();
 }
 

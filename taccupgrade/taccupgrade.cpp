@@ -275,5 +275,19 @@ void upgradeDatabase()
 
         vers = 5;
     }
+
+    if (vers < 6) {
+        printf("Updating to Schema Version 6...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "alter table CustomerContacts add column SendStatements int(11) default '0'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update SchemaVersion set SchemaVersion = 6";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 6;
+    }
 }
 

@@ -61,6 +61,7 @@ uint CustomerContactsDB::loadContact(uint id)
             custContact.emailAddress    = contacts.value("EmailAddress").toString();
             custContact.active          = contacts.value("Active").toInt();
             custContact.flags           = contacts.value("Flags").toInt();
+            custContact.sendStatements  = contacts.value("SendStatements").toInt();
             custContact.lastModifiedBy  = contacts.value("LastModifiedBy").toString();
             custContact.lastModified    = QDateTime::fromString(contacts.value("LastModifiedBy").toString(), Qt::ISODate);
             retVal = id;
@@ -105,6 +106,7 @@ customerContactList CustomerContactsDB::allCustomerContacts(uint id)
             contactRec->emailAddress    = contacts.value("EmailAddress").toString();
             contactRec->active          = contacts.value("Active").toInt();
             contactRec->flags           = contacts.value("Flags").toInt();
+            contactRec->sendStatements  = contacts.value("SendStatements").toInt();
             contactRec->lastModifiedBy  = contacts.value("LastModifiedBy").toString();
             contactRec->lastModified    = QDateTime::fromString(contacts.value("LastModifiedBy").toString(), Qt::ISODate);
 
@@ -147,6 +149,7 @@ void CustomerContactsDB::clear()
     custContact.emailAddress    = "";
     custContact.active          = 0;
     custContact.flags           = 0;
+    custContact.sendStatements  = 0;
     custContact.lastModifiedBy  = "";
     custContact.lastModified    = QDateTime::currentDateTime();
 }
@@ -168,6 +171,7 @@ void CustomerContactsDB::setCursorValues(QSqlRecord *rec)
     rec->setValue("EmailAddress",       custContact.emailAddress);
     rec->setValue("Active",             custContact.active);
     rec->setValue("Flags",              custContact.flags);
+    rec->setValue("SendStatements",     custContact.sendStatements);
     rec->setValue("LastModifiedBy",     custContact.lastModifiedBy);
     rec->setValue("LastModified",       custContact.lastModified);
 }

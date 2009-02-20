@@ -48,7 +48,7 @@
 #include "OverdueAccounts.h"
 #include "WipedAccounts.h"
 #include "RunSubscriptions.h"
-#include "RunStatements.h"
+#include <StatementEngine.h>
 #include "LoginCountReport.h"
 #include "LoginsToWipeReport.h"
 #include "AllReports.h"
@@ -398,6 +398,7 @@ void Administration::run_subscriptions()
 
 void Administration::create_statements()
 {
+    StatementEngine stEng;
     switch(QMessageBox::information(this,
       "Create Statements",
       "Are you sure you wish to create\nstatements for all customers?",
@@ -406,7 +407,7 @@ void Administration::create_statements()
       2         // Escape  == cancel, button 2
     )) {
         case 0:         // Run statements.
-            RunStatements();
+            stEng.runStatements();
             break;
             
         default:        // No/Cancel

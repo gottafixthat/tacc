@@ -19,7 +19,7 @@
 #include <qdatetm.h>
 #include <time.h>
 
-#define SCHEMA_VERSION_REQUIRED 5
+#define SCHEMA_VERSION_REQUIRED 6
 
 enum t_TimeFormat {
     YYYY_MM_DD_HH_MM     = 0,
@@ -72,7 +72,6 @@ void        debug(int level, const char *format, ... );
 const char *stripHTML(const char *src);
 
 const QString latexEscapeString(QString s);
-void        printStatementFromFile(long statementNo);
 
 #endif // TAATools_included
 
