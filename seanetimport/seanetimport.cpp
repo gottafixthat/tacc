@@ -278,7 +278,6 @@ void loadDomains()
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
-    int nextBillDateCol     = parser.header().findIndex("NextBillingDate");
     int domainNameCol       = parser.header().findIndex("ItemVal1");
     int spamFilterCol       = parser.header().findIndex("ItemVal2");
     int mailTypeCol         = parser.header().findIndex("ItemVal3");
@@ -297,7 +296,6 @@ void loadDomains()
         loginRec->planStatus    = parser.row()[planStatusCol].toInt();
         loginRec->serviceType   = parser.row()[serviceTypeCol];
         loginRec->serviceStart  = parser.row()[serviceStartCol];
-        loginRec->nextBillDate  = parser.row()[nextBillDateCol];
         loginRec->virtDomain    = parser.row()[domainNameCol];
         loginRec->spamFilter    = parser.row()[spamFilterCol];
         loginRec->mailType      = parser.row()[mailTypeCol];
@@ -402,7 +400,6 @@ void loadVirtualSet()
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
-    int nextBillDateCol     = parser.header().findIndex("NextBillingDate");
     int virtUserNameCol     = parser.header().findIndex("ItemVal1");
     int domainNameCol       = parser.header().findIndex("ItemVal2");
     int virtDestCol         = parser.header().findIndex("ItemVal3");
@@ -422,7 +419,6 @@ void loadVirtualSet()
         loginRec->planStatus    = parser.row()[planStatusCol].toInt();
         loginRec->serviceType   = parser.row()[serviceTypeCol];
         loginRec->serviceStart  = parser.row()[serviceStartCol];
-        loginRec->nextBillDate  = parser.row()[nextBillDateCol];
         loginRec->virtDomain    = parser.row()[domainNameCol];
         loginRec->virtUser      = parser.row()[virtUserNameCol];
         loginRec->virtDest      = parser.row()[virtDestCol];
@@ -462,7 +458,6 @@ void loadDialupStatic()
     int regNumberCol        = parser.header().findIndex("RegNumber");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
-    int nextBillDateCol     = parser.header().findIndex("NextBillDate");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int userNameCol         = parser.header().findIndex("username");
     int passwordCol         = parser.header().findIndex("password");
@@ -483,7 +478,6 @@ void loadDialupStatic()
         loginRec->regNumber        = parser.row()[regNumberCol];
         loginRec->planStatus       = parser.row()[planStatusCol].toInt();
         loginRec->serviceStart     = parser.row()[serviceStartCol];
-        loginRec->nextBillDate     = parser.row()[nextBillDateCol];
         loginRec->serviceType      = parser.row()[serviceTypeCol];
         loginRec->userName         = parser.row()[userNameCol];
         loginRec->password         = parser.row()[passwordCol];
@@ -532,7 +526,6 @@ void loadDialupDynamic()
     int regNumberCol        = parser.header().findIndex("RegNumber");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
-    int nextBillDateCol     = parser.header().findIndex("NextBillDate");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int userNameCol         = parser.header().findIndex("username");
     int passwordCol         = parser.header().findIndex("password");
@@ -548,7 +541,6 @@ void loadDialupDynamic()
         loginRec->regNumber        = parser.row()[regNumberCol];
         loginRec->planStatus       = parser.row()[planStatusCol].toInt();
         loginRec->serviceStart     = parser.row()[serviceStartCol];
-        loginRec->nextBillDate     = parser.row()[nextBillDateCol];
         loginRec->serviceType      = parser.row()[serviceTypeCol];
         loginRec->userName         = parser.row()[userNameCol];
         loginRec->password         = parser.row()[passwordCol];
@@ -594,7 +586,6 @@ void loadDSLAccessSet()
     int regNumberCol        = parser.header().findIndex("RegNumber");
     int planStatusCol       = parser.header().findIndex("Status");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
-    int nextBillDateCol     = parser.header().findIndex("NextBilldate");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int providerCol         = parser.header().findIndex("Expr1");
     int circuitIDCol        = parser.header().findIndex("customerCircuitID");
@@ -615,7 +606,6 @@ void loadDSLAccessSet()
         loginRec->regNumber        = parser.row()[regNumberCol];
         loginRec->planStatus       = parser.row()[planStatusCol].toInt();
         loginRec->serviceStart     = parser.row()[serviceStartCol];
-        loginRec->nextBillDate     = parser.row()[nextBillDateCol];
         loginRec->serviceType      = parser.row()[serviceTypeCol];
         loginRec->userName         = userName;
         loginRec->provider          = parser.row()[providerCol];
@@ -663,7 +653,6 @@ void loadNailedSet()
     int regNumberCol        = parser.header().findIndex("accountNumber");
     int planStatusCol       = parser.header().findIndex("PlanStatus");
     int serviceStartCol     = parser.header().findIndex("ServiceStart");
-    int nextBillDateCol     = parser.header().findIndex("NextBillDate");
     int serviceTypeCol      = parser.header().findIndex("Detail");
     int nailedTypeCol       = parser.header().findIndex("componentSetName");
     int routeSwitchCol      = parser.header().findIndex("routerOrSwitch");
@@ -683,7 +672,6 @@ void loadNailedSet()
         loginRec->regNumber        = parser.row()[regNumberCol];
         loginRec->planStatus       = parser.row()[planStatusCol].toInt();
         loginRec->serviceStart     = parser.row()[serviceStartCol];
-        loginRec->nextBillDate     = parser.row()[nextBillDateCol];
         loginRec->serviceType      = parser.row()[serviceTypeCol];
         loginRec->userName         = userName;
         loginRec->nailedType        = parser.row()[nailedTypeCol];
@@ -1126,6 +1114,7 @@ void loadCustomers()
     QString lastRegnum = "";
     int     numCusts = 0;
     int     numLines = 0;
+    int     subActive = 1;
 
     // Now walk through the rows.
     while (parser.loadRecord()) {
@@ -1203,6 +1192,13 @@ void loadCustomers()
             }
 
             // A few dates.
+            subActive = 1;
+            QString tmpNextBill = parser.row()[nextBillDateCol];
+            if (!tmpNextBill.length()) {
+                tmpNextBill = QDate::currentDate().toString("MM/dd/yy");
+                subActive = 0;
+            }
+            
             cust->accountOpened     = dateConvert(parser.row()[serviceStartCol]);
             cust->nextBillDate      = dateConvert(parser.row()[nextBillDateCol]);
             cust->billingPeriod     = parser.row()[billPeriodCol].toInt();
@@ -1238,8 +1234,16 @@ void loadCustomers()
             // Got one.  Create a new billable record.
             billableRecord  *billable = new billableRecord;
             billable->billableItemID = q.value(0).toInt();
-            billable->endsOn = parser.row()[nextBillDateCol];
+
             // Parse the date.
+            billable->subscriptionActive = 1;
+            QString tmpNextBill = parser.row()[nextBillDateCol];
+            if (!tmpNextBill.length()) {
+                tmpNextBill = QDate::currentDate().toString("MM/dd/yy");
+                billable->subscriptionActive = 0;
+            }
+            billable->endsOn = tmpNextBill;
+
             billable->endsOnDate = dateConvert(billable->endsOn);
             billable->endsOnDate = billable->endsOnDate.addDays(-1);
             billable->lastDate = billable->endsOnDate.addMonths(-1 * cust->billingPeriod);
@@ -1439,7 +1443,7 @@ void saveCustomer(customerRecord *cust)
         sdb.setValue("InternalID",      0);
         sdb.setValue("CustomerID",      (long int)cust->customerID);
         sdb.setValue("LoginID",         CDB.getStr("PrimaryLogin"));
-        sdb.setValue("Active",          1);
+        sdb.setValue("Active",          billRec->subscriptionActive);
         sdb.setValue("PackageNo",       0);
         sdb.setValue("ItemNumber",      billRec->billableItemID);
         sdb.setValue("ItemDesc",        billRec->description.ascii());
