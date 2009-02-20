@@ -41,7 +41,10 @@ protected:
     QCheckBox               *International;
     QLineEdit               *PhoneNumber;
     QLineEdit               *EmailAddress;
+    QCheckBox               *BillingEmail;
     QCheckBox               *Active;
+    void                    updateCustomerFields();
+    uint                    myCustID;
 
 protected slots:
     void                    saveClicked();

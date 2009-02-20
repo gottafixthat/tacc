@@ -908,8 +908,7 @@ void StatementEngine::emailLatexStatement(uint StNo)
 
         MimeEntity  me;
         QString     toAddress;
-        QString     subject("Account Statement ");
-        subject += StNo;
+        QString     subject = QString("Account Statement %1") . arg(StNo);
         
         me.header().from(cfgVal("StatementFromAddress"));
         toAddress = q.value(0).toString();

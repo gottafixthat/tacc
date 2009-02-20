@@ -256,10 +256,11 @@ void Tab_ContactInfo::loadCustInfo()
     for (uint i = 0; i < contacts.count(); i++) {
         customerContactRecord *ctc = contacts.at(i);
         QString tmpSt = QString::number(ctc->contactID);
-        QString tmpFlags = ctc->flagList.join(",");
+        QString tmpFlags = "";
+        if (ctc->sendStatements) tmpFlags += "Statements";
         (void) new QListViewItem(contactList, ctc->tag, ctc->name, ctc->phoneNumber, ctc->emailAddress, ctc->access, tmpFlags, tmpSt);
     }
-    fprintf(stderr, "Loaded %d contacts...\n", contacts.count());
+    debug(5, "Loaded %d contacts...\n", contacts.count());
 	cdb.get(myCustID);
 	
 	fullName->setText(cdb.getStr("FullName"));

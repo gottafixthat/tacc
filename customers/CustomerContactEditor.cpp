@@ -16,6 +16,7 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+#include <BlargDB.h>
 
 /**
  * CustomerContactEditor()
@@ -76,6 +77,8 @@ CustomerContactEditor::CustomerContactEditor(QWidget *parent, const char * name)
     EmailAddress = new QLineEdit(this, "EmailAddress");
     EmailAddress->setMaxLength(64);
 
+    BillingEmail = new QCheckBox("Email Statements", this);
+
     Active = new QCheckBox("Active", this);
 
     // Action buttons
@@ -116,6 +119,8 @@ CustomerContactEditor::CustomerContactEditor(QWidget *parent, const char * name)
     gl->addWidget(emailAddressLabel,        rowNum, 0);
     gl->addWidget(EmailAddress,             rowNum, 1);
     rowNum++;
+    gl->addWidget(BillingEmail,             rowNum, 1);
+    rowNum++;
     gl->addWidget(Active,                   rowNum, 1);
     rowNum++;
     gl->setColStretch(0, 0);
@@ -133,6 +138,7 @@ CustomerContactEditor::CustomerContactEditor(QWidget *parent, const char * name)
     contactRec.contactID    = 0;
     contactRec.customerID   = 0;
     contactRec.flags        = 0;
+    contactRec.sendStatements = 0;
     contactRec.active       = 0;
     contactRec.international= 0;
 }
@@ -162,6 +168,8 @@ void CustomerContactEditor::setContactID(uint id)
         else International->setChecked(false);
         PhoneNumber->setText(contactRec.phoneNumber);
         EmailAddress->setText(contactRec.emailAddress);
+        if (contactRec.sendStatements) BillingEmail->setChecked(true);
+        else BillingEmail->setChecked(false);
         if (contactRec.active) Active->setChecked(true);
         else Active->setChecked(false);
 
@@ -183,6 +191,9 @@ void CustomerContactEditor::setContactID(uint id)
             }
         }
         Access->setCurrentText(contactRec.access);
+
+        myCustID = contactRec.customerID;
+        updateCustomerFields();
     }
 }
 
@@ -195,6 +206,8 @@ void CustomerContactEditor::setContactID(uint id)
 void CustomerContactEditor::setCustomerID(uint id)
 {
     contactRec.customerID = id;
+    myCustID = id;
+    updateCustomerFields();
 
     // Fill the combo box with all of the tags from this customer.
     customerContactList contacts;
@@ -213,6 +226,25 @@ void CustomerContactEditor::setCustomerID(uint id)
             Access->insertItem(contacts.at(i)->access);
         }
     }
+}
+
+/**
+ * updateCustomerFields()
+ *
+ * Takes the current customer ID and updates the display fields.
+ */
+void CustomerContactEditor::updateCustomerFields()
+{
+    CustomersDB     CDB;
+
+    CDB.get((long)myCustID);
+
+    QString nameStr = CDB.getStr("FullName");
+    QString idStr = QString("%1") . arg(myCustID);
+
+    custName->setText(nameStr);
+    custID->setText(idStr);
+
 }
 
 /**
@@ -237,6 +269,8 @@ void CustomerContactEditor::saveClicked()
     cdb.setPhoneNumber(PhoneNumber->text());
     cdb.setEmailAddress(EmailAddress->text());
     cdb.setFlags(0);
+    if (BillingEmail->isChecked()) cdb.setSendStatements((uint)1);
+    else cdb.setSendStatements((uint)0);
     if (Active->isChecked()) cdb.setActive((uint)1);
     else cdb.setActive((uint)0);
 
