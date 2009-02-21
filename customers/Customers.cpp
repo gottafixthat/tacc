@@ -137,7 +137,7 @@ Customers::Customers ( QWidget* parent, const char* name)
     queryLabel->setMidLineWidth( 0 );
     queryLabel->QFrame::setMargin( -1 );
     */
-    queryLabel->setText( "&Query:" );
+    queryLabel->setText( "&Search:" );
     queryLabel->setAlignment( AlignRight|AlignVCenter|ExpandTabs );
     queryLabel->setMargin( -1 );
 
@@ -529,7 +529,21 @@ void Customers::refreshList(long)
         }
     }
 
-    // Fifth query.  Phone number(s).  This one is harder because it is
+    // Fifth query.  LoginFlagValues Logins.LoginID or Logins.ContactName
+    if (!allLoaded) {
+        DB.query("select distinct Logins.CustomerID from Logins, LoginFlagValues where Logins.LoginID = LoginFlagValues.LoginID and LoginFlagValues.FlagValue LIKE '%%%s%%'", (const char *) tmpsub);
+        rowcnt = DB.rowCount;
+        if (rowcnt) {
+            while (DB.getrow()) {
+                curCustID = atol(DB.curRow["CustomerID"]);
+                // Load them into our loadedCusts map
+                if (loadedCusts[curCustID] != curCustID) loadedCusts.insert(curCustID, curCustID);
+            }
+        }
+    }
+
+
+    // Sixth query.  Phone number(s).  This one is harder because it is
     // free form.  We need to account for the following cases:
     // nnnDnnnDnnnn, nnnnnnnnnn, nnnDnnnn, and nnnnnnn where "D" is any
     // delimiter.  Not pretty.
