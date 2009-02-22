@@ -18,6 +18,7 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <string.h>
 //using namespace std;
 #include <map>
 #include <ext/hash_map>

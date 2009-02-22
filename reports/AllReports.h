@@ -27,6 +27,7 @@
 #include "CallLogReport.h"
 #include "AsteriskCDRReport.h"
 #include "SalesReports.h"
+#include <ccPaymentsByTypeReport.h>
 
 #include <TAAWidget.h>
 #include <qpopupmenu.h>
@@ -56,6 +57,7 @@ public slots:
     void        showCallLogReport();
     void        showAsteriskCDRReport();
     void        showSalesByServiceReport();
+    void        showCcPaymentsByTypeReport();
 
 private:
     QPopupMenu  *reportMenu;

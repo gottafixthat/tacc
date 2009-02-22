@@ -1,37 +1,15 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** AllReports - A class that encapsulates all of the standalone reports.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: AllReports.cpp,v $
-** Revision 1.5  2004/01/04 19:58:44  marc
-** New report, domains that are active but are not setup for DNS management.
-**
-** Revision 1.4  2004/01/04 19:35:48  marc
-** New report, Managed DNS domains
-**
-** Revision 1.3  2003/12/10 00:50:54  marc
-** Minor changes to menus and fixed the startup application font for SuSE.
-**
-** Revision 1.2  2003/12/07 17:49:37  marc
-** New report, AllDomains.
-**
-** Revision 1.1  2003/12/07 01:47:05  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/**
+ * AllReports.cpp - Creates the menu and interfaces to the various reports
+ * found in TAA.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include "AllReports.h"
 
@@ -44,14 +22,29 @@ AllReports::AllReports
 ) : TAAWidget(parent, name)
 {
     hide();
-    QPopupMenu  *domainMenu = new QPopupMenu(this);
-    if (isManager()) domainMenu->insertItem("&Active Domains", this, SLOT(showActiveDomainsReport()));
-    if (isManager()) domainMenu->insertItem("A&ll Domains", this, SLOT(showAllDomainsReport()));
-    if (isManager()) domainMenu->insertItem("&Managed DNS Domains", this, SLOT(showDNSManagedReport()));
-    if (isManager()) domainMenu->insertItem("&Unmanaged DNS Domains", this, SLOT(showDNSUnmanagedReport()));
-    domainMenu->insertItem("Un&released Domains", this, SLOT(showUnreleasedDomainsReport()));
+
+    // Our main report menu
     reportMenu = new QPopupMenu(this, "Reports Menu");
+
+    // Manager reports, billing and stuff.
+    if (isManager()) {
+        QPopupMenu  *billingReports = new QPopupMenu(this);
+        billingReports->insertItem("Credit Card Payments by Type", this, SLOT(showCcPaymentsByTypeReport()));
+
+        reportMenu->insertItem("&Billing Reports", billingReports);
+    }
+    
+    // DNS/Domain reports
+    QPopupMenu  *domainMenu = new QPopupMenu(this);
+    if (isManager()) {
+        domainMenu->insertItem("&Active Domains", this, SLOT(showActiveDomainsReport()));
+        domainMenu->insertItem("A&ll Domains", this, SLOT(showAllDomainsReport()));
+        domainMenu->insertItem("&Managed DNS Domains", this, SLOT(showDNSManagedReport()));
+        domainMenu->insertItem("&Unmanaged DNS Domains", this, SLOT(showDNSUnmanagedReport()));
+    }
+    domainMenu->insertItem("Un&released Domains", this, SLOT(showUnreleasedDomainsReport()));
     reportMenu->insertItem("&Domains", domainMenu);
+
     if (isAdmin()) {
         QPopupMenu *salesMenu = new QPopupMenu(this);
         salesMenu->insertItem("By Service", this, SLOT(showSalesByServiceReport()));
@@ -265,3 +258,16 @@ void AllReports::showSalesByServiceReport()
     QApplication::restoreOverrideCursor();
 }
 
+/**
+ * showCcPaymentsByTypeReport()
+ *
+ * Creates a ccPaymentsByType report.
+ */
+void AllReports::showCcPaymentsByTypeReport()
+{
+    emit(setStatus("Generating report..."));
+    ccPaymentsByTypeReport  *rep;
+    rep = new ccPaymentsByTypeReport();
+    rep->show();
+    emit(setStatus(""));
+}
