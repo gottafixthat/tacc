@@ -218,7 +218,7 @@ Tab_ContactInfo::Tab_ContactInfo
     babl->addWidget(deleteAddrButton, 0);
     abl->addLayout(babl, 0);
 
-    ml->addLayout(abl, 0);          // This one gets stretch
+    ml->addLayout(abl, 1);          // This one gets stretch
 
 
 	myCustID = CustID;

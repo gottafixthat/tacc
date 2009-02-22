@@ -56,6 +56,7 @@ SOURCES =	Report.cpp\
 		ActiveDomainsDetail.cpp\
 		AsteriskCDRReport.cpp\
 		SalesReports.cpp\
+		ccPaymentsByTypeReport.cpp\
 		AllReports.cpp
 
 ifdef USEQWT
@@ -94,6 +95,7 @@ SRCMETA =	moc_Report.cpp\
 		moc_ActiveDomainsDetail.cpp\
 		moc_AsteriskCDRReport.cpp\
 		moc_SalesReports.cpp\
+		moc_ccPaymentsByTypeReport.cpp\
 		moc_AllReports.cpp
 ifdef USEQWT
 SOURCES += moc_Graph.cpp moc_GraphData.cpp
@@ -242,6 +244,9 @@ moc_ActiveDomainsDetail.cpp: ActiveDomainsDetail.h
 
 moc_AsteriskCDRReport.cpp: AsteriskCDRReport.h
 	$(MOC) AsteriskCDRReport.h -o moc_AsteriskCDRReport.cpp
+
+moc_ccPaymentsByTypeReport.cpp: ccPaymentsByTypeReport.h
+	$(MOC) ccPaymentsByTypeReport.h -o moc_ccPaymentsByTypeReport.cpp
 
 moc_SalesReports.cpp: SalesReports.h
 	$(MOC) SalesReports.h -o moc_SalesReports.cpp
