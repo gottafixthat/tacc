@@ -271,3 +271,17 @@ void AllReports::showCcPaymentsByTypeReport()
     rep->show();
     emit(setStatus(""));
 }
+
+/**
+ * showCcPaymentDetailReport()
+ *
+ * Creates a ccPaymentDetail report.
+ */
+void AllReports::showCcPaymentDetailReport()
+{
+    emit(setStatus("Generating report..."));
+    ccPaymentDetailReport  *rep;
+    rep = new ccPaymentDetailReport();
+    rep->show();
+    emit(setStatus(""));
+}
