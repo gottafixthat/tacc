@@ -13,10 +13,12 @@
 #include <stdlib.h>
 
 #include <ccPaymentsByTypeReport.h>
+#include <ccPaymentDetailReport.h>
 #include <ADB.h>
 #include <CCValidate.h>
 #include <mcve.h>
 #include <TAATools.h>
+#include <BString.h>
 
 /**
  * ccPaymentsByTypeReport()
@@ -67,7 +69,6 @@ void ccPaymentsByTypeReport::refreshReport()
 {
     ADB     DB;
     ADB     DB2;
-    char    tmpStr[1024];
     QDate   curDate;
     QString strDate;
     QString txtVisa;
@@ -153,16 +154,22 @@ void ccPaymentsByTypeReport::refreshReport()
  * listItemSelected()
  *
  * When an item is double clicked, this is called.  It drills down
- * in the report.
+ * in the report, opening a ccPaymentDetails report for the specified
+ * day.
  */
 void ccPaymentsByTypeReport::listItemSelected(QListViewItem *curItem)
 {
     if (curItem != NULL) {
-        /*
-        ActiveDomainsDetail *add = new ActiveDomainsDetail();
-        add->setDomainType(atoi(curItem->key(2,0)));
-        add->show();
-        */
+        // Only run the report if its not the total line
+        if (strcmp(curItem->key(0,0), "Total")) {
+            QDate   dateSel;
+            myDatetoQDate(curItem->key(0,0), &dateSel);
+            ccPaymentDetailReport   *rep = new ccPaymentDetailReport();
+            rep->setStartDate(dateSel);
+            rep->setEndDate(dateSel);
+            rep->refreshReport();
+            rep->show();
+        }
     }
 }
 
