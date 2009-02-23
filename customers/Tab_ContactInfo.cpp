@@ -69,6 +69,14 @@ Tab_ContactInfo::Tab_ContactInfo
     customerID = new QLabel(this);
     customerID->setAlignment(AlignLeft|AlignVCenter);
 
+    // RegNum (labels only)
+    QLabel      *regNumLabel = new QLabel(this, "regNumLabel");
+    regNumLabel->setText("RegNum:");
+    regNumLabel->setAlignment(AlignRight|AlignVCenter);
+
+    regNum = new QLabel(this, "regNum");
+    regNum->setAlignment(AlignLeft|AlignVCenter);
+
     // Contact Name
     QLabel      *contactNameLabel = new QLabel(this);
     contactNameLabel->setText("Contact Name:");
@@ -156,29 +164,51 @@ Tab_ContactInfo::Tab_ContactInfo
     // grids within our main box.
     QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
 
-    // Create a grid for our contact information and our other misc info
-    QGridLayout *cil = new QGridLayout(3,4);
-    cil->addWidget(nameLabel,           0, 0);
-    cil->addWidget(fullName,            0, 1);
-    cil->addWidget(customerIDLabel,     0, 2);
-    cil->addWidget(customerID,          0, 3);
+    // Create a grid layout for our name and contact names
+    QGridLayout *cngl = new QGridLayout(3,2);
+    int curRow = 0;
+    cngl->addWidget(nameLabel,          curRow, 0);
+    cngl->addWidget(fullName,           curRow, 1);
+    curRow++;
 
-    cil->addWidget(contactNameLabel,    1, 0);
-    cil->addWidget(contactName,         1, 1);
-    cil->addWidget(primaryLoginLabel,   1, 2);
-    cil->addWidget(primaryLogin,        1, 3);
-    
-    cil->addWidget(altContactLabel,     2, 0);
-    cil->addWidget(altContact,          2, 1);
-    cil->addWidget(lastModifiedLabel,   2, 2);
-    cil->addWidget(lastModified,        2, 3);
+    cngl->addWidget(contactNameLabel,   curRow, 0);
+    cngl->addWidget(contactName,        curRow, 1);
+    curRow++;
 
-    cil->setColStretch(0, 0);
-    cil->setColStretch(1, 1);
-    cil->setColStretch(2, 0);
-    cil->setColStretch(3, 1);
+    cngl->addWidget(altContactLabel,    curRow, 0);
+    cngl->addWidget(altContact,         curRow, 1);
+    curRow++;
+    cngl->setColStretch(0,0);
+    cngl->setColStretch(1,1);
 
-    ml->addLayout(cil, 0);          // Don't stretch the grid
+    // Now one for our text/informational fields.
+    QGridLayout *igl = new QGridLayout(4,2);
+    curRow = 0;
+    igl->addWidget(customerIDLabel,     curRow, 0);
+    igl->addWidget(customerID,          curRow, 1);
+    curRow++;
+
+    igl->addWidget(regNumLabel,         curRow, 0);
+    igl->addWidget(regNum,              curRow, 1);
+    curRow++;
+
+    igl->addWidget(primaryLoginLabel,   curRow, 0);
+    igl->addWidget(primaryLogin,        curRow, 1);
+    curRow++;
+
+    igl->addWidget(lastModifiedLabel,   curRow, 0);
+    igl->addWidget(lastModified,        curRow, 1);
+    curRow++;
+    igl->setColStretch(0,0);
+    igl->setColStretch(1,1);
+
+    // And now a left to right box layout to hold the two grids.
+    QBoxLayout  *hbl = new QBoxLayout(QBoxLayout::LeftToRight);
+    hbl->addLayout(cngl, 1);
+    hbl->addLayout(igl,  1);
+
+    // And add the hbl to the main layout
+    ml->addLayout(hbl, 0);
 
     // The lists are much more complex.  They require two box layouts in
     // them:

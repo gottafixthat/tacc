@@ -73,6 +73,18 @@ void upgradeDatabase()
         sql = "create table if not exists SchemaVersion (SchemaVersion int NOT NULL DEFAULT '0', PRIMARY KEY(SchemaVersion))";
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
 
+        sql = "alter table LoginFlags add column BaseType int NOT NULL DEFAULT '0'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table LoginFlags add column DefaultValue blob NOT NULL DEFAULT '0'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table LoginFlags add column UserDefined int NOT NULL DEFAULT '0'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "CREATE TABLE LoginFlagValues (LoginID varchar(32) NOT NULL DEFAULT '', LoginFlag varchar(32) NOT NULL DEFAULT '', FlagValue text NOT NULL DEFAULT '', PRIMARY KEY(LoginID, LoginFlag))";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
         sql = "alter table Customers change column FullName FullName varchar(80) NOT NULL DEFAULT ''";
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
 
@@ -288,6 +300,29 @@ void upgradeDatabase()
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
 
         vers = 6;
+    }
+
+    if (vers < 7) {
+        printf("Updating to Schema Version 7...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "drop table `Triggers`";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "drop table `TAProcInfo`";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Customers add column RegNum varchar(255) default ''";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table CCTrans add index DateTypeStatusIDX(TransDate,CardType,MCVE_Status)";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update SchemaVersion set SchemaVersion = 7";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 7;
     }
 }
 

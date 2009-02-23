@@ -386,6 +386,10 @@ void NewCustomer::addCustomer()
 	cdb.setValue("AccountOpened", theDate);
 	cdb.setValue("BillingAddress", "Billing");
 
+    // Set the RegNum to be the current unix timestamp
+    QString regNum = QString("%1") . arg(rightNow());
+    cdb.setValue("RegNum",  regNum.ascii());
+
     fprintf(stderr, "Inserting the new customer into the database...\n");
 	// Finally, check to see if the user really wants to add this customer.
 	// Insert the record and get the new customer ID
