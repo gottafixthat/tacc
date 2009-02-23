@@ -296,6 +296,7 @@ void Tab_ContactInfo::loadCustInfo()
 	fullName->setText(cdb.getStr("FullName"));
 	contactName->setText(cdb.getStr("ContactName"));
 	customerID->setText(cdb.getStr("CustomerID"));
+	regNum->setText(cdb.getStr("RegNum"));
 	altContact->setText(cdb.getStr("AltContact"));
 	strcpy(myBillingTag, cdb.getStr("BillingAddress"));
 	
