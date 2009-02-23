@@ -15,6 +15,37 @@
 #define CCPAYMENTDETAILREPORT_H
 
 #include "Report.h"
+#include <qcheckbox.h>
+#include <qlistbox.h>
+
+// Our "Filter" widget
+class ccPaymentDetailOptions : public TAAWidget
+{
+    Q_OBJECT
+
+public:
+    ccPaymentDetailOptions(QWidget* parent = NULL, const char *name = NULL);
+    ~ccPaymentDetailOptions();
+
+    const QString   cardTypeSet();
+    const QString   dispositionSet();
+
+signals:
+    void            optionsUpdated();
+
+protected slots:
+    void    updateClicked();
+    void    closeClicked();
+    void    allCardTypesChanged(int);
+    void    allDispTypesChanged(int);
+
+protected:
+    QCheckBox       *allCardTypes;
+    QCheckBox       *allDispTypes;
+    QListBox        *cardTypeList;
+    QListBox        *dispList;
+
+};
 
 class ccPaymentDetailReport : public Report
 {
@@ -34,6 +65,10 @@ public:
 
 public slots:
     virtual void    listItemSelected(QListViewItem *curItem);
-    
+    virtual void    editFilters();
+
+private:
+    ccPaymentDetailOptions  *opts;
 };
+
 #endif

@@ -321,7 +321,8 @@ void Report::allowGraph(int newSetting)
 
 void Report::closeReport()
 {
-    close();
+    delete this;
+    //close();
 }
 
 
