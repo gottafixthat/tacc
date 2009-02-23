@@ -369,10 +369,10 @@ int ADB::query(const char *format, ... )
     va_start(ap, format);
     char    *querystr = new char[265536];
     vsprintf(querystr, format, ap);
+    rowCount = 0;
 
     if (!Connected()) {
         // Make sure that rowCount is also zero
-        rowCount = 0;
         return retVal;
     }
     // Free the last query result.

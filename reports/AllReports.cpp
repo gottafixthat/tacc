@@ -30,6 +30,7 @@ AllReports::AllReports
     if (isManager()) {
         QPopupMenu  *billingReports = new QPopupMenu(this);
         billingReports->insertItem("Credit Card Payments by Type", this, SLOT(showCcPaymentsByTypeReport()));
+        billingReports->insertItem("Check Payments", this, SLOT(showCheckPaymentsReport()));
 
         reportMenu->insertItem("&Billing Reports", billingReports);
     }
@@ -282,6 +283,20 @@ void AllReports::showCcPaymentDetailReport()
     emit(setStatus("Generating report..."));
     ccPaymentDetailReport  *rep;
     rep = new ccPaymentDetailReport();
+    rep->show();
+    emit(setStatus(""));
+}
+
+/**
+ * showCheckPaymentsReport()
+ *
+ * Creates a CheckPayments report.
+ */
+void AllReports::showCheckPaymentsReport()
+{
+    emit(setStatus("Generating report..."));
+    CheckPaymentsReport  *rep;
+    rep = new CheckPaymentsReport();
     rep->show();
     emit(setStatus(""));
 }
