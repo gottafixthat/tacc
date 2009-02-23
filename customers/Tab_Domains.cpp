@@ -188,7 +188,7 @@ void Tab_Domains::refreshDomainList(int domainID)
             else strcpy(activeStr, "No");
             
             // Are we accepting email for this domain?
-            if (mailDB.query("select VirtualID from Virtual where Mailbox = '%s'", DB.curRow["DomainName"])) {
+            if (mailDB.Connected() && mailDB.query("select VirtualID from Virtual where Mailbox = '%s'", DB.curRow["DomainName"])) {
                 if (mailDB.rowCount) strcpy(doingEmail, "Yes");
                 else strcpy(doingEmail, "No");
             } else {
@@ -196,7 +196,7 @@ void Tab_Domains::refreshDomainList(int domainID)
             }
             
             // Do we have a Virtual Hosting entry?
-            if (vhostDB.query("select VHostID from VHosts where HostName = '%s'", DB.curRow["DomainName"])) {
+            if (vhostDB.Connected() && vhostDB.query("select VHostID from VHosts where HostName = '%s'", DB.curRow["DomainName"])) {
                 if (vhostDB.rowCount) strcpy(hasVHost, "Yes");
                 else strcpy(hasVHost, "No");
             } else {

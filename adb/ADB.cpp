@@ -370,6 +370,11 @@ int ADB::query(const char *format, ... )
     char    *querystr = new char[265536];
     vsprintf(querystr, format, ap);
 
+    if (!Connected()) {
+        // Make sure that rowCount is also zero
+        rowCount = 0;
+        return retVal;
+    }
     // Free the last query result.
     if (queryRes != NULL) { 
         mysql_free_result(queryRes);
@@ -438,6 +443,7 @@ float ADB::sumFloat(const char *format, ... )
 
 int ADB::getrow(void)
 {
+    if (!connected) return 0;
     int RetVal = curRow.loadRow(queryRes);
     ADBDebugMsg(1, "ADB::getrow() returning %d", RetVal);
     return RetVal;
@@ -456,6 +462,7 @@ long ADB::dbcmd(const char *format, ... )
     ADBDebugMsg(1, "ADB: command = '%s'", cmdstr);
 
 	long	Ret = 0;
+    if (!connected) return Ret;
 
     // Do the command
     if (ADBLogUpdates) syslog(LOG_DEBUG, "ADB::dbcmd[%s]: %s", DBUser, cmdstr);
