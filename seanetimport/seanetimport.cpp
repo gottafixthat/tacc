@@ -1350,6 +1350,7 @@ void saveCustomer(customerRecord *cust)
     buf->setValue("PromotionGiven",     timeToStr(rightNow(), YYYY_MM_DD));
     buf->setValue("CurrentBalance",     cust->currentBalance);
     buf->setValue("CreditLimit",        cust->currentBalance);
+    buf->setValue("RegNum",             cust->regNumber);
     if (cust->statementType == 3 || cust->statementType == 5) buf->setValue("PrintedStatement", 1);
 
     // Set the rate plan, billing cycle and terms

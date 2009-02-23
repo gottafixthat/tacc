@@ -77,6 +77,7 @@ protected:
     QLineEdit   *contactName;
     QLineEdit   *altContact;
     QLabel      *customerID;
+    QLabel      *regNum;
     QLabel      *primaryLogin;
     QLabel      *lastModified;
     QPushButton *editAddrButton;

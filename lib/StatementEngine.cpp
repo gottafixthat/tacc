@@ -1142,6 +1142,7 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     tpl->assign("StatementDate",    stDate.toString(cfgVal("LatexDateFormat")));
     tpl->assign("StatementNumber",  stStr);
     tpl->assign("CustomerID",       cidStr);
+    tpl->assign("RegNum",           CDB.getStr("RegNum"));
     tpl->assign("CustomerName",     STDB.getStr("CustName"));
     tpl->assign("CustomerAddr1",    STDB.getStr("CustAddr1"));
     tpl->assign("CustomerAddr2",    STDB.getStr("CustAddr2"));
