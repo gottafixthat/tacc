@@ -42,8 +42,8 @@ ccPaymentsByTypeReport::ccPaymentsByTypeReport
 	list->addColumn("Other");        list->setColumnAlignment(4, AlignRight);
 	list->addColumn("Total");        list->setColumnAlignment(5, AlignRight);
 	
-    setStartDate(QDate(2007,6,1));
-    setEndDate(QDate(2007,6,30));
+    //setStartDate(QDate(2007,6,1));
+    //setEndDate(QDate(2007,6,30));
     allowDates(REP_ALLDATES);
     allowFilters(0);
 	refreshReport();
