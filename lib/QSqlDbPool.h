@@ -38,7 +38,7 @@ public:
             const char *dbDriver = NULL,
             const char *dbOpts = NULL
             );
-    ~QSqlDbPool();
+    virtual ~QSqlDbPool();
 
     static const char *defaultDriver();
     static  void       setDefaultDriver(const char *newDriver);
