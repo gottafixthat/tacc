@@ -34,10 +34,10 @@ BandwidthUsageReport::BandwidthUsageReport
 	setCaption( "Bandwidth Usage Report" );
 	setTitle("Bandwidth Usage Report");
 	
-	list->setColumnText(0, "Date");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Input MB");           list->setColumnAlignment(1, AlignRight);
-	list->addColumn("Output MB");           list->setColumnAlignment(2, AlignRight);
-	list->addColumn("Total MB");               list->setColumnAlignment(3, AlignRight);
+	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Input MB");     repBody->setColumnAlignment(1, AlignRight);
+	repBody->addColumn("Output MB");    repBody->setColumnAlignment(2, AlignRight);
+	repBody->addColumn("Total MB");     repBody->setColumnAlignment(3, AlignRight);
 
     strcpy(myLoginID, "");
 	refreshReport();
@@ -46,8 +46,8 @@ BandwidthUsageReport::BandwidthUsageReport
     outDays = NULL;
     totDays = NULL;
 
-    list->setItemMargin(2);
-    list->setAllColumnsShowFocus(TRUE);
+    repBody->setItemMargin(2);
+    repBody->setAllColumnsShowFocus(TRUE);
     
     resize(600,500);
 }
@@ -79,7 +79,7 @@ void BandwidthUsageReport::refreshReport()
 
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
     
     char    sDate[64];
     char    eDate[64];
@@ -189,7 +189,7 @@ void BandwidthUsageReport::refreshReport()
 
             grandTotal += totDays[i];
             
-            (void) new QListViewItem(list,
+            (void) new QListViewItem(repBody,
               dateStr,
               inStr,
               outStr,
@@ -206,7 +206,7 @@ void BandwidthUsageReport::refreshReport()
         reportTitle->setText(tmpStr);
         
     } else {
-        (void) new QListViewItem(list, "No data for specified period");
+        (void) new QListViewItem(repBody, "No data for specified period");
     }
     
     delete query;

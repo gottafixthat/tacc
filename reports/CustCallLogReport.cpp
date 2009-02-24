@@ -28,18 +28,18 @@ CustCallLogReport::CustCallLogReport
 	setCaption( "Customer Call Log Report" );
 	setTitle("Customer Call Log Report");
 	
-	list->setColumnText(0, "Date");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Time");         list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Taken By");     list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Duration");     list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("LoginID");      list->setColumnAlignment(4, AlignLeft);
-	list->addColumn("Category");     list->setColumnAlignment(5, AlignLeft);
-	list->addColumn("Topic");        list->setColumnAlignment(6, AlignLeft);
+	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Time");         repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Taken By");     repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Duration");     repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("LoginID");      repBody->setColumnAlignment(4, AlignLeft);
+	repBody->addColumn("Category");     repBody->setColumnAlignment(5, AlignLeft);
+	repBody->addColumn("Topic");        repBody->setColumnAlignment(6, AlignLeft);
 
-    list->setRootIsDecorated(TRUE);
-    list->setAllColumnsShowFocus(TRUE);
+    repBody->setRootIsDecorated(TRUE);
+    repBody->setAllColumnsShowFocus(TRUE);
 
-    connect(list, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(showCall(QListViewItem *)));
+    connect(repBody, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(showCall(QListViewItem *)));
     // connect(list, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(showCall(QListViewItem *)));
 
     if (parent) {
@@ -64,7 +64,7 @@ CustCallLogReport::~CustCallLogReport()
 void CustCallLogReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
-    list->clear();
+    repBody->clear();
     userText->setText("");
     userText->hide();
     ADB             DB;
@@ -93,7 +93,7 @@ void CustCallLogReport::refreshReport()
      elapsed = tmpTime.addSecs(atoi(DB.curRow["Duration"]));
      sprintf(elStr, "%02d:%02d:%02d", elapsed.hour(), elapsed.minute(), elapsed.second());
 
-        curItem = new QListViewItem(list, 
+        curItem = new QListViewItem(repBody, 
             DB.curRow["StartDate"],
             DB.curRow["StartTime"],
             DB.curRow["TakenBy"],
@@ -109,8 +109,8 @@ void CustCallLogReport::refreshReport()
     
     delete query;
     
-    list->setSorting(1,0);
-    list->setSorting(0,0);
+    repBody->setSorting(1,0);
+    repBody->setSorting(0,0);
     
     QApplication::restoreOverrideCursor();
 }

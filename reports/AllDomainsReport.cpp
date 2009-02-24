@@ -51,12 +51,12 @@ AllDomainsReport::AllDomainsReport
 	setCaption( "All Domains Report" );
 	setTitle("All Domains");
 	
-	list->setColumnText(0, "Domain Name");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Username");            list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Type");                list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Cust ID");             list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Act");                 list->setColumnAlignment(4, AlignLeft);
-	list->addColumn("DNS");                 list->setColumnAlignment(5, AlignLeft);
+	repBody->setColumnText(0, "Domain Name");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Username");            repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Type");                repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Cust ID");             repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("Act");                 repBody->setColumnAlignment(4, AlignLeft);
+	repBody->addColumn("DNS");                 repBody->setColumnAlignment(5, AlignLeft);
 	
     allowDates(REP_NODATES);
     allowFilters(0);
@@ -76,7 +76,7 @@ AllDomainsReport::~AllDomainsReport()
 
 void AllDomainsReport::refreshReport()
 {
-    list->clear();
+    repBody->clear();
     ADB     DB;
     ADB     dnsDB(cfgVal("DNSSQLDB"), cfgVal("DNSSQLUser"), cfgVal("DNSSQLPass"), cfgVal("DNSSQLHost"));
     char    doingDNS[1024];
@@ -92,7 +92,7 @@ void AllDomainsReport::refreshReport()
         if (dnsDB.rowCount) strcpy(doingDNS, "Yes");
         if (atoi(DB.curRow["Active"])) strcpy(isActive, "Yes");
 
-        (void) new QListViewItem(list, DB.curRow["DomainName"], DB.curRow["LoginID"], DB.curRow["DomainType"], DB.curRow["CustomerID"], isActive, doingDNS);
+        (void) new QListViewItem(repBody, DB.curRow["DomainName"], DB.curRow["LoginID"], DB.curRow["DomainType"], DB.curRow["CustomerID"], isActive, doingDNS);
     }
     
 }

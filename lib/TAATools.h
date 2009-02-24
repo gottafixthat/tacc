@@ -16,6 +16,7 @@
 
 #include <qwidget.h>
 #include <qstrlist.h>
+#include <qlistview.h>
 #include <qdatetm.h>
 #include <time.h>
 
@@ -65,6 +66,8 @@ void        recountAllowedMailboxes(long customerID);
 void        showAbout();
 
 void        emailAdmins(const char *subj, const char *body);
+
+uint        QListViewToCSV(QListView *qlist, const char *fName, bool forceQuotes = false);
 
 void        setDebugLevel(int newLevel);
 void        debug(int level, const char *format, ... );

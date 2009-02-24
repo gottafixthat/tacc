@@ -37,16 +37,16 @@ BandwidthSummaryReport::BandwidthSummaryReport
 	setCaption( "Bandwidth Usage Summary Report" );
 	setTitle("Bandwidth Usage Summary Report");
 	
-	list->setColumnText(0, "Login ID");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Input MB");         list->setColumnAlignment(1, AlignRight);
-	list->addColumn("Output MB");        list->setColumnAlignment(2, AlignRight);
-	list->addColumn("Total MB");         list->setColumnAlignment(3, AlignRight);
-	list->addColumn("Total GB");         list->setColumnAlignment(4, AlignRight);
+	repBody->setColumnText(0, "Login ID");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Input MB");         repBody->setColumnAlignment(1, AlignRight);
+	repBody->addColumn("Output MB");        repBody->setColumnAlignment(2, AlignRight);
+	repBody->addColumn("Total MB");         repBody->setColumnAlignment(3, AlignRight);
+	repBody->addColumn("Total GB");         repBody->setColumnAlignment(4, AlignRight);
 
 	refreshReport();
 
-    list->setItemMargin(2);
-    list->setAllColumnsShowFocus(TRUE);
+    repBody->setItemMargin(2);
+    repBody->setAllColumnsShowFocus(TRUE);
     
     resize(600,500);
 }
@@ -66,7 +66,7 @@ void BandwidthSummaryReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
     
     char    sDate[64];
     char    eDate[64];
@@ -203,7 +203,7 @@ void BandwidthSummaryReport::refreshReport()
             sprintf(totStr,   "%.2f", grandTotal / BW_MBYTE);
             sprintf(gbtotStr, "%.2f", grandTotal / (BW_MBYTE * 1024));
 	        
-	        (void) new QListViewItem(list,
+	        (void) new QListViewItem(repBody,
 	          DB2.curRow["LoginID"],
 	          inStr,
 	          outStr,
@@ -212,7 +212,7 @@ void BandwidthSummaryReport::refreshReport()
 	        );
         }
     } else {
-        (void) new QListViewItem(list, "No data for specified period");
+        (void) new QListViewItem(repBody, "No data for specified period");
     }
     
     delete query;

@@ -24,13 +24,13 @@ RatePlanDetailReport::RatePlanDetailReport
 	setCaption( "Rate Plan Detail Report" );
 	setTitle("Rate Plan Detail");
 	
-	list->setColumnText(0, "Customer ID");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Customer Name");       list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Primary Login");       list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Plan Date");           list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Billing Cycle");       list->setColumnAlignment(4, AlignLeft);
-	list->addColumn("Balance");             list->setColumnAlignment(5, AlignRight);
-	list->addColumn("Active");              list->setColumnAlignment(6, AlignCenter);
+	repBody->setColumnText(0, "Customer ID");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Customer Name");       repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Primary Login");       repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Plan Date");           repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("Billing Cycle");       repBody->setColumnAlignment(4, AlignLeft);
+	repBody->addColumn("Balance");             repBody->setColumnAlignment(5, AlignRight);
+	repBody->addColumn("Active");              repBody->setColumnAlignment(6, AlignCenter);
 	
 	allowDates(REP_NODATES);
 	myRatePlanID = -1;
@@ -60,7 +60,7 @@ void RatePlanDetailReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
     if (myRatePlanID >= 0) {
 	    char    *tmpStr= new char[65536];
 	    char    *query = new char[65536];
@@ -105,7 +105,7 @@ void RatePlanDetailReport::refreshReport()
 	            sprintf(tmpBalance, "%8.2f", atof(DB.curRow["CurrentBalance"]));
 
                 // Finally, add the row to the list.
-                (void) new QListViewItem(list, 
+                (void) new QListViewItem(repBody, 
                   DB.curRow["CustomerID"],
                   DB.curRow["FullName"],
                   DB.curRow["PrimaryLogin"],
@@ -116,10 +116,10 @@ void RatePlanDetailReport::refreshReport()
                 );	            
 	            
 	        } else {
-	            (void) new QListViewItem(list, "No matching customers found");
+	            (void) new QListViewItem(repBody, "No matching customers found");
 	        }
 	    } else {
-	        (void) new QListViewItem(list, "No matching rate plan found!!!");
+	        (void) new QListViewItem(repBody, "No matching rate plan found!!!");
 	    }
 	    
 	    

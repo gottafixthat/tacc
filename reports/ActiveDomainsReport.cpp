@@ -27,8 +27,8 @@ ActiveDomainsReport::ActiveDomainsReport
 	setCaption( "Active Domains Report" );
 	setTitle("Active Domains");
 	
-	list->setColumnText(0, "Domain Type");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Count");       list->setColumnAlignment(1, AlignRight);
+	repBody->setColumnText(0, "Domain Type");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Count");       repBody->setColumnAlignment(1, AlignRight);
 	
     allowDates(REP_NODATES);
     allowFilters(0);
@@ -48,7 +48,7 @@ ActiveDomainsReport::~ActiveDomainsReport()
 
 void ActiveDomainsReport::refreshReport()
 {
-    list->clear();
+    repBody->clear();
     ADB     DB;
     ADB     DB2;
     char    tmpStr[1024];
@@ -56,7 +56,7 @@ void ActiveDomainsReport::refreshReport()
     while (DB.getrow()) {
         DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         sprintf(tmpStr, "%5d", DB2.rowCount);
-        (void) new QListViewItem(list, DB.curRow["DomainType"], tmpStr, DB.curRow["InternalID"]);
+        (void) new QListViewItem(repBody, DB.curRow["DomainType"], tmpStr, DB.curRow["InternalID"]);
     }
 }
 

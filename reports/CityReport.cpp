@@ -27,9 +27,9 @@ CityReport::CityReport
 	setCaption( "Customer City Report" );
 	setTitle("Customer Cities");
 	
-	list->setColumnText(0, "City");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("State");        list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Count");        list->setColumnAlignment(2, AlignRight);
+	repBody->setColumnText(0, "City");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("State");        repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Count");        repBody->setColumnAlignment(2, AlignRight);
 	
     allowDates(REP_NODATES);
     allowFilters(1);
@@ -52,8 +52,8 @@ void CityReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
-    list->setSorting(2, FALSE);     // Sort by count, highest first.
+    repBody->clear();
+    repBody->setSorting(2, FALSE);     // Sort by count, highest first.
     
     // We'll use a QDict for speed...
     QDict<int>     dict(521, FALSE);   // 521 is a prime number...
@@ -127,7 +127,7 @@ void CityReport::refreshReport()
         if (tmpInt != NULL) {
             if (*tmpInt > 0) {
                 sprintf(tmpSt2, "%8d", *tmpInt);
-                (void) new QListViewItem(list, DB.curRow[0], DB.curRow[1], tmpSt2);
+                (void) new QListViewItem(repBody, DB.curRow[0], DB.curRow[1], tmpSt2);
             }
         }
     }

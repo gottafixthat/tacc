@@ -48,15 +48,15 @@ LoginCountReport::LoginCountReport
 	setCaption( "Current Login Count Report" );
 	setTitle("Current Login Counts");
 
-	list->setColumnText(0, "Login Type");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Description");        list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Active");             list->setColumnAlignment(2, AlignRight);
-	list->addColumn("Inactive");           list->setColumnAlignment(3, AlignRight);
-	list->addColumn("System");             list->setColumnAlignment(4, AlignRight);
-	list->addColumn("Total");              list->setColumnAlignment(5, AlignRight);
+	repBody->setColumnText(0, "Login Type");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Description");        repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Active");             repBody->setColumnAlignment(2, AlignRight);
+	repBody->addColumn("Inactive");           repBody->setColumnAlignment(3, AlignRight);
+	repBody->addColumn("System");             repBody->setColumnAlignment(4, AlignRight);
+	repBody->addColumn("Total");              repBody->setColumnAlignment(5, AlignRight);
 	
 	// Set the sorting to a hidden column.
-    list->setSorting(6);
+    repBody->setSorting(6);
 
     // resize(675, 400);
 
@@ -109,9 +109,9 @@ void LoginCountReport::refreshReport()
     QApplication::setOverrideCursor(waitCursor);
 
 	// Set the sorting to a hidden column.
-    list->setSorting(6);
+    repBody->setSorting(6);
     
-    list->clear();
+    repBody->clear();
     DB.query("select InternalID, LoginType, Description from LoginTypes order by LoginType");
     if (DB.rowCount) while (DB.getrow()) {
         sprintf(rowCountSt, "%05d", rowCount++);
@@ -143,7 +143,7 @@ void LoginCountReport::refreshReport()
         parser.addColumn("SystemCount", tmpst3);
         parser.addColumn("TotalCount", tmpst4);
         */
-        (void) new QListViewItem(list, DB.curRow["LoginType"], DB.curRow["Description"], tmpst1, tmpst2, tmpst3, tmpst4, rowCountSt, DB.curRow["InternalID"]);
+        (void) new QListViewItem(repBody, DB.curRow["LoginType"], DB.curRow["Description"], tmpst1, tmpst2, tmpst3, tmpst4, rowCountSt, DB.curRow["InternalID"]);
     }
 
     // Add the totals.
@@ -158,7 +158,7 @@ void LoginCountReport::refreshReport()
     parser.set("TotalSystem", tmpst3);
     parser.set("GrandTotal", tmpst4);
     */
-    (void) new QListViewItem(list, "TOTAL", "", tmpst1, tmpst2, tmpst3, tmpst4);
+    (void) new QListViewItem(repBody, "TOTAL", "", tmpst1, tmpst2, tmpst3, tmpst4);
     /*
     char    fName[4096];
     strcpy(fName, cfgVal("ReportPath"));

@@ -25,10 +25,10 @@ RatePlanReport::RatePlanReport
 	setCaption( "Rate Plans Report" );
 	setTitle("Rate Plan Summary");
 	
-	list->setColumnText(0, "Plan Tag");   list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Description");       list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Active");            list->setColumnAlignment(2, AlignRight);
-	list->addColumn("Inactive");          list->setColumnAlignment(3, AlignRight);
+	repBody->setColumnText(0, "Plan Tag");   repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Description");       repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Active");            repBody->setColumnAlignment(2, AlignRight);
+	repBody->addColumn("Inactive");          repBody->setColumnAlignment(3, AlignRight);
 	
 	refreshReport();
 	
@@ -50,7 +50,7 @@ void RatePlanReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
     
     char    tmpActiveStr[1024];
     char    tmpInactiveStr[1024];
@@ -78,10 +78,10 @@ void RatePlanReport::refreshReport()
             // Now, add the entry into the list, including the last column,
             // which is not shown, containing the internal ID so we can
             // zoom in on it.
-            (void) new QListViewItem(list, DB.curRow["PlanTag"], DB.curRow["Description"], tmpActiveStr, tmpInactiveStr, DB.curRow["InternalID"]);
+            (void) new QListViewItem(repBody, DB.curRow["PlanTag"], DB.curRow["Description"], tmpActiveStr, tmpInactiveStr, DB.curRow["InternalID"]);
         } 
     } else {
-        (void) new QListViewItem(list, "No rate plans found!!!");
+        (void) new QListViewItem(repBody, "No rate plans found!!!");
     }
     
     

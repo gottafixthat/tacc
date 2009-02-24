@@ -31,6 +31,10 @@
 #include <qmessagebox.h>
 #include <qwidget.h>
 #include <qregexp.h>
+#include <qfile.h>
+#include <qtextstream.h>
+#include <qlistview.h>
+#include <qheader.h>
 
 #include <ADB.h>
 #include <Cfg.h>
@@ -565,6 +569,75 @@ void emailAdmins(const char *subj, const char *body)
     }
     
     delete(tmpstr);
+}
+
+/**
+ * QListViewToCSV()
+ *
+ * Given a QListView this exports it into CSV format into the
+ * specified file name.
+ *
+ * It returns the number of rows exported.
+ */
+uint QListViewToCSV(QListView *qlist, const char *fName, bool forceQuotes)
+{
+    uint    retVal = 0;
+    int     numCols;
+    bool    quoteIt;
+
+    if (!qlist) return 0;
+    numCols = qlist->header()->count();
+    if (!numCols) return 0;
+
+    // Open the output file
+    QFile   ofile(fName);
+    if (ofile.open(IO_WriteOnly)) {
+        QTextStream ostr(&ofile);
+        // Output the header line
+        for(int i = 0; i < numCols; i++) {
+            if (i) ostr << ",";
+            // Check to see if we need to quote it.
+            if (forceQuotes) {
+                quoteIt = true;
+            } else {
+                if (qlist->header()->label(i).find(',') >= 0) quoteIt = true;
+                else quoteIt = false;
+            }
+            if (quoteIt) ostr << '"';
+            ostr << qlist->header()->label(i).stripWhiteSpace();
+            if (quoteIt) ostr << '"';
+        }
+        ostr << endl;
+
+        // Now walk through the rest of the list and output the data.
+        QListViewItem *curItem = qlist->firstChild();
+        while(curItem != NULL) {
+            for(int i = 0; i < numCols; i++) {
+                if (i) ostr << ",";
+                // Check to see if we need to quote it.
+                if (forceQuotes) {
+                    quoteIt = true;
+                } else {
+                    if (curItem->key(i,0).find(',') >= 0) quoteIt = true;
+                    else quoteIt = false;
+                }
+                if (quoteIt) ostr << '"';
+                ostr << curItem->key(i,0).stripWhiteSpace();
+                if (quoteIt) ostr << '"';
+            }
+            ostr << endl;
+
+            retVal++;
+            curItem = curItem->itemBelow();
+        }
+
+        // Close the file
+        ofile.close();
+        
+    } else {
+        debug(0, "QListViewToCSV(qlist, '%s') - Unable to open file\n", fName);
+    }
+    return retVal;
 }
 
 /*

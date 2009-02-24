@@ -41,13 +41,13 @@ ccPaymentDetailReport::ccPaymentDetailReport
 	setCaption("Credit Card Transaction Detail Report");
 	setTitle("Credit Card Transaction Detail Report");
 	
-	list->setColumnText(0, "Date");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Amount");       list->setColumnAlignment(1, AlignRight);
-	list->addColumn("Cust ID");      list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Customer Name");list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Company");      list->setColumnAlignment(4, AlignLeft);
-	list->addColumn("CC Type");      list->setColumnAlignment(5, AlignLeft);
-	list->addColumn("Disposition");  list->setColumnAlignment(6, AlignLeft);
+	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Amount");       repBody->setColumnAlignment(1, AlignRight);
+	repBody->addColumn("Cust ID");      repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Customer Name");repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("Company");      repBody->setColumnAlignment(4, AlignLeft);
+	repBody->addColumn("CC Type");      repBody->setColumnAlignment(5, AlignLeft);
+	repBody->addColumn("Disposition");  repBody->setColumnAlignment(6, AlignLeft);
 	
     allowDates(REP_ALLDATES);
     allowFilters(1);
@@ -88,7 +88,7 @@ void ccPaymentDetailReport::refreshReport()
     double      total = 0.00;
 
     QApplication::setOverrideCursor(waitCursor);
-    list->clear();
+    repBody->clear();
 
     // Create our query.
     int transDateCol    = 0;
@@ -199,7 +199,7 @@ void ccPaymentDetailReport::refreshReport()
             }
 
 
-            (void) new QListViewItem(list, 
+            (void) new QListViewItem(repBody, 
                     q.value(transDateCol).toString(),
                     amount,
                     q.value(customerIDCol).toString(),
@@ -210,7 +210,7 @@ void ccPaymentDetailReport::refreshReport()
         }
         // Add the total line
         amount = amount.sprintf("%.2f", total);
-        (void) new QListViewItem(list, 
+        (void) new QListViewItem(repBody, 
                 "Total",
                 amount);
     }

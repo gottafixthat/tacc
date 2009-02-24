@@ -46,12 +46,12 @@ LoginTypeReport::LoginTypeReport(QWidget *parent, const char *name)
     allowDates(REP_NODATES);
     allowFilters(0);
     
-    list->setColumnText(0, "Login ID");
-    list->addColumn("Customer Name");
-    list->addColumn("Last Modified");
-    list->addColumn("Active");
-    list->addColumn("Primary");
-    list->addColumn("CustomerID");
+    repBody->setColumnText(0, "Login ID");
+    repBody->addColumn("Customer Name");
+    repBody->addColumn("Last Modified");
+    repBody->addColumn("Active");
+    repBody->addColumn("Primary");
+    repBody->addColumn("CustomerID");
     
     // This needs to be updated if the list layout ever changes.
     custIDColumn = 5;
@@ -84,7 +84,7 @@ void LoginTypeReport::refreshReport()
     QDateTime   tmpQDT;
     bool        showIt = false;
 
-    list->clear();
+    repBody->clear();
 
     DB.query("select Logins.LoginID, Customers.FullName, Logins.LastModified, Logins.Active, Logins.CustomerID, Customers.PrimaryLogin from Logins, Customers where Logins.LoginType = %d and Customers.CustomerID = Logins.CustomerID", loginType);
 
@@ -102,7 +102,7 @@ void LoginTypeReport::refreshReport()
         if ((!atoi(DB.curRow["Active"])) && showInactive) showIt = true;
 
         if (showIt) {
-            (void) new QListViewItem(list,
+            (void) new QListViewItem(repBody,
                                      DB.curRow["LoginID"],
                                      DB.curRow["FullName"],
                                      modDate,

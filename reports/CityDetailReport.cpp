@@ -24,11 +24,11 @@ CityDetailReport::CityDetailReport
 	setCaption( "Customer City Report" );
 	setTitle("Customer Cities");
 	
-	list->setColumnText(0, "Customer ID");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Customer Name");       list->setColumnAlignment(1, AlignLeft);
-    list->addColumn("Primary Login");       list->setColumnAlignment(2, AlignLeft);
-    list->addColumn("City");                list->setColumnAlignment(3, AlignLeft);
-    list->addColumn("State");               list->setColumnAlignment(4, AlignLeft);
+	repBody->setColumnText(0, "Customer ID");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Customer Name");       repBody->setColumnAlignment(1, AlignLeft);
+    repBody->addColumn("Primary Login");       repBody->setColumnAlignment(2, AlignLeft);
+    repBody->addColumn("City");                repBody->setColumnAlignment(3, AlignLeft);
+    repBody->addColumn("State");               repBody->setColumnAlignment(4, AlignLeft);
 	
     allowDates(REP_NODATES);
 	strcpy(myCity, "");
@@ -62,7 +62,7 @@ void CityDetailReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
 //    if (strlen(myCity) && strlen(myState)) {
 	    char    *query  = new char[65536];
 	    ADB     DB;
@@ -75,7 +75,7 @@ void CityDetailReport::refreshReport()
 	        if (DB2.rowCount) {
 	            DB2.getrow();
 	            if (atoi(DB2.curRow["Active"])) {
-	                (void) new QListViewItem(list, 
+	                (void) new QListViewItem(repBody, 
 	                  DB2.curRow["CustomerID"], 
 	                  DB2.curRow["FullName"], 
 	                  DB2.curRow["PrimaryLogin"],

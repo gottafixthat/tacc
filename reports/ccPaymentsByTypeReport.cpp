@@ -35,12 +35,12 @@ ccPaymentsByTypeReport::ccPaymentsByTypeReport
 	setCaption("Credit Card Transactions By Type");
 	setTitle("Credit Card Transactions By Type");
 	
-	list->setColumnText(0, "Date");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Visa/MC");      list->setColumnAlignment(1, AlignRight);
-	list->addColumn("AmEx");         list->setColumnAlignment(2, AlignRight);
-	list->addColumn("Discover");     list->setColumnAlignment(3, AlignRight);
-	list->addColumn("Other");        list->setColumnAlignment(4, AlignRight);
-	list->addColumn("Total");        list->setColumnAlignment(5, AlignRight);
+	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Visa/MC");      repBody->setColumnAlignment(1, AlignRight);
+	repBody->addColumn("AmEx");         repBody->setColumnAlignment(2, AlignRight);
+	repBody->addColumn("Discover");     repBody->setColumnAlignment(3, AlignRight);
+	repBody->addColumn("Other");        repBody->setColumnAlignment(4, AlignRight);
+	repBody->addColumn("Total");        repBody->setColumnAlignment(5, AlignRight);
 	
     //setStartDate(QDate(2007,6,1));
     //setEndDate(QDate(2007,6,30));
@@ -83,7 +83,7 @@ void ccPaymentsByTypeReport::refreshReport()
     int     pmCur = 0;
     int     pmTot = startDate().daysTo(endDate()) + 1;
 
-    list->clear();
+    repBody->clear();
     curDate = startDate();
     QApplication::setOverrideCursor(waitCursor);
     while(curDate < endDate().addDays(1)) {
@@ -133,7 +133,7 @@ void ccPaymentsByTypeReport::refreshReport()
         txtOther = txtOther.sprintf("%.2f", otherTot);
         txtTotal = txtTotal.sprintf("%.2f", dateTot);
         txtVisa = txtVisa.rightJustify(10, ' ');
-        (void) new QListViewItem(list, strDate, txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
+        (void) new QListViewItem(repBody, strDate, txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
         curDate = curDate.addDays(1);
     }
     // One last one to make our bar go away...
@@ -145,7 +145,7 @@ void ccPaymentsByTypeReport::refreshReport()
     txtDisc = txtDisc.sprintf("%.2f", discGT);
     txtOther = txtOther.sprintf("%.2f", otherGT);
     txtTotal = txtTotal.sprintf("%.2f", grandTot);
-    (void) new QListViewItem(list, "Total", txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
+    (void) new QListViewItem(repBody, "Total", txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
     QApplication::restoreOverrideCursor();
 }
 

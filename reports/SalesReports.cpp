@@ -36,9 +36,9 @@ salesByServiceReport::salesByServiceReport
 	setTitle("Sales By Service");
 	
     int c = 0;
-	list->setColumnText(0, "Service");  list->setColumnAlignment(c++, AlignLeft);
-    //list->addColumn("Qty");             list->setColumnAlignment(c++, AlignRight);
-    list->addColumn("Amount");          list->setColumnAlignment(c++, AlignRight);
+	repBody->setColumnText(0, "Service");  repBody->setColumnAlignment(c++, AlignLeft);
+    //repBody->addColumn("Qty");             repBody->setColumnAlignment(c++, AlignRight);
+    repBody->addColumn("Amount");          repBody->setColumnAlignment(c++, AlignRight);
 	
     // When starting out, do this month.
     allowDates(REP_ALLDATES);
@@ -79,7 +79,7 @@ void salesByServiceReport::refreshReport()
     float   grandTotal = 0.0;
 
     QApplication::setOverrideCursor(waitCursor);
-    list->clear();
+    repBody->clear();
 
     // Two queries, one for standalone billables, one for packages.
     DB.query("select AcctsRecv.ItemID, Billables.ItemID, sum(AcctsRecv.Amount) from AcctsRecv, Billables where Billables.ItemNumber = AcctsRecv.ItemID and AcctsRecv.TransType = 0 and AcctsRecv.ItemID > 0 and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' group by AcctsRecv.ItemID order by Billables.ItemID", sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
@@ -87,7 +87,7 @@ void salesByServiceReport::refreshReport()
         //DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         //sprintf(tmpStr, "%5d", DB2.rowCount);
         if (atof(DB.curRow[2]) > 0.0) {
-            QListViewItem *curItem = new QListViewItem(list, 
+            QListViewItem *curItem = new QListViewItem(repBody, 
                     DB.curRow[1], 
                     DB.curRow[2]
                     );
@@ -102,7 +102,7 @@ void salesByServiceReport::refreshReport()
         //sprintf(tmpStr, "%5d", DB2.rowCount);
         sprintf(tmpStr, "%s - Package", DB.curRow[1]);
         if (atof(DB.curRow[2]) > 0.0) {
-            QListViewItem *curItem = new QListViewItem(list, 
+            QListViewItem *curItem = new QListViewItem(repBody, 
                     tmpStr,
                     DB.curRow[2]
                     );
@@ -116,7 +116,7 @@ void salesByServiceReport::refreshReport()
         //sprintf(tmpStr, "%5d", DB2.rowCount);
         sprintf(tmpStr, "%s - Package", DB.curRow[1]);
         if (atof(DB.curRow[0]) > 0.0) {
-            QListViewItem *curItem = new QListViewItem(list, 
+            QListViewItem *curItem = new QListViewItem(repBody, 
                     "[Unknown Items]",
                     DB.curRow[0]
                     );

@@ -22,8 +22,8 @@ ARReport::ARReport
 	setCaption( "Accounts Receivable Report" );
 	setTitle("Accounts Receivable");
 	
-	list->setColumnText(0, "Account");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Amount");          list->setColumnAlignment(1, AlignRight);
+	repBody->setColumnText(0, "Account");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Amount");          repBody->setColumnAlignment(1, AlignRight);
 	
 	refreshReport();
 }
@@ -43,7 +43,7 @@ void ARReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
     
     char    sDate[64];
     char    eDate[64];
@@ -57,25 +57,25 @@ void ARReport::refreshReport()
     
     tmpFloat = DB.sumFloat("select SUM(Amount) from AcctsRecv where TransDate >= '%s' and TransDate <= '%s' and Amount >= 0.00 and TransType = 0", sDate, eDate);
     sprintf(tmpSt, "%.2f", tmpFloat);
-    (void) new QListViewItem(list, "Amount Billed", tmpSt);
+    (void) new QListViewItem(repBody, "Amount Billed", tmpSt);
     total += tmpFloat;
     
     tmpFloat = DB.sumFloat("select SUM(Amount) from AcctsRecv where TransDate >= '%s' and TransDate <= '%s' and Amount <= 0.00 and TransType = 0", sDate, eDate);
     sprintf(tmpSt, "%.2f", tmpFloat);
-    (void) new QListViewItem(list, "Adjustments/credits", tmpSt);
+    (void) new QListViewItem(repBody, "Adjustments/credits", tmpSt);
     total += tmpFloat;
     
     tmpFloat = DB.sumFloat("select SUM(Amount) from AcctsRecv where TransDate >= '%s' and TransDate <= '%s' and TransType = 2", sDate, eDate);
     sprintf(tmpSt, "%.2f", tmpFloat);
-    (void) new QListViewItem(list, "Payments Received", tmpSt);
+    (void) new QListViewItem(repBody, "Payments Received", tmpSt);
     total += tmpFloat;
 
     tmpFloat = DB.sumFloat("select SUM(Amount) from AcctsRecv where TransDate >= '%s' and TransDate <= '%s'", sDate, eDate);
     sprintf(tmpSt, "%.2f", tmpFloat);
-    (void) new QListViewItem(list, "Balance", tmpSt);
+    (void) new QListViewItem(repBody, "Balance", tmpSt);
 
     sprintf(tmpSt, "%.2f", total);
-    (void) new QListViewItem(list, "Total", tmpSt);
+    (void) new QListViewItem(repBody, "Total", tmpSt);
     
     QApplication::restoreOverrideCursor();
 }

@@ -25,10 +25,10 @@ ActiveDomainsDetail::ActiveDomainsDetail
 	setCaption( "Active Domains Report" );
 	setTitle("Active Domains");
 	
-	list->setColumnText(0, "Domain Name");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Cust ID");       list->setColumnAlignment(1, AlignRight);
-	list->addColumn("Username");      list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Act");           list->setColumnAlignment(2, AlignLeft);
+	repBody->setColumnText(0, "Domain Name");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Cust ID");       repBody->setColumnAlignment(1, AlignRight);
+	repBody->addColumn("Username");      repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Act");           repBody->setColumnAlignment(2, AlignLeft);
 
     myCustIDColumn = 1;
     myDomainType = 0;
@@ -51,7 +51,7 @@ ActiveDomainsDetail::~ActiveDomainsDetail()
 
 void ActiveDomainsDetail::refreshReport()
 {
-    list->clear();
+    repBody->clear();
     if (!myDomainType) return;
     emit(setStatus("Generating report..."));
     ADB     DB;
@@ -60,7 +60,7 @@ void ActiveDomainsDetail::refreshReport()
     while (DB.getrow()) {
         if (atoi(DB.curRow["Active"])) strcpy(tmpStr, "Yes");
         else strcpy(tmpStr, "No");
-        (void) new QListViewItem(list, DB.curRow["DomainName"], DB.curRow["CustomerID"], DB.curRow["LoginID"], tmpStr);
+        (void) new QListViewItem(repBody, DB.curRow["DomainName"], DB.curRow["CustomerID"], DB.curRow["LoginID"], tmpStr);
     }
     emit(setStatus(""));
 }

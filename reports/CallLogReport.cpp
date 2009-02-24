@@ -45,13 +45,13 @@ CallLogReport::CallLogReport
 	setCaption( "Call Log Report" );
 	setTitle("Current Login Counts");
 
-	list->setColumnText(0, "Date/Time");   list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("By");                 list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Type");               list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("CustID");             list->setColumnAlignment(3, AlignRight);
-	list->addColumn("LoginID");            list->setColumnAlignment(4, AlignLeft);
-	list->addColumn("Duration");           list->setColumnAlignment(5, AlignRight);
-	list->addColumn("Summary");            list->setColumnAlignment(6, AlignLeft);
+	repBody->setColumnText(0, "Date/Time");   repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("By");                 repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Type");               repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("CustID");             repBody->setColumnAlignment(3, AlignRight);
+	repBody->addColumn("LoginID");            repBody->setColumnAlignment(4, AlignLeft);
+	repBody->addColumn("Duration");           repBody->setColumnAlignment(5, AlignRight);
+	repBody->addColumn("Summary");            repBody->setColumnAlignment(6, AlignLeft);
 	
 	// Set the sorting to a hidden column.
     //list->setSorting(6);
@@ -159,7 +159,7 @@ void CallLogReport::refreshReport()
     }
 
     // Clear the list.
-    list->clear();
+    repBody->clear();
     DB.query("select NoteID, NoteDate, NoteType, AddedBy, Duration, CustomerID, LoginID, NoteText from Notes where NoteDate >= '%s' and NoteDate <= '%s' %s %s", startDate, endDate, ansby, notetype);
 
     if (DB.rowCount) {
@@ -194,7 +194,7 @@ void CallLogReport::refreshReport()
                 text.append("...");
             }
 
-            (void) new QListViewItem(list, 
+            (void) new QListViewItem(repBody, 
                                      DB.curRow["NoteDate"],
                                      DB.curRow["AddedBy"],
                                      DB.curRow["NoteType"],

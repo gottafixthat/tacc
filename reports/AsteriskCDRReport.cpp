@@ -37,19 +37,19 @@ AsteriskCDRReport::AsteriskCDRReport
 	setCaption( "Asterisk Call Detail Records" );
 	setTitle("Call Detail Records");
 	
-	list->setColumnText(0, "Call Time");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("CallerID");          list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Source");            list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Dest");              list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Context");           list->setColumnAlignment(4, AlignLeft);
-	list->addColumn("Src Channel");       list->setColumnAlignment(5, AlignLeft);
-	list->addColumn("Dest Channel");      list->setColumnAlignment(6, AlignLeft);
-	list->addColumn("lastapp");           list->setColumnAlignment(7, AlignLeft);
-	list->addColumn("lastdata");          list->setColumnAlignment(8, AlignLeft);
-	list->addColumn("duration");          list->setColumnAlignment(9, AlignLeft);
-	list->addColumn("billsec");           list->setColumnAlignment(10, AlignLeft);
-	list->addColumn("disposition");       list->setColumnAlignment(11, AlignLeft);
-	list->addColumn("uniqueid");          list->setColumnAlignment(12, AlignLeft);
+	repBody->setColumnText(0, "Call Time");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("CallerID");          repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Source");            repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Dest");              repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("Context");           repBody->setColumnAlignment(4, AlignLeft);
+	repBody->addColumn("Src Channel");       repBody->setColumnAlignment(5, AlignLeft);
+	repBody->addColumn("Dest Channel");      repBody->setColumnAlignment(6, AlignLeft);
+	repBody->addColumn("lastapp");           repBody->setColumnAlignment(7, AlignLeft);
+	repBody->addColumn("lastdata");          repBody->setColumnAlignment(8, AlignLeft);
+	repBody->addColumn("duration");          repBody->setColumnAlignment(9, AlignLeft);
+	repBody->addColumn("billsec");           repBody->setColumnAlignment(10, AlignLeft);
+	repBody->addColumn("disposition");       repBody->setColumnAlignment(11, AlignLeft);
+	repBody->addColumn("uniqueid");          repBody->setColumnAlignment(12, AlignLeft);
 	
     allowDates(REP_ALLDATES);
     allowFilters(0);
@@ -72,7 +72,7 @@ AsteriskCDRReport::~AsteriskCDRReport()
 
 void AsteriskCDRReport::refreshReport()
 {
-    list->clear();
+    repBody->clear();
     ADB     DB;
     ADB     DB2;
     char    tmpStr[1024];
@@ -85,7 +85,7 @@ void AsteriskCDRReport::refreshReport()
     while (DB.getrow()) {
         //DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         //sprintf(tmpStr, "%5d", DB2.rowCount);
-        QListViewItem *curItem = new QListViewItem(list, 
+        QListViewItem *curItem = new QListViewItem(repBody, 
                 DB.curRow["calldate"], 
                 DB.curRow["clid"], 
                 DB.curRow["src"], 
