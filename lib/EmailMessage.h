@@ -41,8 +41,8 @@ public:
     void        setSubject(const QString);
     void        setBody(const char *);
     void        setBody(const QString);
-    void        addAttachment(const char *, const char *);
-    void        addAttachment(const QString, const QString);
+    void        addAttachment(const char *, const char *, const char *);
+    void        addAttachment(const QString, const QString, const QString);
     void        addAttachment(const QByteArray, const QString, const QString);
 
     int         send();

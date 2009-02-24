@@ -572,6 +572,30 @@ void emailAdmins(const char *subj, const char *body)
 }
 
 /**
+ * makeTmpFileName()
+ *
+ * Creates a temporary file name based on the template given.
+ * Similar to mkstemp but it only generates the file name.
+ */
+const QString makeTmpFileName(const char *tpl)
+{
+    QString asciiChars("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    QString repStr;
+    QString retVal;
+    QString myTpl = tpl;
+
+    // Seed the random number generator
+    srand(rightNow());
+    while(repStr.length() < 6) {
+        int tmpChar = rand() % asciiChars.length() + 1;
+        repStr += asciiChars[tmpChar];
+    }
+
+    retVal = myTpl.replace(QRegExp("XXXXXX"), repStr);
+    return retVal;
+}
+
+/**
  * QListViewToCSV()
  *
  * Given a QListView this exports it into CSV format into the

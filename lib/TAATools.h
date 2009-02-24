@@ -67,6 +67,7 @@ void        showAbout();
 
 void        emailAdmins(const char *subj, const char *body);
 
+const QString makeTmpFileName(const char *);
 uint        QListViewToCSV(QListView *qlist, const char *fName, bool forceQuotes = false);
 
 void        setDebugLevel(int newLevel);
