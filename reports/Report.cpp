@@ -476,15 +476,15 @@ void Report::printReportHeader(QPainter *p)
     
     // Get the width of each header item.
     for (int i = 0; i < numCols; i++) {
-        colWidths[i] = strlen(repBody->header()->label(i));
+        colWidths[i] = repBody->header()->label(i).length();
     }
 
     // Now, get the longest item for each of the keys.
     QListViewItem   *curItem;
     for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
         for (int i = 0; i < numCols; i++) {
-            if ((int) strlen(curItem->key(i, 0)) > colWidths[i]) {
-                colWidths[i] = strlen(curItem->key(i, 0));
+            if (curItem->key(i, 0).length() > colWidths[i]) {
+                colWidths[i] = curItem->key(i, 0).length();
             }
         }
     }
@@ -608,17 +608,23 @@ void Report::emailReport()
     
     // Get the width of each header item.
     for (int i = 0; i < numCols; i++) {
-        colWidths[i] = strlen(repBody->header()->label(i));
+        colWidths[i] = repBody->header()->label(i).length();
     }
 
     // Now, get the longest item for each of the keys.
     QListViewItem   *curItem;
     for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
         for (int i = 0; i < numCols; i++) {
-            if ((int) strlen(curItem->key(i, 0)) > colWidths[i]) {
-                colWidths[i] = strlen(curItem->key(i, 0));
+            if (curItem->key(i, 0).length() > colWidths[i]) {
+                colWidths[i] = curItem->key(i, 0).length();
             }
         }
+    }
+    
+    // If dates are allowed, then put them in here.
+    if (myAllowDates) {
+        txtBody += txtStr.sprintf("%11s: %s\n", "Start Date", startDate().toString().ascii());
+        txtBody += txtStr.sprintf("%11s: %s\n\n\n", "End Date", endDate().toString().ascii());
     }
     
     // Okay, now print our headers
@@ -633,23 +639,6 @@ void Report::emailReport()
     }
     txtBody += "\n";
 
-    // Open the file to save the message to for spooling.
-    /*
-    sprintf(fname, "/var/spool/taamail/Report-%s-%02d%02d%02d%02d",
-      curUser().userName,
-      tmpTime.hour(),
-      tmpTime.minute(),
-      tmpTime.second(),
-      tmpTime.msec()
-    );
-    */
-    
-    // If dates are allowed, then put them in here.
-    if (myAllowDates) {
-        txtBody += txtStr.sprintf("%11s: %s\n", "Start Date", startDate().toString().ascii());
-        txtBody += txtStr.sprintf("%11s: %s\n\n\n", "End Date", endDate().toString().ascii());
-    }
-    
     // And now a line seperating the headers from the data.
     for (int i = 0; i < numCols; i++) {
         strcpy(tmpStr, "");
@@ -676,7 +665,6 @@ void Report::emailReport()
     
     txtBody += txtStr.sprintf("\n\nReport generated on %s at %s\n\n", tmpDate.toString().ascii(), tmpTime.toString().ascii());
 
-    debug(1,"Message contains:\n%s\n", txtBody.ascii());
     // Now, create the email.
     QString     fromAddr;
     QString     subj;
@@ -689,7 +677,15 @@ void Report::emailReport()
     msg.setFrom(fromAddr);
     msg.setTo(eOpts->emailAddress());
     msg.setSubject(subj);
-    msg.setBody(txtBody);
+
+    // Only allow them to not send the body if we're attaching a CSV
+    if (eOpts->attachCSV()) {
+        if (eOpts->doPlainText()) {
+            msg.setBody(txtBody);
+        }
+    } else {
+        msg.setBody(txtBody);
+    }
 
     // Are we attaching the CSV part?
     if (eOpts->attachCSV()) {
@@ -697,11 +693,15 @@ void Report::emailReport()
         csvName = makeTmpFileName("/tmp/report-XXXXXX.csv");
         QListViewToCSV(repBody, csvName.ascii());
 
-        msg.addAttachment(csvName.ascii(), "text/plain", "report.csv");
+        msg.addAttachment(csvName.ascii(), "text/csv", "report.csv");
     }
 
     msg.send();
-    //unlink(csvName);
+
+    // Delete our csv file if necessary
+    if (eOpts->attachCSV()) {
+        unlink(csvName.ascii());
+    }
 
     QMessageBox::information(this, "Email Report", "The report has been spooled for mailing.");
 
