@@ -23,17 +23,11 @@
 #include <ParseFile.h>
 #include <wtpl2.h>
 #include <QSqlDbPool.h>
+#include <EmailMessage.h>
 
-#include <mimetic/mimetic.h>
+#include <qstringlist.h>
 #include <qprogressdialog.h>
 #include <qfile.h>
-
-#include <iostream>
-#include <sstream>
-#include <string>
-
-using namespace std;
-using namespace mimetic;
 
 /**
  * StatementEngine()
@@ -878,6 +872,7 @@ void StatementEngine::emailLatexStatement(uint StNo)
 {
     QSqlDbPool      dbpool;
     QSqlQuery       q(dbpool.qsqldb());
+    QStringList     emailAddrs;
 
     if (StNo != currentStatementNo) {
         generateLatexStatement(StNo);
@@ -892,82 +887,76 @@ void StatementEngine::emailLatexStatement(uint StNo)
         // FIXME.  There should be an error or something here.
         return;
     }
-    if (!q.size()) {
-        // FIXME:  There should be an error or something here.
-        return;
+    if (q.size()) {
+        while(q.next()) {
+            QString toAddress;
+            toAddress = q.value(0).toString();
+            if (q.value(1).toString().length()) {
+                toAddress = q.value(1).toString();
+                toAddress += " <";
+                toAddress += q.value(0).toString();
+                toAddress += ">";
+            }
+            emailAddrs += toAddress;
+        }
     }
-    while(q.next()) {
-        // Create a temporary file name
-        char    fName[1024];
-        // FIXME:  The taamaildir should be configurable
-        sprintf(fName, "/var/spool/taamail/statement-email-%d-XXXXXX", StNo);
-        int fd;
-        fd = mkstemp(fName);
-        close(fd);
-        unlink(fName);
-
-        MimeEntity  me;
-        QString     toAddress;
-        QString     subject = QString("Account Statement %1") . arg(StNo);
-        
-        me.header().from(cfgVal("StatementFromAddress"));
-        toAddress = q.value(0).toString();
-        if (q.value(1).toString().length()) {
-            toAddress = q.value(1).toString();
-            toAddress += " <";
-            toAddress += q.value(0).toString();
-            toAddress += ">";
+    
+    // If our list is empty, get the primary login for the customer and use that.
+    if (!emailAddrs.count()) {
+        q.prepare("select PrimaryLogin, FullName from Customers where CustomerID = (select CustomerID from Statements where StatementNo = :statementNo)");
+        q.bindValue(":statementNo", StNo);
+        if (q.exec() && q.size()) {
+            q.next();
+            QString toAddress;
+            toAddress = q.value(0).toString();
+            toAddress += "@";
+            toAddress += cfgVal("EmailDomain");
+            if (q.value(1).toString().length()) {
+                toAddress = q.value(1).toString();
+                toAddress += " <";
+                toAddress += q.value(0).toString();
+                toAddress += "@";
+                toAddress += cfgVal("EmailDomain");
+                toAddress += ">";
+            }
+            emailAddrs += toAddress;
         }
-        me.header().to(toAddress.ascii());
-        me.header().subject(subject.ascii());
-
-        // Add the text body
-        TextPlain   *pTextPlain = new TextPlain(tpl->text());
-        me.body().parts().push_back(pTextPlain);
-
-        // Write the PDF file that we have in memory to disk.
-        QString pdfFileName;
-        pdfFileName = QString("/tmp/statement-%1.pdf") . arg(StNo);
-        QFile   pdf(pdfFileName);
-        if (pdf.open(IO_WriteOnly)) {
-            QDataStream fstream(&pdf);
-            fstream.writeRawBytes(pdfOutput, pdfOutput.size());
-            pdf.close();
-        }
-
-        // Add the PDF attachment
-        Attachment  *pAttachment = NULL;
-        Base64::Encoder b64;
-        pAttachment = new Attachment(pdfFileName.ascii(), "application/pdf", b64);
-        if (me.header().contentType().isMultipart() == true) {
-            me.body().parts().push_back(pAttachment);
-        } else {
-            MimeEntity  *mm = new MimeEntity;
-            mm->body().preamble("This is a multi-part message in MIME format.");
-            ContentType::Boundary boundary;
-            ContentType ct("multipart", "mixed");
-            ct.paramList().push_back(ContentType::Param("boundary", boundary));
-            me.header().contentType(ct);
-            me.body().parts().push_back(pAttachment);
-        }
-
-
-        string  s;
-        stringstream   ostream(stringstream::in | stringstream::out);
-        ostream << me;
-        s = ostream.str();
-        //debug(5,"ostream.s = '%s'\n", s.c_str());
-
-        // Write the file
-        QFile   file(fName);
-        if (file.open(IO_WriteOnly)) {
-            QTextStream fstream(&file);
-            fstream << s.c_str();
-            file.close();
-        }
-        // Remove our temporary pdf copy of the statement
-        unlink(pdfFileName.ascii());
     }
+
+    // Write the PDF file that we have in memory to disk.
+    QString pdfFileName;
+    QString mimeFileName;
+    pdfFileName = QString("/tmp/statement-%1.pdf") . arg(StNo);
+    mimeFileName = QString("statement-%1.pdf") . arg(StNo);
+    QFile   pdf(pdfFileName);
+    if (pdf.open(IO_WriteOnly)) {
+        QDataStream fstream(&pdf);
+        fstream.writeRawBytes(pdfOutput, pdfOutput.size());
+        pdf.close();
+    }
+
+    // Generate the message
+    EmailMessage    msg;
+    QString     subject = QString("Account Statement %1") . arg(StNo);
+    
+    msg.setFrom(cfgVal("StatementFromAddress"));
+    msg.setSubject(subject);
+
+    // Add the text body
+    msg.setBody(tpl->text());
+
+    // Add the PDF attachment
+    msg.addAttachment(pdfFileName.ascii(), "application/pdf", mimeFileName.ascii());
+
+        // Now walk through the list of addresses and send one to each of them.
+    for (uint a = 0; a < emailAddrs.count(); a++) {
+        QString     toAddress = emailAddrs[a];
+        debug(1,"Sending statement to %s...\n", toAddress.ascii());
+        msg.setTo(toAddress);
+        msg.send();
+    }
+    unlink(pdfFileName.ascii());
+
 }
 
 /**

@@ -585,9 +585,9 @@ const QString makeTmpFileName(const char *tpl)
     QString myTpl = tpl;
 
     // Seed the random number generator
-    srand(rightNow());
     while(repStr.length() < 6) {
-        int tmpChar = rand() % asciiChars.length() + 1;
+        int tmpChar = 1 + (int) (asciiChars.length() * (rand() / (RAND_MAX + 1.0)));
+        //int tmpChar = rand() % asciiChars.length() + 1;
         repStr += asciiChars[tmpChar];
     }
 
