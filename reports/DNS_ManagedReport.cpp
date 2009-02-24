@@ -50,12 +50,12 @@ DNS_ManagedReport::DNS_ManagedReport
 	setCaption( "Managed DNS Domains Report" );
 	setTitle("Managed DNS Domains Report");
 	
-	list->setColumnText(0, "Domain Name");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Username");            list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Type");                list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Cust ID");             list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Act");                 list->setColumnAlignment(4, AlignLeft);
-	list->addColumn("Template");            list->setColumnAlignment(5, AlignLeft);
+	repBody->setColumnText(0, "Domain Name");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Username");            repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Type");                repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Cust ID");             repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("Act");                 repBody->setColumnAlignment(4, AlignLeft);
+	repBody->addColumn("Template");            repBody->setColumnAlignment(5, AlignLeft);
 	
     allowDates(REP_NODATES);
     allowFilters(0);
@@ -76,7 +76,7 @@ DNS_ManagedReport::~DNS_ManagedReport()
 
 void DNS_ManagedReport::refreshReport()
 {
-    list->clear();
+    repBody->clear();
     ADB     DB;
     ADB     dnsDB(cfgVal("DNSSQLDB"), cfgVal("DNSSQLUser"), cfgVal("DNSSQLPass"), cfgVal("DNSSQLHost"));
     char    domainName[1024];
@@ -111,7 +111,7 @@ void DNS_ManagedReport::refreshReport()
         if (atoi(dnsDB.curRow["Active"])) strcpy(isActive, "Yes");
         else strcpy(isActive, "No");
 
-        (void) new QListViewItem(list, domainName, dnsDB.curRow["LoginID"], domainType, dnsDB.curRow["CustomerID"], isActive, templateName);
+        (void) new QListViewItem(repBody, domainName, dnsDB.curRow["LoginID"], domainType, dnsDB.curRow["CustomerID"], isActive, templateName);
     }
     
 }
@@ -135,7 +135,7 @@ void DNS_ManagedReport::listItemSelected(QListViewItem *curItem)
 
 void DNS_ManagedReport::userButtonClickedInt()
 {
-    QListViewItem *curItem = list->currentItem();
+    QListViewItem *curItem = repBody->currentItem();
     if (curItem != NULL) {
         DNSManager  *dnsm = new DNSManager();
         dnsm->setDomainName(curItem->key(0,0));

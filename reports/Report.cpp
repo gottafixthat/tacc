@@ -75,9 +75,9 @@ Report::Report
     reportTitle->setText("reportTitle");
     reportTitle->setAlignment(AlignVCenter|AlignHCenter|ExpandTabs|WordBreak);
 
-    list = new QListView(this);
-    list->addColumn("First Column");
-    connect(list, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(listItemSelected(QListViewItem *)));
+    repBody = new QListView(this);
+    repBody->addColumn("First Column");
+    connect(repBody, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(listItemSelected(QListViewItem *)));
 
     userText = new QTextView(this);
     userText->setFocusPolicy(QWidget::NoFocus);
@@ -127,7 +127,7 @@ Report::Report
     
     ml->addLayout(dl,           0);
     ml->addWidget(reportTitle,  0);
-    ml->addWidget(list,         1);
+    ml->addWidget(repBody,      1);
     ml->addWidget(userText,     0);
     
     // Add the button layout
@@ -178,7 +178,7 @@ Report::Report
     
     allowReproduction(1);   // We can graph/print/email by default.
 
-    list->setAllColumnsShowFocus(true);
+    repBody->setAllColumnsShowFocus(true);
 }
 
 
@@ -394,7 +394,7 @@ void Report::printReport()
     p->begin(&prn);
     
     // Count the children.
-    for (curItem = list->firstChild(); curItem != 0; curItem = curItem->itemBelow()) totLines++;
+    for (curItem = repBody->firstChild(); curItem != 0; curItem = curItem->itemBelow()) totLines++;
     totPages = (totLines / 50) + 1;
     // fprintf(stderr, "The total number of pages is: %d\n", totPages);
 
@@ -402,7 +402,7 @@ void Report::printReport()
     QProgressDialog progress("Printing report...", "Abort", totLines, this);
     progress.setTotalSteps(totPages);
     progress.setProgress(0);
-    curItem = list->firstChild();
+    curItem = repBody->firstChild();
     for (pageNo = 1; pageNo < totPages + 1; pageNo++) {
         printReportHeader(p);
         curItem = printReportRows(p, curItem);
@@ -472,7 +472,7 @@ void Report::printReportHeader(QPainter *p)
     // We'll take the strlens and convert them into pixel values
     // based on the percentage of the total.  That way, our report will
     // always be the full width of the page.
-    numCols = list->header()->count();
+    numCols = repBody->header()->count();
     
     if (!numCols) return;
     
@@ -480,12 +480,12 @@ void Report::printReportHeader(QPainter *p)
     
     // Get the width of each header item.
     for (int i = 0; i < numCols; i++) {
-        colWidths[i] = strlen(list->header()->label(i));
+        colWidths[i] = strlen(repBody->header()->label(i));
     }
 
     // Now, get the longest item for each of the keys.
     QListViewItem   *curItem;
-    for (curItem = list->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
+    for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
         for (int i = 0; i < numCols; i++) {
             if ((int) strlen(curItem->key(i, 0)) > colWidths[i]) {
                 colWidths[i] = strlen(curItem->key(i, 0));
@@ -518,7 +518,7 @@ void Report::printReportHeader(QPainter *p)
         p->setBackgroundMode(OpaqueMode);
         p->setPen(white);
         p->fillRect(rect, bbrush);
-        p->drawText(rect, AlignCenter|AlignVCenter, list->header()->label(i));
+        p->drawText(rect, AlignCenter|AlignVCenter, repBody->header()->label(i));
         xPos += prColWidths[i];
     }
     // Reset our pen
@@ -554,7 +554,7 @@ QListViewItem *Report::printReportRows(QPainter *p, QListViewItem *startItem)
     // Now, draw the report title, centered on the page.
     p->setFont(QFont("helvetica", 8, QFont::Normal));
 
-    numCols = list->header()->count();
+    numCols = repBody->header()->count();
     if (!numCols) return(NULL);
     if (numCols > 20) numCols = 20;
 
@@ -565,7 +565,7 @@ QListViewItem *Report::printReportRows(QPainter *p, QListViewItem *startItem)
 	        xPos     = 36;
             for (int i = 0; i < numCols; i++) {
 		        rect.setCoords(xPos+1, yPos, xPos + prColWidths[i] - 1, yPos+11);
-				p->drawText(rect, list->columnAlignment(i)|AlignVCenter, startItem->key(i,0));
+				p->drawText(rect, repBody->columnAlignment(i)|AlignVCenter, startItem->key(i,0));
 		        xPos += prColWidths[i];
 		    }
 		    yPos += 12;
@@ -591,14 +591,18 @@ void Report::emailReport()
     QString fmtStr;
     char    tmpStr[4096];
     QString tmpQstr;
+    QString colStr;
+    QString txtBody;
+    QString txtStr;
+    char    csvName[2048];
     QDate   tmpDate = QDate::currentDate();
     QTime   tmpTime = QTime::currentTime();
-    FILE    *fp;
-    char    fname[2048];
 
-    numCols = list->header()->count();
+    numCols = repBody->header()->count();
     
     if (!numCols) return;
+
+    //debug(5,"QListViewToCSV() returned %d lines\n", QListViewToCSV(repBody, "/tmp/test.csv"));
 
     EmailReportDialog   *eOpts = new EmailReportDialog(this, "emailReportDialog");
     if (eOpts->exec() != QDialog::Accepted) {
@@ -608,12 +612,12 @@ void Report::emailReport()
     
     // Get the width of each header item.
     for (int i = 0; i < numCols; i++) {
-        colWidths[i] = strlen(list->header()->label(i));
+        colWidths[i] = strlen(repBody->header()->label(i));
     }
 
     // Now, get the longest item for each of the keys.
     QListViewItem   *curItem;
-    for (curItem = list->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
+    for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
         for (int i = 0; i < numCols; i++) {
             if ((int) strlen(curItem->key(i, 0)) > colWidths[i]) {
                 colWidths[i] = strlen(curItem->key(i, 0));
@@ -621,7 +625,20 @@ void Report::emailReport()
         }
     }
     
+    // Okay, now print our headers
+    for (int i = 0; i < numCols; i++) {
+        colStr  = repBody->header()->label(i).ascii();
+        if (repBody->columnAlignment(i) == Qt::AlignRight) {
+            colStr = colStr.rightJustify(colWidths[i]+1);
+        } else {
+            colStr = colStr.leftJustify(colWidths[i]+1);
+        }
+        txtBody += colStr;
+    }
+    txtBody += "\n";
+
     // Open the file to save the message to for spooling.
+    /*
     sprintf(fname, "/var/spool/taamail/Report-%s-%02d%02d%02d%02d",
       curUser().userName,
       tmpTime.hour(),
@@ -629,103 +646,41 @@ void Report::emailReport()
       tmpTime.second(),
       tmpTime.msec()
     );
+    */
     
-    // Temp file for csv
-    char    csvName[1024];
-    sprintf(csvName, "/tmp/report-XXXXXX.csv");
-    int fd;
-    fd = mkstemp(csvName);
-    close(fd);
-    unlink(csvName);
-
-    char    txtStr[16384];
-    QString txtBody = "";
-    QString csvBody = "";
-    QString csvLine = "";
-    //fp = fopen(fname, "w");
-
-    // The message header.
-    //fprintf(fp, "From: %s@%s\n", curUser().userName, cfgVal("EmailDomain"));
-    //fprintf(fp, "To: %s@%s\n", curUser().userName, cfgVal("EmailDomain"));
-    //fprintf(fp, "Subject: Report - %s\n", (const char *) reportTitle->text());
-    //fprintf(fp, "\n\n");
-
-
     // If dates are allowed, then put them in here.
     if (myAllowDates) {
-        sprintf(txtStr, "%11s: %s\n", "Start Date", (const char *) startDate().toString());
-        txtBody += txtStr;
-        sprintf(txtStr, "%11s: %s\n\n\n", "End Date", (const char *) endDate().toString());
-        txtBody += txtStr;
+        txtBody += txtStr.sprintf("%11s: %s\n", "Start Date", startDate().toString().ascii());
+        txtBody += txtStr.sprintf("%11s: %s\n\n\n", "End Date", endDate().toString().ascii());
     }
     
-    // Okay, now print our headers
-    for (int i = 0; i < numCols; i++) {
-        debug(1, "0:Formatting header column %d\n", i);
-        fmtStr = "%";
-        debug(1, "1:Formatting header column %d\n", i);
-        if (list->columnAlignment(i) != Qt::AlignRight) fmtStr += "-";
-        debug(1, "2:Formatting header column %d\n", i);
-        sprintf(tmpStr, "%d", colWidths[i]);
-        debug(1, "3:Formatting header column %d\n", i);
-        fmtStr += tmpStr;
-        debug(1, "4:Formatting header column %d\n", i);
-        fmtStr += "s ";
-        debug(1, "5:Formatting header column %d\n", i);
-        sprintf(txtStr, fmtStr.ascii(), (const char *) list->header()->label(i));
-        debug(1, "6:Formatting header column %d\n", i);
-        if (csvLine.length()) csvLine += ",";
-        debug(1, "7:Formatting header column %d\n", i);
-        csvLine += "\"";
-        debug(1, "8:Formatting header column %d\n", i);
-        csvLine += list->header()->label(i);
-        debug(1, "9:Formatting header column %d\n", i);
-        csvLine += "\"";
-        debug(1, "10:Formatting header column %d\n", i);
-        txtBody += txtStr;
-    }
-    debug(1, "Done formatting header columns\n");
-    csvBody += csvLine;
-    csvBody += "\r\n";
-    csvLine = "";
-    txtBody += "\n";
-
     // And now a line seperating the headers from the data.
     for (int i = 0; i < numCols; i++) {
         strcpy(tmpStr, "");
         for (int n = 0; n < colWidths[i]; n++) strcat(tmpStr, "=");
         
-        sprintf(txtStr, "%s ", tmpStr);
-        txtBody += txtStr;
+        txtBody += tmpStr;
+        txtBody += " ";
         
     }
     txtBody += "\n";
     
     // And now, finally, the data itself
-    for (curItem = list->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
+    for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
         for (int i = 0; i < numCols; i++) {
             fmtStr = "%";
-            if (list->columnAlignment(i) != AlignRight) fmtStr += "-";
+            if (repBody->columnAlignment(i) != AlignRight) fmtStr += "-";
             sprintf(tmpStr, "%d", colWidths[i]);
             fmtStr += tmpStr;
             fmtStr += "s ";
-            sprintf(txtStr, fmtStr.ascii(), (const char *) curItem->key(i, 0));
-            txtBody += txtStr;
-            if (csvLine.length()) csvLine += ",";
-            csvLine += "\"";
-            csvLine += curItem->key(i,0);
-            csvLine += "\"";
+            txtBody += txtStr.sprintf(fmtStr.ascii(), curItem->key(i, 0).ascii());
         }
         txtBody += "\n";
-        csvBody += csvLine;
-        csvBody += "\r\n";
-        csvLine = "";
     }
     
-    sprintf(txtStr, "\n\nReport generated on %s at %s\n\n", (const char *)tmpDate.toString(), (const char *) tmpTime.toString());
-    txtBody += txtStr;
-    fclose(fp);
+    txtBody += txtStr.sprintf("\n\nReport generated on %s at %s\n\n", tmpDate.toString().ascii(), tmpTime.toString().ascii());
 
+    debug(1,"Message contains:\n%s\n", txtBody.ascii());
     // Now, create the email.
     QString     fromAddr;
     QString     subj;
@@ -738,21 +693,24 @@ void Report::emailReport()
     me.header().to(eOpts->emailAddress().ascii());
     me.header().subject(subj.ascii());
 
-    // Are we attaching the text part?
-    if (eOpts->doPlainText()) {
-        TextPlain   *pTextPlain = new TextPlain(txtBody.ascii());
-        me.body().parts().push_back(pTextPlain);
+    if (!eOpts->attachCSV()) {
+        me.body().assign(txtBody.ascii());
+    } else {
+        // Are we attaching the text part?
+        if (eOpts->doPlainText()) {
+            string tmpBody;
+            tmpBody = txtBody.ascii();
+            debug(1, "Adding plain text part...\n%s\n", tmpBody.c_str());
+            TextPlain   *pTextPlain = new TextPlain(tmpBody.c_str());
+            me.body().parts().push_back(pTextPlain);
+        }
     }
 
     // Are we attaching the CSV part?
     if (eOpts->attachCSV()) {
         // Create a temp file name.
-        QFile   csv(csvName);
-        if (csv.open(IO_WriteOnly)) {
-            QTextStream fstream(&csv);
-            fstream << csvBody;
-            csv.close();
-        }
+        strcpy(csvName, "/tmp/report-XXXXXX.csv");
+        QListViewToCSV(repBody, csvName);
 
         Attachment  *pAttachment = NULL;
         Base64::Encoder b64;
@@ -772,18 +730,27 @@ void Report::emailReport()
 
     // Write the actual file now.
     string  s;
-    stringstream    ostream(stringstream::in | stringstream::out);
+    stringstream    ostream;
     ostream << me;
     s = ostream.str();
 
-    QFile   file(fname);
+    debug(1,"s = \n%s\n", s.c_str());
+    /*
+    char    fName[2048];
+    strcpy(fName, "/tmp/report-XXXXXX");
+    int fd;
+    fd = mkstemp(fName);
+    close(fd);
+    unlink(fName);
+    QFile   file(fName);
     if (file.open(IO_WriteOnly)) {
         QTextStream fstream(&file);
         fstream << s.c_str();
         file.close();
     }
+    */
 
-    unlink(csvName);
+    //unlink(csvName);
 
     QMessageBox::information(this, "Email Report", "The report has been spooled for mailing.");
 

@@ -46,11 +46,11 @@ DNS_UnmanagedReport::DNS_UnmanagedReport
 	setCaption( "Unmanaged DNS Domains Report" );
 	setTitle("Unmanaged DNS Domains Report");
 	
-	list->setColumnText(0, "Domain Name");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Username");            list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Type");                list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Cust ID");             list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Act");                 list->setColumnAlignment(4, AlignLeft);
+	repBody->setColumnText(0, "Domain Name");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Username");            repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Type");                repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Cust ID");             repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("Act");                 repBody->setColumnAlignment(4, AlignLeft);
 	
     allowDates(REP_NODATES);
     allowFilters(0);
@@ -70,7 +70,7 @@ DNS_UnmanagedReport::~DNS_UnmanagedReport()
 
 void DNS_UnmanagedReport::refreshReport()
 {
-    list->clear();
+    repBody->clear();
     ADB     DB;
     ADB     DB2;
     ADB     dnsDB(cfgVal("DNSSQLDB"), cfgVal("DNSSQLUser"), cfgVal("DNSSQLPass"), cfgVal("DNSSQLHost"));
@@ -102,7 +102,7 @@ void DNS_UnmanagedReport::refreshReport()
             if (atoi(DB.curRow["Active"])) strcpy(isActive, "Yes");
             else strcpy(isActive, "No");
 
-            (void) new QListViewItem(list, domainName, DB.curRow["LoginID"], domainType, DB.curRow["CustomerID"], isActive);
+            (void) new QListViewItem(repBody, domainName, DB.curRow["LoginID"], domainType, DB.curRow["CustomerID"], isActive);
         }
     }
     

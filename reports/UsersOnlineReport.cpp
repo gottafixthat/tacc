@@ -28,12 +28,12 @@ UsersOnlineReport::UsersOnlineReport
 	setCaption( "Users Online Report" );
 	setTitle("Customer Cities");
 	
-	list->setColumnText(0, "Login ID"); list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Server");          list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Port");            list->setColumnAlignment(2, AlignRight);
-    list->addColumn("Start Time");      list->setColumnAlignment(3, AlignLeft);
-    list->addColumn("Stop Time");       list->setColumnAlignment(4, AlignLeft);
-    list->addColumn("Duration");        list->setColumnAlignment(5, AlignRight);
+	repBody->setColumnText(0, "Login ID"); repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Server");          repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Port");            repBody->setColumnAlignment(2, AlignRight);
+    repBody->addColumn("Start Time");      repBody->setColumnAlignment(3, AlignLeft);
+    repBody->addColumn("Stop Time");       repBody->setColumnAlignment(4, AlignLeft);
+    repBody->addColumn("Duration");        repBody->setColumnAlignment(5, AlignRight);
 	
     allowDates(REP_NODATES);
     allowFilters(1);
@@ -62,7 +62,7 @@ void UsersOnlineReport::refreshReport()
 
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
     
     char    sDate[64];
     char    sTime[64];
@@ -134,7 +134,7 @@ void UsersOnlineReport::refreshReport()
             sprintf(fStart, "%s %s", DB.curRow["StartDate"], DB.curRow["StartTime"]);
             sprintf(fStop,  "%s %s", DB.curRow["StopTime"], DB.curRow["StopDate"]);
 
-            (void) new QListViewItem(list, 
+            (void) new QListViewItem(repBody, 
               DB.curRow["LoginID"],
               strxlt[atol(DB.curRow["Host"])],
               tmpStr,
@@ -144,7 +144,7 @@ void UsersOnlineReport::refreshReport()
             );
         }
     } else {
-        (void) new QListViewItem(list, "No data for specified period");
+        (void) new QListViewItem(repBody, "No data for specified period");
     }
 
     delete query;

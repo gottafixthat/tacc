@@ -23,15 +23,15 @@ LoginsToWipeReport::LoginsToWipeReport
 	setCaption( "List of Expired Accounts" );
 	setTitle("List of Expired Accounts\n(Accounts to wipe)");
 
-	list->setColumnText(0, "Customer Name");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Customer ID");           list->setColumnAlignment(1, AlignRight);
-	list->addColumn("Login ID");              list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Lock Date");             list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Balance");               list->setColumnAlignment(4, AlignRight);
+	repBody->setColumnText(0, "Customer Name");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Customer ID");           repBody->setColumnAlignment(1, AlignRight);
+	repBody->addColumn("Login ID");              repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Lock Date");             repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("Balance");               repBody->setColumnAlignment(4, AlignRight);
 	
 	// Set the sorting to a hidden column.
-    list->setSorting(3);
-    list->setAllColumnsShowFocus(true);
+    repBody->setSorting(3);
+    repBody->setAllColumnsShowFocus(true);
 
     resize(675, 400);
 
@@ -66,9 +66,9 @@ void LoginsToWipeReport::refreshReport()
     QApplication::setOverrideCursor(waitCursor);
 
 	// Set the sorting to a hidden column.
-    list->setSorting(0);
+    repBody->setSorting(0);
     
-    list->clear();
+    repBody->clear();
     QDateTime   tmpTime = QDateTime::currentDateTime().addDays(-90);
     DB.query("select InternalID, CustomerID, LoginID, LastModified from Logins where Wiped = 0 and Active = 0 and LastModified < '%04d%02d%02d%02d%02d%02d'",
       tmpTime.date().year(), tmpTime.date().month(), tmpTime.date().day(), 
@@ -93,7 +93,7 @@ void LoginsToWipeReport::refreshReport()
         );
         
         myDateStamptoQDateTime(DB.curRow["LastModified"], &qDT);
-        (void) new QListViewItem(list,
+        (void) new QListViewItem(repBody,
           custName,
           DB.curRow["CustomerID"],
           DB.curRow["LoginID"],

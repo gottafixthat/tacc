@@ -33,22 +33,22 @@ ModemUsageReport::ModemUsageReport
 	setCaption( "Modem Usage Report" );
 	setTitle("Modem Usage Report");
 	
-	list->setColumnText(0, "Start Time");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("StopTime");           list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Duration");           list->setColumnAlignment(2, AlignRight);
-	list->addColumn("Port");               list->setColumnAlignment(3, AlignLeft);
-	list->addColumn("Connect Info");       list->setColumnAlignment(4, AlignLeft);
-	list->addColumn("In K");               list->setColumnAlignment(5, AlignRight);
-	list->addColumn("Out K");              list->setColumnAlignment(6, AlignRight);
-	list->addColumn("Total K");            list->setColumnAlignment(7, AlignRight);
+	repBody->setColumnText(0, "Start Time");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("StopTime");           repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Duration");           repBody->setColumnAlignment(2, AlignRight);
+	repBody->addColumn("Port");               repBody->setColumnAlignment(3, AlignLeft);
+	repBody->addColumn("Connect Info");       repBody->setColumnAlignment(4, AlignLeft);
+	repBody->addColumn("In K");               repBody->setColumnAlignment(5, AlignRight);
+	repBody->addColumn("Out K");              repBody->setColumnAlignment(6, AlignRight);
+	repBody->addColumn("Total K");            repBody->setColumnAlignment(7, AlignRight);
 
     strcpy(myLoginID, "");
     strxlt.resize(521);
     loadDict();
 	refreshReport();
 
-    list->setItemMargin(2);
-    list->setAllColumnsShowFocus(TRUE);
+    repBody->setItemMargin(2);
+    repBody->setAllColumnsShowFocus(TRUE);
     
     resize(700,500);
 }
@@ -80,7 +80,7 @@ void ModemUsageReport::refreshReport()
 
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
     
     char    sDate[64];
     char    eDate[64];
@@ -158,7 +158,7 @@ void ModemUsageReport::refreshReport()
             sprintf(foutK,  "%ld", outK);
             sprintf(ftotK,  "%ld", totK);
 
-            (void) new QListViewItem(list, 
+            (void) new QListViewItem(repBody, 
               fStart,
               fStop,
               fSess,
@@ -170,7 +170,7 @@ void ModemUsageReport::refreshReport()
             );
         }
     } else {
-        (void) new QListViewItem(list, "No data for specified period");
+        (void) new QListViewItem(repBody, "No data for specified period");
     }
     
     // Update our title, include total number of connections and total

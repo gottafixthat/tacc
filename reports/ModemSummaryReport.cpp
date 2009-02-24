@@ -40,8 +40,8 @@ ModemSummaryReport::ModemSummaryReport
 	setCaption( "Modem Usage Summary" );
 	setTitle("Modem Usage Summary");
 	
-	list->setColumnText(0, "Time");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Ports In Use");        list->setColumnAlignment(1, AlignRight);
+	repBody->setColumnText(0, "Time");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Ports In Use");        repBody->setColumnAlignment(1, AlignRight);
 
     timeDict = NULL;
     
@@ -61,8 +61,8 @@ ModemSummaryReport::ModemSummaryReport
 
 	refreshReport();
 
-    list->setItemMargin(2);
-    list->setAllColumnsShowFocus(TRUE);
+    repBody->setItemMargin(2);
+    repBody->setAllColumnsShowFocus(TRUE);
     
     
 //    resize(700,500);
@@ -95,7 +95,7 @@ void ModemSummaryReport::refreshReport()
     char        tmpTimeStr[128];
     char        tmpPorts[64];
     
-    list->clear();
+    repBody->clear();
     
     // Get the starting and ending dates for our report and setup our counters.
     setupCounters();
@@ -160,11 +160,11 @@ void ModemSummaryReport::refreshReport()
             );
             sprintf(tmpPorts, "%4ld", timeDict[i]);
 
-            (void) new QListViewItem(list, tmpTimeStr, tmpPorts);
+            (void) new QListViewItem(repBody, tmpTimeStr, tmpPorts);
         }
         
     } else {
-        (void) new QListViewItem(list, "No data for specified period");
+        (void) new QListViewItem(repBody, "No data for specified period");
     }
     
     QApplication::restoreOverrideCursor();

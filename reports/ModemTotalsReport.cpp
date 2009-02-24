@@ -34,16 +34,16 @@ ModemTotalsReport::ModemTotalsReport
 	setCaption( "Modem Usage Report" );
 	setTitle("Modem Usage Report");
 	
-	list->setColumnText(0, "Login ID");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Connections");      list->setColumnAlignment(1, AlignRight);
-	list->addColumn("Total Time");       list->setColumnAlignment(2, AlignRight);
-	list->addColumn("Average Call");     list->setColumnAlignment(3, AlignRight);
+	repBody->setColumnText(0, "Login ID");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Connections");      repBody->setColumnAlignment(1, AlignRight);
+	repBody->addColumn("Total Time");       repBody->setColumnAlignment(2, AlignRight);
+	repBody->addColumn("Average Call");     repBody->setColumnAlignment(3, AlignRight);
 
     loginDict.resize(4253);
 	refreshReport();
 
-    list->setItemMargin(2);
-    list->setAllColumnsShowFocus(TRUE);
+    repBody->setItemMargin(2);
+    repBody->setAllColumnsShowFocus(TRUE);
     
     resize(495,500);
 }
@@ -63,7 +63,7 @@ void ModemTotalsReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
 
-    list->clear();
+    repBody->clear();
     
     char    sDate[64];
     char    eDate[64];
@@ -175,7 +175,7 @@ void ModemTotalsReport::refreshReport()
 		        }
 	            sprintf(fAvg, "%3d.%02d:%02d:%02ld", cDays, cHours, cMins, cSecs);
             
-	            (void) new QListViewItem(list, 
+	            (void) new QListViewItem(repBody, 
 	              (const char *) loginList.at(i),
 	              fCount,
 	              fSess,
@@ -184,7 +184,7 @@ void ModemTotalsReport::refreshReport()
             }
         }
     } else {
-        (void) new QListViewItem(list, "No data for specified period");
+        (void) new QListViewItem(repBody, "No data for specified period");
     }
     
     QApplication::restoreOverrideCursor();

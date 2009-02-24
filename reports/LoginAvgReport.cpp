@@ -35,10 +35,10 @@ LoginAvgReport::LoginAvgReport
 	setCaption( "Login Count Averages Report" );
 	setTitle("Login Count Averages Report");
 	
-	list->setColumnText(0, "Login Type");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Low");                list->setColumnAlignment(1, AlignRight);
-	list->addColumn("High");               list->setColumnAlignment(2, AlignRight);
-	list->addColumn("Average");            list->setColumnAlignment(3, AlignRight);
+	repBody->setColumnText(0, "Login Type");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Low");                repBody->setColumnAlignment(1, AlignRight);
+	repBody->addColumn("High");               repBody->setColumnAlignment(2, AlignRight);
+	repBody->addColumn("Average");            repBody->setColumnAlignment(3, AlignRight);
 
 	refreshReport();
 }
@@ -73,7 +73,7 @@ void LoginAvgReport::refreshReport()
     reportTitle->setText("Login Count Averages");
     
     // Okay, generate the report.
-    list->clear();
+    repBody->clear();
     
     // Get the starting and ending dates.
     sprintf(sDate, "%04d-%02d-%02d", startDate().year(), startDate().month(), startDate().day());
@@ -132,7 +132,7 @@ void LoginAvgReport::refreshReport()
                 strcpy(itemAvg, "0");
             }
             sprintf(itemEntry, "%08d", entryNo++);
-            (void) new QListViewItem(list, itemName, itemMin, itemMax, itemAvg, itemEntry);
+            (void) new QListViewItem(repBody, itemName, itemMin, itemMax, itemAvg, itemEntry);
             labels[i] = new char[256];
             strcpy(labels[i], itemName);
             // datum[i] = atof(itemAvg);
@@ -144,10 +144,10 @@ void LoginAvgReport::refreshReport()
         sprintf(itemMax, "%ld", TotalMax);
         sprintf(itemAvg, "%.1f", TotalAvg);
         sprintf(itemEntry, "%08d", entryNo++);
-        (void) new QListViewItem(list, itemName, itemMin, itemMax, itemAvg, itemEntry);
+        (void) new QListViewItem(repBody, itemName, itemMin, itemMax, itemAvg, itemEntry);
         
         // Reset our sort key.
-        list->setSorting(4);
+        repBody->setSorting(4);
         
 	    // Do the graph data.
 	    for (unsigned int i = 0; i < keys.count(); i++) {
@@ -158,7 +158,7 @@ void LoginAvgReport::refreshReport()
 	        datum[i] = tmpAvg / TotalAvg;
 	    }
     } else {
-        (void) new QListViewItem(list, "No data available for specified period");
+        (void) new QListViewItem(repBody, "No data available for specified period");
     }
     
 

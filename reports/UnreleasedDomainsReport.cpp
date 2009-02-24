@@ -25,10 +25,10 @@ UnreleasedDomainsReport::UnreleasedDomainsReport
 	setCaption( "Unreleased Domains Report" );
 	setTitle("Unreleased Domains");
 	
-	list->setColumnText(0, "CustID");  list->setColumnAlignment(0, AlignLeft);
-	list->addColumn("Username");       list->setColumnAlignment(1, AlignLeft);
-	list->addColumn("Type");           list->setColumnAlignment(2, AlignLeft);
-	list->addColumn("Domain Name");    list->setColumnAlignment(3, AlignLeft);
+	repBody->setColumnText(0, "CustID");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->addColumn("Username");       repBody->setColumnAlignment(1, AlignLeft);
+	repBody->addColumn("Type");           repBody->setColumnAlignment(2, AlignLeft);
+	repBody->addColumn("Domain Name");    repBody->setColumnAlignment(3, AlignLeft);
 	
     allowDates(REP_NODATES);
     allowFilters(0);
@@ -48,11 +48,11 @@ UnreleasedDomainsReport::~UnreleasedDomainsReport()
 
 void UnreleasedDomainsReport::refreshReport()
 {
-    list->clear();
+    repBody->clear();
     ADB     DB;
     DB.query("select Domains.CustomerID, Domains.LoginID, DomainTypes.DomainType, Domains.DomainName from Domains, DomainTypes where Domains.Active <> 0 and Domains.Released = '' and DomainTypes.InternalID = Domains.DomainType");
     if (DB.rowCount) while (DB.getrow()) {
-        (void) new QListViewItem(list, DB.curRow["CustomerID"], DB.curRow["LoginID"], DB.curRow["DomainType"], DB.curRow["DomainName"]);
+        (void) new QListViewItem(repBody, DB.curRow["CustomerID"], DB.curRow["LoginID"], DB.curRow["DomainType"], DB.curRow["DomainName"]);
     }
     
 }

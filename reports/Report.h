@@ -129,7 +129,7 @@ protected slots:
 
 protected:
     QLabel      *reportTitle;
-    QListView   *list;
+    QListView   *repBody;
     QLabel      *startDateLabel;
     QLabel      *endDateLabel;
     QPushButton *generateButton;
