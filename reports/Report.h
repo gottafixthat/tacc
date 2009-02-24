@@ -38,6 +38,10 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+#include <qlineedit.h>
+#include <qcheckbox.h>
+#include <qstring.h>
+#include <qdialog.h>
 
 #include "calendar.h"
 
@@ -55,6 +59,22 @@
 #define REP_ALLDATES  255
 
 
+class EmailReportDialog : public QDialog
+{
+    Q_OBJECT
+public:
+    EmailReportDialog(QWidget *parent = NULL, const char *name = NULL);
+    virtual ~EmailReportDialog();
+
+    QString emailAddress();
+    bool    doPlainText();
+    bool    attachCSV();
+
+protected:
+    QLineEdit   *emailAddr;
+    QCheckBox   *includePlainText;
+    QCheckBox   *includeCSV;
+};
 
 class Report : public TAAWidget
 {

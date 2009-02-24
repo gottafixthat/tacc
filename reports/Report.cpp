@@ -17,13 +17,20 @@
 #include <qrect.h>
 #include <math.h>
 #include <qlayout.h>
+#include <qfile.h>
 
 #include <calendar.h>
 #include <qprogressdialog.h>
 #include <qapplication.h>
+#include <qlineedit.h>
+
+#include <mimetic/mimetic.h>
 
 #include <TAATools.h>
 #include <Cfg.h>
+
+using namespace std;
+using namespace mimetic;
 
 Report::Report
 (
@@ -581,7 +588,7 @@ void Report::emailReport()
 {
     int     colWidths[20];
     int     numCols;
-    char    fmtStr[4096];
+    QString fmtStr;
     char    tmpStr[4096];
     QString tmpQstr;
     QDate   tmpDate = QDate::currentDate();
@@ -592,6 +599,12 @@ void Report::emailReport()
     numCols = list->header()->count();
     
     if (!numCols) return;
+
+    EmailReportDialog   *eOpts = new EmailReportDialog(this, "emailReportDialog");
+    if (eOpts->exec() != QDialog::Accepted) {
+        delete eOpts;
+        return;
+    }
     
     // Get the width of each header item.
     for (int i = 0; i < numCols; i++) {
@@ -617,66 +630,163 @@ void Report::emailReport()
       tmpTime.msec()
     );
     
-    fp = fopen(fname, "w");
-    if (fp) {
-        // The message header.
-        fprintf(fp, "From: %s@%s\n", curUser().userName, cfgVal("EmailDomain"));
-        fprintf(fp, "To: %s@%s\n", curUser().userName, cfgVal("EmailDomain"));
-        fprintf(fp, "Subject: Report - %s\n", (const char *) reportTitle->text());
-        fprintf(fp, "\n\n");
-    
-    
-        // If dates are allowed, then put them in here.
-        if (myAllowDates) {
-            fprintf(fp, "%11s: %s\n", "Start Date", (const char *) startDate().toString());
-            fprintf(fp, "%11s: %s\n", "End Date", (const char *) endDate().toString());
-            fprintf(fp, "\n\n");
-        }
-	    
-	    // Okay, now print our headers
-	    for (int i = 0; i < numCols; i++) {
-	        strcpy(fmtStr, "%");
-	        if (list->columnAlignment(i) != AlignRight) strcat(fmtStr, "-");
-	        sprintf(tmpStr, "%d", colWidths[i]);
-	        strcat(fmtStr, tmpStr);
-	        strcat(fmtStr, "s ");
-	        fprintf(fp, fmtStr, (const char *) list->header()->label(i));
-	    }
-	    fprintf(fp, "\n");
+    // Temp file for csv
+    char    csvName[1024];
+    sprintf(csvName, "/tmp/report-XXXXXX.csv");
+    int fd;
+    fd = mkstemp(csvName);
+    close(fd);
+    unlink(csvName);
 
-	    // And now a line seperating the headers from the data.
-	    for (int i = 0; i < numCols; i++) {
-	        strcpy(fmtStr, "%s ");
-	        strcpy(tmpStr, "");
-	        for (int n = 0; n < colWidths[i]; n++) strcat(tmpStr, "=");
-	        
-	        fprintf(fp, fmtStr, tmpStr);
-	        
-	    }
-	    fprintf(fp, "\n");
-	    
-	    // And now, finally, the data itself
-	    for (curItem = list->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
-		    for (int i = 0; i < numCols; i++) {
-		        strcpy(fmtStr, "%");
-		        if (list->columnAlignment(i) != AlignRight) strcat(fmtStr, "-");
-		        sprintf(tmpStr, "%d", colWidths[i]);
-		        strcat(fmtStr, tmpStr);
-		        strcat(fmtStr, "s ");
-		        fprintf(fp, fmtStr, (const char *) curItem->key(i, 0));
-		    }
-		    fprintf(fp, "\n");
-	    }
-	    
-	    fprintf(fp, "\n\n");
-	    fprintf(fp, "Report generated on %s at %s\n\n", (const char *)tmpDate.toString(), (const char *) tmpTime.toString());
-	    fclose(fp);
+    char    txtStr[16384];
+    QString txtBody = "";
+    QString csvBody = "";
+    QString csvLine = "";
+    //fp = fopen(fname, "w");
 
-        QMessageBox::information(this, "Email Report", "The report has been spooled for mailing.");
+    // The message header.
+    //fprintf(fp, "From: %s@%s\n", curUser().userName, cfgVal("EmailDomain"));
+    //fprintf(fp, "To: %s@%s\n", curUser().userName, cfgVal("EmailDomain"));
+    //fprintf(fp, "Subject: Report - %s\n", (const char *) reportTitle->text());
+    //fprintf(fp, "\n\n");
 
-    } else {
-        QMessageBox::critical(this, "Email Report", "Unable to spool report for mailing.");
+
+    // If dates are allowed, then put them in here.
+    if (myAllowDates) {
+        sprintf(txtStr, "%11s: %s\n", "Start Date", (const char *) startDate().toString());
+        txtBody += txtStr;
+        sprintf(txtStr, "%11s: %s\n\n\n", "End Date", (const char *) endDate().toString());
+        txtBody += txtStr;
     }
+    
+    // Okay, now print our headers
+    for (int i = 0; i < numCols; i++) {
+        debug(1, "0:Formatting header column %d\n", i);
+        fmtStr = "%";
+        debug(1, "1:Formatting header column %d\n", i);
+        if (list->columnAlignment(i) != Qt::AlignRight) fmtStr += "-";
+        debug(1, "2:Formatting header column %d\n", i);
+        sprintf(tmpStr, "%d", colWidths[i]);
+        debug(1, "3:Formatting header column %d\n", i);
+        fmtStr += tmpStr;
+        debug(1, "4:Formatting header column %d\n", i);
+        fmtStr += "s ";
+        debug(1, "5:Formatting header column %d\n", i);
+        sprintf(txtStr, fmtStr.ascii(), (const char *) list->header()->label(i));
+        debug(1, "6:Formatting header column %d\n", i);
+        if (csvLine.length()) csvLine += ",";
+        debug(1, "7:Formatting header column %d\n", i);
+        csvLine += "\"";
+        debug(1, "8:Formatting header column %d\n", i);
+        csvLine += list->header()->label(i);
+        debug(1, "9:Formatting header column %d\n", i);
+        csvLine += "\"";
+        debug(1, "10:Formatting header column %d\n", i);
+        txtBody += txtStr;
+    }
+    debug(1, "Done formatting header columns\n");
+    csvBody += csvLine;
+    csvBody += "\r\n";
+    csvLine = "";
+    txtBody += "\n";
+
+    // And now a line seperating the headers from the data.
+    for (int i = 0; i < numCols; i++) {
+        strcpy(tmpStr, "");
+        for (int n = 0; n < colWidths[i]; n++) strcat(tmpStr, "=");
+        
+        sprintf(txtStr, "%s ", tmpStr);
+        txtBody += txtStr;
+        
+    }
+    txtBody += "\n";
+    
+    // And now, finally, the data itself
+    for (curItem = list->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
+        for (int i = 0; i < numCols; i++) {
+            fmtStr = "%";
+            if (list->columnAlignment(i) != AlignRight) fmtStr += "-";
+            sprintf(tmpStr, "%d", colWidths[i]);
+            fmtStr += tmpStr;
+            fmtStr += "s ";
+            sprintf(txtStr, fmtStr.ascii(), (const char *) curItem->key(i, 0));
+            txtBody += txtStr;
+            if (csvLine.length()) csvLine += ",";
+            csvLine += "\"";
+            csvLine += curItem->key(i,0);
+            csvLine += "\"";
+        }
+        txtBody += "\n";
+        csvBody += csvLine;
+        csvBody += "\r\n";
+        csvLine = "";
+    }
+    
+    sprintf(txtStr, "\n\nReport generated on %s at %s\n\n", (const char *)tmpDate.toString(), (const char *) tmpTime.toString());
+    txtBody += txtStr;
+    fclose(fp);
+
+    // Now, create the email.
+    QString     fromAddr;
+    QString     subj;
+
+    fromAddr = fromAddr.sprintf("%s@%s", curUser().userName, cfgVal("EmailDomain"));
+    subj = subj.sprintf("Report - %s", reportTitle->text().ascii());
+
+    MimeEntity  me;
+    me.header().from(fromAddr.ascii());
+    me.header().to(eOpts->emailAddress().ascii());
+    me.header().subject(subj.ascii());
+
+    // Are we attaching the text part?
+    if (eOpts->doPlainText()) {
+        TextPlain   *pTextPlain = new TextPlain(txtBody.ascii());
+        me.body().parts().push_back(pTextPlain);
+    }
+
+    // Are we attaching the CSV part?
+    if (eOpts->attachCSV()) {
+        // Create a temp file name.
+        QFile   csv(csvName);
+        if (csv.open(IO_WriteOnly)) {
+            QTextStream fstream(&csv);
+            fstream << csvBody;
+            csv.close();
+        }
+
+        Attachment  *pAttachment = NULL;
+        Base64::Encoder b64;
+        pAttachment = new Attachment(csvName, "text/plain", b64);
+        if (me.header().contentType().isMultipart() == true) {
+            me.body().parts().push_back(pAttachment);
+        } else {
+            MimeEntity  *mm = new MimeEntity;
+            mm->body().preamble("This is a multi-part message in MIME format.");
+            ContentType::Boundary boundary;
+            ContentType ct("multipart", "mixed");
+            ct.paramList().push_back(ContentType::Param("boundary", boundary));
+            me.header().contentType(ct);
+            me.body().parts().push_back(pAttachment);
+        }
+    }
+
+    // Write the actual file now.
+    string  s;
+    stringstream    ostream(stringstream::in | stringstream::out);
+    ostream << me;
+    s = ostream.str();
+
+    QFile   file(fname);
+    if (file.open(IO_WriteOnly)) {
+        QTextStream fstream(&file);
+        fstream << s.c_str();
+        file.close();
+    }
+
+    unlink(csvName);
+
+    QMessageBox::information(this, "Email Report", "The report has been spooled for mailing.");
+
 
 }
 
@@ -859,5 +969,114 @@ void Report::setUserButton(const char *newText)
 {
     userButton->show();
     userButton->setText(newText);
+}
+
+/**
+ * EmailReportDialog()
+ *
+ * Constructor that gives the user a couple options for sending
+ * out the email.
+ */
+EmailReportDialog::EmailReportDialog(QWidget *parent, const char *name) :
+    QDialog(parent, name)
+{
+    setCaption("Email Report Options");
+
+    QLabel  *emailAddressLabel = new QLabel(this, "emailAddressLabel");
+    emailAddressLabel->setText("Email Address:");
+    emailAddressLabel->setAlignment(AlignVCenter|AlignRight);
+
+    emailAddr = new QLineEdit(this, "emailAddress");
+    emailAddr->setMaxLength(80);
+    QString tmpStr;
+    tmpStr = curUser().userName;
+    tmpStr += "@";
+    tmpStr += cfgVal("EmailDomain");
+    emailAddr->setText(tmpStr);
+
+    includePlainText = new QCheckBox("Include plain-text report", this, "includePlainText");
+    includePlainText->setChecked(true);
+
+    includeCSV = new QCheckBox("Attach report as CSV file", this, "includeCSV");
+    includeCSV->setChecked(false);
+
+    QPushButton *sendButton = new QPushButton(this, "sendButton");
+    sendButton->setText("&Send");
+    sendButton->setDefault(true);
+    connect(sendButton, SIGNAL(clicked()), this, SLOT(accept()));
+
+    QPushButton *cancelButton = new QPushButton(this, "cancelButton");
+    cancelButton->setText("&Cancel");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+
+
+    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+
+    QGridLayout *gl = new QGridLayout(2,3);
+    int curRow = 0;
+    gl->addWidget(emailAddressLabel,        curRow, 0);
+    gl->addWidget(emailAddr,                curRow, 1);
+    curRow++;
+
+    gl->addWidget(includePlainText,         curRow, 1);
+    curRow++;
+
+    gl->addWidget(includeCSV,               curRow, 1);
+    curRow++;
+    gl->setColStretch(0, 0);
+    gl->setColStretch(1, 1);
+
+    ml->addLayout(gl, 0);
+    ml->addStretch(1);
+    
+    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(sendButton, 0);
+    bl->addWidget(cancelButton, 0);
+
+    ml->addLayout(bl);
+
+
+}
+
+/**
+ * ~EmailReportDialog()
+ *
+ * Destructor.
+ */
+EmailReportDialog::~EmailReportDialog()
+{
+}
+
+/**
+ * emailAddress()
+ *
+ * Returns the email address specified by the user.
+ */
+QString EmailReportDialog::emailAddress()
+{
+    return emailAddr->text();
+}
+
+/**
+ * doPlainText()
+ *
+ * Returns true if the user wants to include the plain-text body
+ * of the report in the email.
+ */
+bool EmailReportDialog::doPlainText()
+{
+    return (includePlainText->isChecked());
+}
+
+/**
+ * attachCSV()
+ *
+ * Returns true if the user wants to include a CSV 
+ * of the report in the email.
+ */
+bool EmailReportDialog::attachCSV()
+{
+    return (includeCSV->isChecked());
 }
 
