@@ -212,30 +212,44 @@ int EmailMessage::send()
 
     // Create the mimetic MimeEntity
     MimeEntity  me;
-    me.header().from(myTo.ascii());
+    me.header().from(myFrom.ascii());
     me.header().to(myTo.ascii());
     me.header().subject(mySubject.ascii());
 
     if (!attachmentList.count()) {
         // No attachments, simply set the body.
-        me.body().assign(myBody.ascii());
+        if (myBody.length()) me.body().assign(myBody.ascii());
     } else {
         // We have attachments.  Add the body part first.
-        TextPlain   *pTextPlain = new TextPlain(myBody.ascii());
-        me.body().parts().push_back(pTextPlain);
+        if (myBody.length()) {
+            TextPlain   *pTextPlain = new TextPlain(myBody.ascii());
+            me.body().parts().push_back(pTextPlain);
+        }
 
         // Now add the attachments one by one.
         for (uint i = 0; i < attachmentList.count(); i++) {
             emailAttachmentRecord   *rec = attachmentList.at(i);
 
-            Attachment  *pAttach = NULL;
-            Base64::Encoder b64;
+            // Can't use the Attachment convenience class since 
+            // there is no way to override the filename.
+            MimeEntity  *mAttach = new MimeEntity();
             ContentType act(rec->mimeType.ascii());
-            //act.param("filename", rec->mimeFilename.ascii());
-            //pAttach = new Attachment(rec->filename.ascii(), rec->mimeType.ascii(), b64);
-            pAttach = new Attachment(rec->filename.ascii(), act, b64);
+            Base64::Encoder b64;
+
+            Header &h = mAttach->header();
+            // Set the content type
+            h.contentType(act);
+            h.contentType().paramList().push_back(ContentType::Param("name", rec->mimeFilename.ascii()));
+            // Set the content-transer-encoding
+            h.contentTransferEncoding().mechanism(b64.name());
+
+            // The disposition
+            h.contentDisposition().type("attachment");
+            h.contentDisposition().paramList().push_back(ContentDisposition::Param("filename", rec->mimeFilename.ascii()));
+            mAttach->body().load(rec->filename.ascii(), b64);
+
             if (me.header().contentType().isMultipart() == true) {
-                me.body().parts().push_back(pAttach);
+                me.body().parts().push_back(mAttach);
             } else {
                 //MimeEntity  *mm = new MimeEntity;
                 me.body().preamble("This is a multi-part message in MIME format.");
@@ -244,8 +258,9 @@ int EmailMessage::send()
                 ct.paramList().push_back(ContentType::Param("boundary", boundary));
                 me.header().contentType(ct);
                 //pAttach->header().contentType().paramList().remove(pAttach->header().contentType().paramList().find("name"));
-                me.body().parts().push_back(pAttach);
+                me.body().parts().push_back(mAttach);
             }
+
         }
     }
 
