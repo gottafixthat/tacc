@@ -24,13 +24,9 @@
 #include <qapplication.h>
 #include <qlineedit.h>
 
-#include <mimetic/mimetic.h>
-
+#include <EmailMessage.h>
 #include <TAATools.h>
 #include <Cfg.h>
-
-using namespace std;
-using namespace mimetic;
 
 Report::Report
 (
@@ -594,7 +590,7 @@ void Report::emailReport()
     QString colStr;
     QString txtBody;
     QString txtStr;
-    char    csvName[2048];
+    QString csvName;
     QDate   tmpDate = QDate::currentDate();
     QTime   tmpTime = QTime::currentTime();
 
@@ -688,68 +684,23 @@ void Report::emailReport()
     fromAddr = fromAddr.sprintf("%s@%s", curUser().userName, cfgVal("EmailDomain"));
     subj = subj.sprintf("Report - %s", reportTitle->text().ascii());
 
-    MimeEntity  me;
-    me.header().from(fromAddr.ascii());
-    me.header().to(eOpts->emailAddress().ascii());
-    me.header().subject(subj.ascii());
+    EmailMessage    msg;
 
-    if (!eOpts->attachCSV()) {
-        me.body().assign(txtBody.ascii());
-    } else {
-        // Are we attaching the text part?
-        if (eOpts->doPlainText()) {
-            string tmpBody;
-            tmpBody = txtBody.ascii();
-            debug(1, "Adding plain text part...\n%s\n", tmpBody.c_str());
-            TextPlain   *pTextPlain = new TextPlain(tmpBody.c_str());
-            me.body().parts().push_back(pTextPlain);
-        }
-    }
+    msg.setFrom(fromAddr);
+    msg.setTo(eOpts->emailAddress());
+    msg.setSubject(subj);
+    msg.setBody(txtBody);
 
     // Are we attaching the CSV part?
     if (eOpts->attachCSV()) {
         // Create a temp file name.
-        strcpy(csvName, "/tmp/report-XXXXXX.csv");
-        QListViewToCSV(repBody, csvName);
+        csvName = makeTmpFileName("/tmp/report-XXXXXX.csv");
+        QListViewToCSV(repBody, csvName.ascii());
 
-        Attachment  *pAttachment = NULL;
-        Base64::Encoder b64;
-        pAttachment = new Attachment(csvName, "text/plain", b64);
-        if (me.header().contentType().isMultipart() == true) {
-            me.body().parts().push_back(pAttachment);
-        } else {
-            MimeEntity  *mm = new MimeEntity;
-            mm->body().preamble("This is a multi-part message in MIME format.");
-            ContentType::Boundary boundary;
-            ContentType ct("multipart", "mixed");
-            ct.paramList().push_back(ContentType::Param("boundary", boundary));
-            me.header().contentType(ct);
-            me.body().parts().push_back(pAttachment);
-        }
+        msg.addAttachment(csvName.ascii(), "text/plain", "report.csv");
     }
 
-    // Write the actual file now.
-    string  s;
-    stringstream    ostream;
-    ostream << me;
-    s = ostream.str();
-
-    debug(1,"s = \n%s\n", s.c_str());
-    /*
-    char    fName[2048];
-    strcpy(fName, "/tmp/report-XXXXXX");
-    int fd;
-    fd = mkstemp(fName);
-    close(fd);
-    unlink(fName);
-    QFile   file(fName);
-    if (file.open(IO_WriteOnly)) {
-        QTextStream fstream(&file);
-        fstream << s.c_str();
-        file.close();
-    }
-    */
-
+    msg.send();
     //unlink(csvName);
 
     QMessageBox::information(this, "Email Report", "The report has been spooled for mailing.");

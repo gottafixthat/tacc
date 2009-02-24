@@ -102,7 +102,6 @@ int main( int argc, char ** argv )
     
     // BlargDB	*DB;
     
-    
     // Check our key.
     #ifdef USEDES
     loadKey();

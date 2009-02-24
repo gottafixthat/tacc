@@ -124,8 +124,8 @@ void scanDir(void)
     QDateTime   curDateTime = QDateTime::currentDateTime();
     // printf(" Bytes, File Name\n");
     while((fi = it.current())) {
-        // Make sure its a file and at least 300 seconds old
-        if (fi->isFile() && (fi->lastModified().secsTo(curDateTime) > 300)) {
+        // Make sure its a file and at least SLEEPTIME seconds old
+        if (fi->isFile() && (fi->lastModified().secsTo(curDateTime) > SLEEPTIME)) {
             if (!smtp.IsOpen()) {
                 if (!smtp.Open(smtpHost)) {
                     syslog(LOG_INFO, "Unable to connect to mail host '%s'", smtpHost);
@@ -323,7 +323,7 @@ void scanDb(void)
     
     // printf(" Bytes, File Name\n");
     while(qdb.getrow()) {
-        // Make sure its a file and at least 300 seconds old
+        // Make sure its a file and at least SLEEPTIME seconds old
         // Perhaps later.
 
         if (!smtp.IsOpen()) {
