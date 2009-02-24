@@ -100,6 +100,9 @@ int main( int argc, char ** argv )
     int             opt;
     a.setDesktopSettingsAware(true);
     
+    // Seed our random number generator
+    srand(rightNow());
+
     // BlargDB	*DB;
     
     // Check our key.

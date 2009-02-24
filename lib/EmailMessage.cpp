@@ -201,14 +201,10 @@ void EmailMessage::addAttachment(const QByteArray buf, const QString fName, cons
 int EmailMessage::send()
 {
     QString msgFile;
-    QString toMailbox;
-    QString frMailbox;
-
-    toMailbox = myTo.left(myTo.find('@'));
-    frMailbox = myFrom.left(myFrom.find('@'));
-    msgFile = msgFile.sprintf("/var/spool/taamail/Email-%s-%s-XXXXXX", frMailbox.ascii(), toMailbox.ascii());
+    msgFile = msgFile.sprintf("/var/spool/taamail/message-%ld-XXXXXX", rightNow());
 
     msgFile = makeTmpFileName(msgFile.ascii());
+    debug(1, "EmailMessage::send() - Output file = '%s'", msgFile.ascii());
 
     // Create the mimetic MimeEntity
     MimeEntity  me;
@@ -277,6 +273,7 @@ int EmailMessage::send()
         oFile.close();
     }
 
+    return 1;
 }
 
 
