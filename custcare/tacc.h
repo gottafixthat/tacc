@@ -136,6 +136,8 @@ protected slots:
     void            voipServiceTypeList();
     void            manageRateCenters();
     void            openCompanyList();
+    void            toggleCallQueue();
+    void            toggleAgentStatus();
     void            settings();
 
     void            asteriskEvent(const astEventRecord);
@@ -153,6 +155,9 @@ protected:
     bool            realTimeProgress;
     AsteriskManager *am;
     Customers       *clist;
+    QPopupMenu      *viewMenu;
+    int             showQueueMenuItem;
+    int             showAgentsMenuItem;
 };
 
 

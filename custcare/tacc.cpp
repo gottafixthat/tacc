@@ -285,6 +285,13 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
         fileMenu->insertSeparator();
     }
     fileMenu->insertItem("&Quit", this, SLOT(quitSelected()));
+
+    // View menu
+    viewMenu = new QPopupMenu(this);
+    showQueueMenuItem = viewMenu->insertItem("Call Queue", this, SLOT(toggleCallQueue()));
+    showAgentsMenuItem = viewMenu->insertItem("Agent Status", this, SLOT(toggleAgentStatus()));
+    menuBar()->insertItem("&View", viewMenu);
+
     menuBar()->insertItem("Ti&ckets", ccStack->tickets->menu());
 
     // Add the voice mail menu now.
@@ -388,7 +395,8 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     this->resize(555,300);
     
     progressMeter = new QProgressBar(statusBar(), "Progress Meter");
-    progressMeter->setMaximumWidth(50);
+    progressMeter->setMinimumWidth(75);
+    progressMeter->setMaximumWidth(75);
     progressMeter->setIndicatorFollowsStyle(false);
     progressMeter->setCenterIndicator(true);
     statusBar()->addWidget(progressMeter, 0, true);
@@ -412,6 +420,15 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     //connect(am, SIGNAL(eventReceived(const astEventRecord)), ccStack->agents, SLOT(asteriskEvent(const astEventRecord)));
     //connect(ccStack->agents, SIGNAL(sendAsteriskCommand(int)), am, SLOT(simpleCommand(int)));
 
+
+    if (!ccStack->qMon->isHidden()) {
+        viewMenu->setItemChecked(showQueueMenuItem, true);
+    }
+
+    if (!ccStack->agents->isHidden()) {
+        viewMenu->setItemChecked(showAgentsMenuItem, true);
+    }
+    
     
     updateClock();
 
@@ -674,6 +691,16 @@ CustomerCareStack::CustomerCareStack(AsteriskManager *astmgr, QWidget *parent, c
     qMon   = new QueueMonitor(this, "Queue Monitor");
     agents = new AgentStatus(astmgr, this, "Agent List");
     connect(qMon, SIGNAL(phoneNumberSelected(const char *)), custs, SLOT(customerSearch(const char *)));
+
+    // Do we need to hide the queue monitor?
+    if (!strcmp(getUserPref("QueueMonitor", "Hide"), "true")) {
+        qMon->hide();
+    }
+    
+    // Do we need to hide the agent status?
+    if (!strcmp(getUserPref("AgentStatus", "Hide"), "true")) {
+        agents->hide();
+    }
     
     /*
     if (isAdmin()) {
@@ -1254,5 +1281,37 @@ void CustomerCare::asteriskEvent(const astEventRecord event)
                 event.data[i].key, event.data[i].val);
     }
     */
+}
+
+/**
+ * toggleCallQueue() - Toggles the visibility of the call queue widget.
+ */
+void CustomerCare::toggleCallQueue()
+{
+    if (ccStack->qMon->isHidden()) {
+        ccStack->qMon->show();
+        viewMenu->setItemChecked(showQueueMenuItem, true);
+        ccStack->setUserPref("QueueMonitor", "Hide", "false");
+    } else {
+        ccStack->qMon->hide();
+        viewMenu->setItemChecked(showQueueMenuItem, false);
+        ccStack->setUserPref("QueueMonitor", "Hide", "true");
+    }
+}
+
+/**
+ * toggleAgentStatus() - Toggles the visibility of the agent status widget.
+ */
+void CustomerCare::toggleAgentStatus()
+{
+    if (ccStack->agents->isHidden()) {
+        ccStack->agents->show();
+        viewMenu->setItemChecked(showAgentsMenuItem, true);
+        ccStack->setUserPref("AgentStatus", "Hide", "false");
+    } else {
+        ccStack->agents->hide();
+        viewMenu->setItemChecked(showAgentsMenuItem, false);
+        ccStack->setUserPref("AgentStatus", "Hide", "true");
+    }
 }
 
