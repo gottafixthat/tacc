@@ -1092,36 +1092,65 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     stDate = QDate::fromString(STDB.getStr("StatementDate"), Qt::ISODate);
 
     //myDatetoQDate(STDB.getStr("StatementDate"), &stDate);
+    QStringList blocks;
+    blocks += "lineitems";
+    blocks += "credits";
+    blocks += "charges";
+    QString qExtra;
+    QString curBlock;
+    QString blockPrefix;
+    QString blockName;
 
-    // Parse the line items here
-    DB.query("select InternalID from StatementsData where StatementNo = %ld order by InternalID", statementNo);
-    while(DB.getrow()) {
-        SDDB.get(atol(DB.curRow[0]));
-        tpl->assign("Description",      latexEscapeString(SDDB.getStr("Description")));
-        tmpDate = QDate::fromString(SDDB.getStr("TransDate"), Qt::ISODate);
-        tpl->assign("TransDate",        tmpDate.toString(cfgVal("LatexDateFormat")));
-        startDate = QDate::fromString(SDDB.getStr("StartDate"), Qt::ISODate);
-        tpl->assign("StartDate",        startDate.toString(cfgVal("LatexDateFormat")));
-        endDate = QDate::fromString(SDDB.getStr("EndDate"), Qt::ISODate);
-        tpl->assign("EndDate",          endDate.toString(cfgVal("LatexDateFormat")));
-        int hasDateRange = 1;
-        if (startDate == endDate) hasDateRange = 0;
-        tpl->assign("LoginID",          SDDB.getStr("LoginID"));
-        tpl->assign("Amount",           SDDB.getStr("Amount"));
-        balance += SDDB.getFloat("Amount");
-        if (SDDB.getFloat("Quantity") == 1.00 && atoi(cfgVal("StatementQtyOneBlank"))) {
-            tpl->assign("Quantity",         "");
-            tpl->assign("Price",            "");
+    for (uint i = 0; i < blocks.count(); i++) {
+        // Base our query on what block we're doing.
+        curBlock = blocks[i];
+        if (curBlock == "credits") {
+            qExtra = " and Amount < 0.00 ";
+            blockPrefix = "statement.credits";
+        } else if (curBlock == "charges") {
+            qExtra = " and Amount >= 0.00 and Special = 0";
+            blockPrefix = "statement.charges";
         } else {
-            tpl->assign("Quantity",         SDDB.getStr("Quantity"));
-            tpl->assign("Price",            SDDB.getStr("Price"));
+            qExtra = "";
+            blockPrefix = "statement.lineitems";
         }
-        if (hasDateRange) {
-            tpl->parse("statement.lineitems.normalline");
-        } else {
-            tpl->parse("statement.lineitems.nodaterange");
+
+        // Parse the line items here
+        DB.query("select InternalID from StatementsData where StatementNo = %ld %s order by InternalID", statementNo, qExtra.ascii());
+        while(DB.getrow()) {
+            SDDB.get(atol(DB.curRow[0]));
+            tpl->assign("Description",      latexEscapeString(SDDB.getStr("Description")));
+            tmpDate = QDate::fromString(SDDB.getStr("TransDate"), Qt::ISODate);
+            tpl->assign("TransDate",        tmpDate.toString(cfgVal("LatexDateFormat")));
+            startDate = QDate::fromString(SDDB.getStr("StartDate"), Qt::ISODate);
+            tpl->assign("StartDate",        startDate.toString(cfgVal("LatexDateFormat")));
+            endDate = QDate::fromString(SDDB.getStr("EndDate"), Qt::ISODate);
+            tpl->assign("EndDate",          endDate.toString(cfgVal("LatexDateFormat")));
+            int hasDateRange = 1;
+            if (startDate == endDate) hasDateRange = 0;
+            tpl->assign("LoginID",          SDDB.getStr("LoginID"));
+            tpl->assign("Amount",           SDDB.getStr("Amount"));
+            balance += SDDB.getFloat("Amount");
+            if (SDDB.getFloat("Quantity") == 1.00 && atoi(cfgVal("StatementQtyOneBlank"))) {
+                tpl->assign("Quantity",         "");
+                tpl->assign("Price",            "");
+            } else {
+                tpl->assign("Quantity",         SDDB.getStr("Quantity"));
+                tpl->assign("Price",            SDDB.getStr("Price"));
+            }
+            if (hasDateRange) {
+                blockName = blockPrefix;
+                blockName += ".";
+                blockName += "normalline";
+                tpl->parse(blockName.ascii());
+            } else {
+                blockName = blockPrefix;
+                blockName += ".";
+                blockName += "nodaterange";
+                tpl->parse(blockName.ascii());
+            }
+            tpl->parse(blockPrefix.ascii());
         }
-        tpl->parse("statement.lineitems");
     }
 
     // Parse the main body items
