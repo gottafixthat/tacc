@@ -76,7 +76,7 @@ void upgradeDatabase()
         sql = "alter table LoginFlags add column BaseType int NOT NULL DEFAULT '0'";
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
 
-        sql = "alter table LoginFlags add column DefaultValue blob NOT NULL DEFAULT '0'";
+        sql = "alter table LoginFlags add column DefaultValue blob NOT NULL";
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
 
         sql = "alter table LoginFlags add column UserDefined int NOT NULL DEFAULT '0'";
