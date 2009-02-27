@@ -621,16 +621,10 @@ int AccountsDB::del(int AcctNo)
 
     // First things first.  We need to check to see if this account can
     // be deleted.  It can't if there are transactions referencing it in
-    // either the Register or RegisterSplits tables.
-    DB.query("select TransID from Register where AccountNo = %d", AcctNo);
+    // the General Ledger
+    DB.query("select TransID from GL where AccountNo = %d", AcctNo);
     if (DB.rowCount) {
         Ret = 1;
-    } else {
-        // Check RegisterSplits
-        DB.query("select TransID from RegisterSplits where AccountNo = %d", AcctNo);
-        if (DB.rowCount) {
-            Ret = 1;
-        }
     }
     
     if (!Ret) {

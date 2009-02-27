@@ -51,6 +51,11 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
     sections->addWidget(billing, sectionCount);
     sectionCount++;
 
+    accounting = new AccountingSettings(this, "Accounting");
+    sectionList->insertItem("Accounting");
+    sections->addWidget(accounting, sectionCount);
+    sectionCount++;
+
     HorizLine   *hLine = new HorizLine(this, "hLine");
     VertLine    *vLine = new VertLine(this, "vLine");
 
@@ -96,6 +101,12 @@ SettingsManager::~SettingsManager()
 void SettingsManager::saveSettings()
 {
     // Call each of the widgets one by one to validate their settings
+    if (!accounting->validateSettings()) {
+        sections->raiseWidget(accounting);
+        sectionList->setSelected(sectionList->findItem(accounting->name(), Qt::ExactMatch), true);
+        return;
+    }
+
     if (!general->validateSettings()) {
         sections->raiseWidget(general);
         sectionList->setSelected(sectionList->findItem(general->name(), Qt::ExactMatch), true);
@@ -109,6 +120,12 @@ void SettingsManager::saveSettings()
     }
 
     // Now call each of the widgets one by one to save their settings
+    if (!accounting->saveSettings()) {
+        sections->raiseWidget(accounting);
+        sectionList->setSelected(sectionList->findItem(accounting->name(), Qt::ExactMatch), true);
+        return;
+    }
+
     if (!general->saveSettings()) {
         sections->raiseWidget(general);
         sectionList->setSelected(sectionList->findItem(general->name(), Qt::ExactMatch), true);

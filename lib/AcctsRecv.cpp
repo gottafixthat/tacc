@@ -70,9 +70,7 @@ long AcctsRecv::SaveTrans(void)
 	int         SrcAcct, DstAcct = 0;
 	
 	// We need to get the AR account number
-	DB.query("select AccountNo from Accounts where AcctType = 1");
-	DB.getrow();
-	ARAcct = atoi(DB.curRow["AccountNo"]);
+	ARAcct = atoi(cfgVal("AcctsRecvAccount"));
 	
 	// Now, load the Billable Item so we can have its account number.
 	BDB.get(ARDB->getLong("ItemID"));
@@ -89,14 +87,12 @@ long AcctsRecv::SaveTrans(void)
 		
 		switch(ARDB->getInt("TransType")) {
 		    case TRANSTYPE_PAYMENT:
-		        strcpy(tmpstr, cfgVal("UndepositedFundsAcct"));
-		        DstAcct = atoi(tmpstr);
+		        DstAcct = atoi(cfgVal("UndepositedFundsAcct"));
 		        SrcAcct = ARAcct;
 		        break;
 		        
 		    case TRANSTYPE_CCPAYMENT:
-		        strcpy(tmpstr, cfgVal("UndepositedCCAcct"));
-		        DstAcct = atoi(tmpstr);
+		        DstAcct = atoi(cfgVal("UndepositedCCAcct"));
 		        SrcAcct = ARAcct;
 		        break;
 		        

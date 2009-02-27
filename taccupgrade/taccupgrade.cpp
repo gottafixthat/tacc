@@ -403,5 +403,19 @@ void upgradeDatabase()
 
         vers = 8;
     }
+
+    if (vers < 9) {
+        printf("Updating to Schema Version 9...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "alter table Accounts add primary key(AccountNo)";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update SchemaVersion set SchemaVersion = 9";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 9;
+    }
 }
 
