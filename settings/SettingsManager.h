@@ -20,6 +20,7 @@
 #include <qwidgetstack.h>
 #include <qlabel.h>
 #include "TAAWidget.h"
+#include "AccountingSettings.h"
 #include "GeneralSettings.h"
 #include "BillingSettings.h"
 
@@ -39,8 +40,9 @@ protected:
     QPushButton     *saveButton;
     QPushButton     *cancelButton;
 
-    GeneralSettings *general;
-    BillingSettings *billing;
+    AccountingSettings  *accounting;
+    GeneralSettings     *general;
+    BillingSettings     *billing;
 
 protected slots:
     void            saveSettings();

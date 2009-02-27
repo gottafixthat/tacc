@@ -31,6 +31,8 @@ GLAccountEditor::GLAccountEditor
 {
     ADB     DB;
 
+    AcctNoIndex = 0;
+
     QLabel  *acctNameLabel = new QLabel(this, "acctNameLabel");
     acctNameLabel->setText("Account Name:");
     acctNameLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -161,7 +163,7 @@ void GLAccountEditor::setAccountNo(int newAccountNo)
     }
 
     // Clear our mappings to internal ID's
-    AcctNoIndex = NULL;
+    delete AcctNoIndex;
     
     // We're editing one, so get the data for it.
     if (myAccountNo) {
@@ -171,6 +173,14 @@ void GLAccountEditor::setAccountNo(int newAccountNo)
         tmpSubOf = acctDB.SubAcctOf.toInt();
         acctType->setCurrentItem(acctDB.AcctType.toInt());
         acctTypeChanged(acctDB.AcctType.toInt());
+        // Find our parent in the sub account list.
+        if (tmpSubOf) {
+            for (int i = 0; i < subAcctOf->count(); i++) {
+                if (AcctNoIndex[i] == tmpSubOf) {
+                    subAcctOf->setCurrentItem(i);
+                }
+            }
+        }
         acctNumber->setValue(acctDB.AccountNo);
         acctType->setEnabled(false);
         acctType->setEnabled(false);
@@ -201,6 +211,7 @@ void GLAccountEditor::acctTypeChanged(int newIDX)
     // Fill the combo box...
     ADB DB;
     DB.query("select AccountNo, AcctName from Accounts where AccountNo <> %d and SubAcctOf = 0 and AcctType = %d order by AcctType, AcctName", myAccountNo, newIDX);
+    if (AcctNoIndex) delete AcctNoIndex;
     AcctNoIndex = new(int[DB.rowCount+1]);
     AcctNoIndex[0] = 0;
     int indexPtr = 0;

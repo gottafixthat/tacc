@@ -4,7 +4,7 @@ USEDES = 1
 
 INCDIRS	=  -I$(QTDIR)/include -I. -I../customers -I../include -I../lib
 INCDIRS += -I../ccards
-INCDIRS += -I../reports -I../config -I../voicemail
+INCDIRS += -I../reports -I../config -I../voicemail -I../adb
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
 CFLAGS += -DADBQT
 # CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
@@ -34,11 +34,13 @@ endif
 SUBDIRS =	
 
 SOURCES =	SettingsManager.cpp\
+		AccountingSettings.cpp\
 		GeneralSettings.cpp\
 		BillingSettings.cpp\
 		TelephonySettings.cpp
 
 HEADERS =	SettingsManager.h\
+		AccountingSettings.h\
 		GeneralSettings.h\
 		BillingSettings.h\
 		TelephonySettings.h
@@ -46,6 +48,7 @@ HEADERS =	SettingsManager.h\
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_SettingsManager.cpp\
+		moc_AccountingSettings.cpp\
 		moc_GeneralSettings.cpp\
 		moc_BillingSettings.cpp\
 		moc_TelephonySettings.cpp
@@ -90,6 +93,9 @@ FORCE:
 
 moc_SettingsManager.cpp: SettingsManager.h
 	$(MOC) SettingsManager.h -o moc_SettingsManager.cpp
+
+moc_AccountingSettings.cpp: AccountingSettings.h
+	$(MOC) AccountingSettings.h -o moc_AccountingSettings.cpp
 
 moc_GeneralSettings.cpp: GeneralSettings.h
 	$(MOC) GeneralSettings.h -o moc_GeneralSettings.cpp
