@@ -96,7 +96,7 @@ void salesByServiceReport::refreshReport()
     }
     
     // The seocnd query for packages.
-    DB.query("select AcctsRecv.PackageItem, Packages.PackageTag, sum(AcctsRecv.Amount) from AcctsRecv, Packages where Packages.InternalID = AcctsRecv.PackageItem and AcctsRecv.TransType = 0 and AcctsRecv.ItemID = 0 and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' group by AcctsRecv.ItemID order by Packages.PackageTag", sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
+    DB.query("select AcctsRecv.PackageItem, Packages.PackageTag, sum(AcctsRecv.Amount) from AcctsRecv, Packages where Packages.InternalID = AcctsRecv.PackageItem and AcctsRecv.TransType = 0 and AcctsRecv.ItemID = 0 and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' group by Packages.InternalID order by Packages.PackageTag", sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
     if (DB.rowCount) while (DB.getrow()) {
         //DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         //sprintf(tmpStr, "%5d", DB2.rowCount);
