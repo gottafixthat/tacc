@@ -1,30 +1,16 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** Accounts - Displays a list of accounts.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Accounts.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/**
+ * ChartOfAccounts.h - Displays the Chart of Accounts
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "BlargDB.h"
-#include "Accounts.h"
-#include "AccountsEdit.h"
+#include <BlargDB.h>
 #include <mysql/mysql.h>
 #include <qkeycode.h>
 #include <qmessagebox.h>
@@ -32,10 +18,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ADB.h>
+#include <ChartOfAccounts.h>
+#include <GenLedger.h>
+#include <GLAccountEditor.h>
 
-#define Inherited AccountsData
-
-Accounts::Accounts
+ChartOfAccounts::ChartOfAccounts
 (
 	QWidget* parent,
 	const char* name
@@ -104,12 +91,12 @@ Accounts::Accounts
 }
 
 
-Accounts::~Accounts()
+ChartOfAccounts::~ChartOfAccounts()
 {
 }
 
 
-void Accounts::Hide()
+void ChartOfAccounts::Hide()
 {
     delete this;
 }
@@ -125,7 +112,7 @@ void Accounts::Hide()
 //                  handle one active query at a time...
 //
 
-void Accounts::addToList(int AcctNo, QListViewItem *parent)
+void ChartOfAccounts::addToList(int AcctNo, QListViewItem *parent)
 {
     ADB	      DB;
     QString   tmpBal;
@@ -139,7 +126,7 @@ void Accounts::addToList(int AcctNo, QListViewItem *parent)
     
     while(DB.getrow()) {
         
-        tmpAcctType = ACCOUNTTYPES[atoi(DB.curRow["AcctType"])];
+        tmpAcctType = GLAccountTypes[atoi(DB.curRow["AcctType"])];
         tmpAcctType.truncate(20);
         strcpy(tmpAcctTypeC, tmpAcctType);
         
@@ -158,7 +145,7 @@ void Accounts::addToList(int AcctNo, QListViewItem *parent)
 //                  list.
 //
 
-void Accounts::refreshList(int)
+void ChartOfAccounts::refreshList(int)
 {
     ADB     DB;
     QString tmpBal;
@@ -174,7 +161,7 @@ void Accounts::refreshList(int)
     while(DB.getrow()) {
         
         // tmpBal = DB.curRow[2];
-        tmpAcctType = ACCOUNTTYPES[atoi(DB.curRow["AcctType"])];
+        tmpAcctType = GLAccountTypes[atoi(DB.curRow["AcctType"])];
         tmpAcctType.truncate(20);
         strcpy(tmpAcctTypeC, tmpAcctType);
         
@@ -193,10 +180,10 @@ void Accounts::refreshList(int)
 // newAccount  - Allows the user to create a new PaymentTerms
 //
 
-void Accounts::newAccount()
+void ChartOfAccounts::newAccount()
 {
-    AccountsEdit * newAccounts;
-    newAccounts = new AccountsEdit(0,"",0);
+    GLAccountEditor *newAccounts;
+    newAccounts = new GLAccountEditor(0,"",0);
     newAccounts->show();
     connect(newAccounts, SIGNAL(refresh(int)),this, SLOT(refreshList(int)));
     
@@ -206,15 +193,15 @@ void Accounts::newAccount()
 // editAccount  - Allows the user to edit an account
 //
 
-void Accounts::editAccount()
+void ChartOfAccounts::editAccount()
 {
     QListViewItem *curItem;
-    AccountsEdit * newAccounts;
+    GLAccountEditor *account;
     curItem = list->currentItem();
     if (curItem != NULL) {
-        newAccounts = new AccountsEdit(0, "", atoi(curItem->text(0)));
-        newAccounts->show();
-        connect(newAccounts, SIGNAL(refresh(int)),this, SLOT(refreshList(int)));
+        account = new GLAccountEditor(0, "", atoi(curItem->text(0)));
+        account->show();
+        connect(account, SIGNAL(refresh(int)),this, SLOT(refreshList(int)));
     }
 }
 
@@ -222,7 +209,7 @@ void Accounts::editAccount()
 // editAccountL  - Allows the user to edit a new VendorType from the list
 //
 
-void Accounts::editAccountL(int msg)
+void ChartOfAccounts::editAccountL(int msg)
 {
     msg = 0;
     editAccount();
@@ -232,7 +219,7 @@ void Accounts::editAccountL(int msg)
 // deleteAccount  - Allows the user to delete an Account
 //
 
-void Accounts::deleteAccount()
+void ChartOfAccounts::deleteAccount()
 {
     char   tmpstr[256];
     ADB    DB;

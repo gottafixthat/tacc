@@ -15,7 +15,6 @@
 #include <qlistview.h>
 #include <qtimer.h>
 
-#include "Accounts.h"
 #include "BillingCycles.h"
 #include "RatePlans.h"
 #include "VendorTypes.h"
@@ -33,7 +32,6 @@ public:
     Administration(QWidget* parent = NULL, const char *name = NULL);
     ~Administration();
     
-    Accounts		* accounts;
     BillingCycles	* cycles;
     RatePlans		* rateplans;
     VendorTypes		* vtypes;
@@ -44,7 +42,7 @@ public:
     QPopupMenu      *menu();
 
 public slots:
-    void    customerChanged(long);
+    void customerChanged(long);
     void configtaa();
 	void accountlist();
 	void billingcycleslist();

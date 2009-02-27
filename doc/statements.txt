@@ -1,0 +1,40 @@
+
+Variables available in the "statement" block:
+
+
+    StatementDate
+    StatementNumber
+    CustomerID
+    RegNum
+    CustomerName
+    CustomerAddr1
+    CustomerAddr2
+    CustomerAddr3
+    CustomerAddr4
+    Terms
+    DueDate
+    PreviousBalance
+    Credits
+    FinaceRate
+    FinaceCharge
+    NewCharges
+    TotalDue
+    HeaderMsg
+    FooterMsg
+
+Variables available in the "normalline" and "nodaterange" blocks within
+the "lineitems", "credits", and "charges" blocks:
+
+    Description
+    TransDate
+    StartDate
+    EndDate
+    LoginID
+    Amount
+    Quantity
+    Price
+
+  * Note, normalline and nodaterange are determined if StartDate and
+    EndDate are the same value (that calls nodaterange)
+
+

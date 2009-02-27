@@ -114,7 +114,7 @@ void salesByServiceReport::refreshReport()
     if (DB.rowCount) while (DB.getrow()) {
         //DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         //sprintf(tmpStr, "%5d", DB2.rowCount);
-        sprintf(tmpStr, "%s - Package", DB.curRow[1]);
+        //sprintf(tmpStr, "%s - Package", DB.curRow[1]);
         if (atof(DB.curRow[0]) > 0.0) {
             QListViewItem *curItem = new QListViewItem(repBody, 
                     "[Unknown Items]",
