@@ -10,6 +10,8 @@
 #include <QSqlDbPool.h>
 #include <qsqlcursor.h>
 #include <qsqlrecord.h>
+#include <qlist.h>
+#include <ADB.h>
 #include <Cfg.h>
 
 #include "taccupgrade.h"
@@ -22,6 +24,11 @@ int main( int argc, char ** argv )
     QApplication    a( argc, argv );
 
     // Setup the database pool
+    ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
+    ADB::setDefaultDBase(cfgVal("TAAMySQLDB"));
+    ADB::setDefaultUser(cfgVal("TAAMySQLUser"));
+    ADB::setDefaultPass(cfgVal("TAAMySQLPass"));
+
     QSqlDbPool::setDefaultHost(cfgVal("TAAMySQLHost"));
     QSqlDbPool::setDefaultName(cfgVal("TAAMySQLDB"));
     QSqlDbPool::setDefaultUser(cfgVal("TAAMySQLUser"));
@@ -323,6 +330,78 @@ void upgradeDatabase()
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
 
         vers = 7;
+    }
+
+    if (vers < 8) {
+        printf("Updating to Schema Version 8...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+        ADB         db;
+        int         ufAcct = atoi(cfgVal("UndepositedFundsAccount")) * 10;
+        int         coAcct = atoi(cfgVal("CollectionsAccount")) * 10;
+        int         acctNoList[8];
+        int         acctMap[16];
+        acctNoList[0]   = 1000;     // Asset
+        acctNoList[1]   = 2000;     // Liability
+        acctNoList[2]   = 3000;     // Equity
+        acctNoList[3]   = 4000;     // Income
+        acctNoList[4]   = 5000;     // Cost of Goods Sold
+        acctNoList[5]   = 6000;     // Expense
+        acctNoList[6]   = 7000;     // Other Income
+        acctNoList[7]   = 8000;     // Other Expense
+
+        acctMap[0]      = 0;    // Bank -> Asset
+        acctMap[1]      = 0;    // Accts Recv -> Asset
+        acctMap[2]      = 0;    // Other Current Asset -> Asset
+        acctMap[3]      = 0;    // Fixed Asset -> Asset
+        acctMap[4]      = 0;    // Other Asset -> Asset
+        acctMap[5]      = 1;    // Accounts Payable
+        acctMap[6]      = 1;    // Credit Card
+        acctMap[7]      = 1;    // Other Current Liability
+        acctMap[8]      = 1;    // Long Term Liability
+        acctMap[9]      = 2;    // Capital/Equity
+        acctMap[10]     = 3;    // Income
+        acctMap[11]     = 4;    // Cost of Goods Sold
+        acctMap[12]     = 5;    // Expense
+        acctMap[13]     = 6;    // Other Income
+        acctMap[14]     = 7;    // Other Expense
+
+        printf("Updating General Ledger account types...\n");
+        sql = "update GL set AccountNo = AccountNo * 10";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update Accounts set AccountNo = AccountNo * 10";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        // Now, get all of the accounts in the chart of accounts.
+        sql = "select AccountNo, AcctType from Accounts";
+        if (!q.exec(sql) || !q.size()) upgradeError(q.lastError().databaseText(), q.lastQuery());
+        else while (q.next()) {
+            int newAcctType = acctMap[q.value(1).toInt()];
+            int newAcctNo = acctNoList[newAcctType];
+            acctNoList[newAcctType]++;
+            
+            db.dbcmd("update Accounts set AccountNo = %d, AcctType = %d where AccountNo = %d", newAcctNo, newAcctType, q.value(0).toInt());
+            db.dbcmd("update GL set AccountNo = %d where AccountNo = %d", newAcctNo, q.value(0).toInt());
+            // Find our undeposited funds account
+            if (q.value(0).toInt() == ufAcct) {
+                ufAcct = newAcctNo;
+            }
+            // Find our undeposited funds account
+            if (q.value(0).toInt() == coAcct) {
+                coAcct = newAcctNo;
+            }
+        }
+
+        // Update our settings with the new undeposted funds and collections accounts.
+        db.dbcmd("delete from Settings where Token in ('CollectionsAccount', 'UndepositedFundsAcct')");
+        db.dbcmd("insert into Settings values(0, 0, 0, 'CollectionsAccount', '%d')", coAcct);
+        db.dbcmd("insert into Settings values(0, 0, 0, 'UndepositedFundsAcct', '%d')", ufAcct);
+
+        sql = "update SchemaVersion set SchemaVersion = 8";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 8;
     }
 }
 

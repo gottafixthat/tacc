@@ -94,48 +94,6 @@ public:
     ~PaymentTermsDB();
 };
 
-// General Ledger (GL) layout
-
-class GLDB
-{
-public:
-    GLDB(void);
-    ~GLDB();
-
-    int get(long IntID);
-    long ins(void);
-    long insTrans(void);
-    int  upd(void);
-    int del(long TransID);
-
-
-	// The GL table
-    long    InternalID;
-    QString TransID;
-    QString AccountNo;
-    QString Amount;
-    QString LinkedTrans;
-    QString TransType;
-    QString	TransTypeLink;
-    QString	TransDate;
-    QString BilledDate;
-    QString DueDate;
-    QString	Cleared;
-    QString	Number;
-    QString	NumberStr;
-    QString	ItemID;
-    QString	Quantity;
-    QString	Price;
-    QString	Memo;
-    
-    // The GLIndex
-    QString	IDXTransID;
-    QString	SplitCount;
-    QString	BaseDesc;
-    
-    
-};
-
 // AcctsRecv (AR) layout
 
 class AcctsRecvDB : public ADBTable
@@ -179,25 +137,6 @@ public:
 };
 
 // Accounts layout
-
-const int ACCOUNTTYPECOUNT = 16;
-const char ACCOUNTTYPES[ACCOUNTTYPECOUNT][40] = {
-  "Bank", 
-  "Accounts Receivable",
-  "Other Current Asset",
-  "Fixed Asset",
-  "Other Asset",
-  "Accounts Payable",
-  "Credit Card",
-  "Other Current Liability",
-  "Long Term Liability",
-  "Capital/Equity",
-  "Income",
-  "Cost of Goods Sold",
-  "Expense",
-  "Other Income",
-  "Other Expense"
-};
 
 class AccountsDB
 {

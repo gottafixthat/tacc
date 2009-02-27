@@ -35,8 +35,8 @@ endif
 SUBDIRS =	
 
 SOURCES =	BaseList.cpp BaseListData.cpp\
-		Accounts.cpp\
-		AccountsEdit.cpp AccountsEditData.cpp\
+		ChartOfAccounts.cpp\
+		GLAccountEditor.cpp\
 		RatePlans.cpp\
 		RatePlanEdit.cpp RatePlanEditData.cpp\
 		BillingCycles.cpp\
@@ -81,8 +81,8 @@ SOURCES =	BaseList.cpp BaseListData.cpp\
         admin.cpp
 
 HEADERS =	BaseList.h BaseListData.h\
-		Accounts.h\
-		AccountsEdit.h AccountsEditData.h\
+		ChartOfAccounts.h\
+		GLAccountEditor.h\
 		RatePlans.h\
 		RatePlanEdit.h RatePlanEditData.h\
 		BillingCycles.h\
@@ -129,8 +129,8 @@ HEADERS =	BaseList.h BaseListData.h\
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_BaseList.cpp moc_BaseListData.cpp\
-		moc_Accounts.cpp\
-		moc_AccountsEdit.cpp moc_AccountsEditData.cpp\
+		moc_ChartOfAccounts.cpp\
+		moc_GLAccountEditor.cpp\
 		moc_RatePlans.cpp\
 		moc_RatePlanEdit.cpp moc_RatePlanEditData.cpp\
 		moc_BillingCycles.cpp\
@@ -275,14 +275,11 @@ moc_RatePlanEdit.cpp: RatePlanEdit.h
 moc_RatePlanEditData.cpp: RatePlanEditData.h
 	$(MOC) RatePlanEditData.h -o moc_RatePlanEditData.cpp
 
-moc_Accounts.cpp: Accounts.h
-	$(MOC) Accounts.h -o moc_Accounts.cpp
+moc_ChartOfAccounts.cpp: ChartOfAccounts.h
+	$(MOC) ChartOfAccounts.h -o moc_ChartOfAccounts.cpp
 
-moc_AccountsEdit.cpp: AccountsEdit.h
-	$(MOC) AccountsEdit.h -o moc_AccountsEdit.cpp
-
-moc_AccountsEditData.cpp: AccountsEditData.h
-	$(MOC) AccountsEditData.h -o moc_AccountsEditData.cpp
+moc_GLAccountEditor.cpp: GLAccountEditor.h
+	$(MOC) GLAccountEditor.h -o moc_GLAccountEditor.cpp
 
 moc_AddBaseTypeLink.cpp: AddBaseTypeLink.h
 	$(MOC) AddBaseTypeLink.h -o moc_AddBaseTypeLink.cpp

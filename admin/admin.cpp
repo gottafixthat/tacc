@@ -34,6 +34,7 @@
 //#include "BlargDB.h"
 #include "TAALogin.h"
 #include "TAAConfig.h"
+#include <ChartOfAccounts.h>
 
 #ifdef USEDES
 #include "loadKey.h"
@@ -69,7 +70,6 @@ Administration::Administration(QWidget *parent, const char *name)
     : TAAWidget(parent, name, 0) //(QWidget *parent=0, const char *name=0)
     
 {
-	accounts	= new Accounts;
 	cycles		= new BillingCycles;
 	rateplans	= new RatePlans;
 	vtypes		= new VendorTypes;
@@ -261,10 +261,9 @@ void Administration::configtaa()
 
 void Administration::accountlist()
 {
+    ChartOfAccounts *accounts = new ChartOfAccounts();
+    
     accounts->show();
-    accounts->raise();
-    accounts->setFocus();
-    accounts->refreshList(1);
 }
 
 void Administration::billingcycleslist()

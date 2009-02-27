@@ -66,7 +66,7 @@
 #include "DomainTypeEdit.h"
 #include "DNS_Templates.h"
 #include "TE_Main.h"
-#include "Accounts.h"
+#include <ChartOfAccounts.h>
 #include "MakeDeposits.h"
 #include "RatePlans.h"
 #include "BillingCycles.h"
@@ -990,10 +990,9 @@ void CustomerCare::sendTargetedEmail()
 
 void CustomerCare::accountlist()
 {
-    Accounts    *accounts;
-    accounts = new Accounts();
+    ChartOfAccounts    *accounts;
+    accounts = new ChartOfAccounts();
     accounts->show();
-    accounts->refreshList(1);
 }
 
 /*
