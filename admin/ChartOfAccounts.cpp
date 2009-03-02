@@ -30,6 +30,9 @@ ChartOfAccounts::ChartOfAccounts
 {
 	setCaption( "Chart of Accounts" );
 
+    // Load the list of GL Account Types
+    glAcctTypes = GLAccountTypesDB::getAccountTypeList();
+
     QPopupMenu * options = new QPopupMenu();
     CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newAccount()), CTRL+Key_N);
@@ -67,9 +70,11 @@ ChartOfAccounts::ChartOfAccounts
     list->addColumn("Name");
     list->addColumn("Type");
     list->addColumn("Balance");
+    list->setColumnAlignment(3, Qt::AlignRight);
     list->setFocus();
     list->setAllColumnsShowFocus(TRUE);
     list->setRootIsDecorated(TRUE);
+    intAcctNoCol = 4;
 
     // Create our layout and add our widgets.
     QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
@@ -112,32 +117,43 @@ void ChartOfAccounts::Hide()
 //                  handle one active query at a time...
 //
 
-void ChartOfAccounts::addToList(int AcctNo, QListViewItem *parent)
+int ChartOfAccounts::addToList(int ParentID, QListViewItem *parent)
 {
-    ADB	      DB;
-    QString   tmpBal;
-    QString   tmpName;
-    QString   tmpAcctType;
-    char      tmpAcctTypeC[128];
+    ADB	            DB;
+    QString         tmpBal;
+    QString         tmpName;
+    QString         tmpAcctType;
     QListViewItem   *curItem;
+    int             retVal = 0;
+    int             intAcctNo;
         
     
-    DB.query("select AccountNo, AcctName, Balance, HasSubAccts, AcctType from Accounts where SubAcctOf = %d order by AcctType", AcctNo);
-    
-    while(DB.getrow()) {
+    DB.query("select * from Accounts where ParentID = %d order by AccountType, AccountNo", ParentID);
+    retVal = DB.rowCount;
+    if (retVal) {
         
-        tmpAcctType = GLAccountTypes[atoi(DB.curRow["AcctType"])];
-        tmpAcctType.truncate(20);
-        strcpy(tmpAcctTypeC, tmpAcctType);
-        
-        curItem = new QListViewItem(parent, DB.curRow["AccountNo"], DB.curRow["AcctName"], tmpAcctTypeC, DB.curRow["Balance"]);
-        list->triggerUpdate();
-        if (atoi(DB.curRow["HasSubAccts"])) {
-            addToList(atoi(DB.curRow["AccountNo"]), curItem);
-            curItem->setOpen(TRUE);
-            list->triggerUpdate();
+        while(DB.getrow()) {
+            
+            intAcctNo = atoi(DB.curRow["IntAccountNo"]);
+
+            // Find the name of the account type
+            tmpAcctType = "";
+            GLAccountTypeRecord *rec;
+            for (rec = glAcctTypes.first(); rec; rec = glAcctTypes.next()) {
+                if (rec->accountType == atoi(DB.curRow["AccountType"])) {
+                    tmpAcctType = rec->description;
+                }
+            }
+            
+            if (!parent) curItem = new QListViewItem(list, DB.curRow["AccountNo"], DB.curRow["AcctName"], tmpAcctType, DB.curRow["Balance"], DB.curRow["IntAccountNo"]);
+            else curItem = new QListViewItem(parent, DB.curRow["AccountNo"], DB.curRow["AcctName"], tmpAcctType, DB.curRow["Balance"], DB.curRow["IntAccountNo"]);
+            if (addToList(intAcctNo, curItem)) {
+                curItem->setOpen(true);
+            }
         }
     }
+
+    return retVal;
 }
 
 
@@ -147,32 +163,9 @@ void ChartOfAccounts::addToList(int AcctNo, QListViewItem *parent)
 
 void ChartOfAccounts::refreshList(int)
 {
-    ADB     DB;
-    QString tmpBal;
-    QString tmpName;
-    QString   tmpAcctType;
-    char      tmpAcctTypeC[128];
-    QListViewItem   *curItem;
-    
-    // Save the state of the list.
-    
+    // Calling addToList with 0 will get all of the accounts.
     list->clear();
-    DB.query("select AccountNo, AcctName, Balance, HasSubAccts, AcctType from Accounts where SubAcctOf = 0 order by AcctType");
-    while(DB.getrow()) {
-        
-        // tmpBal = DB.curRow[2];
-        tmpAcctType = GLAccountTypes[atoi(DB.curRow["AcctType"])];
-        tmpAcctType.truncate(20);
-        strcpy(tmpAcctTypeC, tmpAcctType);
-        
-        curItem = new QListViewItem(list, DB.curRow["AccountNo"], DB.curRow["AcctName"], tmpAcctTypeC, DB.curRow["Balance"]);
-        if (atoi(DB.curRow["HasSubAccts"])) {
-            addToList(atoi(DB.curRow["AccountNo"]), curItem);
-            curItem->setOpen(TRUE);
-        }
-    }
-    
-    list->triggerUpdate();
+    addToList(0, NULL);
 }
 
 
@@ -199,21 +192,12 @@ void ChartOfAccounts::editAccount()
     GLAccountEditor *account;
     curItem = list->currentItem();
     if (curItem != NULL) {
-        account = new GLAccountEditor(0, "", atoi(curItem->text(0)));
+        account = new GLAccountEditor(0, "", atoi(curItem->text(intAcctNoCol)));
         account->show();
         connect(account, SIGNAL(refresh(int)),this, SLOT(refreshList(int)));
     }
 }
 
-//
-// editAccountL  - Allows the user to edit a new VendorType from the list
-//
-
-void ChartOfAccounts::editAccountL(int msg)
-{
-    msg = 0;
-    editAccount();
-}
 
 //
 // deleteAccount  - Allows the user to delete an Account
@@ -227,12 +211,10 @@ void ChartOfAccounts::deleteAccount()
     
     curItem = list->currentItem();
     if (curItem != NULL) {
-        DB.query("select AcctName from Accounts where AccountNo = %d", atoi(curItem->text(0)));
-        DB.getrow();
-        sprintf(tmpstr, "Are you sure you wish to delete the\nAccount '%s'?", DB.curRow["AcctName"]);
+        sprintf(tmpstr, "Are you sure you wish to delete the\nAccount '%s'?", curItem->key(1,0).ascii());
         if (QMessageBox::warning(this, "Delete Account", tmpstr, "&Yes", "&No", 0, 1) == 0) {
             AccountsDB ADB;
-            if (ADB.del(atoi(curItem->text(0)))) {
+            if (ADB.del(atoi(curItem->key(intAcctNoCol,0)))) {
                 QMessageBox::critical(this, "Delete Account", "The account could not be delete as it contains transactions.");
             } else {
                 refreshList(1);

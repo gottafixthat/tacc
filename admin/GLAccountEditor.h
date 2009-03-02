@@ -21,6 +21,7 @@
 #include <qspinbox.h>
 
 #include <TAAWidget.h>
+#include <GenLedger.h>
 
 class GLAccountEditor : public TAAWidget
 {
@@ -41,24 +42,30 @@ signals:
     void refresh(int);
 
 protected:
+
+    QLineEdit   *accountNo;
     QLineEdit   *acctName;
-    QComboBox   *subAcctOf;
-    QComboBox   *acctType;
-    QSpinBox    *acctNumber;
+    QComboBox   *parentAcct;
+    QComboBox   *accountType;
+    QLineEdit   *providerAcctNo;
+    QLineEdit   *taxLine;
     QLabel      *balance;
     QLabel      *transCount;
-    QLineEdit   *taxLine;
 
-    void        setAccountNo(int);
+    void        setIntAccountNo(int);
+    void        loadParentList();
 
 private slots:
-    void         acctTypeChanged(int newIDX);
+    void         accountTypeChanged(int newIDX);
     virtual void cancelAccount();
     virtual void saveAccount();
     
 private:
-    int myAccountNo;
-    int *AcctNoIndex;      // for our combo box.
+    GLAccountTypeList   glAcctTypes;
+    int *acctTypeIDX;
+    int myIntAccountNo;
+    int *intAcctNoIndex;        // for our combo box.
+    int *parentIDX;             // For our combo box.
     int IdxID;
 };
 #endif

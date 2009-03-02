@@ -14,9 +14,11 @@
 #ifndef CHARTOFACCOUNTS_H
 #define CHARTOFACCOUNTS_H
 
-#include "TAAWidget.h"
 #include <qlistview.h>
 #include <qmenubar.h>
+
+#include <TAAWidget.h>
+#include <GenLedger.h>
 
 class ChartOfAccounts : public TAAWidget
 {
@@ -38,7 +40,6 @@ signals:
 public slots:
     void Hide();
     void refreshList(int);
-    void editAccountL(int msg = 0);
 
 private slots:
     void newAccount();
@@ -49,8 +50,11 @@ protected:
     QMenuBar    *menu;
     QListView   *list;
 
+    GLAccountTypeList   glAcctTypes;
+
 private:
-    void addToList(int AcctNo, QListViewItem *parent);
+    int addToList(int ParentID, QListViewItem *parent);
+    int intAcctNoCol;
     // int *acctNoIndex;
     // int indexPtr;
 };

@@ -35,6 +35,49 @@
 
 
 /**
+ * GLAccountTypesDB()
+ *
+ * Constructor for the GLAccountTypes database class
+ */
+GLAccountTypesDB::GLAccountTypesDB()
+{
+}
+
+/**
+ * ~GLAccountTypesDB()
+ *
+ * Destructor.
+ */
+GLAccountTypesDB::~GLAccountTypesDB()
+{
+}
+
+/**
+ * getAccountTypeList()
+ *
+ * Gets the list of account types from the database and returns
+ * them in a QList.
+ */
+GLAccountTypeList GLAccountTypesDB::getAccountTypeList()
+{
+    ADB     DB;
+    GLAccountTypeList   myList;
+
+    DB.query("select * from GLAccountTypes order by AccountType");
+    if (DB.rowCount) {
+        while (DB.getrow()) {
+            GLAccountTypeRecord *rec = new GLAccountTypeRecord;
+            rec->accountType = atoi(DB.curRow["AccountType"]);
+            rec->description = DB.curRow["Description"];
+            myList.append(rec);
+        }
+    }
+
+    return myList;
+}
+
+
+/**
  * GLDB()
  *
  * Constructor for the General Ledger Database Class (GLDB)

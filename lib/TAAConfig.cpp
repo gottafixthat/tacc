@@ -32,7 +32,7 @@ void cfgInit(void)
     uid_t   myUID;
     passwd  *pent;
     char    homeCfg[1024];
-    
+
     // Get the uid of this user and thier passwd entry
     myUID = getuid();
     pent = getpwuid(myUID);
@@ -40,6 +40,9 @@ void cfgInit(void)
         fprintf(stderr, "\nUnable to get user information.\n\n");
         exit(-1);
     }
+
+    // Defaults.
+    setDefaultConfigValues();
 
     // Create the file name for the users "local" configuration file.  This is
     // mostly just used for development.  Keeps things local to the user only and not
@@ -68,6 +71,18 @@ void cfgInit(void)
         setCfgVal(DB.curRow["Token"], tmpStr);
     }
 }
+
+/**
+ * setDefaultConfigValues()
+ *
+ * Sets up some default values.  They will be overridden by the config
+ * files.
+ */
+void setDefaultConfigValues(void)
+{
+    setCfgVal("GLAccountNoMask",  "D999-99-99");
+}
+
 
 /*
  * updateCfgVal - Stores the specified configuration value into the database.

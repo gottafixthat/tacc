@@ -451,16 +451,15 @@ int VendorTypesDB::del(int IntID)
 
 AccountsDB::AccountsDB(void)
 {
-    AccountNo     = 0;
-    AcctName      = "";
-    HasSubAccts   = "";
-    SubAcctOf     = "";
-    AcctType      = "";
-    Reimbursable  = "";
-    AcctNumber    = "";
-    TaxLine       = "";
-    Balance       = "";
-    TransCount    = "";
+    IntAccountNo        = 0;
+    AccountNo           = "";
+    AcctName            = "";
+    ParentID            = 0;
+    AccountType         = 0;
+    ProviderAccountNo   = "";
+    TaxLine             = "";
+    Balance             = 0.00;
+    TransCount          = 0;
 }
 
 AccountsDB::~AccountsDB()
@@ -476,25 +475,24 @@ AccountsDB::~AccountsDB()
 // Returns     - 0 on failure, 1 on success
 //
 
-int AccountsDB::get(int AcctNo)
+int AccountsDB::get(int intAcctNo)
 {
     int     Ret = 0;
 	ADB     DB;
 
-    DB.query("select * from Accounts where AccountNo = %d", AcctNo);
+    DB.query("select * from Accounts where IntAccountNo = %d", intAcctNo);
     if (DB.rowCount) {
         DB.getrow();
         
-        AccountNo    = AcctNo;
-        AcctName     = DB.curRow["AcctName"];
-        HasSubAccts  = DB.curRow["HasSubAccts"];
-        SubAcctOf    = DB.curRow["SubAcctOf"];
-        AcctType     = DB.curRow["AcctType"];
-        Reimbursable = DB.curRow["Reimbursable"];
-        AcctNumber   = DB.curRow["AcctNumber"];
-        TaxLine      = DB.curRow["TaxLine"];
-        Balance      = DB.curRow["Balance"];
-        TransCount   = DB.curRow["TransCount"];
+        IntAccountNo = intAcctNo;
+        AccountNo           = DB.curRow["AccountNo"];
+        AcctName            = DB.curRow["AcctName"];
+        ParentID            = atoi(DB.curRow["ParentID"]);
+        AccountType         = atoi(DB.curRow["AccountType"]);
+        ProviderAccountNo   = DB.curRow["ProviderAccountNo"];
+        TaxLine             = DB.curRow["TaxLine"];
+        Balance             = atof(DB.curRow["Balance"]);
+        TransCount          = atoi(DB.curRow["TransCount"]);
 
         Ret = 1;
     }
@@ -511,52 +509,25 @@ int AccountsDB::get(int AcctNo)
 
 int AccountsDB::ins(void)
 {
-    int         Ret = 0;
+    long        retVal = 0;
     int         startingAcctNo = 0;
 	ADB	        DB;
     ADBTable    acctsDB("Accounts");
     
-    //AccountNo = 0;
+    acctsDB.setValue("IntAccountNo",        IntAccountNo);
+    acctsDB.setValue("AccountNo",           AccountNo.ascii());
+    acctsDB.setValue("AcctName",            AcctName.ascii());
+    acctsDB.setValue("ParentID",            ParentID);
+    acctsDB.setValue("AccountType",         AccountType);
+    acctsDB.setValue("ProviderAccountNo",   ProviderAccountNo.ascii());
+    acctsDB.setValue("TaxLine",             TaxLine.ascii());
+    acctsDB.setValue("Balance",             Balance);
+    acctsDB.setValue("TransCount",          TransCount);
+    retVal = acctsDB.ins();
+    if (!IntAccountNo) IntAccountNo = retVal;
+    else retVal = IntAccountNo;
     
-    if (AccountNo == 0) {
-        startingAcctNo = AcctType.toInt() * 1000;
-    
-        while (!AccountNo) {
-            DB.query("select AccountNo from Accounts where AccountNo = %d", startingAcctNo);
-            if (DB.rowCount) {
-                startingAcctNo++;
-            } else {
-                AccountNo = startingAcctNo;
-            }
-        }
-    }
-    
-    #ifdef DBDEBUG
-    fprintf(stderr, "AccountsDB: next account number is %d\n", AccountNo);
-    #endif    
-    
-    acctsDB.setValue("AccountNo",       AccountNo);
-    acctsDB.setValue("AcctName",        (const char *) AcctName);
-    acctsDB.setValue("HasSubAccts",     HasSubAccts.toInt());
-    acctsDB.setValue("SubAcctOf",       SubAcctOf.toInt());
-    acctsDB.setValue("AcctType",        AcctType.toInt());
-    acctsDB.setValue("Reimbursable",    Reimbursable.toInt());
-    acctsDB.setValue("AcctNumber",      (const char *) AcctNumber);
-    acctsDB.setValue("TaxLine",         (const char *) TaxLine);
-    acctsDB.setValue("Balance",         Balance.toFloat());
-    acctsDB.setValue("TransCount",      TransCount.toInt());
-    acctsDB.ins();
-    
-    // Now, check to see if it is a sub Account of something.  If so, update
-    // the parent info.
-    if (SubAcctOf.toInt() > 0) {
-        DB.dbcmd("update Accounts set HasSubAccts = HasSubAccts + 1 where AccountNo = %d", SubAcctOf.toInt());
-    }
-
-    #ifdef DBDEBUG
-    fprintf(stderr, "AccountsDB: returning from ins()\n");
-    #endif    
-    return Ret;
+    return retVal;
 }
 
 //
@@ -573,32 +544,17 @@ int AccountsDB::upd(void)
 	BlargDB	DB;
     ADBTable    acctsDB("Accounts");
 
-    acctsDB.get(AccountNo);
-    acctsDB.setValue("AcctName",        (const char *) AcctName);
-    acctsDB.setValue("HasSubAccts",     HasSubAccts.toInt());
-    acctsDB.setValue("SubAcctOf",       SubAcctOf.toInt());
-    acctsDB.setValue("AcctType",        AcctType.toInt());
-    acctsDB.setValue("Reimbursable",    Reimbursable.toInt());
-    acctsDB.setValue("AcctNumber",      (const char *) AcctNumber);
-    acctsDB.setValue("TaxLine",         (const char *) TaxLine);
-    acctsDB.setValue("Balance",         Balance.toFloat());
-    acctsDB.setValue("TransCount",      TransCount.toInt());
+    acctsDB.get(IntAccountNo);
+    acctsDB.setValue("AccountNo",       AccountNo.ascii());
+    acctsDB.setValue("AcctName",        AcctName.ascii());
+    acctsDB.setValue("ParentID",        ParentID);
+    acctsDB.setValue("AccountType",     AccountType);
+    acctsDB.setValue("ProviderAccountNo", ProviderAccountNo.ascii());
+    acctsDB.setValue("TaxLine",         TaxLine.ascii());
+    acctsDB.setValue("Balance",         Balance);
+    acctsDB.setValue("TransCount",      TransCount);
     acctsDB.upd();
 
-    // Now, check the previous data to see if we need to adjust anything.
-    if (acctsDB.getInt("SubAcctOf", 1) != SubAcctOf.toInt()) {
-        // SubAcctOf has changed, so first, update the old one.
-        if (acctsDB.getInt("SubAcctOf", 1)) {
-            // It wasn't zero, so we have to update one.
-            DB.dbcmd("update Accounts set HasSubAccts = HasSubAccts - 1 where AccountNo = %d", acctsDB.getInt("SubAcctOf", 1));
-        }
-        
-        if (SubAcctOf.toInt()) {
-            // We have a different sub-type now.
-            DB.dbcmd("update Accounts set HasSubAccts = HasSubAccts + 1 where AccountNo = %d", SubAcctOf.toInt());
-        }
-    }
-    
     return Ret;
 }
 
@@ -622,33 +578,20 @@ int AccountsDB::del(int AcctNo)
     // First things first.  We need to check to see if this account can
     // be deleted.  It can't if there are transactions referencing it in
     // the General Ledger
-    DB.query("select TransID from GL where AccountNo = %d", AcctNo);
+    DB.query("select TransID from GL where IntAccountNo = %d", AcctNo);
     if (DB.rowCount) {
         Ret = 1;
     }
     
     if (!Ret) {
-        // We need to get some data from old record to see if any sub/parent info
-        // is changing so we can update things properly.
-        DB.query("select AccountNo, HasSubAccts, SubAcctOf from Accounts where AccountNo = %d", AcctNo);
+        // There are no GL records, so we're okay.  Promote any children.
+        DB.query("select ParentID from Accounts where IntAccountNo = %d", AcctNo);
         DB.getrow();
         tmpAcctNo      = atoi(DB.curRow[0]);
-        tmpHasSubAccts = DB.curRow[1];
-        tmpSubAcctOf   = DB.curRow[2];
-    
-        // We've got the old info, so we can safely delete the record.
-        DB.dbcmd("delete from Accounts where AccountNo = %d", tmpAcctNo);
-    
-        // First, take care of any accounts using this one as a parent.
-        if (tmpHasSubAccts.toInt() > 0) {
-            DB.dbcmd("update Accounts set SubAcctOf = 0 where SubAcctOf = %d", tmpAcctNo);
-        }
+        DB.dbcmd("update Accounts set ParentID = %d where ParentID = %d", tmpAcctNo, AcctNo);
 
-        // Now, check to see if we were a sub-account of anything, and if so,
-        // update the parent so he has one less.
-        if (tmpSubAcctOf.toInt() > 0) {
-            DB.dbcmd("update Accounts set HasSubAccts = HasSubAccts - 1 where AccountNo = %d", tmpSubAcctOf.toInt());
-        }
+        // Now delete the account.
+        DB.dbcmd("delete from Accounts where IntAccountNo = %d", AcctNo);
     }
     return(Ret);
 }

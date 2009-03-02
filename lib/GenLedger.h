@@ -27,10 +27,22 @@
 #define TRANSTYPE_CCPAYMENT     3
 #define TRANSTYPE_DEPOSIT       4
 
-// DON'T EVER CHANGE THIS!
-static QStringList GLAccountTypes = QStringList()
-    << "Asset" << "Liability" << "Equity" << "Income"
-    << "Cost of Goods Sold" << "Expense" << "Other Income" << "Other Expense";
+struct GLAccountTypeRecord {
+    int     accountType;
+    QString description;
+};
+
+typedef QPtrList<GLAccountTypeRecord> GLAccountTypeList;
+
+// GL Account Types
+class GLAccountTypesDB
+{
+public:
+    GLAccountTypesDB();
+    virtual ~GLAccountTypesDB();
+
+    static GLAccountTypeList   getAccountTypeList();
+};
 
 // General Ledger (GL) layout
 

@@ -69,6 +69,7 @@ void upgradeError(const QString &err, const QString &sql)
 void upgradeDatabase()
 {
     QSqlDbPool  dbp;
+    ADB         db;
 
     int     vers = schemaVersion();
     printf("Current schema version is %d, upgrading to version %d...\n", vers, SCHEMA_VERSION_REQUIRED);
@@ -336,7 +337,6 @@ void upgradeDatabase()
         printf("Updating to Schema Version 8...\n");
         QSqlQuery   q(dbp.qsqldb());
         QString     sql;
-        ADB         db;
         int         ufAcct = atoi(cfgVal("UndepositedFundsAccount")) * 10;
         int         coAcct = atoi(cfgVal("CollectionsAccount")) * 10;
         int         acctNoList[8];
@@ -416,6 +416,66 @@ void upgradeDatabase()
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
 
         vers = 9;
+    }
+
+    if (vers < 10) {
+        printf("Updating to Schema Version 10...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+        ADB         db2;
+
+        db.dbcmd("rename table Accounts to AccountsOld");
+
+        db.dbcmd("drop table if exists Accounts");
+        db.dbcmd("create table Accounts (IntAccountNo int(11) not null auto_increment, AccountNo varchar(64) not null, AcctName varchar(80) not null, ParentID int(11) default '0', AccountType int(11) not null, ProviderAccountNo varchar(80), TaxLine varchar(250), Balance float(10,2) default '0.00', TransCount bigint(21) default '0', PRIMARY KEY (IntAccountNo))");
+        ADBTable acctsDB("Accounts");
+        db.dbcmd("alter table GL change column AccountNo IntAccountNo int(11) not null");
+        db.dbcmd("alter table Billables change column AccountNo IntAccountNo int(11) not null");
+
+        // Load the old accounts table and move them to the new accounts table
+        // and update the GL at the same time.
+        int intAcctNo = 1;
+        db.query("select * from AccountsOld");
+        while(db.getrow()) {
+            acctsDB.clearData();
+            acctsDB.setValue("IntAccountNo",        intAcctNo);
+            acctsDB.setValue("AccountNo",           db.curRow["AccountNo"]);
+            acctsDB.setValue("AcctName",            db.curRow["AcctName"]);
+            acctsDB.setValue("AccountType",         db.curRow["AcctType"]);
+            acctsDB.setValue("ParentID",            db.curRow["SubAcctOf"]);
+            acctsDB.setValue("ProviderAccountNo",   db.curRow["AcctNumber"]);
+            acctsDB.setValue("TaxLine",             db.curRow["TaxLine"]);
+            acctsDB.setValue("Balance",             db.curRow["Balance"]);
+            acctsDB.setValue("TransCount",          db.curRow["TransCount"]);
+            acctsDB.ins();
+            db2.dbcmd("update GL set IntAccountNo = %d where IntAccountNo = %s", intAcctNo, db.curRow["AccountNo"]);
+            db2.dbcmd("update Billables set IntAccountNo = %d where IntAccountNo = %s", intAcctNo, db.curRow["AccountNo"]);
+            db2.dbcmd("update Accounts set Balance = (select sum(Amount) from GL where IntAccountNo = %d) where IntAccountNo = %d", intAcctNo, intAcctNo);
+            db2.dbcmd("update Accounts set TransCount = (select count(InternalID) from GL where IntAccountNo = %d) where IntAccountNo = %d", intAcctNo, intAcctNo);
+            intAcctNo++;
+        }
+        db.dbcmd("drop table if exists AccountsOld");
+
+        // Create the new GL Account Types
+        db.dbcmd("create table GLAccountTypes (AccountType int(11) not null auto_increment, Description varchar(80), PRIMARY KEY (AccountType))");
+        db.dbcmd("insert into GLAccountTypes values(1,'Asset')");
+        db.dbcmd("insert into GLAccountTypes values(2,'Liabilites & Equity')");
+        db.dbcmd("insert into GLAccountTypes values(3,'Income')");
+        db.dbcmd("insert into GLAccountTypes values(4,'Cost of Goods Sold')");
+        db.dbcmd("insert into GLAccountTypes values(5,'Selling Expenses')");
+        db.dbcmd("insert into GLAccountTypes values(6,'Administrative Expenses')");
+        db.dbcmd("insert into GLAccountTypes values(7,'Other Income and Expense')");
+
+        // Drop a couple of old tables while we're at it.
+        db.dbcmd("drop table if exists Register");
+        db.dbcmd("drop table if exists RegisterSplits");
+        db.dbcmd("drop table if exists QBRegister");
+        db.dbcmd("drop table if exists IQCart");
+
+        sql = "update SchemaVersion set SchemaVersion = 10";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 10;
     }
 }
 
