@@ -12,6 +12,7 @@
 #define TAACONFIG_H
 
 void    cfgInit(void);
+void    setDefaultConfigValues(void);
 void    updateCfgVal(const char *token, const char *val);
 
 #endif // TAACONFIG_H

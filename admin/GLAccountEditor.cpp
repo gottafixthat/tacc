@@ -21,6 +21,7 @@
 #include <BlargDB.h>
 #include <GenLedger.h>
 #include <GLAccountEditor.h>
+#include <Cfg.h>
 
 GLAccountEditor::GLAccountEditor
 (
@@ -31,37 +32,54 @@ GLAccountEditor::GLAccountEditor
 {
     ADB     DB;
 
-    AcctNoIndex = 0;
+    // Load our GL Account type index.
+    glAcctTypes = GLAccountTypesDB::getAccountTypeList();
+    intAcctNoIndex = 0;
+
+    QLabel  *accountNoLabel = new QLabel(this, "accountNoLabel");
+    accountNoLabel->setText("Account Number:");
+    accountNoLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    accountNo = new QLineEdit(this, "accountNo");
+    accountNo->setInputMask(cfgVal("GLAccountNoMask"));
 
     QLabel  *acctNameLabel = new QLabel(this, "acctNameLabel");
     acctNameLabel->setText("Account Name:");
     acctNameLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
     acctName = new QLineEdit(this, "acctName");
-    acctName->setMaxLength(30);
+    acctName->setMaxLength(80);
 
-    QLabel  *subAcctOfLabel = new QLabel(this, "subAcctOfLabel");
-    subAcctOfLabel->setText("Sub Account Of:");
-    subAcctOfLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    QLabel  *parentAcctLabel = new QLabel(this, "ParentAcctLabel");
+    parentAcctLabel->setText("Parent Account:");
+    parentAcctLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    subAcctOf = new QComboBox(false, this, "subAcctOf");
-    subAcctOf->insertItem("None");
+    parentAcct = new QComboBox(false, this, "parentAcct");
+    parentIDX = 0;
+    loadParentList();
 
-    QLabel  *acctTypeLabel = new QLabel(this, "acctTypeLabel");
-    acctTypeLabel->setText("Account Type:");
-    acctTypeLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    acctType = new QComboBox(false, this, "acctType");
-    acctType->insertStringList(GLAccountTypes);
-    connect(acctType, SIGNAL(activated(int)), this, SLOT(acctTypeChanged(int)));
+    QLabel  *accountTypeLabel = new QLabel(this, "accountTypeLabel");
+    accountTypeLabel->setText("Account Type:");
+    accountTypeLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 
-    QLabel  *acctNumberLabel = new QLabel(this, "acctNumberLabel");
-    acctNumberLabel->setText("Account Number:");
-    acctNumberLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    accountType = new QComboBox(false, this, "accountType");
+    // Fill the account type list.
+    acctTypeIDX = new int[glAcctTypes.count()+1];
+    int idxPtr = 0;
+    GLAccountTypeRecord *rec;
+    for (rec = glAcctTypes.first(); rec; rec = glAcctTypes.next()) {
+        acctTypeIDX[idxPtr] = rec->accountType;
+        accountType->insertItem(rec->description);
+        idxPtr++;
+    }
 
-    acctNumber = new QSpinBox(this, "acctNumber");
-    acctNumber->setRange(1000, 1999);
-    acctNumber->setValue(1000);
+    QLabel  *providerAcctNoLabel = new QLabel(this, "providerAcctNoLabel");
+    providerAcctNoLabel->setText("Provider Account Number:");
+    providerAcctNoLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    providerAcctNo = new QLineEdit(this, "providerAcctNo");
+    providerAcctNo->setMaxLength(80);
 
     QLabel  *taxLineLabel = new QLabel(this, "taxLineLabel");
     taxLineLabel->setText("Tax Line:");
@@ -101,17 +119,20 @@ GLAccountEditor::GLAccountEditor
     QGridLayout *gl = new QGridLayout(2,6);
     int curRow = 0;
 
+    gl->addWidget(accountNoLabel,       curRow, 0);
+    gl->addWidget(accountNo,            curRow, 1);
+    curRow++;
     gl->addWidget(acctNameLabel,        curRow, 0);
     gl->addWidget(acctName,             curRow, 1);
     curRow++;
-    gl->addWidget(subAcctOfLabel,       curRow, 0);
-    gl->addWidget(subAcctOf,            curRow, 1);
+    gl->addWidget(parentAcctLabel,      curRow, 0);
+    gl->addWidget(parentAcct,           curRow, 1);
     curRow++;
-    gl->addWidget(acctTypeLabel,        curRow, 0);
-    gl->addWidget(acctType,             curRow, 1);
+    gl->addWidget(accountTypeLabel,     curRow, 0);
+    gl->addWidget(accountType,          curRow, 1);
     curRow++;
-    gl->addWidget(acctNumberLabel,      curRow, 0);
-    gl->addWidget(acctNumber,           curRow, 1);
+    gl->addWidget(providerAcctNoLabel,  curRow, 0);
+    gl->addWidget(providerAcctNo,       curRow, 1);
     curRow++;
     gl->addWidget(taxLineLabel,         curRow, 0);
     gl->addWidget(taxLine,              curRow, 1);
@@ -136,64 +157,105 @@ GLAccountEditor::GLAccountEditor
 
     ml->addLayout(bl, 0);
 
-    setAccountNo(AcctNo);
+    setIntAccountNo(AcctNo);
 }
 
 
 GLAccountEditor::~GLAccountEditor()
 {
+    if (parentIDX) {
+        delete parentIDX;
+        parentIDX = 0;
+    }
 }
 
 /**
- * setAccountNo()
+ * loadParentList()
+ *
+ * Loads the list of possible parent accounts into memory.
+ */
+void GLAccountEditor::loadParentList()
+{
+    ADB     DB;
+    if (parentIDX) {
+        delete parentIDX;
+        parentIDX = 0;
+    }
+
+    parentAcct->clear();
+    parentAcct->insertItem("None");
+
+    DB.query("select * from Accounts where ParentID = 0 and IntAccountNo <> %d", myIntAccountNo);
+    parentIDX = new int[DB.rowCount+2];
+    int idxPtr = 1;
+    parentIDX[0] = 0;
+    if (DB.rowCount) while (DB.getrow()) {
+        QString tmpStr;
+        tmpStr = DB.curRow["AccountNo"];
+        tmpStr += " ";
+        tmpStr += DB.curRow["AcctName"];
+        parentAcct->insertItem(tmpStr);
+        parentIDX[idxPtr] = atoi(DB.curRow["IntAccountNo"]);
+        idxPtr++;
+    }
+}
+
+/**
+ * setIntAccountNo()
  *
  * Sets up the account number and puts the editor into edit mode.
  */
-void GLAccountEditor::setAccountNo(int newAccountNo)
+void GLAccountEditor::setIntAccountNo(int newIntAccountNo)
 {
     ADB    DB;
-    int    tmpSubOf = 0;
+    int    parentID = 0;
 
-    myAccountNo = newAccountNo;
+    myIntAccountNo = newIntAccountNo;
     
-    if (myAccountNo) {
+    if (myIntAccountNo) {
     	setCaption("Edit Account");
     } else {
-        setCaption("New New");
+        setCaption("New Account");
     }
 
     // Clear our mappings to internal ID's
-    delete AcctNoIndex;
+    if(intAcctNoIndex) delete intAcctNoIndex;
     
     // We're editing one, so get the data for it.
-    if (myAccountNo) {
+    if (myIntAccountNo) {
         AccountsDB acctDB;
-        acctDB.get(myAccountNo);
+        acctDB.get(myIntAccountNo);
+        accountNo->setText(acctDB.AccountNo);
         acctName->setText(acctDB.AcctName);
-        tmpSubOf = acctDB.SubAcctOf.toInt();
-        acctType->setCurrentItem(acctDB.AcctType.toInt());
-        acctTypeChanged(acctDB.AcctType.toInt());
-        // Find our parent in the sub account list.
+        loadParentList();
+        parentID = acctDB.ParentID;
+        // Find our account type in the list.
+        for (int i = 0; i < glAcctTypes.count(); i++) {
+            if (acctTypeIDX[i] == acctDB.AccountType) accountType->setCurrentItem(i);
+        }
+        // Find our parent in the list.
+        for (int i = 0; i < parentAcct->count(); i++) {
+            if (parentIDX[i] == parentID) parentAcct->setCurrentItem(i);
+        }
+        /*
         if (tmpSubOf) {
             for (int i = 0; i < subAcctOf->count(); i++) {
-                if (AcctNoIndex[i] == tmpSubOf) {
+                if (intAcctNoIndex[i] == tmpSubOf) {
                     subAcctOf->setCurrentItem(i);
                 }
             }
         }
         acctNumber->setValue(acctDB.AccountNo);
         acctType->setEnabled(false);
-        acctType->setEnabled(false);
         acctNumber->setEnabled(false);
+        */
         taxLine->setText(acctDB.TaxLine);
-        acctDB.Balance.sprintf("%12.2f", acctDB.Balance.toFloat());
-        acctDB.Balance.stripWhiteSpace();
-        balance->setText(acctDB.Balance);
-        transCount->setText(acctDB.TransCount);
+        QString tmpStr;
+        tmpStr = tmpStr.sprintf("%.2f", acctDB.Balance);
+        balance->setText(tmpStr);
+        tmpStr.setNum(acctDB.TransCount);
+        transCount->setText(tmpStr);
     }
-
-    
-    acctName->setFocus();
 }
 
 /**
@@ -202,27 +264,28 @@ void GLAccountEditor::setAccountNo(int newAccountNo)
  * Updates the account number ranges when the user selects
  * the type of account this is.
  */
-void GLAccountEditor::acctTypeChanged(int newIDX)
+void GLAccountEditor::accountTypeChanged(int newIDX)
 {
     int acctRange = (newIDX + 1) * 1000;
-    acctNumber->setRange(acctRange, acctRange+999);
-    acctNumber->setValue(acctRange);
 
     // Fill the combo box...
     ADB DB;
-    DB.query("select AccountNo, AcctName from Accounts where AccountNo <> %d and SubAcctOf = 0 and AcctType = %d order by AcctType, AcctName", myAccountNo, newIDX);
-    if (AcctNoIndex) delete AcctNoIndex;
-    AcctNoIndex = new(int[DB.rowCount+1]);
-    AcctNoIndex[0] = 0;
+    DB.query("select IntAccountNo, AccountNo, AcctName from Accounts where IntAccountNo <> %d and ParentID = 0 and AccountType = %d order by AccountType, AcctName", myIntAccountNo, newIDX);
+    if (intAcctNoIndex) delete intAcctNoIndex;
+    intAcctNoIndex = new(int[DB.rowCount+1]);
+    intAcctNoIndex[0] = 0;
     int indexPtr = 0;
-    subAcctOf->clear();
-    subAcctOf->insertItem("None");
+    parentAcct->clear();
+    parentAcct->insertItem("None");
     while (DB.getrow()) {
         indexPtr++;
-        AcctNoIndex[indexPtr] = atoi(DB.curRow["AccountNo"]);
-        subAcctOf->insertItem(DB.curRow["AcctName"]);
+        intAcctNoIndex[indexPtr] = atoi(DB.curRow["IntAccountNo"]);
+        QString tmpStr;
+        tmpStr = DB.curRow["AccountNo"];
+        tmpStr += " ";
+        tmpStr += DB.curRow["AcctName"];
+        parentAcct->insertItem(tmpStr);
     }
-    
 }
 
 // The user clicked on the close button...
@@ -240,40 +303,27 @@ void GLAccountEditor::saveAccount()
     ADB         DB;
     AccountsDB  acctDB;
     
-    if (myAccountNo) {
-        acctDB.get(myAccountNo);
+    if (myIntAccountNo) {
+        acctDB.get(myIntAccountNo);
     } else {
-        acctDB.HasSubAccts.setNum(0);
-        acctDB.Reimbursable.setNum(0);
-        acctDB.Balance.setNum(0.00);
-        acctDB.TransCount.setNum(0);
+        acctDB.IntAccountNo = 0;
+        acctDB.Balance = 0.00;
+        acctDB.TransCount = 0;
     }
     
     // Get the data from the dialog
-    acctDB.AcctName           = acctName->text();
-    acctDB.SubAcctOf.setNum(AcctNoIndex[subAcctOf->currentItem()]);
-    acctDB.AcctType.setNum(acctType->currentItem());
-    //acctDB.AcctNumber         = acctNumber->text();
-    acctDB.TaxLine            = taxLine->text();
+    acctDB.AccountNo        = accountNo->text();
+    acctDB.AcctName         = acctName->text();
+    acctDB.ParentID         = parentIDX[parentAcct->currentItem()];
+    acctDB.AccountType      = acctTypeIDX[accountType->currentItem()];
+    acctDB.ProviderAccountNo= providerAcctNo->text();
+    acctDB.TaxLine          = taxLine->text();
     
-    if (!myAccountNo) {
-        // New record...
-        // Determine the new account number for it.
-        int done = 0;
-        myAccountNo = acctNumber->value();
-        while (!done) {
-            DB.query("select AccountNo from Accounts where AccountNo = %d", myAccountNo);
-            if (!DB.rowCount) {
-                done = 1;
-            } else {
-                myAccountNo++;
-            }
-        }
-        acctDB.AccountNo = myAccountNo;
+    if (!myIntAccountNo) {
         acctDB.ins();
     } else {
         // Updating a record...
-        acctDB.AccountNo = myAccountNo;
+        acctDB.IntAccountNo = myIntAccountNo;
         acctDB.upd();
     }
     

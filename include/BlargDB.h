@@ -149,16 +149,15 @@ public:
     int upd(void);
     int del(int AcctNo);
 
-    int     AccountNo;
+    int     IntAccountNo;
+    QString AccountNo;
     QString AcctName;
-    QString HasSubAccts;
-    QString SubAcctOf;
-    QString AcctType;
-    QString Reimbursable;
-    QString AcctNumber;
+    int     ParentID;
+    int     AccountType;
+    QString ProviderAccountNo;
     QString TaxLine;
-    QString Balance;
-    QString TransCount;
+    double  Balance;
+    int     TransCount;
 
 };
 

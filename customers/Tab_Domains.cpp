@@ -46,7 +46,6 @@
 #include "DomainAdd.h"
 #include "DomainChecklist.h"
 #include "DomainAliases.h"
-// #include "IQCartSetup.h"
 #include <ADB.h>
 #include <Cfg.h>
 #include <TAATools.h>
@@ -328,29 +327,6 @@ void Tab_Domains::deActivateDomain()
     }
 }
 
-/*
-** iqCartSelected - Gets called when the user clicks on the IQ-Cart button.
-**                  It loads the IQ-Cart setup window.
-*/
-/*
-void Tab_Domains::iqCartSelected()
-{
-    long            domainID = 0;
-    QListViewItem   *curItem = list->currentItem();
-    if (curItem != NULL) {
-        domainID = atol(curItem->key(7,0));
-        if (domainID) {
-            IQCartSetup *IQCS;
-            IQCS = new IQCartSetup;
-            if (IQCS->setDomainID(domainID)) {
-                IQCS->show();
-            } else {
-                delete IQCS;
-            }
-        }
-    }
-}
-*/
 
 /*
 ** emailSelected - Gets called when the user clicks on the Email button.
