@@ -45,6 +45,7 @@ private slots:
     void newAccount();
     void editAccount();
     void deleteAccount();
+    void editAccountTypes();
 
 protected:
     QMenuBar    *menu;

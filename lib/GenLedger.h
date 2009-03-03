@@ -62,7 +62,7 @@ public:
 	// The GL table
     long    InternalID;
     QString TransID;
-    QString AccountNo;
+    QString IntAccountNo;
     QString Amount;
     QString LinkedTrans;
     QString TransType;

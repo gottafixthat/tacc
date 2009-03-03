@@ -144,10 +144,10 @@ public:
     AccountsDB(void);
     ~AccountsDB();
 
-    int get(int AcctNo);
+    int get(int intAcctNo);
     int ins(void);
     int upd(void);
-    int del(int AcctNo);
+    int del(int intAcctNo);
 
     int     IntAccountNo;
     QString AccountNo;

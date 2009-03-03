@@ -192,7 +192,7 @@ void BI_Main::newBillable()
     BIDB.setValue("ItemID",         "New Billable");
     BIDB.setValue("Description",    "New Billable Item");
     BIDB.setValue("ItemType",       0);
-    BIDB.setValue("AccountNo",      0);
+    BIDB.setValue("IntAccountNo",   0);
     BIDB.setValue("Taxable",        0);
     BIDB.setValue("Priority",       0);
     BIDB.setValue("Active",         0);

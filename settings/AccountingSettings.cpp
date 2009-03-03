@@ -50,13 +50,13 @@ AccountingSettings::AccountingSettings(QWidget *parent, const char *name) : TAAW
     if (strlen(cfgVal("CollectionsAccount"))) collAcct = atoi(cfgVal("CollectionsAccount"));
     if (strlen(cfgVal("AcctsRecvAccount"))) arAcct = atoi(cfgVal("AcctsRecvAccount"));
 
-    DB.query("select AccountNo, AcctName from Accounts order by AcctType, AccountNo");
+    DB.query("select IntAccountNo, AccountNo, AcctName from Accounts order by AccountNo, AcctName");
     acctNoIDX = new int[DB.rowCount+2];
     int curIDX = 0;
-    int curAcct;
+    int intAcctNo;
     while(DB.getrow()) {
-        curAcct = atoi(DB.curRow["AccountNo"]);
-        acctNoIDX[curIDX] = curAcct;
+        intAcctNo = atoi(DB.curRow["IntAccountNo"]);
+        acctNoIDX[curIDX] = intAcctNo;
         tmpStr = DB.curRow["AccountNo"];
         tmpStr += " ";
         tmpStr += DB.curRow["AcctName"];
@@ -65,10 +65,10 @@ AccountingSettings::AccountingSettings(QWidget *parent, const char *name) : TAAW
         undepositedCCAccount->insertItem(tmpStr);
         collectionsAccount->insertItem(tmpStr);
         
-        if (arAcct == curAcct) acctsRecvAccount->setCurrentItem(curIDX);
-        if (ufAcct == curAcct) undepositedFundsAccount->setCurrentItem(curIDX);
-        if (ufccAcct == curAcct) undepositedCCAccount->setCurrentItem(curIDX);
-        if (collAcct == curAcct) collectionsAccount->setCurrentItem(curIDX);
+        if (arAcct == intAcctNo) acctsRecvAccount->setCurrentItem(curIDX);
+        if (ufAcct == intAcctNo) undepositedFundsAccount->setCurrentItem(curIDX);
+        if (ufccAcct == intAcctNo) undepositedCCAccount->setCurrentItem(curIDX);
+        if (collAcct == intAcctNo) collectionsAccount->setCurrentItem(curIDX);
 
         curIDX++;
     }
