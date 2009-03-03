@@ -10,6 +10,7 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
+#include <stdlib.h>
 #include <BlargDB.h>
 #include <mysql/mysql.h>
 #include <qmessagebox.h>
