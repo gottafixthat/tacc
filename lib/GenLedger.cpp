@@ -87,7 +87,7 @@ GLDB::GLDB(void)
 	// from the GL table
     InternalID      = 0;
     TransID			= "";
-    AccountNo		= "";
+    IntAccountNo	= "";
     Amount			= "";
     LinkedTrans		= "";
     TransType		= "";
@@ -139,7 +139,7 @@ int GLDB::get(long IntID)
     
         InternalID		= IntID;
         TransID			= DB.curRow["TransID"];
-        AccountNo		= DB.curRow["AccountNo"];
+        IntAccountNo	= DB.curRow["IntAccountNo"];
         Amount			= DB.curRow["Amount"];
         LinkedTrans		= DB.curRow["LinkedTrans"];
         TransType		= DB.curRow["TransType"];
@@ -214,7 +214,7 @@ long GLDB::insTrans(void)
     // Escape the strings
 
     glDB.setValue("TransID",        TransID.toLong());
-    glDB.setValue("AccountNo",      AccountNo.toInt());
+    glDB.setValue("IntAccountNo",   IntAccountNo.toInt());
     glDB.setValue("Amount",         Amount.toFloat());
     glDB.setValue("LinkedTrans",    LinkedTrans.toLong());
     glDB.setValue("TransType",      TransType.toInt());
@@ -240,7 +240,7 @@ long GLDB::insTrans(void)
     } else {
     	strcpy(tmpOp, "+");
     }
-   	DB.dbcmd("update Accounts set Balance = Balance %s %12.2f, TransCount = TransCount + 1 where AccountNo = %d", tmpOp, tmpAmt, AccountNo.toInt());
+   	DB.dbcmd("update Accounts set Balance = Balance %s %12.2f, TransCount = TransCount + 1 where IntAccountNo = %d", tmpOp, tmpAmt, IntAccountNo.toInt());
 
     return(Ret);
 }
@@ -305,12 +305,12 @@ int GLDB::del(long TransID)
     	    // Load the record from the GL to get the amounts
 	    	DB.query("select * from GL where InternalID = %ld", intIDIdx[i]);
 	    	DB.getrow();
-	    	tmpAccountNo = atoi(DB.curRow["AccountNo"]);
+	    	tmpAccountNo = atoi(DB.curRow["IntAccountNo"]);
 	    	tmpAmount = atof(DB.curRow["Amount"]);
 	    	tmpAmount = tmpAmount * -1.0;
 	    	
 	    	// Now, update the account it refers to.
-		    DB.dbcmd("update Accounts set TransCount = TransCount - 1, Balance = Balance + %f where AccountNo = %d", tmpAmount, tmpAccountNo);
+		    DB.dbcmd("update Accounts set TransCount = TransCount - 1, Balance = Balance + %f where IntAccountNo = %d", tmpAmount, tmpAccountNo);
 		    
 		    // Now that we've updated the balance, delete the split record
 		    DB.dbcmd("delete from GL where InternalID = %ld", intIDIdx[i]);
@@ -440,9 +440,9 @@ long GenLedger::SaveTrans(void)
 	// so we can delete them one by one and adjust their referenced accounts.
 	if (updating) {
 		// Get the list of internal ID's
-		DB.query("select AccountNo, Amount from GL where TransID = %ld", TransID);
+		DB.query("select IntAccountNo, Amount from GL where TransID = %ld", TransID);
 		while (DB.getrow()) {
-			tmpAcctNo = atoi(DB.curRow["AccountNo"]);
+			tmpAcctNo = atoi(DB.curRow["IntAccountNo"]);
 			tmpAmount = atof(DB.curRow["Amount"]);
 			if (tmpAmount < 0.00) {
 				tmpOperator = "+";
@@ -450,7 +450,7 @@ long GenLedger::SaveTrans(void)
 			} else {
 				tmpOperator = "-";
 			}
-			sprintf(query, "update Accounts set Balance = Balance %s %f, TransCount = TransCount - 1 where AccountNo = %d",
+			sprintf(query, "update Accounts set Balance = Balance %s %f, TransCount = TransCount - 1 where IntAccountNo = %d",
 			  (const char *) tmpOperator,
 			  tmpAmount,
 			  tmpAcctNo

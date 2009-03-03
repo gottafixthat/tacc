@@ -98,13 +98,13 @@ long AcctsRecv::SaveTrans(void)
 		        
 		    default:
 		        SrcAcct = ARAcct;
-		        DstAcct = BDB.getInt("AccountNo");
+		        DstAcct = BDB.getInt("IntAccountNo");
 		        break;
 		}
 		
 		// First, put in the AR account split
 		GL->AddSplit();
-		GL->CurrentSplit->AccountNo.setNum(SrcAcct);
+		GL->CurrentSplit->IntAccountNo.setNum(SrcAcct);
 		GL->CurrentSplit->Amount.setNum(ARDB->getFloat("Amount"));
 		GL->CurrentSplit->TransType.setNum(ARDB->getInt("TransType"));
 		GL->CurrentSplit->TransTypeLink.setNum(InternalID);
@@ -121,7 +121,7 @@ long AcctsRecv::SaveTrans(void)
 		
 		// Now, put in the sales split.
 		GL->AddSplit();
-		GL->CurrentSplit->AccountNo.setNum(DstAcct);
+		GL->CurrentSplit->IntAccountNo.setNum(DstAcct);
 		GL->CurrentSplit->Amount.setNum(ARDB->getFloat("Amount") * -1.0);
 		GL->CurrentSplit->TransType.setNum(ARDB->getInt("TransType"));
 		GL->CurrentSplit->TransTypeLink.setNum(InternalID);

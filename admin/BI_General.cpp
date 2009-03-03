@@ -221,13 +221,17 @@ void BI_General::loadAccountList()
     
     if (acctIDX != NULL) delete acctIDX;
 
-    DB.query("select AccountNo, AcctName from Accounts order by AcctType, AcctName");
+    DB.query("select IntAccountNo, AccountNo, AcctName from Accounts order by AccountNo, AcctName");
     if (DB.rowCount) {
         acctIDX = new long[DB.rowCount+1];
         acctIDX[DB.rowCount] = -1;
+        QString tmpStr;
         while (DB.getrow()) {
-            acctIDX[idxPtr++] = atol(DB.curRow["AccountNo"]);
-            accountList->insertItem(DB.curRow["AcctName"]);
+            acctIDX[idxPtr++] = atol(DB.curRow["IntAccountNo"]);
+            tmpStr = DB.curRow["AccountNo"];
+            tmpStr += " ";
+            tmpStr += DB.curRow["AcctName"];
+            accountList->insertItem(tmpStr);
         }
     }
     
@@ -287,7 +291,7 @@ void BI_General::setItemNumber(long itemNumber)
             if (acctIDX != NULL) {
                 int     idxPos = 0;
                 while (acctIDX[idxPos] >= 0) {
-                    if (acctIDX[idxPos] == BIDB.getLong("AccountNo")) {
+                    if (acctIDX[idxPos] == BIDB.getLong("IntAccountNo")) {
                         accountList->setCurrentItem(idxPos);
                     }
                     idxPos++;
@@ -419,7 +423,7 @@ void BI_General::save()
     BIDB.setValue("ItemID", itemName->text());
     BIDB.setValue("Description", description->text());
     BIDB.setValue("ItemType", itemTypeList->currentItem());
-    BIDB.setValue("AccountNo", myAcct);
+    BIDB.setValue("IntAccountNo", myAcct);
     BIDB.setValue("SetupItem", mySetup);
     BIDB.setValue("Active", (int) isActive->isChecked());
     BIDB.setValue("Taxable", (int) isTaxable->isChecked());

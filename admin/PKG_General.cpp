@@ -48,6 +48,7 @@ PKG_General::PKG_General
 	const char* name
 ) : TAAWidget( parent, name )
 {
+    ADB     DB;
     // Create our widgets.
     QLabel  *itemNameLabel = new QLabel(this, "itemNameLabel");
     itemNameLabel->setText("Package Name:");
@@ -75,6 +76,26 @@ PKG_General::PKG_General
     isPrivate = new QCheckBox(this, "isPrivate");
     isPrivate->setText("Private Package");
     connect(isPrivate, SIGNAL(clicked()), this, SLOT(checkForSave()));
+
+    QLabel *glAccountLabel = new QLabel(this, "glAccountLabel");
+    glAccountLabel->setText("Account:");
+    glAccountLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+
+    glAccount = new QComboBox(false, this, "glAccount");
+    // Load the account list and seutp our index
+    DB.query("select IntAccountNo, AccountNo, AcctName from Accounts order by AccountNo, AcctName");
+    glAcctIDX = new int[DB.rowCount + 2];
+    int curIDX = 0;
+    QString tmpStr;
+    if (DB.rowCount) while (DB.getrow()) {
+        glAcctIDX[curIDX] = atoi(DB.curRow["IntAccountNo"]);
+        tmpStr = DB.curRow["AccountNo"];
+        tmpStr += " ";
+        tmpStr += DB.curRow["AcctName"];
+        glAccount->insertItem(tmpStr);
+        curIDX++;
+    }
+    connect(glAccount, SIGNAL(activated(int)), this, SLOT(glAccountChanged(int)));
 
     QLabel *numMailboxesLabel = new QLabel(this, "numMailboxesLabel");
     numMailboxesLabel->setText("Number of Mailboxes:");
@@ -113,6 +134,10 @@ PKG_General::PKG_General
 
     gl->addWidget(isPrivate,                curRow, 1);
     gl->setRowStretch(curRow++, 0);
+
+    gl->addWidget(glAccountLabel,           curRow, 0);
+    gl->addWidget(glAccount,                curRow, 1);
+    gl->setRowStretch(curRow++, 1);
     
     gl->addWidget(numMailboxesLabel,        curRow, 0);
     gl->addWidget(numMailboxes,             curRow, 1);
@@ -134,6 +159,7 @@ PKG_General::PKG_General
     intItemActive   = 0;
     intItemPrivate  = 0;
     intShowIncluded = 0;
+    intGLAccount    = 0;
     intNumMailboxes = 0;
 
     myPackageID     = 0;
@@ -169,6 +195,11 @@ void PKG_General::setPackageID(long newPackageID)
 	        isPrivate->setEnabled(TRUE);
 	        showIncluded->setChecked(PDB.getInt("ShowIncluded"));
 	        showIncluded->setEnabled(TRUE);
+            for(int i=0; i < glAccount->count(); i++) {
+                if (glAcctIDX[i] == PDB.getInt("IntAccountNo")) {
+                    glAccount->setCurrentItem(i);
+                }
+            }
             numMailboxes->setValue(PDB.getInt("NumMailboxes"));
 	        numMailboxes->setEnabled(TRUE);
 
@@ -185,6 +216,7 @@ void PKG_General::setPackageID(long newPackageID)
             intItemActive = isActive->isChecked();
             intItemPrivate = isPrivate->isChecked();
             intShowIncluded = showIncluded->isChecked();
+            intGLAccount    = PDB.getInt("IntAccountNo");
             intNumMailboxes = PDB.getInt("NumMailboxes");
             
         } else {
@@ -216,6 +248,7 @@ void PKG_General::setPackageID(long newPackageID)
         intItemActive    = 0;
         intItemPrivate   = 0;
         intShowIncluded  = 0;
+        intGLAccount     = 0;
         intNumMailboxes  = 0;
     }
 }
@@ -245,6 +278,8 @@ void PKG_General::checkForSave(void)
     
     if (intShowIncluded != showIncluded->isChecked()) allowSave++;
 
+    if (intGLAccount != glAcctIDX[glAccount->currentItem()]) allowSave++;
+
     if (intNumMailboxes != numMailboxes->cleanText().toInt()) allowSave++;
     
     saveButton->setEnabled(allowSave);
@@ -268,6 +303,7 @@ void PKG_General::save()
     PDB.setValue("Active", (int)isActive->isChecked());
     PDB.setValue("PackageType", (int)isPrivate->isChecked());
     PDB.setValue("ShowIncluded", (int)showIncluded->isChecked());
+    PDB.setValue("IntAccountNo", glAcctIDX[glAccount->currentItem()]);
     PDB.setValue("NumMailboxes", numMailboxes->cleanText().toInt());
     PDB.upd();
     

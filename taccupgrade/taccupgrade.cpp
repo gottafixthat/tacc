@@ -427,10 +427,12 @@ void upgradeDatabase()
         db.dbcmd("rename table Accounts to AccountsOld");
 
         db.dbcmd("drop table if exists Accounts");
-        db.dbcmd("create table Accounts (IntAccountNo int(11) not null auto_increment, AccountNo varchar(64) not null, AcctName varchar(80) not null, ParentID int(11) default '0', AccountType int(11) not null, ProviderAccountNo varchar(80), TaxLine varchar(250), Balance float(10,2) default '0.00', TransCount bigint(21) default '0', PRIMARY KEY (IntAccountNo))");
+        db.dbcmd("create table Accounts (IntAccountNo int(11) not null auto_increment, AccountNo varchar(64) not null, AcctName varchar(80) not null, ParentID int(11) default '0', AccountType int(11) not null, ProviderAccountNo varchar(80), TaxLine varchar(250), Balance decimal(20,2) default '0.00', TransCount bigint(21) default '0', PRIMARY KEY (IntAccountNo))");
         ADBTable acctsDB("Accounts");
         db.dbcmd("alter table GL change column AccountNo IntAccountNo int(11) not null");
+        db.dbcmd("alter table GL change column Amount Amount decimal(20,2) not null");
         db.dbcmd("alter table Billables change column AccountNo IntAccountNo int(11) not null");
+        db.dbcmd("alter table Packages add column IntAccountNo int(11) not null default '0'");
 
         // Load the old accounts table and move them to the new accounts table
         // and update the GL at the same time.

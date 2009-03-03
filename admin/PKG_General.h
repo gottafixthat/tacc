@@ -36,6 +36,7 @@
 #include <qlineedit.h>
 #include <qmultilineedit.h>
 #include <qspinbox.h>
+#include <qcombobox.h>
 #include <TAAWidget.h>
 
 class PKG_General : public TAAWidget
@@ -60,8 +61,9 @@ protected:
     QCheckBox       *isActive;
     QCheckBox       *showIncluded;
     QCheckBox       *isPrivate;
-    QPushButton     *saveButton;
+    QComboBox       *glAccount;
     QSpinBox        *numMailboxes;
+    QPushButton     *saveButton;
 
 protected slots:
     void            checkForSave(void);
@@ -70,6 +72,7 @@ protected slots:
     virtual void    activeChanged(bool)             { checkForSave(); }
     virtual void    privateChanged(bool)            { checkForSave(); }
     virtual void    showIncludedChanged(bool)       { checkForSave(); }
+    virtual void    glAccountChanged(int)           { checkForSave(); }
     virtual void    save();
     void            numMailboxesChanged(int)        { checkForSave(); }
     
@@ -80,7 +83,9 @@ private:
     int         intItemActive;
     int         intItemPrivate;
     int         intShowIncluded;
+    int         intGLAccount;
     int         intNumMailboxes;
+    int         *glAcctIDX;
     
 
 signals:

@@ -17,7 +17,9 @@
 #include <qlayout.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <TAATools.h>
 #include <ADB.h>
+#include <GLAccountTypes.h>
 #include <ChartOfAccounts.h>
 #include <GenLedger.h>
 #include <GLAccountEditor.h>
@@ -38,6 +40,10 @@ ChartOfAccounts::ChartOfAccounts
     options->insertItem("New", this, SLOT(newAccount()), CTRL+Key_N);
     options->insertItem("Edit", this, SLOT(editAccount()), CTRL+Key_E);
     options->insertItem("Delete", this, SLOT(deleteAccount()), CTRL+Key_D);
+    if (isAdmin()) {
+        options->insertSeparator();
+        options->insertItem("Edit GL Account Types", this, SLOT(editAccountTypes()));
+    }
     options->insertSeparator();
     options->insertItem("Close", this, SLOT(Hide()), CTRL+Key_C);
     
@@ -223,3 +229,13 @@ void ChartOfAccounts::deleteAccount()
     }
 }
 
+/**
+ * editAccountTypes()
+ *
+ * Brings up the GL Account Type list.
+ */
+void ChartOfAccounts::editAccountTypes()
+{
+    GLAccountTypes   *glatl = new GLAccountTypes();
+    glatl->show();
+}

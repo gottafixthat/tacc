@@ -162,12 +162,16 @@ MakeDeposits::MakeDeposits
     // Fill our account list.
     ADB     DB;
     int     tmpPos = 0;
-    DB.query("select AccountNo, AcctName from Accounts order by AccountNo");
+    DB.query("select IntAccountNo, AccountNo, AcctName from Accounts order by AccountNo");
     accountIDX = new long[DB.rowCount+2];
     accountIDX[0] = 0;
+    QString tmpStr;
     if (DB.rowCount) while (DB.getrow()) {
-        accountIDX[tmpPos++] = atol(DB.curRow["AccountNo"]);
-        targetAccountList->insertItem(DB.curRow["AcctName"]);
+        accountIDX[tmpPos++] = atol(DB.curRow["IntAccountNo"]);
+        tmpStr = DB.curRow["AccountNo"];
+        tmpStr += " ";
+        tmpStr += DB.curRow["AcctName"];
+        targetAccountList->insertItem(tmpStr);
     }
     
     selTotal = 0.00;
@@ -194,7 +198,7 @@ void MakeDeposits::fillDepositList()
     strcpy(tmpStr, cfgVal("UndepositedFundsAccount"));
     
     emit(setStatus("Creating undeposited funds list..."));
-    DB.query("select GL.InternalID, GL.TransDate, GL.Amount, AcctsRecv.RefNo, AcctsRecv.CustomerID, Customers.FullName from GL, AcctsRecv, Customers where GL.AccountNo = 9200 and GL.TransType = 2 and AcctsRecv.InternalID = GL.TransTypeLink and AcctsRecv.RefNo > 0 and Customers.CustomerID = AcctsRecv.CustomerID and GL.Cleared = 0");
+    DB.query("select GL.InternalID, GL.TransDate, GL.Amount, AcctsRecv.RefNo, AcctsRecv.CustomerID, Customers.FullName from GL, AcctsRecv, Customers where GL.IntAccountNo = %d and GL.TransType = 2 and AcctsRecv.InternalID = GL.TransTypeLink and AcctsRecv.RefNo > 0 and Customers.CustomerID = AcctsRecv.CustomerID and GL.Cleared = 0", atoi(cfgVal("UndepositedFundsAcct")));
     //DB.query("select * from GL where AccountNo = %d and LinkedTrans = 0", atoi(tmpStr));
     
     if (DB.rowCount) while (DB.getrow()) {
@@ -258,7 +262,7 @@ void MakeDeposits::processSelections()
     }
     // Add the first half of our split
     GL->AddSplit();
-    GL->CurrentSplit->AccountNo.setNum(srcAcct);
+    GL->CurrentSplit->IntAccountNo.setNum(srcAcct);
     GL->CurrentSplit->Amount.setNum(selTotal * -1.0);
     GL->CurrentSplit->TransType.setNum(TRANSTYPE_DEPOSIT);
     GL->CurrentSplit->TransTypeLink.setNum(0);
@@ -276,7 +280,7 @@ void MakeDeposits::processSelections()
 
     // Now, setup the other "half" of our transaction.
     GL->AddSplit();
-    GL->CurrentSplit->AccountNo.setNum(dstAcct);
+    GL->CurrentSplit->IntAccountNo.setNum(dstAcct);
     GL->CurrentSplit->Amount.setNum(selTotal);
     GL->CurrentSplit->TransType.setNum(TRANSTYPE_DEPOSIT);
     GL->CurrentSplit->TransTypeLink.setNum(0);

@@ -81,14 +81,18 @@ GenJournalEntry::GenJournalEntry
 		YPos += 20;
 	}
 	
-	DB.query("select AccountNo, AcctName from Accounts order by AcctType, AcctName");
+	DB.query("select IntAccountNo, AccountNo, AcctName from Accounts order by AccountNo, AcctName");
 	acctNoIndex = new(int[DB.rowCount + 1]);
 	int indexPtr = 0;
 	acctNoIndex[indexPtr++] = 0;
+    QString tmpStr;
 	while(DB.getrow()) {
-		acctNoIndex[indexPtr++] = atoi(DB.curRow["AccountNo"]);
+		acctNoIndex[indexPtr++] = atoi(DB.curRow["IntAccountNo"]);
 		for (int i = 0; i < GJELINES; i++) {
-			accounts[i]->insertItem(DB.curRow["AcctName"]);
+            tmpStr = DB.curRow["AccountNo"];
+            tmpStr += " ";
+            tmpStr += DB.curRow["AcctName"];
+			accounts[i]->insertItem(tmpStr);
 		}
 	}
 	// Plug today's date into the form.
@@ -167,7 +171,7 @@ void GenJournalEntry::saveEntry()
 	    			}
 	    			// Should be good.
 	    			glDB.CurrentSplit->TransDate = tmpDate;
-	    			glDB.CurrentSplit->AccountNo.setNum(acctNoIndex[accounts[i]->currentItem()]);
+	    			glDB.CurrentSplit->IntAccountNo.setNum(acctNoIndex[accounts[i]->currentItem()]);
 	    			glDB.CurrentSplit->Amount.setNum(tmpAmt);
 	    			glDB.CurrentSplit->Memo = memos[i]->text();
 	    			//glDB.insTrans();

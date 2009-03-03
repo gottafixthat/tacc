@@ -633,7 +633,7 @@ BillingCyclesDB::~BillingCyclesDB()
 // get()       - Gets a record from the database using the
 //               specified cycleID.
 //
-// Args        - int AcctNo - the AccountNo of the record
+// Args        - int internalID - The Internal ID of the billing cycle.
 //
 // Returns     - 0 on failure, 1 on success
 //
@@ -804,7 +804,7 @@ int BillingCyclesDB::upd(void)
 //
 // del()       - Deletes a record in the database.
 //
-// Args        - The AccountNo to delete.
+// Args        - The billing cycle to delete
 //
 // Returns     - -1 on failure, 0 on success
 //
