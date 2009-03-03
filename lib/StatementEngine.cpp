@@ -1152,13 +1152,23 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
             tpl->parse(blockPrefix.ascii());
         }
     }
+    
+    // Get the previous statement date.
+    DB.query("select StatementDate from Statements where StatementNo <> %d order by StatementDate desc limit 1", statementNo);
+    if (DB.rowCount) {
+        DB.getrow();
+        QDate   prevBalDate = QDate::fromString(DB.curRow["StatementDate"], Qt::ISODate);
+        tpl->assign("PreviousBalanceDate", prevBalDate.toString(cfgVal("LatexDateFormat")));
+    } else {
+        tpl->assign("PreviousBalanceDate", "N/A");
+    }
 
     // Parse the main body items
     sprintf(stStr, "%d", statementNo);
     sprintf(cidStr, "%ld", STDB.getLong("CustomerID"));
     tmpDate = QDate::fromString(STDB.getStr("DueDate"), Qt::ISODate);
     QString balFwd;
-    balFwd = balFwd.sprintf("%.2f", (float) STDB.getFloat("PrevBalance") - STDB.getFloat("Credits"));
+    balFwd = balFwd.sprintf("%.2f", (float) STDB.getFloat("PrevBalance") + STDB.getFloat("Credits"));
     tpl->assign("StatementDate",    stDate.toString(cfgVal("LatexDateFormat")));
     tpl->assign("StatementNumber",  stStr);
     tpl->assign("CustomerID",       cidStr);
