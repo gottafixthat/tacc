@@ -1157,6 +1157,8 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     sprintf(stStr, "%d", statementNo);
     sprintf(cidStr, "%ld", STDB.getLong("CustomerID"));
     tmpDate = QDate::fromString(STDB.getStr("DueDate"), Qt::ISODate);
+    QString balFwd;
+    balFwd = balFwd.sprintf("%.2f", (float) STDB.getFloat("PrevBalance") - STDB.getFloat("Credits"));
     tpl->assign("StatementDate",    stDate.toString(cfgVal("LatexDateFormat")));
     tpl->assign("StatementNumber",  stStr);
     tpl->assign("CustomerID",       cidStr);
@@ -1170,6 +1172,7 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     tpl->assign("DueDate",          tmpDate.toString(cfgVal("LatexDateFormat")));
     tpl->assign("PreviousBalance",  STDB.getStr("PrevBalance"));
     tpl->assign("Credits",          STDB.getStr("Credits"));
+    tpl->assign("BalanceForward",   balFwd.ascii());
     tpl->assign("FinaceRate",       STDB.getStr("FinanceRate"));
     tpl->assign("FinaceCharge",     STDB.getStr("FinanceCharge"));
     tpl->assign("NewCharges",       STDB.getStr("NewCharges"));
