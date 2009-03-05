@@ -1,19 +1,15 @@
-/**************************************************************************
-**
-** SalesReports - Creates reports on sales statistics.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2006, R. Marc Lewis and Avvanta Communications Corp.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/**
+ * SalesReports.h - Reports for Billable Items and packages.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include "SalesReports.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +19,9 @@
 
 #include <BlargDB.h>
 #include <BString.h>
+#include <TAATools.h>
 
+#include "SalesReports.h"
 
 salesByServiceReport::salesByServiceReport
 (
@@ -42,17 +40,7 @@ salesByServiceReport::salesByServiceReport
 	
     // When starting out, do this month.
     allowDates(REP_ALLDATES);
-    QDate   curDate = QDate::currentDate();
-    QDate   dayFirst;
-    QDate   dayLast;
-
-    dayFirst.setYMD(curDate.year(), curDate.month(), 1);
-    dayLast.setYMD(curDate.year(), curDate.month(), curDate.daysInMonth());
-
-    startDateCal->setDate(dayFirst);
-    endDateCal->setDate(dayLast);
-    dateList->setCurrentText("This Month");
-
+    setDateRange(d_thisMonth);
 
     allowFilters(0);
 	refreshReport();
@@ -87,9 +75,11 @@ void salesByServiceReport::refreshReport()
         //DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         //sprintf(tmpStr, "%5d", DB2.rowCount);
         if (atof(DB.curRow[2]) > 0.0) {
-            QListViewItem *curItem = new QListViewItem(repBody, 
+            new QListViewItem(repBody, 
                     DB.curRow[1], 
-                    DB.curRow[2]
+                    DB.curRow[2],
+                    DB.curRow[0],    // The Item ID
+                    "0"              // isPackage
                     );
             grandTotal += atof(DB.curRow[2]);
         }
@@ -102,9 +92,11 @@ void salesByServiceReport::refreshReport()
         //sprintf(tmpStr, "%5d", DB2.rowCount);
         sprintf(tmpStr, "%s - Package", DB.curRow[1]);
         if (atof(DB.curRow[2]) > 0.0) {
-            QListViewItem *curItem = new QListViewItem(repBody, 
+            new QListViewItem(repBody, 
                     tmpStr,
-                    DB.curRow[2]
+                    DB.curRow[2],
+                    DB.curRow["PackageItem"],   // The Package ID
+                    "1"                         // isPackage
                     );
             grandTotal += atof(DB.curRow[2]);
         }
@@ -124,6 +116,9 @@ void salesByServiceReport::refreshReport()
         }
     }
 
+    sprintf(tmpStr, "%.2f", grandTotal);
+    new QListViewItem(repBody, "Total", tmpStr);
+
     sprintf(tmpStr, "Sales by Service\n%02d-%02d-%04d through %02d-%02d-%04d, $%.2f", sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day(), grandTotal);
 	setTitle(tmpStr);
 
@@ -139,10 +134,143 @@ void salesByServiceReport::refreshReport()
 void salesByServiceReport::listItemSelected(QListViewItem *curItem)
 {
     if (curItem != NULL) {
-        //AsteriskCDRDetail *add = new AsteriskCDRDetail();
-        //add->setDomainType(atoi(curItem->key(2,0)));
-        //add->show();
+        if (curItem->key(2,0).length()) {
+            salesByServiceDetailReport *detRep = new salesByServiceDetailReport();
+            detRep->setStartDate(startDate());
+            detRep->setEndDate(endDate());
+            detRep->setBillableItem(atoi(curItem->key(2,0)), atoi(curItem->key(3,0)));
+            detRep->show();
+        }
     }
+}
+
+/**
+ * salesByServiceDetailReport()
+ *
+ * Constructor.
+ */
+salesByServiceDetailReport::salesByServiceDetailReport(QWidget *parent, const char *name)
+	: Report( parent, name )
+{
+	setCaption( "Sales Detail Report" );
+	setTitle("Sales Detail Report");
+	
+    int c = 0;
+	repBody->setColumnText(0, "Date");      repBody->setColumnAlignment(c++, AlignLeft);
+    repBody->addColumn("Amount");           repBody->setColumnAlignment(c++, AlignRight);
+    repBody->addColumn("Cust ID");          repBody->setColumnAlignment(c++, AlignLeft);
+    custIDCol = c - 1;
+	repBody->addColumn("Customer Name");    repBody->setColumnAlignment(c++, AlignLeft);
+	repBody->addColumn("Company");          repBody->setColumnAlignment(c++, AlignLeft);
+	repBody->addColumn("Statement");        repBody->setColumnAlignment(c++, AlignLeft);
+	
+    // When starting out, do this month.
+    allowDates(REP_ALLDATES);
+    setDateRange(d_thisMonth);
+    myBillableID = 0;
+
+    allowFilters(0);
+}
+
+/**
+ * ~salesByServiceDetailReport
+ *
+ * Destructor.
+ */
+salesByServiceDetailReport::~salesByServiceDetailReport()
+{
+}
+
+/**
+ * setBillableItem()
+ *
+ * Sets the billable item ID that we will display.
+ */
+void salesByServiceDetailReport::setBillableItem(long billableID, int isPackage)
+{
+    myBillableID = billableID;
+    myIsPackage = isPackage;
+    if (myBillableID) refreshReport();
+}
+
+/**
+ * refreshReport()
+ *
+ * Fills the report body with data.
+ */
+void salesByServiceDetailReport::refreshReport()
+{
+    repBody->clear();
+    if (!myBillableID) return;
+
+    ADB     DB;
+    QDate   sDate = this->startDateCal->date();
+    QDate   eDate = this->endDateCal->date();
+    QString companyName;
+    QString customerName;
+    QString tmpStr;
+    double  grandTotal = 0.00;
+
+    QApplication::setOverrideCursor(waitCursor);
+
+    if (myIsPackage) {
+        PackagesDB  PDB;
+        PDB.get(myBillableID);
+        tmpStr = tmpStr.sprintf("Sales Detail Report\n%s (Package)\n%s - %s", PDB.getStr("Description"), sDate.toString("yyyy-MM-dd").ascii(), eDate.toString("yyyy-MM-dd").ascii());
+        setTitle(tmpStr);
+
+        debug(1,"select AcctsRecv.TransDate, AcctsRecv.PackageItem, Packages.InternalID, Packages.PackageTag, AcctsRecv.Amount, Customers.CustomerID, Customers.FullName, Customers.ContactName from AcctsRecv, Packages, Customers where Packages.InternalID = AcctsRecv.PackageItem and AcctsRecv.TransType = 0 and AcctsRecv.ItemID = %d and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' and Customers.CustomerID = AcctsRecv.CustomerID order by Customers.CustomerID\n", myBillableID, sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
+        DB.query("select AcctsRecv.TransDate, AcctsRecv.PackageItem, Packages.InternalID, Packages.PackageTag, AcctsRecv.Amount, Customers.CustomerID, Customers.FullName, Customers.ContactName from AcctsRecv, Packages, Customers where Packages.InternalID = AcctsRecv.PackageItem and AcctsRecv.TransType = 0 and AcctsRecv.PackageItem = %d and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' and Customers.CustomerID = AcctsRecv.CustomerID order by Customers.CustomerID", myBillableID, sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
+
+    } else {
+        // Get the title.
+        BillablesDB BDB;
+        BDB.get(myBillableID);
+        tmpStr = tmpStr.sprintf("Sales Detail Report\n%s\n%s - %s", BDB.getStr("Description"), sDate.toString("yyyy-MM-dd").ascii(), eDate.toString("yyyy-MM-dd").ascii());
+        setTitle(tmpStr);
+
+        // Two queries, one for standalone billables, one for packages.
+        DB.query("select AcctsRecv.TransDate, AcctsRecv.ItemID, Billables.ItemID, AcctsRecv.Amount, AcctsRecv.StatementNo, Customers.CustomerID, Customers.FullName, Customers.ContactName from AcctsRecv, Billables, Customers where Billables.ItemNumber = AcctsRecv.ItemID and AcctsRecv.TransType = 0 and AcctsRecv.ItemID = %d and AcctsRecv.PackageItem = 0 and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' and Customers.CustomerID = AcctsRecv.CustomerID order by Customers.CustomerID", myBillableID, sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
+    }
+    // Both queries return compatible result sets for a single pass
+    // through the returned rows.
+    if (DB.rowCount) while (DB.getrow()) {
+        customerName = "";
+        companyName  = "";
+        // Check for a company name.
+        if (strlen(DB.curRow["ContactName"])) {
+            customerName = DB.curRow["ContactName"];
+            companyName  = DB.curRow["FullName"];
+        } else {
+            customerName = DB.curRow["FullName"];
+        }
+        new QListViewItem(repBody, 
+                DB.curRow["TransDate"],
+                DB.curRow["Amount"], 
+                DB.curRow["CustomerID"],
+                customerName,
+                companyName,
+                DB.curRow["StatementNo"]
+                );
+        grandTotal += atof(DB.curRow["Amount"]);
+    }
+    tmpStr = tmpStr.sprintf("%.2f", grandTotal);
+    new QListViewItem(repBody, "Total", tmpStr);
+
+    QApplication::restoreOverrideCursor();
+}
+
+/**
+ * listItemSelected()
+ *
+ * Gets called when the user double clicks an item in the report.
+ */
+void salesByServiceDetailReport::listItemSelected(QListViewItem *curItem)
+{
+    if (!curItem) return;
+    QString custID;
+    custID = curItem->key(custIDCol, 0);
+    if (custID.length()) emit(openCustomer(custID.toInt()));
 }
 
 
