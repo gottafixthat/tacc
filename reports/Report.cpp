@@ -723,10 +723,6 @@ void Report::setDateRange(repDates newRange)
     int     thisMonth = today.month();
     
     switch(newRange) {
-        case d_thisMonth:
-            myStartDate.setYMD(today.year(), today.month(), 1);
-            myEndDate.setYMD(today.year(), today.month(), today.daysInMonth());
-            break;
         case d_lastMonth:
             if (today.month() == 1) {
                 today.setYMD(today.year()-1, 12, 1);
@@ -735,32 +731,39 @@ void Report::setDateRange(repDates newRange)
             }
             myStartDate.setYMD(today.year(), today.month(), 1);
             myEndDate.setYMD(today.year(), today.month(), today.daysInMonth());
+            dateList->setCurrentText("Last Month");
             break;
         case d_today:
             myStartDate.setYMD(today.year(), today.month(), today.day());
             myEndDate.setYMD(today.year(), today.month(), today.day());
+            dateList->setCurrentText("Today");
             break;
         case d_yesterday:
             myStartDate.setYMD(yest.year(), yest.month(), yest.day());
             myEndDate.setYMD(yest.year(), yest.month(), yest.day());
+            dateList->setCurrentText("Yesterday");
             break;
         case d_thisWeek:
             myStartDate.setYMD(weekStart.year(), weekStart.month(), weekStart.day());
             myEndDate.setYMD(weekEnd.year(), weekEnd.month(), weekEnd.day());
+            dateList->setCurrentText("This Week");
             break;
         case d_lastWeek:
             weekStart = today.addDays(((today.dayOfWeek() - 1) * -1) - 7);
             weekEnd   = weekStart.addDays(6);
             myStartDate.setYMD(weekStart.year(), weekStart.month(), weekStart.day());
             myEndDate.setYMD(weekEnd.year(), weekEnd.month(), weekEnd.day());
+            dateList->setCurrentText("Last Week");
             break;
         case d_thisYear:
             myStartDate.setYMD(today.year(), 1, 1);
             myEndDate.setYMD(today.year(), 12, 31);
+            dateList->setCurrentText("This Year");
             break;
         case d_lastYear:
             myStartDate.setYMD(today.year()-1, 1, 1);
             myEndDate.setYMD(today.year()-1, 12, 31);
+            dateList->setCurrentText("Last Year");
             break;
         case d_thisQuarter:
             // This one is trickier.  We have to figure out what month we are
@@ -793,6 +796,7 @@ void Report::setDateRange(repDates newRange)
                     break;
                     
             }
+            dateList->setCurrentText("This Quarter");
             break;
         case d_lastQuarter:
             // This one is trickier still.  We have to figure out what month 
@@ -826,15 +830,17 @@ void Report::setDateRange(repDates newRange)
                     myEndDate.setYMD(today.year(), 9, 30);
                     break;
             }
+            dateList->setCurrentText("Last Quarter");
             break;
         default:
+        case d_thisMonth:
+            myStartDate.setYMD(today.year(), today.month(), 1);
+            myEndDate.setYMD(today.year(), today.month(), today.daysInMonth());
+            dateList->setCurrentText("This Month");
             break;
     }
     
-    char    dateStr[1024];
-    sprintf(dateStr, "%02d/%02d/%04d", myStartDate.month(), myStartDate.day(), myStartDate.year());
     startDateCal->setDate(myStartDate);
-    sprintf(dateStr, "%02d/%02d/%04d", myEndDate.month(), myEndDate.day(), myEndDate.year());
     endDateCal->setDate(myEndDate);
 }
 

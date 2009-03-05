@@ -39,4 +39,25 @@ public slots:
     virtual void    listItemSelected(QListViewItem *curItem);
     
 };
+
+class salesByServiceDetailReport : public Report
+{
+    Q_OBJECT
+
+public:
+
+    salesByServiceDetailReport(QWidget *parent = NULL, const char *name = NULL);
+    virtual ~salesByServiceDetailReport();
+
+    virtual void setBillableItem(long billableID, int isPackage = 0);
+    virtual void refreshReport();
+
+public slots:
+    virtual void listItemSelected(QListViewItem *curItem);
+
+protected:
+    int     custIDCol;
+    long    myBillableID;
+    int     myIsPackage;
+};
 #endif // SalesReports_included
