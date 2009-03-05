@@ -93,6 +93,12 @@ MakeDeposits::MakeDeposits
 
     targetAccountList = new QComboBox(false, this, "targetAccountList");
 
+    QLabel  *transDateLabel = new QLabel(this, "transDateLabel");
+    transDateLabel->setText("Desposit Date:");
+    transDateLabel->setAlignment(AlignRight | AlignVCenter);
+
+    transDate = new QDateEdit(QDate::currentDate(), this, "transDate");
+
     // Our buttons now.
     QPushButton *selectAllButton = new QPushButton(this, "selectAllButton");
     selectAllButton->setText("Select &All");
@@ -132,6 +138,9 @@ MakeDeposits::MakeDeposits
     asl->setRowStretch(curRow++, 0);
     asl->addWidget(targetAccountLabel,              curRow, 0);
     asl->addWidget(targetAccountList,               curRow, 1);
+    asl->setRowStretch(curRow++, 0);
+    asl->addWidget(transDateLabel,                  curRow, 0);
+    asl->addWidget(transDate,                       curRow, 1);
     asl->setRowStretch(curRow++, 0);
 
     // Now, put the account selection layout into a box so it stretches
@@ -234,6 +243,10 @@ void MakeDeposits::processSelections()
     GenLedger   *GL = new GenLedger();
     int         srcAcct, dstAcct = 0;
     ADB         DB;
+    QDate       selDate = transDate->date();
+    char        tDate[1024];
+
+    strcpy(tDate, selDate.toString("yyyy-MM-dd").ascii());
 
     // Setup the base GL transaction
     GL->BaseDesc = "Deposit";
@@ -266,16 +279,16 @@ void MakeDeposits::processSelections()
     GL->CurrentSplit->Amount.setNum(selTotal * -1.0);
     GL->CurrentSplit->TransType.setNum(TRANSTYPE_DEPOSIT);
     GL->CurrentSplit->TransTypeLink.setNum(0);
-    GL->CurrentSplit->TransDate = timeToStr(rightNow(), YYYY_MM_DD);
-    GL->CurrentSplit->BilledDate = timeToStr(rightNow(), YYYY_MM_DD);
-    GL->CurrentSplit->DueDate = timeToStr(rightNow(), YYYY_MM_DD);
+    GL->CurrentSplit->TransDate = selDate.toString("yyyy-MM-dd");
+    GL->CurrentSplit->BilledDate = selDate.toString("yyyy-MM-dd");
+    GL->CurrentSplit->DueDate = selDate.toString("yyyy-MM-dd");
     GL->CurrentSplit->Cleared.setNum(0);
     GL->CurrentSplit->Number.setNum(0);
     GL->CurrentSplit->NumberStr = "";
     GL->CurrentSplit->ItemID.setNum(0);
     GL->CurrentSplit->Quantity.setNum(1);
     GL->CurrentSplit->Price.setNum(selTotal);
-    sprintf(tmpStr, "Deposit of $%.2f on %s", selTotal, timeToStr(rightNow(), YYYY_MM_DD));
+    sprintf(tmpStr, "Deposit of $%.2f on %s", selTotal, selDate.toString("yyyy-MM-dd").ascii());
     GL->CurrentSplit->Memo = tmpStr;
 
     // Now, setup the other "half" of our transaction.
@@ -284,16 +297,16 @@ void MakeDeposits::processSelections()
     GL->CurrentSplit->Amount.setNum(selTotal);
     GL->CurrentSplit->TransType.setNum(TRANSTYPE_DEPOSIT);
     GL->CurrentSplit->TransTypeLink.setNum(0);
-    GL->CurrentSplit->TransDate = timeToStr(rightNow(), YYYY_MM_DD);
-    GL->CurrentSplit->BilledDate = timeToStr(rightNow(), YYYY_MM_DD);
-    GL->CurrentSplit->DueDate = timeToStr(rightNow(), YYYY_MM_DD);
+    GL->CurrentSplit->TransDate = selDate.toString("yyyy-MM-dd").ascii();
+    GL->CurrentSplit->BilledDate = selDate.toString("yyyy-MM-dd").ascii();
+    GL->CurrentSplit->DueDate = selDate.toString("yyyy-MM-dd").ascii();
     GL->CurrentSplit->Cleared.setNum(0);
     GL->CurrentSplit->Number.setNum(0);
     GL->CurrentSplit->NumberStr = "0";
     GL->CurrentSplit->ItemID.setNum(0);
     GL->CurrentSplit->Quantity.setNum(1);
     GL->CurrentSplit->Price.setNum(selTotal);
-    sprintf(tmpStr, "Deposit of $%.2f on %s", selTotal, timeToStr(rightNow(), YYYY_MM_DD));
+    sprintf(tmpStr, "Deposit of $%.2f on %s", selTotal, selDate.toString("yyyy-MM-dd").ascii());
     GL->CurrentSplit->Memo = tmpStr;
 
     // Finally, save the entire transaction.
