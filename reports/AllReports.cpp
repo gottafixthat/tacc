@@ -33,6 +33,7 @@ AllReports::AllReports
         billingReports->insertItem("Check Payments", this, SLOT(showCheckPaymentsReport()));
 
         reportMenu->insertItem("&Billing Reports", billingReports);
+        reportMenu->insertItem("G&eneral Ledger", this, SLOT(showGeneralLedgerReport()));
     }
     
     // DNS/Domain reports
@@ -297,6 +298,20 @@ void AllReports::showCheckPaymentsReport()
     emit(setStatus("Generating report..."));
     CheckPaymentsReport  *rep;
     rep = new CheckPaymentsReport();
+    rep->show();
+    emit(setStatus(""));
+}
+
+/**
+ * showGeneralLedgerReport()
+ *
+ * Creates a GeneralLedger report.
+ */
+void AllReports::showGeneralLedgerReport()
+{
+    emit(setStatus("Generating report..."));
+    GeneralLedgerReport  *rep;
+    rep = new GeneralLedgerReport();
     rep->show();
     emit(setStatus(""));
 }

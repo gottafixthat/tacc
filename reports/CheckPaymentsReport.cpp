@@ -18,6 +18,7 @@
 #include <mcve.h>
 #include <TAATools.h>
 #include <BString.h>
+#include <Cfg.h>
 
 /**
  * CheckPaymentsReport()
@@ -82,7 +83,7 @@ void CheckPaymentsReport::refreshReport()
     QString     eDate = endDate().toString("yyyy-MM-dd");
 
     // Create our query.
-    DB.query("select GL.InternalID, GL.TransDate, GL.Amount, GL.Memo, AcctsRecv.RefNo, AcctsRecv.CustomerID, Customers.FullName, Customers.ContactName from GL, AcctsRecv, Customers where GL.AccountNo = 9200 and GL.TransType = 2 and AcctsRecv.InternalID = GL.TransTypeLink and AcctsRecv.RefNo > 0 and Customers.CustomerID = AcctsRecv.CustomerID and GL.TransDate >= '%s' and GL.TransDate <= '%s'", sDate.ascii(), eDate.ascii());
+    DB.query("select GL.InternalID, GL.TransDate, GL.Amount, GL.Memo, AcctsRecv.RefNo, AcctsRecv.CustomerID, Customers.FullName, Customers.ContactName from GL, AcctsRecv, Customers where GL.IntAccountNo = %d and GL.TransType = 2 and AcctsRecv.InternalID = GL.TransTypeLink and AcctsRecv.RefNo > 0 and Customers.CustomerID = AcctsRecv.CustomerID and GL.TransDate >= '%s' and GL.TransDate <= '%s'", atoi(cfgVal("UndepositedFundsAcct")), sDate.ascii(), eDate.ascii());
 
     if (DB.rowCount) {
         while(DB.getrow()) {

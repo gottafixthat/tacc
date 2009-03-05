@@ -40,4 +40,18 @@ struct customerContactRecord {
 
 typedef QList<customerContactRecord> customerContactList;
 
+// Chart of accounts
+struct glAccountRecord {
+    int     intAccountNo;
+    QString accountNo;
+    QString acctName;
+    int     parentID;
+    int     accountType;
+    QString accountTypeName;
+    QString providerAccountNo;
+    QString taxLine;
+    double  balance;
+    ulong   transCount;
+};
+
 #endif

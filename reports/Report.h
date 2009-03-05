@@ -58,6 +58,8 @@
 #define REP_GENERATE  128
 #define REP_ALLDATES  255
 
+typedef enum { d_thisMonth, d_lastMonth, d_today, d_yesterday, d_thisWeek, d_lastWeek, d_thisYear, d_lastYear, d_thisQuarter, d_lastQuarter} repDates;
+
 
 class EmailReportDialog : public QDialog
 {
@@ -96,6 +98,7 @@ public:
     QDate endDate(); 
     void  setStartDate(const QDate newDate);
     void  setEndDate(const QDate newDate);
+    void  setDateRange(repDates newRange);
     
     void  allowDates(int newSetting);
     void  allowFilters(int newSetting);
