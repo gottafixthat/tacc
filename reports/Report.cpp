@@ -614,7 +614,7 @@ void Report::emailReport()
     // Now, get the longest item for each of the keys.
     QListViewItem   *curItem;
     for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
-        for (int i = 0; i < numCols; i++) {
+        for (uint i = 0; i < numCols; i++) {
             if (curItem->key(i, 0).length() > colWidths[i]) {
                 colWidths[i] = curItem->key(i, 0).length();
             }
@@ -708,123 +708,127 @@ void Report::emailReport()
 
 }
 
-/*
-** dateRangeSelected  - Changes the dates in the date spinboxes when the
-**                      user selects a text description of a date range.
-*/
-
-void Report::dateRangeSelected(const char *newRange)
+/**
+ * setDateRange()
+ *
+ * Given a report_DateRanges this sets the start and end dates to
+ * that range.
+ */
+void Report::setDateRange(repDates newRange)
 {
     QDate   today = QDate::currentDate();
+    QDate   yest = today.addDays(-1);
+    QDate   weekStart = today.addDays(((today.dayOfWeek() - 1) * -1));
+    QDate   weekEnd   = weekStart.addDays(6);
+    int     thisMonth = today.month();
     
-    if (!strcmp("This Month", newRange)) {
-        myStartDate.setYMD(today.year(), today.month(), 1);
-        myEndDate.setYMD(today.year(), today.month(), today.daysInMonth());
-    }
-    if (!strcmp("Last Month", newRange)) {
-        if (today.month() == 1) {
-            today.setYMD(today.year()-1, 12, 1);
-        } else {
-            today.setYMD(today.year(), today.month()-1, 1);
-        }
-        myStartDate.setYMD(today.year(), today.month(), 1);
-        myEndDate.setYMD(today.year(), today.month(), today.daysInMonth());
-    }
-    if (!strcmp("Today", newRange)) {
-        myStartDate.setYMD(today.year(), today.month(), today.day());
-        myEndDate.setYMD(today.year(), today.month(), today.day());
-    }
-    if (!strcmp("Yesterday", newRange)) {
-        QDate yest = today.addDays(-1);
-        myStartDate.setYMD(yest.year(), yest.month(), yest.day());
-        myEndDate.setYMD(yest.year(), yest.month(), yest.day());
-    }
-    if (!strcmp("This Week", newRange)) {
-        QDate weekStart = today.addDays(((today.dayOfWeek() - 1) * -1));
-        QDate weekEnd   = weekStart.addDays(6);
-        myStartDate.setYMD(weekStart.year(), weekStart.month(), weekStart.day());
-        myEndDate.setYMD(weekEnd.year(), weekEnd.month(), weekEnd.day());
-    }
-    if (!strcmp("Last Week", newRange)) {
-        QDate weekStart = today.addDays(((today.dayOfWeek() - 1) * -1) - 7);
-        QDate weekEnd   = weekStart.addDays(6);
-        myStartDate.setYMD(weekStart.year(), weekStart.month(), weekStart.day());
-        myEndDate.setYMD(weekEnd.year(), weekEnd.month(), weekEnd.day());
-    }
-    if (!strcmp("This Year", newRange)) {
-        myStartDate.setYMD(today.year(), 1, 1);
-        myEndDate.setYMD(today.year(), 12, 31);
-    }
-    if (!strcmp("Last Year", newRange)) {
-        myStartDate.setYMD(today.year()-1, 1, 1);
-        myEndDate.setYMD(today.year()-1, 12, 31);
-    }
-    if (!strcmp("This Quarter", newRange)) {
-        // This one is trickier.  We have to figure out what month we are
-        // in and then set the date accordingly.
-        int thisMonth = today.month();
-        switch (thisMonth) {
-            case 1:         // First quarter.
-            case 2:
-            case 3:
-                myStartDate.setYMD(today.year(), 1, 1);
-                myEndDate.setYMD(today.year(), 3, 31);
-                break;
-                
-            case 4:         // Second quarter.
-            case 5:
-            case 6:
-                myStartDate.setYMD(today.year(), 4, 1);
-                myEndDate.setYMD(today.year(), 6, 30);
-                break;
-                
-            case 7:         // Third quarter.
-            case 8:
-            case 9:
-                myStartDate.setYMD(today.year(), 7, 1);
-                myEndDate.setYMD(today.year(), 9, 30);
-                break;
-                
-            default:        // Last Quarter
-                myStartDate.setYMD(today.year(), 10, 1);
-                myEndDate.setYMD(today.year(), 12, 31);
-                break;
-                
-        }
-    }
-    if (!strcmp("Last Quarter", newRange)) {
-        // This one is trickier still.  We have to figure out what month 
-        // quarter we are in, and then subtract three months from it.
-        // in and then set the date accordingly.
-        int thisMonth = today.month();
+    switch(newRange) {
+        case d_thisMonth:
+            myStartDate.setYMD(today.year(), today.month(), 1);
+            myEndDate.setYMD(today.year(), today.month(), today.daysInMonth());
+            break;
+        case d_lastMonth:
+            if (today.month() == 1) {
+                today.setYMD(today.year()-1, 12, 1);
+            } else {
+                today.setYMD(today.year(), today.month()-1, 1);
+            }
+            myStartDate.setYMD(today.year(), today.month(), 1);
+            myEndDate.setYMD(today.year(), today.month(), today.daysInMonth());
+            break;
+        case d_today:
+            myStartDate.setYMD(today.year(), today.month(), today.day());
+            myEndDate.setYMD(today.year(), today.month(), today.day());
+            break;
+        case d_yesterday:
+            myStartDate.setYMD(yest.year(), yest.month(), yest.day());
+            myEndDate.setYMD(yest.year(), yest.month(), yest.day());
+            break;
+        case d_thisWeek:
+            myStartDate.setYMD(weekStart.year(), weekStart.month(), weekStart.day());
+            myEndDate.setYMD(weekEnd.year(), weekEnd.month(), weekEnd.day());
+            break;
+        case d_lastWeek:
+            weekStart = today.addDays(((today.dayOfWeek() - 1) * -1) - 7);
+            weekEnd   = weekStart.addDays(6);
+            myStartDate.setYMD(weekStart.year(), weekStart.month(), weekStart.day());
+            myEndDate.setYMD(weekEnd.year(), weekEnd.month(), weekEnd.day());
+            break;
+        case d_thisYear:
+            myStartDate.setYMD(today.year(), 1, 1);
+            myEndDate.setYMD(today.year(), 12, 31);
+            break;
+        case d_lastYear:
+            myStartDate.setYMD(today.year()-1, 1, 1);
+            myEndDate.setYMD(today.year()-1, 12, 31);
+            break;
+        case d_thisQuarter:
+            // This one is trickier.  We have to figure out what month we are
+            // in and then set the date accordingly.
+            switch (thisMonth) {
+                case 1:         // First quarter.
+                case 2:
+                case 3:
+                    myStartDate.setYMD(today.year(), 1, 1);
+                    myEndDate.setYMD(today.year(), 3, 31);
+                    break;
+                    
+                case 4:         // Second quarter.
+                case 5:
+                case 6:
+                    myStartDate.setYMD(today.year(), 4, 1);
+                    myEndDate.setYMD(today.year(), 6, 30);
+                    break;
+                    
+                case 7:         // Third quarter.
+                case 8:
+                case 9:
+                    myStartDate.setYMD(today.year(), 7, 1);
+                    myEndDate.setYMD(today.year(), 9, 30);
+                    break;
+                    
+                default:        // Last Quarter
+                    myStartDate.setYMD(today.year(), 10, 1);
+                    myEndDate.setYMD(today.year(), 12, 31);
+                    break;
+                    
+            }
+            break;
+        case d_lastQuarter:
+            // This one is trickier still.  We have to figure out what month 
+            // quarter we are in, and then subtract three months from it.
+            // in and then set the date accordingly.
 
-        switch (thisMonth) {
-            case 1:         // Last quarter of last year.
-            case 2:
-            case 3:
-                myStartDate.setYMD(today.year()-1, 10, 1);
-                myEndDate.setYMD(today.year()-1, 12, 31);
-                break;
-                
-            case 4:         // first quarter of this year.
-            case 5:
-            case 6:
-                myStartDate.setYMD(today.year(), 1, 1);
-                myEndDate.setYMD(today.year(), 3, 31);
-                break;
+            switch (thisMonth) {
+                case 1:         // Last quarter of last year.
+                case 2:
+                case 3:
+                    myStartDate.setYMD(today.year()-1, 10, 1);
+                    myEndDate.setYMD(today.year()-1, 12, 31);
+                    break;
+                    
+                case 4:         // first quarter of this year.
+                case 5:
+                case 6:
+                    myStartDate.setYMD(today.year(), 1, 1);
+                    myEndDate.setYMD(today.year(), 3, 31);
+                    break;
 
-            case 7:         // Second quarter.
-            case 8:
-            case 9:
-                myStartDate.setYMD(today.year(), 4, 1);
-                myEndDate.setYMD(today.year(), 6, 30);
-                break;
-                
-            default:        // Third quarter of this year.
-                myStartDate.setYMD(today.year(), 7, 1);
-                myEndDate.setYMD(today.year(), 9, 30);
-                break;
-        }
+                case 7:         // Second quarter.
+                case 8:
+                case 9:
+                    myStartDate.setYMD(today.year(), 4, 1);
+                    myEndDate.setYMD(today.year(), 6, 30);
+                    break;
+                    
+                default:        // Third quarter of this year.
+                    myStartDate.setYMD(today.year(), 7, 1);
+                    myEndDate.setYMD(today.year(), 9, 30);
+                    break;
+            }
+            break;
+        default:
+            break;
     }
     
     char    dateStr[1024];
@@ -832,12 +836,33 @@ void Report::dateRangeSelected(const char *newRange)
     startDateCal->setDate(myStartDate);
     sprintf(dateStr, "%02d/%02d/%04d", myEndDate.month(), myEndDate.day(), myEndDate.year());
     endDateCal->setDate(myEndDate);
+}
+
+/*
+** dateRangeSelected  - Changes the dates in the date spinboxes when the
+**                      user selects a text description of a date range.
+*/
+
+void Report::dateRangeSelected(const char *newRange)
+{
+    
+    if (!strcmp("This Month", newRange))    setDateRange(d_thisMonth);
+    if (!strcmp("Last Month", newRange))    setDateRange(d_lastMonth);
+    if (!strcmp("Today", newRange))         setDateRange(d_today);
+    if (!strcmp("Yesterday", newRange))     setDateRange(d_yesterday); 
+    if (!strcmp("This Week", newRange))     setDateRange(d_thisWeek);
+    if (!strcmp("Last Week", newRange))     setDateRange(d_lastWeek);
+    if (!strcmp("This Year", newRange))     setDateRange(d_thisYear);
+    if (!strcmp("Last Year", newRange))     setDateRange(d_lastYear);
+    if (!strcmp("This Quarter", newRange))  setDateRange(d_thisQuarter);
+    if (!strcmp("Last Quarter", newRange))  setDateRange(d_lastQuarter);
+    
     refreshReport();
 }
 
 void Report::dateRangeSelected(const QString &newRange)
 {
-    dateRangeSelected((const char *)newRange);
+    dateRangeSelected(newRange.ascii());
 }
 
 /*
