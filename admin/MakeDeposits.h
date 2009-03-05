@@ -31,6 +31,7 @@
 #include <qlabel.h>
 #include <qlistview.h>
 #include <qcombobox.h>
+#include <qdatetimeedit.h>
 #include <TAAWidget.h>
 
 class MakeDeposits : public TAAWidget
@@ -53,6 +54,7 @@ protected:
     QLabel      *undepositedAmount;
     QLabel      *amountSelected;
     QListView   *paymentList;
+    QDateEdit   *transDate;
     QComboBox   *targetAccountList;
     float       selTotal;
 
