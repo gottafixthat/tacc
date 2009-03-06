@@ -216,17 +216,17 @@ void salesByServiceDetailReport::refreshReport()
     if (myIsPackage) {
         PackagesDB  PDB;
         PDB.get(myBillableID);
-        tmpStr = tmpStr.sprintf("Sales Detail Report\n%s (Package)\n%s - %s", PDB.getStr("Description"), sDate.toString("yyyy-MM-dd").ascii(), eDate.toString("yyyy-MM-dd").ascii());
+        tmpStr = tmpStr.sprintf("Sales Detail Report\n%s (Package)", PDB.getStr("Description"));
         setTitle(tmpStr);
 
-        debug(1,"select AcctsRecv.TransDate, AcctsRecv.PackageItem, Packages.InternalID, Packages.PackageTag, AcctsRecv.Amount, Customers.CustomerID, Customers.FullName, Customers.ContactName from AcctsRecv, Packages, Customers where Packages.InternalID = AcctsRecv.PackageItem and AcctsRecv.TransType = 0 and AcctsRecv.ItemID = %d and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' and Customers.CustomerID = AcctsRecv.CustomerID order by Customers.CustomerID\n", myBillableID, sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
+        //debug(1,"select AcctsRecv.TransDate, AcctsRecv.PackageItem, Packages.InternalID, Packages.PackageTag, AcctsRecv.Amount, Customers.CustomerID, Customers.FullName, Customers.ContactName from AcctsRecv, Packages, Customers where Packages.InternalID = AcctsRecv.PackageItem and AcctsRecv.TransType = 0 and AcctsRecv.ItemID = %d and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' and Customers.CustomerID = AcctsRecv.CustomerID order by Customers.CustomerID\n", myBillableID, sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
         DB.query("select AcctsRecv.TransDate, AcctsRecv.PackageItem, Packages.InternalID, Packages.PackageTag, AcctsRecv.Amount, Customers.CustomerID, Customers.FullName, Customers.ContactName from AcctsRecv, Packages, Customers where Packages.InternalID = AcctsRecv.PackageItem and AcctsRecv.TransType = 0 and AcctsRecv.PackageItem = %d and AcctsRecv.TransDate  >= '%04d-%02d-%02d' and AcctsRecv.TransDate <= '%04d-%02d-%02d' and Customers.CustomerID = AcctsRecv.CustomerID order by Customers.CustomerID", myBillableID, sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day());
 
     } else {
         // Get the title.
         BillablesDB BDB;
         BDB.get(myBillableID);
-        tmpStr = tmpStr.sprintf("Sales Detail Report\n%s\n%s - %s", BDB.getStr("Description"), sDate.toString("yyyy-MM-dd").ascii(), eDate.toString("yyyy-MM-dd").ascii());
+        tmpStr = tmpStr.sprintf("Sales Detail Report\n%s", BDB.getStr("Description"));
         setTitle(tmpStr);
 
         // Two queries, one for standalone billables, one for packages.
