@@ -18,6 +18,9 @@
 #include <qstringlist.h>
 #include <qdatetime.h>
 #include <qlist.h>
+#include <qmap.h>
+
+typedef QMap<QString, QString> QStringMap;
 
 enum customerContactFlags { None = 0, Billing = 1 };
 
