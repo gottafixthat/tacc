@@ -216,13 +216,41 @@ GeneralLedgerDetailReport::GeneralLedgerDetailReport
     availableColumns.insert("PackageTag",       "Package Name");
     availableColumns.insert("PackageDesc",      "Package Desc");
 
+    // Note that all of the names listed above have to be listed here as well.
+    columnNames.append("Date");
+    columnNames.append("Account Number");
+    columnNames.append("Account Name");
+    columnNames.append("Amount");
+    columnNames.append("Type");
+    columnNames.append("Bill Date");
+    columnNames.append("Due Date");
+    columnNames.append("Cleared");
+    columnNames.append("Number");
+    columnNames.append("Quantity");
+    columnNames.append("Price");
+    columnNames.append("Memo");
+    columnNames.append("Customer ID");
+    columnNames.append("Login ID");
+    columnNames.append("Statement");
+    columnNames.append("StartDate");
+    columnNames.append("EndDate");
+    columnNames.append("Billing Cycle");
+    columnNames.append("Rate Plan");
+    columnNames.append("Full Name");
+    columnNames.append("Contact Name");
+    columnNames.append("Contact Name");
+    columnNames.append("Billable Name");
+    columnNames.append("Billable Desc");
+    columnNames.append("Package Name");
+    columnNames.append("Package Desc");
+
     QStringMap  tmpMap;
     tmpMap.insert("TransDate",  "Date");
     tmpMap.insert("PackageTag", "Package Name");
     
    
     filters = new GeneralLedgerDetailFilters();
-    filters->setAvailableColumns(availableColumns);
+    filters->setAvailableColumns(columnNames);
     filters->setDisplayColumns(availableColumns);
     connect(filters, SIGNAL(optionsUpdated()), this, SLOT(refreshReport()));
 
@@ -372,6 +400,14 @@ GeneralLedgerDetailFilters::GeneralLedgerDetailFilters
     columnList = new QListBox(this, "columnList");
     columnList->setSelectionMode(QListBox::Multi);
 
+    QPushButton *upButton = new QPushButton(this, "upButton");
+    upButton->setText("Move Up");
+    connect(upButton, SIGNAL(clicked()), this, SLOT(upClicked()));
+    
+    QPushButton *dnButton = new QPushButton(this, "dnButton");
+    dnButton->setText("Move Down");
+    connect(dnButton, SIGNAL(clicked()), this, SLOT(downClicked()));
+
     QPushButton *updateButton = new QPushButton(this, "updateButton");
     updateButton->setText("&Update");
     connect(updateButton, SIGNAL(clicked()), this, SLOT(updateClicked()));
@@ -396,6 +432,9 @@ GeneralLedgerDetailFilters::GeneralLedgerDetailFilters
     // Buttons
     QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
     bl->addStretch(1);
+    bl->addWidget(upButton, 0);
+    bl->addWidget(dnButton, 0);
+    bl->addSpacing(20);
     bl->addWidget(updateButton, 0);
     bl->addWidget(closeButton, 0);
 
@@ -418,15 +457,11 @@ GeneralLedgerDetailFilters::~GeneralLedgerDetailFilters()
  * Defines the list of columns that are available to display
  * to the user.
  */
-void GeneralLedgerDetailFilters::setAvailableColumns(QStringMap &columnNames)
+void GeneralLedgerDetailFilters::setAvailableColumns(const QStringList columnNames)
 {
-    myColumnNames = columnNames;
+    //myColumnNames = columnNames;
     columnList->clear();
-
-    QStringMap::Iterator it;
-    for (it = columnNames.begin(); it != columnNames.end(); ++it) {
-        columnList->insertItem(it.data());
-    }
+    columnList->insertStringList(columnNames);
 }
 
 /**
@@ -474,6 +509,38 @@ const QStringMap GeneralLedgerDetailFilters::displayColumns()
         }
     }
     return retMap;
+}
+
+/**
+ * upClicked()
+ *
+ * Moves the current item in the columnList up by one.
+ */
+void GeneralLedgerDetailFilters::upClicked()
+{
+    uint curIdx = columnList->currentItem();
+    if (curIdx > 0) {
+        QListBoxItem    *curItem = columnList->item(curIdx);
+        columnList->takeItem(curItem);
+        columnList->insertItem(curItem, curIdx-1);
+        columnList->setCurrentItem(curItem);
+    }
+}
+
+/**
+ * downClicked()
+ *
+ * Moves the current item in the columnList down by one.
+ */
+void GeneralLedgerDetailFilters::downClicked()
+{
+    uint curIdx = columnList->currentItem();
+    if (curIdx < columnList->count() - 1) {
+        QListBoxItem    *curItem = columnList->item(curIdx);
+        columnList->takeItem(curItem);
+        columnList->insertItem(curItem, curIdx+1);
+        columnList->setCurrentItem(curItem);
+    }
 }
 
 /**

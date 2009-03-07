@@ -55,7 +55,7 @@ public:
     GeneralLedgerDetailFilters(QWidget *parent = NULL, const char *name = NULL);
     ~GeneralLedgerDetailFilters();
 
-    void                setAvailableColumns(QStringMap &columnNames);
+    void                setAvailableColumns(const QStringList columnNames);
     void                setDisplayColumns(QStringMap dispCols);
     const QStringMap    displayColumns();
 
@@ -63,6 +63,8 @@ signals:
     void                optionsUpdated();
 
 protected slots:
+    void                upClicked();
+    void                downClicked();
     void                updateClicked();
     void                closeClicked();
     QStringMap          myColumnNames;
@@ -98,6 +100,7 @@ protected:
     int             myIntAccountNo;
     int             myCustomerIDCol;
     QStringMap      availableColumns;
+    QStringList     columnNames;
     GeneralLedgerDetailFilters  *filters;
 
 };
