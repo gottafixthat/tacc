@@ -1959,3 +1959,27 @@ CREATE TABLE CustomerContacts (
     PRIMARY KEY(ContactID),
     INDEX CustomerIDIDX (CustomerID)
 );
+
+# SavedReports - Stores various information about custom report filters
+# so a user can quickly recall reports they have saved.
+#
+# SavedReportID - Primary key
+# LoginID       - The TACC user's login ID.
+# ReportName    - TACC's name of the report that we're saving, i.e.
+#                 GeneralLedgerDetailReport
+# SaveName      - The user defined name
+# ReportData    - The details, which are up to the report to define.
+#                 Sample data might be
+#                 "StartDate=2009-01-01;EndDate=2009-01-07;Columns=Date:Amount;ColumnOrder=Amount:Date"
+#
+CREATE TABLE SavedReports (
+    SavedReportID   bigint(21) NOT NULL auto_increment,
+    LoginID         varchar(64) NOT NULL,
+    ReportName      varchar(64) NOT NULL,
+    SaveName        varchar(255) NOT NULL,
+    ReportData      text NOT NULL,
+    PRIMARY KEY(SavedReportID),
+    INDEX LoginNameIDX(LoginID, ReportName),
+    INDEX SaveNameIDX(LoginID, ReportName, SaveName)
+);
+

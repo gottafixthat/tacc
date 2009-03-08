@@ -153,17 +153,10 @@ protected:
     QBoxLayout      *bl;    // Button Layout (the button bar)
 
 private:
-    void printReportHeader(QPainter *p);
-    void printReportFooter(QPainter *p, int PageNo, int totPages);
-    QListViewItem * printReportRows(QPainter *p, QListViewItem *startItem);
-
     // DateInput       *startDateCal;
     // DateInput       *endDateCal;
     QDate   myStartDate;
     QDate   myEndDate;
-    
-    // This is used for printing.
-    int     prColWidths[20];
     
     int     myAllowDates;
     int     myAllowFilters;

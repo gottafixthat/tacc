@@ -24,6 +24,7 @@
 #include <qapplication.h>
 #include <qlineedit.h>
 
+#include <QListViewPrint.h>
 #include <EmailMessage.h>
 #include <TAATools.h>
 #include <Cfg.h>
@@ -175,6 +176,7 @@ Report::Report
     allowReproduction(1);   // We can graph/print/email by default.
 
     repBody->setAllColumnsShowFocus(true);
+
 }
 
 
@@ -364,214 +366,16 @@ void Report::plotGraph(QwtPlot *plot)
 
 void Report::printReport()
 {
-    // QMessageBox::information(this, "Print Report", "Not yet implemented.");
-
-    QPrinter        prn(QPrinter::PrinterResolution);
-    QPainter        *p;
-    QBrush          bbrush;
-    QListViewItem   *curItem;
-    
-    int         pageNo = 1;
-    int         totPages = 1;
-    int         totLines = 0;
-    
-    prn.setPageSize(QPrinter::Letter);
-    prn.setDocName("Standard Report");
-    prn.setCreator("Total Accountability");
-
-    
-    // Initialize the printer device.
-    if (!prn.setup()) return;
-    // prn.setOutputFileName("/tmp/Report.ps");
-    // prn.setOutputToFile(TRUE);
-    QApplication::setOverrideCursor(waitCursor);
-    
-    p = new QPainter();
-    p->begin(&prn);
-    
-    // Count the children.
-    for (curItem = repBody->firstChild(); curItem != 0; curItem = curItem->itemBelow()) totLines++;
-    totPages = (totLines / 50) + 1;
-    // fprintf(stderr, "The total number of pages is: %d\n", totPages);
-
-    // Print the report...
-    QProgressDialog progress("Printing report...", "Abort", totLines, this);
-    progress.setTotalSteps(totPages);
-    progress.setProgress(0);
-    curItem = repBody->firstChild();
-    for (pageNo = 1; pageNo < totPages + 1; pageNo++) {
-        printReportHeader(p);
-        curItem = printReportRows(p, curItem);
-        printReportFooter(p, pageNo, totPages);
-        if (pageNo < totPages) prn.newPage();
-        progress.setProgress(pageNo);
-        if (progress.wasCancelled()) pageNo = totPages + 1;
-    }
-    progress.setProgress(totPages);
-    
-    // We're all done.  Close the printer device.
-    p->end();
-    delete(p);
-    QApplication::restoreOverrideCursor();
-}
-
-void Report::printReportHeader(QPainter *p)
-{
-    QDate       theDate;
-    QTime       theTime;
-    QRect       rect;
-    QBrush      bbrush;
-    QString     tmpSt;
-    char        tmpstr[1024];
-    int         xPos = 36; 
-    
-    float       headerPcts[20];
-    float       colWidths[20];
-    float       totWidth = 0;
-    
-    int         numCols;
-    
-    theDate = QDate::currentDate();
-    theTime = QTime::currentTime();
-
-    // p->rotate(55);
-    // Draw our Blarg header and the date at the top of the page
-    p->setFont(QFont("helvetica", 10, QFont::Bold));
-    rect.setCoords(36, 30,  399, 60);
-    p->drawText(rect, AlignLeft, "Blarg! Online Services, Inc.");
-    sprintf(tmpstr, "%s %s", (const char *) theDate.toString(), (const char *) theTime.toString());
-    rect.setCoords(400, 30, 575, 60);
-    p->drawText(rect, AlignRight, tmpstr);
-    
-    // Now, draw the report title, centered on the page.
-    // If we have a date range for the report, shrink down the title by 12
-    // pixels so we can display the dates on the page.  If not, give the
-    // title the full height.
+    QListViewPrint  lvPrn(repBody);
+    lvPrn.setTitle(reportTitle->text());
     if (myAllowDates) {
-	    p->setFont(QFont("helvetica", 18, QFont::Bold));
-	    rect.setCoords(0, 40, 611, 95);
-	    p->drawText(rect, AlignCenter|AlignVCenter, reportTitle->text());
-	    p->setFont(QFont("helvetica",  8, QFont::Normal));
-	    rect.setCoords(0, 96, 611, 112);
-	    sprintf(tmpstr, "For the period from %s through %s.",
-	      (const char *) startDate().toString(),
-          (const char *) endDate().toString()
-        );
-	    p->drawText(rect, AlignCenter|AlignVCenter, tmpstr);
-    } else {
-	    p->setFont(QFont("helvetica", 18, QFont::Bold));
-	    rect.setCoords(0, 40, 611, 112);
-	    p->drawText(rect, AlignCenter|AlignVCenter, reportTitle->text());
+        QString tmpStr = "For the period from ";
+        tmpStr += startDate().toString();
+        tmpStr += " to ";
+        tmpStr += endDate().toString();
+        lvPrn.setDateLine(tmpStr);
     }
-
-    // Now, calculate the column widths.
-    // We'll take the strlens and convert them into pixel values
-    // based on the percentage of the total.  That way, our report will
-    // always be the full width of the page.
-    numCols = repBody->header()->count();
-    
-    if (!numCols) return;
-    
-    if (numCols > 20) numCols = 20;
-    
-    // Get the width of each header item.
-    for (int i = 0; i < numCols; i++) {
-        colWidths[i] = repBody->header()->label(i).length();
-    }
-
-    // Now, get the longest item for each of the keys.
-    QListViewItem   *curItem;
-    for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
-        for (int i = 0; i < numCols; i++) {
-            if (curItem->key(i, 0).length() > colWidths[i]) {
-                colWidths[i] = curItem->key(i, 0).length();
-            }
-        }
-    }
-    
-    // Now, add up the widths.
-    
-    for (int i = 0; i < numCols; i++) {
-        totWidth += colWidths[i];
-        
-    }
-    
-    // Now, get our percentages.
-    for (int i = 0; i < numCols; i++) {
-        headerPcts[i] = colWidths[i] / totWidth * 540;
-        sprintf(tmpstr, "%f", rint(headerPcts[i]));
-        prColWidths[i] = atoi(tmpstr);       // 1" margin
-        // fprintf(stderr, "Column %d width = %f (%f) = %d pixels.\n", i, colWidths[i], headerPcts[i], prColWidths[i]);
-    }
-    
-    // Now, draw the titles.
-    xPos = 36;
-    p->setFont(QFont("helvetica", 8, QFont::Normal));
-    for (int i = 0; i < numCols; i++) {
-        rect.setCoords(xPos+1, 113, xPos + prColWidths[i] - 1, 129);
-        bbrush.setStyle(SolidPattern);
-        bbrush.setColor(black);
-        p->setBackgroundMode(OpaqueMode);
-        p->setPen(white);
-        p->fillRect(rect, bbrush);
-        p->drawText(rect, AlignCenter|AlignVCenter, repBody->header()->label(i));
-        xPos += prColWidths[i];
-    }
-    // Reset our pen
-    p->setBackgroundMode(TransparentMode);
-    p->setPen(black);
-}
-
-void Report::printReportFooter(QPainter *p, int PageNo, int totPages)
-{
-    QRect       rect;
-    char        tmpstr[1024];
-    
-    // Now, draw the report title, centered on the page.
-    p->setFont(QFont("helvetica", 8, QFont::Normal));
-    rect.setCoords(0, 735, 611, 750);
-    sprintf(tmpstr, "Page %d of %d", PageNo, totPages);
-    p->drawText(rect, AlignCenter|AlignVCenter, tmpstr);
-
-}
-
-QListViewItem *Report::printReportRows(QPainter *p, QListViewItem *startItem)
-{
-    QRect       rect;
-    QBrush      bbrush;
-    QString     tmpSt;
-    int         yPos;
-    int         xPos = 36; 
-    
-    int         rowsPrinted = 0;
-    
-    int         numCols;
-    
-    // Now, draw the report title, centered on the page.
-    p->setFont(QFont("helvetica", 8, QFont::Normal));
-
-    numCols = repBody->header()->count();
-    if (!numCols) return(NULL);
-    if (numCols > 20) numCols = 20;
-
-    if (startItem != NULL) {
-        int finished = 0;
-        yPos     = 130;
-        while(!finished) {
-	        xPos     = 36;
-            for (int i = 0; i < numCols; i++) {
-		        rect.setCoords(xPos+1, yPos, xPos + prColWidths[i] - 1, yPos+11);
-				p->drawText(rect, repBody->columnAlignment(i)|AlignVCenter, startItem->key(i,0));
-		        xPos += prColWidths[i];
-		    }
-		    yPos += 12;
-            startItem = startItem->itemBelow();
-            if (startItem == NULL) finished = 1;
-            if (++rowsPrinted >= 50) finished = 1;
-        }
-    }
-    
-    return startItem;
+    lvPrn.print();
 }
 
 
