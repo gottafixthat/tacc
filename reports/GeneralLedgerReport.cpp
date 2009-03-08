@@ -12,7 +12,7 @@
 
 #include <stdlib.h>
 #include <qmap.h>
-
+#include <qstringlist.h>
 #include <GeneralLedgerReport.h>
 #include <ADB.h>
 #include <TAATools.h>
@@ -189,32 +189,32 @@ GeneralLedgerDetailReport::GeneralLedgerDetailReport
 	setTitle("General Ledger Detail");
 
     // Set all of the available columns we have for the report.
-    availableColumns.insert("TransDate",        "Date");
-    availableColumns.insert("AccountNo",        "Account Number");
-    availableColumns.insert("AcctName",         "Account Name");
+    availableColumns.insert("Date",             "TransDate");
+    availableColumns.insert("Account Number",   "AccountNo");
+    availableColumns.insert("Account Name",     "AcctName");
     availableColumns.insert("Amount",           "Amount");
-    availableColumns.insert("TransType",        "Type");
-    availableColumns.insert("BilledDate",       "Bill Date");
-    availableColumns.insert("DueDate",          "Due Date");
+    availableColumns.insert("Type",             "TransType");
+    availableColumns.insert("Bill Date",        "BilledDate");
+    availableColumns.insert("Due Date",         "DueDate");
     availableColumns.insert("Cleared",          "Cleared");
     availableColumns.insert("Number",           "Number");
     availableColumns.insert("Quantity",         "Quantity");
     availableColumns.insert("Price",            "Price");
     availableColumns.insert("Memo",             "Memo");
-    availableColumns.insert("CustomerID",       "Customer ID");
-    availableColumns.insert("LoginID",          "Login ID");
-    availableColumns.insert("StatementNo",      "Statement");
-    availableColumns.insert("StartDate",        "StartDate");
-    availableColumns.insert("EndDate",          "EndDate");
-    availableColumns.insert("CycleID",          "Billing Cycle");
-    availableColumns.insert("PlanTag",          "Rate Plan");
-    availableColumns.insert("FullName",         "Full Name");
-    availableColumns.insert("ContactName",      "Contact Name");
-    availableColumns.insert("ContactName",      "Contact Name");
-    availableColumns.insert("BillableItemID",   "Billable Name");
-    availableColumns.insert("BillablesDesc",    "Billable Desc");
-    availableColumns.insert("PackageTag",       "Package Name");
-    availableColumns.insert("PackageDesc",      "Package Desc");
+    availableColumns.insert("Customer ID",      "CustomerID");
+    availableColumns.insert("Login ID",         "LoginID");
+    availableColumns.insert("Statement",        "StatementNo");
+    availableColumns.insert("Start Date",       "StartDate");
+    availableColumns.insert("End Date",         "End Date");
+    availableColumns.insert("Billing Cycle",    "CycleID");
+    availableColumns.insert("Rate Plan",        "PlanTag");
+    availableColumns.insert("Full Name",        "FullName");
+    availableColumns.insert("Contact Name",     "ContactName");
+    availableColumns.insert("Contact Name",     "ContactName");
+    availableColumns.insert("Billable Name",    "BillableItemID");
+    availableColumns.insert("Billable Desc",    "BillablesDesc");
+    availableColumns.insert("Package Name",     "PackageTag");
+    availableColumns.insert("Package Desc",     "PackageDesc");
 
     // Note that all of the names listed above have to be listed here as well.
     columnNames.append("Date");
@@ -232,8 +232,8 @@ GeneralLedgerDetailReport::GeneralLedgerDetailReport
     columnNames.append("Customer ID");
     columnNames.append("Login ID");
     columnNames.append("Statement");
-    columnNames.append("StartDate");
-    columnNames.append("EndDate");
+    columnNames.append("Start Date");
+    columnNames.append("End Date");
     columnNames.append("Billing Cycle");
     columnNames.append("Rate Plan");
     columnNames.append("Full Name");
@@ -244,14 +244,22 @@ GeneralLedgerDetailReport::GeneralLedgerDetailReport
     columnNames.append("Package Name");
     columnNames.append("Package Desc");
 
-    QStringMap  tmpMap;
-    tmpMap.insert("TransDate",  "Date");
-    tmpMap.insert("PackageTag", "Package Name");
-    
+    // Pick a few of the available for our starting columns
+    // if the user hasn't saved a report.
+    QStringList startingCols;
+    startingCols += "Date";
+    startingCols += "Amount";
+    startingCols += "Customer ID";
+    startingCols += "Full Name";
+    startingCols += "Contact Name";
+    startingCols += "Statement";
+    startingCols += "Billable Name";
+    startingCols += "Package Name";
+
    
     filters = new GeneralLedgerDetailFilters();
     filters->setAvailableColumns(columnNames);
-    filters->setDisplayColumns(availableColumns);
+    filters->setDisplayColumns(startingCols);
     connect(filters, SIGNAL(optionsUpdated()), this, SLOT(refreshReport()));
 
 	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, AlignLeft);
@@ -281,7 +289,7 @@ GeneralLedgerDetailReport::~GeneralLedgerDetailReport()
 void GeneralLedgerDetailReport::refreshReport()
 {
     ADB         DB;
-    QStringMap  dispCols = filters->displayColumns();
+    QStringList dispCols = filters->displayColumns();
 
     // Set the report columns.  This will also clear the list.
     setReportColumns();
@@ -292,14 +300,16 @@ void GeneralLedgerDetailReport::refreshReport()
       startDate().toString("yyyy-MM-dd").ascii(), 
       endDate().toString("yyyy-MM-dd").ascii());
 
-    int curCol;
+    QString colName;
+    int     curCol;
     if (DB.rowCount) while (DB.getrow()) {
         curCol = 0;
         QListViewItem   *curItem = new QListViewItem(repBody);
 
-        QStringMap::Iterator it;
+        QStringList::Iterator it;
         for (it = dispCols.begin(); it != dispCols.end(); ++it) {
-            curItem->setText(curCol, DB.curRow[it.key().ascii()]);
+            colName = *it;
+            curItem->setText(curCol, DB.curRow[availableColumns[colName].ascii()]);
             curCol++;
         }
         repBody->insertItem(curItem);
@@ -319,17 +329,19 @@ void GeneralLedgerDetailReport::setReportColumns()
     myCustomerIDCol = -1;
 
     // Load the columns from the filters.
-    QStringMap dispCols = filters->displayColumns();
+    QStringList dispCols = filters->displayColumns();
 
-    QStringMap::Iterator it;
+    QString colName;
     uint curCol = 0;
+    QStringList::Iterator it;
     for (it = dispCols.begin(); it != dispCols.end(); ++it) {
-        repBody->addColumn(it.data());
+        colName = *it;
+        repBody->addColumn(colName);
         repBody->setColumnAlignment(curCol, Qt::AlignLeft);
-        if (it.key() == "Amount") repBody->setColumnAlignment(curCol, AlignRight);
-        if (it.key() == "Quantity") repBody->setColumnAlignment(curCol, AlignRight);
-        if (it.key() == "Price") repBody->setColumnAlignment(curCol, AlignRight);
-        if (it.key() == "CustomerID") myCustomerIDCol = curCol;
+        if (colName == "Amount") repBody->setColumnAlignment(curCol, AlignRight);
+        if (colName == "Quantity") repBody->setColumnAlignment(curCol, AlignRight);
+        if (colName == "Price") repBody->setColumnAlignment(curCol, AlignRight);
+        if (colName == "Customer ID") myCustomerIDCol = curCol;
         curCol++;
     }
 }
@@ -469,16 +481,14 @@ void GeneralLedgerDetailFilters::setAvailableColumns(const QStringList columnNam
  *
  * Sets the selected items in our QListBox.
  */
-void GeneralLedgerDetailFilters::setDisplayColumns(QStringMap dispCols)
+void GeneralLedgerDetailFilters::setDisplayColumns(QStringList dispCols)
 {
     columnList->clearSelection();
-    QStringMap::Iterator it;
+    QStringList::Iterator it;
     for (it = dispCols.begin(); it != dispCols.end(); ++it) {
-        // Walk through the list now, and if we find an item with a matching
-        // description, set it to be selected.
         for (uint i = 0; i < columnList->count(); i++) {
             QListBoxItem *itm = columnList->item(i);
-            if (!itm->text().compare(it.data())) {
+            if (!itm->text().compare(*it)) {
                 columnList->setSelected(i, true);
             }
         }
@@ -490,25 +500,18 @@ void GeneralLedgerDetailFilters::setDisplayColumns(QStringMap dispCols)
  *
  * Returns the items selected in the QListBox.
  */
-const QStringMap GeneralLedgerDetailFilters::displayColumns()
+QStringList GeneralLedgerDetailFilters::displayColumns()
 {
-    QStringMap  retMap;
+    QStringList  retList;
 
     for (uint i = 0; i < columnList->count(); i++) {
         if (columnList->isSelected(i)) {
             // This one is selected, add it to our return value.
             QListBoxItem *itm = columnList->item(i);
-            QString keyStr = itm->text();
-            QStringMap::Iterator it;
-            for (it = myColumnNames.begin(); it != myColumnNames.end(); ++it) {
-                if (it.data() == itm->text()) {
-                    // This item matches, add it to our return map
-                    retMap.insert(it.key(), it.data());
-                }
-            }
+            retList += itm->text();
         }
     }
-    return retMap;
+    return retList;
 }
 
 /**

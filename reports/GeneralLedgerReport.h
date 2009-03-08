@@ -56,8 +56,8 @@ public:
     ~GeneralLedgerDetailFilters();
 
     void                setAvailableColumns(const QStringList columnNames);
-    void                setDisplayColumns(QStringMap dispCols);
-    const QStringMap    displayColumns();
+    void                setDisplayColumns(QStringList dispCols);
+    QStringList         displayColumns();
 
 signals:
     void                optionsUpdated();

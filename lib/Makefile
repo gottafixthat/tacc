@@ -26,6 +26,7 @@ SUBDIRS =	gl
 SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			IClient.cpp BString.cpp TAAWidget.cpp\
 			QSqlDbPool.cpp\
+			QListViewPrint.cpp\
 			EmailMessage.cpp\
 			StatementEngine.cpp\
 			CustomerContactsDB.cpp\
@@ -56,6 +57,7 @@ OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_TAAWidget.cpp\
 			moc_QSqlDbPool.cpp\
+			moc_QListViewPrint.cpp\
 			moc_CustomerSearch.cpp\
 			moc_AddressEditor.cpp moc_AddressEditorData.cpp\
 			moc_SelectionList.cpp\
@@ -115,6 +117,9 @@ moc_CustomerSearch.cpp: CustomerSearch.h
 
 moc_QSqlDbPool.cpp: QSqlDbPool.h
 	$(MOC) QSqlDbPool.h -o moc_QSqlDbPool.cpp
+
+moc_QListViewPrint.cpp: QListViewPrint.h
+	$(MOC) QListViewPrint.h -o moc_QListViewPrint.cpp
 
 moc_AddressEditor.cpp: AddressEditor.h
 	$(MOC) AddressEditor.h -o moc_AddressEditor.cpp
