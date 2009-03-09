@@ -37,12 +37,14 @@ SOURCES =	SettingsManager.cpp\
 		AccountingSettings.cpp\
 		GeneralSettings.cpp\
 		BillingSettings.cpp\
+		CompanyInfoSettings.cpp\
 		TelephonySettings.cpp
 
 HEADERS =	SettingsManager.h\
 		AccountingSettings.h\
 		GeneralSettings.h\
 		BillingSettings.h\
+		CompanyInfoSettings.h\
 		TelephonySettings.h
 
 OBJECTS =	$(SOURCES:.cpp=.o)
@@ -51,6 +53,7 @@ SRCMETA =	moc_SettingsManager.cpp\
 		moc_AccountingSettings.cpp\
 		moc_GeneralSettings.cpp\
 		moc_BillingSettings.cpp\
+		moc_CompanyInfoSettings.cpp\
 		moc_TelephonySettings.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
@@ -102,6 +105,9 @@ moc_GeneralSettings.cpp: GeneralSettings.h
 
 moc_BillingSettings.cpp: BillingSettings.h
 	$(MOC) BillingSettings.h -o moc_BillingSettings.cpp
+
+moc_CompanyInfoSettings.cpp: CompanyInfoSettings.h
+	$(MOC) CompanyInfoSettings.h -o moc_CompanyInfoSettings.cpp
 
 moc_TelephonySettings.cpp: TelephonySettings.h
 	$(MOC) TelephonySettings.h -o moc_TelephonySettings.cpp

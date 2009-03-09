@@ -24,6 +24,7 @@
 #include <qprogressdialog.h>
 #include <qheader.h>
 
+#include <Cfg.h>
 #include <QListViewPrint.h>
 
 /**
@@ -150,10 +151,10 @@ void QListViewPrint::printHeader(QPainter *p)
     theTime = QTime::currentTime();
 
     // p->rotate(55);
-    // Draw our Blarg header and the date at the top of the page
+    // Draw our Company Name header and the date at the top of the page
     p->setFont(QFont("helvetica", 10, QFont::Bold));
     rect.setCoords(prLeftMargin, 30,  399, 60);
-    p->drawText(rect, AlignLeft, "Blarg! Online Services, Inc.");
+    p->drawText(rect, AlignLeft, cfgVal("CompanyName"));
     sprintf(tmpstr, "%s %s", (const char *) theDate.toString(), (const char *) theTime.toString());
     rect.setCoords(400, 30, prLeftMargin+540, 60);
     p->drawText(rect, AlignRight, tmpstr);
