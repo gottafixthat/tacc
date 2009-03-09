@@ -3479,11 +3479,11 @@ void StatementsDB::printHeader(QPainter *p, int PageNo)
     hnFont.setStyleHint(QFont::SansSerif, QFont::PreferDevice);
 
     p->setFont(hbFont);
-    p->drawText(34, yPos, "Avvanta Communications Corporation");
+    p->drawText(34, yPos, cfgVal("CompanyName"));
     p->setFont(hnFont);
-    p->drawText(34, yPos+10, "(formerly Blarg! Online Services)");
-    p->drawText(34, yPos+20, "PO Box 1827");
-    p->drawText(34, yPos+30, "Bellevue, WA 98009-1827");
+    p->drawText(34, yPos+10, cfgVal("CompanyAddr1"));
+    p->drawText(34, yPos+20, cfgVal("CompanyAddr2"));
+    p->drawText(34, yPos+30, cfgVal("CompanyAddr3"));
 
     myDatetoQDate((const char *)getStr("StatementDate"), &stDate);
     

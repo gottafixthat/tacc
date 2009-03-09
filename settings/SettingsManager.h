@@ -23,6 +23,7 @@
 #include "AccountingSettings.h"
 #include "GeneralSettings.h"
 #include "BillingSettings.h"
+#include "CompanyInfoSettings.h"
 
 class SettingsManager : public TAAWidget
 {
@@ -43,6 +44,7 @@ protected:
     AccountingSettings  *accounting;
     GeneralSettings     *general;
     BillingSettings     *billing;
+    CompanyInfoSettings *company;
 
 protected slots:
     void            saveSettings();

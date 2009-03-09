@@ -56,6 +56,12 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
     sections->addWidget(accounting, sectionCount);
     sectionCount++;
 
+    company = new CompanyInfoSettings(this, "Company Info");
+    sectionList->insertItem("Company Info");
+    sections->addWidget(company, sectionCount);
+    sectionCount++;
+
+
     HorizLine   *hLine = new HorizLine(this, "hLine");
     VertLine    *vLine = new VertLine(this, "vLine");
 
@@ -119,6 +125,13 @@ void SettingsManager::saveSettings()
         return;
     }
 
+    if (!company->validateSettings()) {
+        sections->raiseWidget(company);
+        sectionList->setSelected(sectionList->findItem(company->name(), Qt::ExactMatch), true);
+        return;
+    }
+
+
     // Now call each of the widgets one by one to save their settings
     if (!accounting->saveSettings()) {
         sections->raiseWidget(accounting);
@@ -135,6 +148,12 @@ void SettingsManager::saveSettings()
     if (!billing->saveSettings()) {
         sections->raiseWidget(billing);
         sectionList->setSelected(sectionList->findItem(billing->name(), Qt::ExactMatch), true);
+        return;
+    }
+
+    if (!company->saveSettings()) {
+        sections->raiseWidget(company);
+        sectionList->setSelected(sectionList->findItem(company->name(), Qt::ExactMatch), true);
         return;
     }
 
