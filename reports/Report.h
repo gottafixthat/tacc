@@ -162,4 +162,49 @@ private:
     int     myAllowFilters;
     int     myAllowGraph;
 };
+
+/**
+ * ReportFilter()
+ *
+ * Base class for a report filter.  Includes some convenience functions.
+ */
+class ReportFilter : public TAAWidget
+{
+    Q_OBJECT
+
+public:
+    ReportFilter(QWidget *parent = NULL, const char *name = NULL);
+    virtual ~ReportFilter();
+
+    void            setReportName(const QString);
+    void            setAllowSave(int allow);
+
+signals:
+    void            optionsUpdated();
+
+protected slots:
+    virtual void    loadFilters(const QString)  {};
+    virtual void    loadClicked();
+    virtual void    saveFilters()               {};
+    virtual void    updateClicked()             { emit(optionsUpdated()); };
+    virtual void    closeClicked()              { hide(); };
+
+protected:
+    QLabel          *saveListLabel;
+    QComboBox       *saveList;
+    QPushButton     *loadButton;
+
+    QPushButton     *saveButton;
+    QPushButton     *updateButton;
+    QPushButton     *closeButton;
+
+    QBoxLayout      *ml;
+    QBoxLayout      *bl;
+
+    int             myAllowSave;
+    QString         myReportName;
+
+    void            loadSavedReportList();
+};
+
 #endif // Report_included

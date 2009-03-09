@@ -589,6 +589,23 @@ void CustomerCare::setStatusMW(const char *msg)
 }
 
 /*
+** setStatusMW - Connected to the TAAWidget setStatus command.  This displays
+**               the message on our statusBar().
+*/
+
+void CustomerCare::setStatusMW(const char *msg, int msec)
+{
+    if (!msg || !strlen(msg)) {
+        statusBar()->clear();
+    } else {
+        statusBar()->message(msg, msec);
+        appRef->processEvents();
+        QApplication::flush();
+        QApplication::flushX();
+        QApplication::syncX();
+    }
+}
+/*
 ** setProgressMW - Connected to the TAAWidget setProgress command.  This 
 **                 displays a progress meter on our statusBar().
 */

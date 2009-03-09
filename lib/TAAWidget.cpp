@@ -43,6 +43,7 @@ TAAWidget::TAAWidget(QWidget *parent, const char *name, WFlags f)
     connect(this, SIGNAL(openCustomer(long)), mainWin(), SLOT(openCustomerMW(long)));
     connect(this, SIGNAL(openTicket(long)), mainWin(), SLOT(openTicketMW(long)));
     connect(this, SIGNAL(setStatus(const char *)), mainWin(), SLOT(setStatusMW(const char *)));
+    connect(this, SIGNAL(setStatus(const char *, int)), mainWin(), SLOT(setStatusMW(const char *, int)));
     connect(this, SIGNAL(setProgress(int, int)), mainWin(), SLOT(setProgressMW(int, int)));
     connect(this, SIGNAL(setProgressRT(int, int)), mainWin(), SLOT(setProgressMWRT(int, int)));
 

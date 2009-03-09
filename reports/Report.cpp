@@ -24,6 +24,7 @@
 #include <qapplication.h>
 #include <qlineedit.h>
 
+#include <ADB.h>
 #include <QListViewPrint.h>
 #include <EmailMessage.h>
 #include <TAATools.h>
@@ -386,8 +387,8 @@ void Report::printReport()
 
 void Report::emailReport()
 {
-    int     colWidths[20];
-    int     numCols;
+    uint    colWidths[20];
+    uint    numCols;
     QString fmtStr;
     char    tmpStr[4096];
     QString tmpQstr;
@@ -411,7 +412,7 @@ void Report::emailReport()
     }
     
     // Get the width of each header item.
-    for (int i = 0; i < numCols; i++) {
+    for (uint i = 0; i < numCols; i++) {
         colWidths[i] = repBody->header()->label(i).length();
     }
 
@@ -432,7 +433,7 @@ void Report::emailReport()
     }
     
     // Okay, now print our headers
-    for (int i = 0; i < numCols; i++) {
+    for (uint i = 0; i < numCols; i++) {
         colStr  = repBody->header()->label(i).ascii();
         if (repBody->columnAlignment(i) == Qt::AlignRight) {
             colStr = colStr.rightJustify(colWidths[i]+1);
@@ -444,9 +445,9 @@ void Report::emailReport()
     txtBody += "\n";
 
     // And now a line seperating the headers from the data.
-    for (int i = 0; i < numCols; i++) {
+    for (uint i = 0; i < numCols; i++) {
         strcpy(tmpStr, "");
-        for (int n = 0; n < colWidths[i]; n++) strcat(tmpStr, "=");
+        for (uint n = 0; n < colWidths[i]; n++) strcat(tmpStr, "=");
         
         txtBody += tmpStr;
         txtBody += " ";
@@ -456,7 +457,7 @@ void Report::emailReport()
     
     // And now, finally, the data itself
     for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
-        for (int i = 0; i < numCols; i++) {
+        for (uint i = 0; i < numCols; i++) {
             fmtStr = "%";
             if (repBody->columnAlignment(i) != AlignRight) fmtStr += "-";
             sprintf(tmpStr, "%d", colWidths[i]);
@@ -831,5 +832,146 @@ bool EmailReportDialog::doPlainText()
 bool EmailReportDialog::attachCSV()
 {
     return (includeCSV->isChecked());
+}
+
+
+/**
+ * ReportFilter()
+ *
+ * Constructor for ReportFilter base class.
+ */
+ReportFilter::ReportFilter(QWidget *parent, const char *name) :
+    TAAWidget(parent, name)
+{
+    // Create our common widgets.
+    saveListLabel = new QLabel(this, "saveListLabel");
+    saveListLabel->setText("Saved Filters:");
+    saveListLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+
+    saveList = new QComboBox(true, this, "saveList");
+
+    loadButton = new QPushButton(this, "loadButton");
+    loadButton->setText("Load");
+    connect(loadButton, SIGNAL(clicked()), this, SLOT(loadClicked()));
+
+    saveButton = new QPushButton(this, "saveButton");
+    saveButton->setText("&Save");
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveFilters()));
+
+    updateButton = new QPushButton(this, "updateButton");
+    updateButton->setText("&Update");
+    connect(updateButton, SIGNAL(clicked()), this, SLOT(updateClicked()));
+
+    closeButton = new QPushButton(this, "closeButton");
+    closeButton->setText("&Close");
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
+
+    // Now, create our layout.  This is a bit different than the normal
+    // layout since classes that inherit us will want to put stuff
+    // in the middle.
+    QBoxLayout *myML = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    ml = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    myML->addLayout(ml, 1);
+
+    // Add a horizontal line before the button rows.
+    myML->addWidget(new HorizLine(this), 0);
+
+    // A grid layout for our load list.
+    QGridLayout *ll = new QGridLayout(1, 3);
+    int curRow = 0;
+    ll->addWidget(saveListLabel,        curRow, 0);
+    ll->addWidget(saveList,             curRow, 1);
+    ll->addWidget(loadButton,           curRow, 2);
+    ll->setColStretch(0, 0);
+    ll->setColStretch(1, 1);
+    ll->setColStretch(2, 0);
+    ll->setRowStretch(curRow, 0);
+
+    myML->addLayout(ll, 0);
+
+    // Add our button layout.
+    bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(saveButton, 0);
+    bl->addWidget(updateButton, 0);
+    bl->addWidget(closeButton, 0);
+
+    myML->addLayout(bl, 0);
+
+    setAllowSave(0);
+
+}
+
+/**
+ * ~ReportFilter()
+ *
+ * Destructor for ReportFilter base class.
+ */
+ReportFilter::~ReportFilter()
+{
+}
+
+/**
+ * setAllowSave()
+ *
+ * Tells the widget whether or not to show the save button.
+ */
+void ReportFilter::setAllowSave(int allow)
+{
+    myAllowSave = allow;
+    bool isEnabled = myAllowSave ? true : false;
+    bool isHidden = myAllowSave ? false : true;
+    saveListLabel->setHidden(isHidden);
+    saveListLabel->setEnabled(isEnabled);
+    saveList->setHidden(isHidden);
+    saveList->setEnabled(isEnabled);
+    loadButton->setHidden(isHidden);
+    loadButton->setEnabled(isEnabled);
+    saveButton->setHidden(isHidden);
+    saveButton->setEnabled(isEnabled);
+    if (myAllowSave) loadSavedReportList();
+}
+
+/**
+ * setReportName()
+ *
+ * Sets the report name.
+ */
+void ReportFilter::setReportName(const QString repName)
+{
+    myReportName = repName;
+    if (myAllowSave) loadSavedReportList();
+}
+
+/**
+ * loadSavedReportList()
+ *
+ * Loads the saved report list from the database.
+ * It populates the saveList QComboBox with the names.
+ */
+void ReportFilter::loadSavedReportList()
+{
+    if (!myReportName.length()) return;
+    ADB     DB;
+
+    saveList->clear();
+    DB.query("select SaveName from SavedReports where LoginID = '%s' and ReportName = '%s' order by SaveName", curUser().userName, myReportName.ascii());
+    if (DB.rowCount) {
+        while(DB.getrow()) {
+            saveList->insertItem(DB.curRow["SaveName"]);
+        }
+    }
+}
+
+/**
+ * loadClicked()
+ *
+ * Emits "loadFilters" with the selected saved report name.
+ */
+void ReportFilter::loadClicked()
+{
+    if (saveList->currentItem() >= 0) {
+        emit(loadFilters(saveList->currentText()));
+    }
 }
 

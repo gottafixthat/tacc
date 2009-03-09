@@ -47,7 +47,7 @@ public slots:
  * pick the account and columns that they want to show on the GL
  * detail report.
  */
-class GeneralLedgerDetailFilters : public TAAWidget
+class GeneralLedgerDetailFilters : public ReportFilter
 {
     Q_OBJECT
 
@@ -59,15 +59,11 @@ public:
     void                setDisplayColumns(QStringList dispCols);
     QStringList         displayColumns();
 
-signals:
-    void                optionsUpdated();
-
 protected slots:
     void                upClicked();
     void                downClicked();
-    void                updateClicked();
-    void                closeClicked();
     QStringMap          myColumnNames;
+    virtual void        saveFilters();
 
 protected:
     QListBox            *columnList;

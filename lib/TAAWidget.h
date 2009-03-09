@@ -52,6 +52,7 @@ public:
 signals:
     // Status signals.
     void    setStatus(const char *);
+    void    setStatus(const char *, int);
     void    setProgress(int, int);
     void    setProgressRT(int, int);
 
