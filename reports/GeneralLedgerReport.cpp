@@ -582,9 +582,18 @@ void GeneralLedgerDetailFilters::saveFilters()
     // Walk through the list box and add the columns in the order they appear.
     QStringList  tmpList;
     for (uint i = 0; i < columnList->count(); i++) {
-        // This one is selected, add it to our return value.
         QListBoxItem *itm = columnList->item(i);
         tmpList += itm->text();
+    }
+    repData += tmpList.join(":");
+    repData += ";";
+    // Now walk through the list box and add the selected columns.
+    repData += "SelectedColumns=";
+    tmpList.clear();
+    for (uint i = 0; i < columnList->count(); i++) {
+        // This one is selected, add it to our return value.
+        QListBoxItem *itm = columnList->item(i);
+        if (itm->isSelected()) tmpList += itm->text();
     }
     repData += tmpList.join(":");
 
@@ -595,4 +604,71 @@ void GeneralLedgerDetailFilters::saveFilters()
     emit (setStatus("Report saved", 5000));
 }
 
+/**
+ * loadFilters()
+ *
+ * Loads a set of saved filters for this report from the database.
+ */
+void GeneralLedgerDetailFilters::loadFilters(const QString repName)
+{
+    //debug(1, "Loading report filter '%s'\n", repName.ascii());
+    if (!repName.length()) return;
+    ADB     DB;
+    
+    //debug(1, "Loading report filter '%s' from database...\n", repName.ascii());
+    DB.query("select ReportData from SavedReports where LoginID = '%s' and ReportName = '%s' and SaveName = '%s'", curUser().userName, myReportName.ascii(), repName.ascii());
+    if (!DB.rowCount) return;
+    DB.getrow();
+
+    //debug(1, "Parsing report filter '%s'...\n", repName.ascii());
+    QStringMap  settingsMap;
+    QStringList repSettings;
+    repSettings = repSettings.split(";", DB.curRow["ReportData"]);
+    // Now, walk through the settings and put each of the key/value pairs
+    // into our settings map for further processing.
+    for (QStringList::Iterator it = repSettings.begin(); it != repSettings.end(); ++it) {
+        QString tmpStr = *it;
+        QStringList kvPairs;
+        kvPairs = kvPairs.split("=", tmpStr);
+        if (kvPairs.count() == 2) {
+            settingsMap[kvPairs[0]] = kvPairs[1];
+            //debug(1, "Key = '%s', Value = '%s'\n\n", kvPairs[0].ascii(), kvPairs[1].ascii());
+        } else {
+            debug(0, "Malformed report setting: '%s'\n", tmpStr.ascii());
+        }
+    }
+
+    // Now, go through our settings.
+    if (settingsMap["ColumnOrder"].length()) {
+        //debug(1, "Setting available columns for report filter '%s'\n", repName.ascii());
+        QStringList tmpList;
+        tmpList = tmpList.split(":", settingsMap["ColumnOrder"]);
+        // Now, compare the available columns from our list
+        // To do this, we'll walk through both lists adding any
+        // in our availableColumns list that don't exist in the
+        // column order to it and then replace our availableColumns
+        // list with the new list.
+        QStringList dispCols = displayColumns();
+        QString it1, it2;
+        for (QStringList::Iterator dcit = dispCols.begin(); dcit != dispCols.end(); ++dcit) {
+            bool    foundIt = false;
+            it1 = *dcit;
+            for (QStringList::Iterator tlit = tmpList.begin(); tlit != tmpList.end(); ++tlit) {
+                it2 = *tlit;
+                if (!it1.compare(it2)) foundIt = true;
+            }
+            if (!foundIt) tmpList.append(it1);
+        }
+        setAvailableColumns(tmpList);
+    }
+
+    if (settingsMap["SelectedColumns"].length()) {
+        //debug(1, "Setting selected columns for report filter '%s'\n", repName.ascii());
+        QStringList tmpList;
+        tmpList = tmpList.split(":", settingsMap["SelectedColumns"]);
+        setDisplayColumns(tmpList);
+    }
+
+    emit(optionsUpdated());
+}
 

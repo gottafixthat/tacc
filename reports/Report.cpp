@@ -955,6 +955,7 @@ void ReportFilter::loadSavedReportList()
     ADB     DB;
 
     saveList->clear();
+    saveList->insertItem("");
     DB.query("select SaveName from SavedReports where LoginID = '%s' and ReportName = '%s' order by SaveName", curUser().userName, myReportName.ascii());
     if (DB.rowCount) {
         while(DB.getrow()) {

@@ -64,6 +64,7 @@ protected slots:
     void                downClicked();
     QStringMap          myColumnNames;
     virtual void        saveFilters();
+    virtual void        loadFilters(const QString);
 
 protected:
     QListBox            *columnList;
