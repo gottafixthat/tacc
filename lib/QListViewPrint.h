@@ -30,12 +30,14 @@ public:
 
     void        setTitle(const QString newTitle);
     void        setDateLine(const QString newDateLine);
+    void        setPrintSelectedOnly(int);
 
     void        print();
 
 protected:
     QString     myTitle;
     QString     myDateLine;
+    int         myPrintSelectedOnly;
     QListView   *myList;
     int         showDateLine;
 
