@@ -1,27 +1,16 @@
-/*
-** $Id: MakeDeposits.h,v 1.2 2004/01/22 20:59:17 marc Exp $
-**
-***************************************************************************
-**
-** MakeDeposits  - Allows the user to select money that is currently
-**                 sitting in the undeposited funds account and transfer
-**                 it into a checking account.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: MakeDeposits.h,v $
-** Revision 1.2  2004/01/22 20:59:17  marc
-** Functional.
-**
-**
-*/
+/**
+ * MakeDeposits.h - Allows the user to select funds that are currently
+ * sitting in the Undeposited Funds account and transfer it into a cash
+ * account.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef MakeDeposits_included
@@ -51,6 +40,7 @@ public:
     void    fillDepositList();
 
 protected:
+    QLabel      *selectedItemCount;
     QLabel      *undepositedAmount;
     QLabel      *amountSelected;
     QListView   *paymentList;
@@ -65,6 +55,7 @@ protected slots:
     virtual void itemDoubleClicked(QListViewItem *);
     virtual void selectNone();
     virtual void selectAll();
+    virtual void printSelected();
 
 private:
     long    *accountIDX;

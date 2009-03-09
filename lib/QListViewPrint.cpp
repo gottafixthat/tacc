@@ -36,6 +36,7 @@ QListViewPrint::QListViewPrint(QListView *srcList)
 {
     myList = srcList;
     showDateLine = 0;
+    myPrintSelectedOnly = 0;
 }
 
 /**
@@ -72,7 +73,15 @@ void QListViewPrint::setDateLine(const QString newDateLine)
     prRightMargin = 10;
 }
 
-
+/**
+ * setPrintSelectedOnly()
+ *
+ * Tells the engine to print all or only selected items.
+ */
+void QListViewPrint::setPrintSelectedOnly(int selOnly)
+{
+    myPrintSelectedOnly = selOnly;
+}
 
 
 /**
@@ -94,7 +103,6 @@ void QListViewPrint::print()
     prn.setPageSize(QPrinter::Letter);
     prn.setDocName("List Print");
     prn.setCreator("Total Accountability");
-
     
     // Initialize the printer device.
     if (!prn.setup()) return;
@@ -106,7 +114,13 @@ void QListViewPrint::print()
     p->begin(&prn);
     
     // Count the children.
-    for (curItem = myList->firstChild(); curItem != 0; curItem = curItem->itemBelow()) totLines++;
+    for (curItem = myList->firstChild(); curItem != 0; curItem = curItem->itemBelow()) {
+        if (myPrintSelectedOnly) {
+            if (curItem->isSelected()) totLines++;
+        } else {
+            totLines++;
+        }
+    }
     totPages = (totLines / 50) + 1;
     // fprintf(stderr, "The total number of pages is: %d\n", totPages);
 
@@ -271,16 +285,18 @@ QListViewItem *QListViewPrint::printRows(QPainter *p, QListViewItem *startItem)
         int finished = 0;
         yPos     = 130;
         while(!finished) {
-	        xPos     = prLeftMargin;
-            for (int i = 0; i < numCols; i++) {
-		        rect.setCoords(xPos+1, yPos, xPos + prColWidths[i] - 1, yPos+11);
-				p->drawText(rect, myList->columnAlignment(i)|AlignVCenter, startItem->key(i,0));
-		        xPos += prColWidths[i];
-		    }
-		    yPos += 12;
+            if (!myPrintSelectedOnly || startItem->isSelected()) {
+                xPos     = prLeftMargin;
+                for (int i = 0; i < numCols; i++) {
+                    rect.setCoords(xPos+1, yPos, xPos + prColWidths[i] - 1, yPos+11);
+                    p->drawText(rect, myList->columnAlignment(i)|AlignVCenter, startItem->key(i,0));
+                    xPos += prColWidths[i];
+                }
+                yPos += 12;
+                if (++rowsPrinted >= 50) finished = 1;
+            }
             startItem = startItem->itemBelow();
             if (startItem == NULL) finished = 1;
-            if (++rowsPrinted >= 50) finished = 1;
         }
     }
     

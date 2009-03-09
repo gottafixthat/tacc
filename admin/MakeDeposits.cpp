@@ -1,37 +1,16 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** MakeDeposits - Allows the user to select the money that is currently
-**                sitting in undeposited funds and transfer it to a 
-**                checking account.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: MakeDeposits.cpp,v $
-** Revision 1.4  2004/08/21 15:45:01  marc
-** Added qwestconnect mail filter for connect notices.
-**
-** Revision 1.3  2004/01/22 22:01:35  marc
-** Updated it so it only uses two GL splits instead of one for each check.  Much more efficient this way.
-**
-** Revision 1.2  2004/01/22 20:59:17  marc
-** Functional.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/**
+ * MakeDeposits.h - Allows the user to select funds that are currently
+ * sitting in the Undeposited Funds account and transfer it into a cash
+ * account.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,6 +23,7 @@
 #include <GenLedger.h>
 #include <Cfg.h>
 #include <TAATools.h>
+#include <QListViewPrint.h>
 
 #include "MakeDeposits.h"
 #include <ADB.h>
@@ -70,6 +50,14 @@ MakeDeposits::MakeDeposits
     paymentList->setMultiSelection(true);
     connect(paymentList, SIGNAL(selectionChanged()), this, SLOT(itemSelected()));
     connect(paymentList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+
+    QLabel  *selectedItemCountLabel = new QLabel(this, "selectedItemCountLabel");
+    selectedItemCountLabel->setText("Items Selected:");
+    selectedItemCountLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+
+    selectedItemCount = new QLabel(this, "selectedItemCount");
+    selectedItemCount->setText("0");
+    selectedItemCount->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     QLabel  *undepositedAmountLabel = new QLabel(this, "undepositedAmountLabel");
     undepositedAmountLabel->setText("Undeposted amount:");
@@ -100,6 +88,10 @@ MakeDeposits::MakeDeposits
     transDate = new QDateEdit(QDate::currentDate(), this, "transDate");
 
     // Our buttons now.
+    QPushButton *printButton = new QPushButton(this, "printButton");
+    printButton->setText("&Print");
+    connect(printButton, SIGNAL(clicked()), this, SLOT(printSelected()));
+    
     QPushButton *selectAllButton = new QPushButton(this, "selectAllButton");
     selectAllButton->setText("Select &All");
     connect(selectAllButton, SIGNAL(clicked()), this, SLOT(selectAll()));
@@ -121,15 +113,15 @@ MakeDeposits::MakeDeposits
 
     ml->addWidget(paymentList, 1);
 
-    // Other Widget Layout
-    QBoxLayout *owl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
-
     // A grid for our labels and account selection.
     QGridLayout *asl = new QGridLayout(3, 2);
     asl->setColStretch(0, 0);
-    asl->setColStretch(1, 0);
+    asl->setColStretch(1, 1);
     int curRow = 0;
 
+    asl->addWidget(selectedItemCountLabel,          curRow, 0);
+    asl->addWidget(selectedItemCount,               curRow, 1);
+    asl->setRowStretch(curRow++, 0);
     asl->addWidget(undepositedAmountLabel,          curRow, 0);
     asl->addWidget(undepositedAmount,               curRow, 1);
     asl->setRowStretch(curRow++, 0);
@@ -143,28 +135,22 @@ MakeDeposits::MakeDeposits
     asl->addWidget(transDate,                       curRow, 1);
     asl->setRowStretch(curRow++, 0);
 
-    // Now, put the account selection layout into a box so it stretches
-    // the way we want it to
-    QBoxLayout *aslbl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
-    aslbl->addLayout(asl, 0);
-    aslbl->addStretch(1);
-    // Then add that box to our other widget layout
-    owl->addLayout(aslbl, 0);
-    owl->addStretch(1);
-
     // Now our button layout
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
     bl->addStretch(1);
+    bl->addWidget(printButton,      0);
     bl->addWidget(selectAllButton,  0);
     bl->addWidget(selectNoneButton, 0);
     bl->addWidget(continueButton,   0);
     bl->addWidget(cancelButton,     0);
 
     // Add the buttons to our other widget layout
-    owl->addLayout(bl, 0);
+    //owl->addLayout(bl, 0);
 
     // Add the other widget layout to our main layout.
-    ml->addLayout(owl, 0);
+    ml->addLayout(asl, 0);
+    ml->addWidget(new HorizLine(this), 0);
+    ml->addLayout(bl, 0);
 
     // Done with the layout.
 
@@ -338,10 +324,12 @@ void MakeDeposits::itemSelected()
 {
     QListViewItem   *curItem;
     int amtCol = 4;
+    int selCount = 0;
     selTotal = 0.00;
     curItem = paymentList->firstChild();
     while (curItem != NULL) {
         if (curItem->isSelected()) {
+            selCount++;
             selTotal += atof(curItem->key(amtCol,0));
         }
         curItem = curItem->itemBelow();
@@ -349,6 +337,8 @@ void MakeDeposits::itemSelected()
     char    tmpStr[1024];
     sprintf(tmpStr, "$%.2f", selTotal);
     amountSelected->setText(tmpStr);
+    sprintf(tmpStr, "%d", selCount);
+    selectedItemCount->setText(tmpStr);
 }
 
 /*
@@ -383,5 +373,24 @@ void MakeDeposits::selectAll()
     itemSelected();
 }
 
+/**
+ * printSelected()
+ *
+ * Brings up the printer dialog and prints the *selected*
+ * checks.
+ */
+void MakeDeposits::printSelected()
+{
+    QString         dateStr;
+    QListViewPrint  lvPrn(paymentList);
 
+    dateStr = selectedItemCount->text();
+    dateStr += " items totalling ";
+    dateStr += amountSelected->text();
+
+    lvPrn.setTitle("Deposited Item Summary");
+    lvPrn.setDateLine(dateStr);
+    lvPrn.setPrintSelectedOnly(1);
+    lvPrn.print();
+}
 
