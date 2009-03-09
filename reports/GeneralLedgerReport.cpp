@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <qmap.h>
 #include <qstringlist.h>
+#include <qmessagebox.h>
+
 #include <GeneralLedgerReport.h>
 #include <ADB.h>
 #include <TAATools.h>
@@ -400,8 +402,8 @@ void GeneralLedgerDetailReport::editFilters()
  *
  * Constructor.
  */
-GeneralLedgerDetailFilters::GeneralLedgerDetailFilters
-( QWidget* parent, const char* name) : TAAWidget( parent, name )
+GeneralLedgerDetailFilters::GeneralLedgerDetailFilters(QWidget* parent, const char* name) : 
+    ReportFilter( parent, name )
 {
     setCaption("Filters - General Ledger Detail Report");
 
@@ -420,16 +422,7 @@ GeneralLedgerDetailFilters::GeneralLedgerDetailFilters
     dnButton->setText("Move Down");
     connect(dnButton, SIGNAL(clicked()), this, SLOT(downClicked()));
 
-    QPushButton *updateButton = new QPushButton(this, "updateButton");
-    updateButton->setText("&Update");
-    connect(updateButton, SIGNAL(clicked()), this, SLOT(updateClicked()));
-
-    QPushButton *closeButton = new QPushButton(this, "closeButton");
-    closeButton->setText("&Close");
-    connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
-
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
-
+    // Our main layout is already created for us
     QGridLayout *gl = new QGridLayout(2, 2);
     int curRow = 0;
     gl->addWidget(columnListLabel,      curRow, 0);
@@ -441,17 +434,16 @@ GeneralLedgerDetailFilters::GeneralLedgerDetailFilters
 
     ml->addLayout(gl, 1);
 
-    // Buttons
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
-    bl->addStretch(1);
-    bl->addWidget(upButton, 0);
-    bl->addWidget(dnButton, 0);
-    bl->addSpacing(20);
-    bl->addWidget(updateButton, 0);
-    bl->addWidget(closeButton, 0);
-
-    ml->addLayout(bl, 0);
+    // Our button layout is already created for us, so insert
+    // our buttons into it, but since we want to do them on the
+    // left, insert them in reverse order.
+    bl->insertSpacing(0, 20);
+    bl->insertWidget(0, dnButton, 0);
+    bl->insertWidget(0, upButton, 0);
     
+    // Tell the base class we can save.
+    setAllowSave(1);
+    setReportName("GeneralLedgerDetailReport");
 }
 
 /**
@@ -547,24 +539,60 @@ void GeneralLedgerDetailFilters::downClicked()
 }
 
 /**
- * updateClicked()
+ * saveFilters()
  *
- * The user clicked "Update" on the filter list.
+ * Slot that gets called when the user clicks Save to save
+ * the report filters.
  */
-void GeneralLedgerDetailFilters::updateClicked()
+void GeneralLedgerDetailFilters::saveFilters()
 {
-    emit(optionsUpdated());
-    hide();
-}
+    // First, check to see if the report name is valid.
+    if (!saveList->currentText().length()) {
+        QMessageBox::critical(this, "Invalid Save Name", "You must specify a report name before saving.");
+        return;
+    }
 
-/**
- * closeClicked()
- *
- * The user clicked the "Close" button.
- */
-void GeneralLedgerDetailFilters::closeClicked()
-{
-    hide();
+    ADB         DB;
+    ADBTable    srDB("SavedReports");
+    long        savedReportID = 0;
+    // Check to see if this report name exists and if so if they want
+    // to overwrite it.
+    DB.query("select SavedReportID from SavedReports where LoginID = '%s' and ReportName = '%s' and SaveName = '%s'", curUser().userName, myReportName.ascii(), saveList->currentText().ascii());
+    if (DB.rowCount) {
+        DB.getrow();
+        savedReportID = atol(DB.curRow["SavedReportID"]);
+    }
+    if (savedReportID) {
+        // Load it from the datbase while we're here.
+        srDB.get(savedReportID);
+        if (QMessageBox::warning(this, "Saved Report Exists", "A saved report with this name\nalready exists.  Do you want to overwrite it?", "&Yes", "&No", 0, 1) == 1) {
+            return;
+        }
+    }
+
+    // If we made it here, we're good to save.
+    // Set the preliminary items.
+    srDB.setValue("LoginID",        curUser().userName);
+    srDB.setValue("ReportName",     myReportName.ascii());
+    srDB.setValue("SaveName",       saveList->currentText().ascii());
+    
+    // Now, create the report data.
+    QString repData;
+    repData = "ColumnOrder=";
+    // Walk through the list box and add the columns in the order they appear.
+    QStringList  tmpList;
+    for (uint i = 0; i < columnList->count(); i++) {
+        // This one is selected, add it to our return value.
+        QListBoxItem *itm = columnList->item(i);
+        tmpList += itm->text();
+    }
+    repData += tmpList.join(":");
+
+    // Finally, set the report data and save.
+    srDB.setValue("ReportData", repData.ascii());
+    if (savedReportID) srDB.upd();
+    else srDB.ins();
+    emit (setStatus("Report saved", 5000));
 }
 
 

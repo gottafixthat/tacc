@@ -93,7 +93,7 @@ AccountingSettings::AccountingSettings(QWidget *parent, const char *name) : TAAW
     QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
 
     // Now create a grid layout to hold the input boxes
-    QGridLayout *gl = new QGridLayout(this, 3, 2);
+    QGridLayout *gl = new QGridLayout(3, 2);
     int curRow = 0;
     gl->addWidget(acctsRecvAccountLabel,        curRow, 0);
     gl->addWidget(acctsRecvAccount,             curRow, 1);

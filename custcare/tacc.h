@@ -92,6 +92,7 @@ public slots:
 
     // mainWin() relay slots
     void            setStatusMW(const char *);
+    void            setStatusMW(const char *, int);
     void            setProgressMW(int, int);
     void            setProgressMWRT(int, int);
     void            openCustomerMW(long);
