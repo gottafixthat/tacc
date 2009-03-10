@@ -11,11 +11,14 @@
 \parskip \baselineskip
 \begin{document}
 \input{acct-titlepage.tex}
+\pagebreak
 \pagenumbering{roman}
 \tableofcontents
 \vfill
 \pagebreak
 \pagenumbering{arabic}
-\input{acct-initial-setup.tex}
+\include{acct-initial-setup}
+\include{acct-chartofaccounts}
+\include{acct-reports}
 \end{document}
 

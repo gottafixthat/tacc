@@ -1,6 +1,7 @@
 
 GUIDES = accounting-guide.pdf
-ACCTSECTIONS = preamble.tex acct-initial-setup.tex acct-titlepage.tex
+COMMONSECTS = preamble.tex common-reports.tex
+ACCTSECTIONS = acct-titlepage.tex acct-chartofaccounts.tex acct-initial-setup.tex acct-reports.tex
 
 all: $(GUIDES)
 
@@ -10,14 +11,14 @@ clean:
 accounting-guide.pdf: accounting-guide.dvi
 	dvipdf accounting-guide
 
-accounting-guide.dvi: accounting-guide.tex $(ACCTSECTIONS)
+accounting-guide.dvi: accounting-guide.tex $(COMMONSECTS) $(ACCTSECTIONS)
 	latex accounting-guide
 	latex accounting-guide
 
 admin-guide.pdf : admin-guide.dvi
 	   dvipdf admin-guide
 
-admin-guide.dvi : admin-guide.tex $(ADMINSECTIONS)
+admin-guide.dvi : admin-guide.tex $(COMMONSECTS) $(ADMINSECTIONS)
 	   latex admin-guide
 	   latex admin-guide
 
