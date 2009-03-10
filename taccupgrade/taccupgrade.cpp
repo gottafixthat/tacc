@@ -479,5 +479,18 @@ void upgradeDatabase()
 
         vers = 10;
     }
+
+    if (vers < 11) {
+        printf("Creating SavedReports table and upgrading to version 11...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+        sql = "create table if not exists SavedReports (SavedReportID   bigint(21) NOT NULL auto_increment, LoginID         varchar(64) NOT NULL, ReportName      varchar(64) NOT NULL, SaveName        varchar(255) NOT NULL, ReportData      text NOT NULL, PRIMARY KEY(SavedReportID), INDEX LoginNameIDX(LoginID, ReportName), INDEX SaveNameIDX(LoginID, ReportName, SaveName))";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update SchemaVersion set SchemaVersion = 11";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 11;
+    }
 }
 
