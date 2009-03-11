@@ -101,6 +101,10 @@ include/version.h: ./Makefile
 	@echo \#endif >> .ver
 	@mv -f .ver $@
 
+rpms: clean FORCE
+	$(BUILDNUM)
+	scripts/makerpm
+
 ####### Meta objects
 
 
