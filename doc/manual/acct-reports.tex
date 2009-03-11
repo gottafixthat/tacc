@@ -21,7 +21,7 @@ amounts for the current month.  See figure
 
 \begin{figure}[hbtp]
 \center{ \fbox{\includegraphics[width=7cm]{figures/GeneralLedgerReport.eps}} }
-\caption{ \label{fig:GeneralLedgerReport} Sample General Ledger Reort}
+\caption{ \label{fig:GeneralLedgerReport} Sample General Ledger Report}
 \end{figure}
 
 The General Ledger Report displays the following columns:
@@ -43,4 +43,58 @@ report for the selected account with the dates specified in the Date
 Bar.
 
 \section{General Ledger Detail Report}
+
+The General Ledger Detail Report displays all of the transactions that
+have posted to a GL account for the specified date range.
+
+When first opened, the default GL Detail Report displays a default set
+of columns, not all of which may be available for the particular GL
+account being displayed:  Date, Amount, Customer ID, Statement, Full
+Name, Contact Name, Billable Name, Package Name.  As with most other
+reports, the Date Bar will allow you to change the date range to
+display.  If there is a Customer ID associated with the GL item, double
+clicking on the item will open the selected customer window.
+
+\begin{figure}[hbtp]
+\center{ \fbox{\includegraphics[width=5in]{figures/GeneralLedgerDetailReport.eps}} }
+\caption{ \label{fig:GeneralLedgerDetailReport} Sample General Ledger Detail Report}
+\end{figure}
+
+GL Detail Reports can be customized to change what information can be
+displayed, and in which order the columns will appear.  To change the
+report, click on the {\emph Filters} control button in the control bar.
+
+\begin{figure}[hbtp]
+\center{ \fbox{\includegraphics[width=5in]{figures/GeneralLedgerDetailFilters.eps}} }
+\caption{ \label{fig:GeneralLedgerDetailFilters} General Ledger Detail Filters}
+\end{figure}
+
+This will bring up a new window that will allow you to customize the
+report.  Additionally, you can save the report filters and quickly
+retrieve them for any GL Detail report.
+
+To add or remove columns from the report display, select or deselect
+them from the list of {\emph Display Columns} with a single left mouse click.
+
+To re-order the columns, click on the column you want to move in the
+{\emph Display Columns} list then click the {\emph Move Up} or {\emph
+Move Down} button to change its position in the list.  You may need to
+click the item a second time if your selection changed.
+
+Click the {\emph Update} button and the report will be refreshed with
+the new layout.
+
+To save the both the order and selected columns for future use, enter
+a name for the saved filters in the {\emph Saved Filters} box and click
+{\emph Save}.  If there is already a set of saved filters with that name you
+will be prompted to verify that you wish to replace it.  When the
+filters are successfully saved, a status message will appear briefly on
+the main TACC window.
+
+To load a set of saved filters, click the down arrow on the {\emph Saved
+Filters} box and select the name you entered when you saved it.  After
+you have selected the filter, click the {\emph Load} button and it will
+be applied to the current report.  You may then make any changes to the
+filters and click {\emph Save} again to update the saved filters.
+
 

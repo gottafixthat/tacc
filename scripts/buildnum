@@ -1,12 +1,17 @@
 #!/bin/sh
 
 BUILDNUM=`svn info | grep Revision | cut -f2 -d" "`
+if [ $BUILDNUM != "" ]
+then
 #NEWBUILD=`expr $BUILDNUM + 1`
-BUILDDATE=`date +"%m-%d-%Y"`
+    BUILDDATE=`date +"%m-%d-%Y"`
 #echo $NEWBUILD
 #echo $NEWBUILD > .buildnum
-echo "#ifndef BUILDNUM" > include/buildnum.h
-echo "const char *BUILDNUM(void);" >> include/buildnum.h
-echo "#endif" >> include/buildnum.h
-echo "const char *BUILDNUM(void)" > lib/buildnum.cpp
-echo "{ return \"Revision $BUILDNUM, built on $BUILDDATE\";}" >> lib/buildnum.cpp
+    echo "#ifndef BUILDNUM" > include/buildnum.h
+    echo "const char *BUILDNUM(void);" >> include/buildnum.h
+    echo "#endif" >> include/buildnum.h
+    echo "const char *BUILDNUM(void)" > lib/buildnum.cpp
+    echo "{ return \"Revision $BUILDNUM, built on $BUILDDATE\";}" >> lib/buildnum.cpp
+    echo "Revision $BUILDNUM, built on $BUILDDATE"
+fi
+
