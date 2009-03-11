@@ -84,7 +84,7 @@ Tab_Logins::Tab_Logins
     connect(newButton, SIGNAL(clicked()), this, SLOT(createNewLogin()));
 
     openCloseButton = new QPushButton(this, "OpenCloseButton");
-    openCloseButton->setText("&Open/Close");
+    openCloseButton->setText("(&De)Activate");
     connect(openCloseButton, SIGNAL(clicked()), this, SLOT(unlockLogin()));
 
     passwdButton = new QPushButton(this, "PasswdButton");
