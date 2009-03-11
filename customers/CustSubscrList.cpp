@@ -40,11 +40,11 @@ CustSubscrList::CustSubscrList
     list = new QListView(this);
     list->addColumn("LoginID");
     list->addColumn("Item ID");
-    list->addColumn("Qty");
-    list->addColumn("Price");
+    list->addColumn("Qty");         list->setColumnAlignment(2, AlignRight);
+    list->addColumn("Price");       list->setColumnAlignment(3, AlignRight);
     list->addColumn("Last Date");
     list->addColumn("Ends On");
-    list->addColumn("Act");
+    list->addColumn("Act");         list->setColumnAlignment(6, AlignCenter);
     list->addColumn("Description");
     subscriptionIDCol = 8;
     list->setAllColumnsShowFocus(true);
@@ -245,6 +245,11 @@ void CustSubscrList::refreshCustomer(long custID)
 	        } else {
 	            strcpy(tmpPrice, "Undefined!");
 	        }
+
+            // Check for a price override.
+            if (!SDB.getInt("AutoPrice")) {
+                sprintf(tmpPrice, "*%.2f", SDB.getFloat("Price"));
+            }
 
 	        if (SDB.getInt("Active")) strcpy(tmpActive, "Y");
 	        else strcpy(tmpActive, "N");
