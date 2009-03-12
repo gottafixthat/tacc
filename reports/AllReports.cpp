@@ -31,6 +31,7 @@ AllReports::AllReports
         QPopupMenu  *billingReports = new QPopupMenu(this);
         billingReports->insertItem("Credit Card Payments by Type", this, SLOT(showCcPaymentsByTypeReport()));
         billingReports->insertItem("Check Payments", this, SLOT(showCheckPaymentsReport()));
+        billingReports->insertItem("Aging Report", this, SLOT(showAgingReport()));
 
         reportMenu->insertItem("&Billing Reports", billingReports);
         reportMenu->insertItem("G&eneral Ledger", this, SLOT(showGeneralLedgerReport()));
@@ -312,6 +313,20 @@ void AllReports::showGeneralLedgerReport()
     emit(setStatus("Generating report..."));
     GeneralLedgerReport  *rep;
     rep = new GeneralLedgerReport();
+    rep->show();
+    emit(setStatus(""));
+}
+
+/**
+ * showAgingReport()
+ *
+ * Creates an Aging report.
+ */
+void AllReports::showAgingReport()
+{
+    emit(setStatus("Generating report..."));
+    AgingReport *rep;
+    rep = new AgingReport();
     rep->show();
     emit(setStatus(""));
 }

@@ -60,6 +60,7 @@ SOURCES =	Report.cpp\
 		ccPaymentDetailReport.cpp\
 		CheckPaymentsReport.cpp\
 		GeneralLedgerReport.cpp\
+		AgingReport.cpp\
 		AllReports.cpp
 
 ifdef USEQWT
@@ -102,6 +103,7 @@ SRCMETA =	moc_Report.cpp\
 		moc_ccPaymentDetailReport.cpp\
 		moc_CheckPaymentsReport.cpp\
 		moc_GeneralLedgerReport.cpp\
+		moc_AgingReport.cpp\
 		moc_AllReports.cpp
 ifdef USEQWT
 SOURCES += moc_Graph.cpp moc_GraphData.cpp
@@ -262,6 +264,9 @@ moc_CheckPaymentsReport.cpp: CheckPaymentsReport.h
 
 moc_GeneralLedgerReport.cpp: GeneralLedgerReport.h
 	$(MOC) GeneralLedgerReport.h -o moc_GeneralLedgerReport.cpp
+
+moc_AgingReport.cpp: AgingReport.h
+	$(MOC) AgingReport.h -o moc_AgingReport.cpp
 
 moc_SalesReports.cpp: SalesReports.h
 	$(MOC) SalesReports.h -o moc_SalesReports.cpp

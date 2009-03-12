@@ -31,6 +31,7 @@
 #include <ccPaymentDetailReport.h>
 #include <CheckPaymentsReport.h>
 #include <GeneralLedgerReport.h>
+#include <AgingReport.h>
 
 #include <TAAWidget.h>
 #include <qpopupmenu.h>
@@ -64,6 +65,7 @@ public slots:
     void        showCcPaymentDetailReport();
     void        showCheckPaymentsReport();
     void        showGeneralLedgerReport();
+    void        showAgingReport();
 
 private:
     QPopupMenu  *reportMenu;
