@@ -136,6 +136,7 @@ void importLoginTypes();
 void loadCustomers();
 void importCustomers();
 void saveCustomer(customerRecord *);
+void loadCustomerCharges();
 const QDate dateConvert(const QString src);
 
 #endif

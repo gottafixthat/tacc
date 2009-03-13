@@ -80,6 +80,7 @@ int main( int argc, char ** argv )
     if (scrubDB) cleanDatabase();
 
     // Import the login types and billable items.
+    
     loadAccountTypes();
     loadChartOfAccounts();
     loadBillingCycles();
@@ -93,6 +94,8 @@ int main( int argc, char ** argv )
     loadNailedSet();
     loadCustomers();
     importCustomers();
+
+    loadCustomerCharges();
 
 }
 
@@ -1708,3 +1711,84 @@ const QDate dateConvert(const QString src)
     sprintf(workStr, "%04d-%02d-%02d", y, m, d);
     return QDate::fromString(workStr, Qt::ISODate);
 }
+
+/**
+ * loadCustomerCharges()
+ *
+ * Loads the charges for the customer from seanet_charges.csv
+ * into Accounts Receivables.
+ */
+void loadCustomerCharges()
+{
+    CSVParser   parser;
+    if (!parser.openFile("seanet_charges.csv", true)) {
+        fprintf(stderr, "Unable to open seanet_charges.csv, skipping.\n");
+        return;
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("Regnum");
+    int amountCol           = parser.header().findIndex("amount");
+    int invoiceAmountCol    = parser.header().findIndex("InvoiceAmount");
+    int startDateCol        = parser.header().findIndex("dateFrom");
+    int endDateCol          = parser.header().findIndex("dateTo");
+    int idInvoiceCol        = parser.header().findIndex("idInvoice");
+    int idChargeCol         = parser.header().findIndex("idCharge");
+    int memoCol             = parser.header().findIndex("serviceTypeName");
+
+    QString lastRegnum = "";
+    int     numCusts = 0;
+    int     numLines = 0;
+    int     subActive = 1;
+    long    custID = 0;
+    CustomersDB     CDB;
+    ADB             DB;
+    QStringList     tmpParts;
+    QDate           startDate;
+    QDate           endDate;
+
+    // Now walk through the rows.
+    while (parser.loadRecord()) {
+        numLines++;
+        //if (!(numLines % 10)) fprintf(stderr, "\rProcessing line %d...", numLines);
+        if (lastRegnum.compare(parser.row()[regNumberCol])) {
+            DB.query("select CustomerID from Customers where RegNum = '%s'", parser.row()[regNumberCol].ascii());
+            if (DB.rowCount) {
+                DB.getrow();
+                custID = atoi(DB.curRow["CustomerID"]);
+                CDB.get(custID);
+            } else {
+                custID = 0;
+            }
+        }
+
+        if (custID) {
+            // Parse the dates.
+            if (parser.row()[startDateCol].length()) {
+                tmpParts = tmpParts.split(" ", parser.row()[startDateCol]);
+                myDateToQDate(tmpParts[0].ascii(), startDate);
+            }
+            if (parser.row()[endDateCol].length()) {
+                tmpParts = tmpParts.split(" ", parser.row()[endDateCol]);
+                myDateToQDate(tmpParts[0].ascii(), endDate);
+            }
+
+            AcctsRecv   AR;
+            AR.setGLAccount(SALESACCOUNT);
+            //CDB.get((long int)cust->customerID);
+            AR.ARDB->setValue("CustomerID",     custID);
+            AR.ARDB->setValue("LoginID",        CDB.getStr("PrimaryLogin"));
+            AR.ARDB->setValue("ItemID",         0);
+            AR.ARDB->setValue("Quantity",       1.0);
+            AR.ARDB->setValue("Price",          parser.row()[amountCol].toFloat());
+            AR.ARDB->setValue("Amount",         parser.row()[amountCol].toFloat());
+            AR.ARDB->setValue("TransDate",      startDate.toString("yyyy-MM-dd").ascii());
+            AR.ARDB->setValue("StartDate",      startDate.toString("yyyy-MM-dd").ascii());
+            AR.ARDB->setValue("EndDate",        endDate.toString("yyyy-MM-dd").ascii());
+            AR.ARDB->setValue("StatementNo",    parser.row()[idInvoiceCol].toInt());
+            AR.ARDB->setValue("Memo",           parser.row()[memoCol].ascii());
+            AR.SaveTrans();
+        }
+    }
+}
+

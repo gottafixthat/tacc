@@ -17,6 +17,19 @@
 
 #define TRANSTYPE_CUSTCHARGE 1
 
+struct customerARAgingRecord {
+    long        customerID;
+    double      currentBalance;
+    double      totalOverdue;
+    double      currentDue;
+    double      overdue;
+    double      overdue30;
+    double      overdue60;
+    double      overdue90;
+};
+
+const customerARAgingRecord getCustomerAgingData(long custID);
+
 class AcctsRecv
 {
 

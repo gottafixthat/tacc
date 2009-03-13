@@ -4,12 +4,13 @@
 **                  as individual split lines.
 */
 
-#include "AcctsRecv.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <qstrlist.h>
 #include <Cfg.h>
 #include <ADB.h>
+#include <TAATools.h>
+#include "AcctsRecv.h"
 
 
 // Okay, first off, we need to define the information we need to keep
@@ -19,6 +20,84 @@ struct AREntry {
     float Amount;
     float ClearedAmount;
 };
+
+/**
+ * getCustomerAgingData()
+ *
+ * Utility function that returns the AR Aging data
+ * for the specified customer ID.
+ *
+ * currentBalance = The customer's current balance, including all charges and payments
+ * totalOverdue = What portion of the currentBalance is overdue
+ * currentDue = What portion of the currentBalance is not overdue
+ * overdue = Amount overdue between 0 and 30 days
+ * overdue30 = Amunt overdue between 31 and 60 days
+ * overdue60 = Amount overdue between 61 and 90 days
+ * overdue90 = Amount overdue 91 days or greater.
+ */
+const customerARAgingRecord getCustomerAgingData(long custID)
+{
+    customerARAgingRecord   retVal;
+    ADB                     DB;
+
+    // Set our return values
+    retVal.customerID = 0;
+    retVal.currentBalance = 0.00;
+    retVal.totalOverdue = 0.00;
+    retVal.currentDue = 0.00;
+    retVal.overdue = 0.00;
+    retVal.overdue30 = 0.00;
+    retVal.overdue60 = 0.00;
+    retVal.overdue90 = 0.00;
+
+    DB.query("select CurrentBalance from Customers where CustomerID = %ld", custID);
+    if (!DB.rowCount) return retVal;
+    DB.getrow();
+    retVal.customerID = custID;
+    retVal.currentBalance = atof(DB.curRow["CurrentBalance"]);
+    if (retVal.currentBalance == 0.00) return retVal;
+
+    // If we've made it here, we have a customer with a balance
+    QDate   today = QDate::currentDate();
+    QDate   dueDate = QDate::currentDate();
+    QString dueDateSt;
+
+    DB.query("select Amount, ClearedAmount, DueDate from AcctsRecv where CustomerID = %ld and DueDate <> '0000-00-00' and ClearedAmount <> Amount", custID);
+    if (DB.rowCount) while (DB.getrow()) {
+        double  amount  = 0.00;
+        double  cleared = 0.00;
+        double  diff    = 0.00;
+        int     days    = 0;
+
+        dueDateSt = DB.curRow["DueDate"];
+        myDateToQDate(dueDateSt.ascii(), dueDate);
+        amount  = atof(DB.curRow["Amount"]);
+        cleared = atof(DB.curRow["ClearedAmount"]);
+        diff = amount - cleared;
+        days = dueDate.daysTo(today);
+
+        if (days > 90) {
+            retVal.overdue90 += diff;
+            retVal.totalOverdue += diff;
+        } else if (days > 60) {
+            retVal.overdue60 += diff;
+            retVal.totalOverdue += diff;
+        } else if (days > 30) {
+            retVal.overdue30 += diff;
+            retVal.totalOverdue += diff;
+        } else if (days >= 1) {
+            retVal.overdue += diff;
+            retVal.totalOverdue += diff;
+        } else {
+            // else its not overdue yet, don't necessarily add them
+            retVal.currentDue += diff;
+        }
+    }
+
+
+    return retVal;
+
+}
 
 
 
