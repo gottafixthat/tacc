@@ -369,6 +369,16 @@ int StatementEngine::doStatement(uint CustID)
             if (CDB.getInt("PrintedStatement")) {
                 STDB.setValue("ToBePrinted", (int) 1);
             }
+
+            // Set the aging information.
+            // MARC
+            customerARAgingRecord aging = getCustomerAgingData(CDB.getLong("CustomerID"));
+            STDB.setValue("TotalOverdue",   aging.totalOverdue);
+            STDB.setValue("CurrentDue",     aging.currentDue);
+            STDB.setValue("Overdue",        aging.overdue);
+            STDB.setValue("Overdue30",      aging.overdue30);
+            STDB.setValue("Overdue60",      aging.overdue60);
+            STDB.setValue("Overdue90",      aging.overdue90);
             
 			// Okay, insert the record...
 			STDB.ins();
@@ -1155,7 +1165,7 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     }
     
     // Get the previous statement date.
-    DB.query("select StatementDate from Statements where StatementNo <> %d order by StatementDate desc limit 1", statementNo);
+    DB.query("select StatementDate from Statements where StatementNo < %d order by StatementDate desc limit 1", statementNo);
     if (DB.rowCount) {
         DB.getrow();
         QDate   prevBalDate = QDate::fromString(DB.curRow["StatementDate"], Qt::ISODate);
@@ -1165,40 +1175,18 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     }
 
     // Check to see if they have any overdue charges.
-    customerARAgingRecord aging = getCustomerAgingData(STDB.getLong("CustomerID"));
-    if (aging.totalOverdue > 0.00) {
+    if (STDB.getFloat("PrevBalance") + STDB.getFloat("Credits") > 0.00) {
         tpl->assign("IsOverdue", "1");
     } else {
         // They're not overdue
         tpl->assign("IsOverdue", "0");
     }
-    if (aging.currentBalance > 0.00) {
+    if (STDB.getFloat("TotalDue") > 0.00) {
         tpl->assign("NeedsPayment", "1");
     } else {
         // They don't need to pay
         tpl->assign("NeedsPayment", "0");
     }
-
-    // Now add the actual aging data to the output as well.
-    QString totalOverdue;
-    QString currentDue;
-    QString overdue;
-    QString overdue30;
-    QString overdue60;
-    QString overdue90;
-    totalOverdue = totalOverdue.sprintf("%.2f", aging.totalOverdue);
-    currentDue   = currentDue.sprintf("%.2f", aging.currentDue);
-    overdue      = overdue.sprintf("%.2f", aging.overdue);
-    overdue30    = overdue30.sprintf("%.2f", aging.overdue30);
-    overdue60    = overdue60.sprintf("%.2f", aging.overdue60);
-    overdue90    = overdue90.sprintf("%.2f", aging.overdue90);
-
-    tpl->assign("TotalOverdue",     totalOverdue.ascii());
-    tpl->assign("CurrentDue",       currentDue.ascii());
-    tpl->assign("Overdue",          overdue.ascii());
-    tpl->assign("Overdue30",        overdue30.ascii());
-    tpl->assign("Overdue60",        overdue60.ascii());
-    tpl->assign("Overdue90",        overdue90.ascii());
 
 
     // Parse the main body items
@@ -1230,6 +1218,13 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     tpl->assign("FinaceCharge",     STDB.getStr("FinanceCharge"));
     tpl->assign("NewCharges",       STDB.getStr("NewCharges"));
     tpl->assign("TotalDue",         STDB.getStr("TotalDue"));
+    tpl->assign("TotalOverdue",     STDB.getStr("TotalOverdue"));
+    tpl->assign("CurrentDue",       STDB.getStr("CurrentDue"));
+    tpl->assign("Overdue",          STDB.getStr("Overdue"));
+    tpl->assign("Overdue30",        STDB.getStr("Overdue30"));
+    tpl->assign("Overdue60",        STDB.getStr("Overdue60"));
+    tpl->assign("Overdue90",        STDB.getStr("Overdue90"));
+
     if (STDB.getFloat("NewCharges") < 0.00) balStat = "1";
     if (STDB.getFloat("NewCharges") > 0.00) balStat = "2";
     tpl->assign("BalanceStatus",    balStat.ascii());
