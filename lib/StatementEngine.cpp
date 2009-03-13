@@ -1129,7 +1129,7 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
             tpl->assign("EndDate",          endDate.toString(cfgVal("LatexDateFormat")));
             int hasDateRange = 1;
             if (startDate == endDate) hasDateRange = 0;
-            tpl->assign("LoginID",          SDDB.getStr("LoginID"));
+            tpl->assign("LoginID",          latexEscapeString(SDDB.getStr("LoginID")));
             tpl->assign("Amount",           SDDB.getStr("Amount"));
             balance += SDDB.getFloat("Amount");
             if (SDDB.getFloat("Quantity") == 1.00 && atoi(cfgVal("StatementQtyOneBlank"))) {
@@ -1213,12 +1213,12 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     tpl->assign("StatementNumber",  stStr);
     tpl->assign("CustomerID",       cidStr);
     tpl->assign("RegNum",           CDB.getStr("RegNum"));
-    tpl->assign("CustomerName",     STDB.getStr("CustName"));
-    tpl->assign("CustomerAddr1",    STDB.getStr("CustAddr1"));
-    tpl->assign("CustomerAddr2",    STDB.getStr("CustAddr2"));
-    tpl->assign("CustomerAddr3",    STDB.getStr("CustAddr3"));
-    tpl->assign("CustomerAddr4",    STDB.getStr("CustAddr4"));
-    tpl->assign("Terms",            termsStr);
+    tpl->assign("CustomerName",     latexEscapeString(STDB.getStr("CustName")));
+    tpl->assign("CustomerAddr1",    latexEscapeString(STDB.getStr("CustAddr1")));
+    tpl->assign("CustomerAddr2",    latexEscapeString(STDB.getStr("CustAddr2")));
+    tpl->assign("CustomerAddr3",    latexEscapeString(STDB.getStr("CustAddr3")));
+    tpl->assign("CustomerAddr4",    latexEscapeString(STDB.getStr("CustAddr4")));
+    tpl->assign("Terms",            latexEscapeString(termsStr));
     tpl->assign("DueDate",          tmpDate.toString(cfgVal("LatexDateFormat")));
     tpl->assign("PreviousBalance",  STDB.getStr("PrevBalance"));
     tpl->assign("Credits",          STDB.getStr("Credits"));
@@ -1233,8 +1233,8 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     if (STDB.getFloat("NewCharges") < 0.00) balStat = "1";
     if (STDB.getFloat("NewCharges") > 0.00) balStat = "2";
     tpl->assign("BalanceStatus",    balStat.ascii());
-    tpl->assign("HeaderMsg",        STDB.getStr("HeaderMsg"));
-    tpl->assign("FooterMsg",        STDB.getStr("FooterMsg"));
+    tpl->assign("HeaderMsg",        latexEscapeString(STDB.getStr("HeaderMsg")));
+    tpl->assign("FooterMsg",        latexEscapeString(STDB.getStr("FooterMsg")));
 
     tpl->parse("statement");
 
