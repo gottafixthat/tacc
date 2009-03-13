@@ -45,7 +45,11 @@ struct taa_User {
 
 QWidget    *mainWin();
 void        setMainWin(QWidget *newWinPtr);
+
 bool        loadTAAConfig(bool isCritical = true);
+void        setDefaultConfigValues(void);
+void        updateCfgVal(const char *token, const char *val);
+
 int         schemaVersion();
 bool        schemaValid();
 

@@ -15,8 +15,8 @@
 #include <qtooltip.h>
 
 #include <ADB.h>
-#include <TAAConfig.h>
 #include <Cfg.h>
+#include <TAATools.h>
 #include <AccountingSettings.h>
 
 /**

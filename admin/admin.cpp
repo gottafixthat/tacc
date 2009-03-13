@@ -33,7 +33,6 @@
 #include "common.h"
 //#include "BlargDB.h"
 #include "TAALogin.h"
-#include "TAAConfig.h"
 #include <ChartOfAccounts.h>
 
 #ifdef USEDES
@@ -755,7 +754,7 @@ int main( int argc, char ** argv )
     ADB::setDefaultPass(DBPass);
 
     // Load the config files.        
-    cfgInit();
+    loadTAAConfig();
     
     Administration m;
 

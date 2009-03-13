@@ -128,8 +128,51 @@ bool loadTAAConfig(bool isCritical)
         }
     }
 
+    // Setup the database pool
+    ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
+    ADB::setDefaultDBase(cfgVal("TAAMySQLDB"));
+    ADB::setDefaultUser(cfgVal("TAAMySQLUser"));
+    ADB::setDefaultPass(cfgVal("TAAMySQLPass"));
+
+    // Now, load all of the configuration data into memory.
+    ADB DB;
+    DB.query("select * from Settings order by InternalID");
+    if (DB.rowCount) while (DB.getrow()) {
+        char    *tmpStr = new char[strlen(DB.curRow["Setting"])+2];
+        strcpy(tmpStr, DB.curRow["Setting"]);
+        setCfgVal(DB.curRow["Token"], tmpStr);
+    }
+
     return retVal;
 }
+
+/**
+ * setDefaultConfigValues()
+ *
+ * Sets up some default values.  They will be overridden by the config
+ * files.
+ */
+void setDefaultConfigValues(void)
+{
+    setCfgVal("GLAccountNoMask",  "D999-99-99");
+}
+
+
+/*
+ * updateCfgVal - Stores the specified configuration value into the database.
+ */
+void updateCfgVal(const char *token, const char *val)
+{
+    ADB DB;
+    DB.query("select * from Settings where Token = '%s'", token);
+    if (DB.rowCount) {
+        DB.dbcmd("update Settings set Setting = '%s' where Token = '%s'", DB.escapeString(val), token);
+    } else {
+        DB.dbcmd("insert into Settings (Token, Setting) values ('%s', '%s')", token, DB.escapeString(val));
+    }
+    setCfgVal(token, val);
+}
+
 
 /**
  * schemaVersion()

@@ -41,7 +41,6 @@
 #include "admin.h"
 #include "common.h"
 #include "TAALogin.h"
-#include "TAAConfig.h"
 #include <TAATools.h>
 #include <Cfg.h>
 #include <QSqlDbPool.h>
@@ -217,7 +216,7 @@ int main( int argc, char ** argv )
 
 
     // Re-Initialize our configuration values.
-    cfgInit();
+    loadTAAConfig();
 
 	aw = new CustomerCare(NULL, "CustomerCare");
 
