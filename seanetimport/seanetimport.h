@@ -18,7 +18,8 @@
 #include <qptrlist.h>
 
 #define STARTING_CUSTOMERID 100000
-#define SALESACCOUNT "3745-07-01"
+#define ARACCOUNT    "1110-07-00"
+#define SALESACCOUNT "2740-07-00"
 
 struct billingCycleRecord {
     long    cycleID;
@@ -137,6 +138,7 @@ void loadCustomers();
 void importCustomers();
 void saveCustomer(customerRecord *);
 void loadCustomerCharges();
+void loadCustomerPayments();
 const QDate dateConvert(const QString src);
 
 #endif
