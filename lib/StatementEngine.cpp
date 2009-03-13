@@ -15,7 +15,9 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <StatementEngine.h>
+#include <qstringlist.h>
+#include <qprogressdialog.h>
+#include <qfile.h>
 #include <TAATools.h>
 #include <BString.h>
 #include <BlargDB.h>
@@ -24,10 +26,9 @@
 #include <wtpl2.h>
 #include <QSqlDbPool.h>
 #include <EmailMessage.h>
+#include <AcctsRecv.h>
 
-#include <qstringlist.h>
-#include <qprogressdialog.h>
-#include <qfile.h>
+#include <StatementEngine.h>
 
 /**
  * StatementEngine()
@@ -1162,6 +1163,43 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     } else {
         tpl->assign("PreviousBalanceDate", "N/A");
     }
+
+    // Check to see if they have any overdue charges.
+    customerARAgingRecord aging = getCustomerAgingData(STDB.getLong("CustomerID"));
+    if (aging.totalOverdue > 0.00) {
+        tpl->assign("IsOverdue", "1");
+    } else {
+        // They're not overdue
+        tpl->assign("IsOverdue", "0");
+    }
+    if (aging.currentBalance > 0.00) {
+        tpl->assign("NeedsPayment", "1");
+    } else {
+        // They don't need to pay
+        tpl->assign("NeedsPayment", "0");
+    }
+
+    // Now add the actual aging data to the output as well.
+    QString totalOverdue;
+    QString currentDue;
+    QString overdue;
+    QString overdue30;
+    QString overdue60;
+    QString overdue90;
+    totalOverdue = totalOverdue.sprintf("%.2f", aging.totalOverdue);
+    currentDue   = currentDue.sprintf("%.2f", aging.currentDue);
+    overdue      = overdue.sprintf("%.2f", aging.overdue);
+    overdue30    = overdue30.sprintf("%.2f", aging.overdue30);
+    overdue60    = overdue60.sprintf("%.2f", aging.overdue60);
+    overdue90    = overdue90.sprintf("%.2f", aging.overdue90);
+
+    tpl->assign("TotalOverdue",     totalOverdue.ascii());
+    tpl->assign("CurrentDue",       currentDue.ascii());
+    tpl->assign("Overdue",          overdue.ascii());
+    tpl->assign("Overdue30",        overdue30.ascii());
+    tpl->assign("Overdue60",        overdue60.ascii());
+    tpl->assign("Overdue90",        overdue90.ascii());
+
 
     // Parse the main body items
     sprintf(stStr, "%d", statementNo);
