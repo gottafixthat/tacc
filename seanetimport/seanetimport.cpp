@@ -27,6 +27,7 @@ QPtrList<customerRecord> customerList;
 QPtrList<domainRecord> domainListFull;
 QPtrList<loginRecord> loginListFull;
 QPtrList<billingCycleRecord> billingCycleList;
+int doHistoricalData;
 
 int main( int argc, char ** argv )
 {
@@ -34,6 +35,7 @@ int main( int argc, char ** argv )
     loadTAAConfig();
     QApplication    a( argc, argv );
     bool            scrubDB = true;
+    doHistoricalData = 0;
 
     fprintf(stderr, "AcctsRecvAccount = '%s'\n", cfgVal("AcctsRecvAccount"));
 
@@ -66,11 +68,14 @@ int main( int argc, char ** argv )
 
     int c;
     while(1) {
-        c = getopt(argc,argv,"s");
+        c = getopt(argc,argv,"sh");
         if (c == -1) break;
         switch(c) {
             case    's':
                 scrubDB = false;
+                break;
+            case    'h':
+                doHistoricalData = 1;
                 break;
             default:
                 break;
@@ -83,6 +88,8 @@ int main( int argc, char ** argv )
     
     loadAccountTypes();
     loadChartOfAccounts();
+    fprintf(stderr, "AcctsRecvAccount = '%s'\n", cfgVal("AcctsRecvAccount"));
+
     loadBillingCycles();
     importLoginTypes();
     loadDomains();
@@ -95,7 +102,10 @@ int main( int argc, char ** argv )
     loadCustomers();
     importCustomers();
 
-    loadCustomerCharges();
+    if (doHistoricalData) {
+        loadCustomerPayments();
+        loadCustomerCharges();
+    }
 
 }
 
@@ -189,6 +199,7 @@ void cleanDatabase()
     tables  += "AutoPayments";
     tables  += "Billables";
     tables  += "BillablesData";
+    tables  += "BillingCycles";
     tables  += "CCTrans";
     tables  += "Contacts";
     tables  += "Customers";
@@ -295,6 +306,25 @@ void loadChartOfAccounts()
         acctDB.setValue("TransCount",     0);
         acctDB.ins();
     }
+
+    // Now set our AR account to be the one defined as ARACCOUNT
+    ADB DB;
+    DB.query("select IntAccountNo from Accounts where AccountNo = '%s'", ARACCOUNT);
+    if (!DB.rowCount) {
+        fprintf(stderr, "Unable to locate AR Account '%s'.  Aborting.\n", ARACCOUNT);
+        exit(-1);
+    }
+    DB.getrow();
+    updateCfgVal("AcctsRecvAccount", DB.curRow["IntAccountNo"]);
+
+    // Now do the same for undeposited funds.
+    DB.query("select IntAccountNo from Accounts where AccountNo = '%s'", SALESACCOUNT);
+    if (!DB.rowCount) {
+        fprintf(stderr, "Unable to locate Account '%s'.  Aborting.\n", SALESACCOUNT);
+        exit(-1);
+    }
+    DB.getrow();
+    updateCfgVal("UndepositedFundsAcct", DB.curRow["IntAccountNo"]);
 }
 
 /**
@@ -319,6 +349,43 @@ void loadBillingCycles()
             rec->period  = q.value(1).toInt();
             billingCycleList.append(rec);
         }
+    } else {
+        // Define our billing cycles.
+        ADBTable    bcDB("BillingCycles");
+        bcDB.clearData();
+        bcDB.setValue("CycleID",        "Monthly");
+        bcDB.setValue("Description",    "Monthly");
+        bcDB.setValue("DefaultCycle",   1);
+        bcDB.setValue("CycleType",      "Anniversary");
+        bcDB.setValue("AnniversaryPeriod", 1);
+        bcDB.ins();
+
+        bcDB.clearData();
+        bcDB.setValue("CycleID",        "Quarterly");
+        bcDB.setValue("Description",    "Quarterly");
+        bcDB.setValue("DefaultCycle",   0);
+        bcDB.setValue("CycleType",      "Anniversary");
+        bcDB.setValue("AnniversaryPeriod", 3);
+        bcDB.ins();
+
+        bcDB.clearData();
+        bcDB.setValue("CycleID",        "Semi-Annual");
+        bcDB.setValue("Description",    "Semi-Annual");
+        bcDB.setValue("DefaultCycle",   0);
+        bcDB.setValue("CycleType",      "Anniversary");
+        bcDB.setValue("AnniversaryPeriod", 6);
+        bcDB.ins();
+
+        bcDB.clearData();
+        bcDB.setValue("CycleID",        "Annual");
+        bcDB.setValue("Description",    "Annual");
+        bcDB.setValue("DefaultCycle",   0);
+        bcDB.setValue("CycleType",      "Anniversary");
+        bcDB.setValue("AnniversaryPeriod", 12);
+        bcDB.ins();
+
+        // And reload our cycles.
+        loadBillingCycles();
     }
 }
 
@@ -1543,7 +1610,7 @@ void saveCustomer(customerRecord *cust)
     }
 
     // If they have an opening balance, create an AR charge for them.
-    if (cust->currentBalance > 0.0) {
+    if (cust->currentBalance > 0.0 && !doHistoricalData) {
         AcctsRecv   AR;
         AR.setGLAccount(SALESACCOUNT);
         CDB.get((long int)cust->customerID);
@@ -1729,40 +1796,43 @@ void loadCustomerCharges()
     // Get the index of certain columns from our header row.
     int regNumberCol        = parser.header().findIndex("Regnum");
     int amountCol           = parser.header().findIndex("amount");
-    int invoiceAmountCol    = parser.header().findIndex("InvoiceAmount");
     int startDateCol        = parser.header().findIndex("dateFrom");
     int endDateCol          = parser.header().findIndex("dateTo");
     int idInvoiceCol        = parser.header().findIndex("idInvoice");
-    int idChargeCol         = parser.header().findIndex("idCharge");
     int memoCol             = parser.header().findIndex("serviceTypeName");
 
-    QString lastRegnum = "";
-    int     numCusts = 0;
-    int     numLines = 0;
-    int     subActive = 1;
-    long    custID = 0;
-    CustomersDB     CDB;
+    QString         lastRegnum = "";
+    int             numLines = 0;
+    long            custID = 0;
     ADB             DB;
     QStringList     tmpParts;
     QDate           startDate;
     QDate           endDate;
+    float           curProg = 0.00;
 
     // Now walk through the rows.
+    fprintf(stderr, "Processing customer charges...\n");
     while (parser.loadRecord()) {
         numLines++;
         //if (!(numLines % 10)) fprintf(stderr, "\rProcessing line %d...", numLines);
-        if (lastRegnum.compare(parser.row()[regNumberCol])) {
+        if (lastRegnum.compare(lastRegnum, parser.row()[regNumberCol])) {
+            lastRegnum = parser.row()[regNumberCol];
             DB.query("select CustomerID from Customers where RegNum = '%s'", parser.row()[regNumberCol].ascii());
             if (DB.rowCount) {
+                if (custID) {
+                    fprintf(stderr, "\rProcessing charges line %d...Customer ID %ld - %.2f...\e[K", numLines, custID, curProg);
+                }
                 DB.getrow();
                 custID = atoi(DB.curRow["CustomerID"]);
-                CDB.get(custID);
+                curProg = 0.00;
             } else {
                 custID = 0;
+                curProg = 0.00;
             }
         }
 
         if (custID) {
+            curProg += parser.row()[amountCol].toFloat();
             // Parse the dates.
             if (parser.row()[startDateCol].length()) {
                 tmpParts = tmpParts.split(" ", parser.row()[startDateCol]);
@@ -1775,9 +1845,8 @@ void loadCustomerCharges()
 
             AcctsRecv   AR;
             AR.setGLAccount(SALESACCOUNT);
-            //CDB.get((long int)cust->customerID);
             AR.ARDB->setValue("CustomerID",     custID);
-            AR.ARDB->setValue("LoginID",        CDB.getStr("PrimaryLogin"));
+            AR.ARDB->setValue("LoginID",        "");
             AR.ARDB->setValue("ItemID",         0);
             AR.ARDB->setValue("Quantity",       1.0);
             AR.ARDB->setValue("Price",          parser.row()[amountCol].toFloat());
@@ -1787,6 +1856,90 @@ void loadCustomerCharges()
             AR.ARDB->setValue("EndDate",        endDate.toString("yyyy-MM-dd").ascii());
             AR.ARDB->setValue("StatementNo",    parser.row()[idInvoiceCol].toInt());
             AR.ARDB->setValue("Memo",           parser.row()[memoCol].ascii());
+            AR.SaveTrans();
+        }
+    }
+}
+
+/**
+ * loadCustomerPayments()
+ *
+ * Loads the payments for the customer from seanet_payments.csv
+ * into Accounts Receivables.
+ */
+void loadCustomerPayments()
+{
+    CSVParser   parser;
+    if (!parser.openFile("seanet_payments.csv", true)) {
+        fprintf(stderr, "Unable to open seanet_payments.csv, skipping.\n");
+        return;
+    }
+
+    // Get the index of certain columns from our header row.
+    int regNumberCol        = parser.header().findIndex("Regnum");
+    int amountCol           = parser.header().findIndex("Expr1");
+    int recvDateCol         = parser.header().findIndex("receiveDate");
+    int refNumCol           = parser.header().findIndex("refNumber");
+    int methodCol           = parser.header().findIndex("PaymentType");
+
+    QString         lastRegnum = "";
+    int             numLines = 0;
+    long            custID = 0;
+    ADB             DB;
+    QStringList     tmpParts;
+    QDate           paymentDate;
+    QString         memo;
+    float           curProg = 0.00;
+
+    // Now walk through the rows.
+    fprintf(stderr, "Processing customer payments...\n");
+    while (parser.loadRecord()) {
+        numLines++;
+        //if (!(numLines % 10)) fprintf(stderr, "\rProcessing line %d...", numLines);
+        if (lastRegnum.compare(lastRegnum, parser.row()[regNumberCol])) {
+            lastRegnum = parser.row()[regNumberCol];
+            DB.query("select CustomerID from Customers where RegNum = '%s'", parser.row()[regNumberCol].ascii());
+            if (DB.rowCount) {
+                if (custID) {
+                    fprintf(stderr, "\rProcessing payments line %d...Customer ID %ld - %.2f...\e[K", numLines, custID, curProg);
+                }
+                DB.getrow();
+                custID = atoi(DB.curRow["CustomerID"]);
+                curProg = 0.00;
+            } else {
+                custID = 0;
+                curProg = 0.00;
+            }
+        }
+
+        if (custID) {
+            curProg += parser.row()[amountCol].toFloat();
+            // Parse the dates.
+            if (parser.row()[recvDateCol].length()) {
+                tmpParts = tmpParts.split(" ", parser.row()[recvDateCol]);
+                myDateToQDate(tmpParts[0].ascii(), paymentDate);
+            }
+
+            memo = "Payment Received";
+            if (parser.row()[methodCol].length()) {
+                if (parser.row()[methodCol].compare(parser.row()[methodCol], "N/A")) {
+                    memo += " (";
+                    memo += parser.row()[methodCol];
+                    if (parser.row()[methodCol].compare(parser.row()[methodCol], "Credit Card")) {
+                        memo += " #";
+                        memo += parser.row()[refNumCol];
+                    };
+                    memo += ")";
+                }
+            }
+            AcctsRecv   AR;
+            AR.setGLAccount(SALESACCOUNT);
+            AR.ARDB->setValue("CustomerID",     custID);
+            AR.ARDB->setValue("TransType",      TRANSTYPE_PAYMENT);
+            AR.ARDB->setValue("Price",          parser.row()[amountCol].toFloat() * -1.0);
+            AR.ARDB->setValue("Amount",         parser.row()[amountCol].toFloat() * -1.0);
+            AR.ARDB->setValue("TransDate",      paymentDate.toString("yyyy-MM-dd").ascii());
+            AR.ARDB->setValue("Memo",           memo.ascii());
             AR.SaveTrans();
         }
     }

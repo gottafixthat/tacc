@@ -23,7 +23,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qwindowsstyle.h>
 #include <qmenubar.h>
 #include <qstatusbar.h>
 #include <qpopupmenu.h>
@@ -154,39 +153,6 @@ int main( int argc, char ** argv )
     strcpy(DBName, DBNAME);
     */
 
-    // Setup our font and palette for the entire application.
-    QFont       awFont = a.font();
-    QPalette    pal;
-    pal = a.palette();
-    QColorGroup colg = pal.active();
-
-    QColor standardLightGray( 220, 220, 220 );
-    QColor light( 250, 250, 250 );
-    QColor dark( standardLightGray.dark( 120 ) );
-    QColorGroup std_act( Qt::black, dark,
-             light, Qt::black, Qt::gray,
-             Qt::black, standardLightGray);
-
-    QColorGroup std_dis( Qt::darkGray, dark,
-             light, dark, Qt::gray,
-             Qt::darkGray, std_act.background() );
-
-    QColorGroup std_inact( Qt::black, dark,
-             light, Qt::black, Qt::gray,
-             Qt::black, standardLightGray);
-
-    QPalette qt_std_pal( std_act, std_dis, std_inact );
-
-    //awFont.setPointSize(10);
-    awFont.setPointSize(10);
-    awFont.setFamily(QString("Bistream Vera Sans"));
-    awFont.setStyleHint(QFont::SansSerif);
-    //awFont.setWeight(50);
-
-    //a.setStyle(new QWindowsStyle);
-    //a.setFont(awFont, true);
-    //a.setPalette(qt_std_pal);
-
     // Check the schema version.
     if (!schemaValid()) {
         QMessageBox::critical(NULL, "Invalid Database Schema", "This version of TACC is not compatible\nwith the current databse version.\n\nThe upgradetacc program will bring the version current.");
@@ -221,8 +187,6 @@ int main( int argc, char ** argv )
 	aw = new CustomerCare(NULL, "CustomerCare");
 
     a.setMainWidget(aw);
-    //aw->setFont(awFont);
-    aw->setPalette(qt_std_pal);
 
     setMainWin(aw);
     aw->show();
