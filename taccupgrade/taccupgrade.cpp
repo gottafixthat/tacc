@@ -492,5 +492,34 @@ void upgradeDatabase()
 
         vers = 11;
     }
+
+    if (vers < 12) {
+        printf("Updating Statements table...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "alter table Statements add column TotalOverdue decimal(20,2) default '0.00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Statements add column CurrentDue decimal(20,2) default '0.00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Statements add column Overdue decimal(20,2) default '0.00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Statements add column Overdue30 decimal(20,2) default '0.00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Statements add column Overdue60 decimal(20,2) default '0.00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "alter table Statements add column Overdue90 decimal(20,2) default '0.00'";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "update SchemaVersion set SchemaVersion = 12";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 12;
+    }
 }
 
