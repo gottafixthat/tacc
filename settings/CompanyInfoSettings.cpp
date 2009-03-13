@@ -16,7 +16,7 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
-#include "TAAConfig.h"
+#include <TAATools.h>
 #include "Cfg.h"
 #include "CompanyInfoSettings.h"
 

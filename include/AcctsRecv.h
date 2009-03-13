@@ -30,9 +30,12 @@ public:
     // Transaction functions
     int			GetTrans(long IntID);
     long		SaveTrans(void);
+    int         setGLAccount(const char *acctNo);
+    int         setGLAccount(int intAcctNo);
     
 private:
 	GenLedger	*GL;
+    int         myIntAcctNo;
 };
 
 void applyCredits(long CustomerID);

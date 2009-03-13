@@ -35,6 +35,8 @@ int main( int argc, char ** argv )
     QApplication    a( argc, argv );
     bool            scrubDB = true;
 
+    fprintf(stderr, "AcctsRecvAccount = '%s'\n", cfgVal("AcctsRecvAccount"));
+
     // Setup the database pool
     ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
     ADB::setDefaultDBase(cfgVal("TAAMySQLDB"));
@@ -78,6 +80,8 @@ int main( int argc, char ** argv )
     if (scrubDB) cleanDatabase();
 
     // Import the login types and billable items.
+    loadAccountTypes();
+    loadChartOfAccounts();
     loadBillingCycles();
     importLoginTypes();
     loadDomains();
@@ -98,9 +102,11 @@ int main( int argc, char ** argv )
  * Given a CSV file and a table name, this migrates all of the columns
  * found in the CSV into a SQL database.
  */
-void csvImport(const char *csvFile, const char *tableName)
+void csvImport(const char *csvFile, const char *tableName, char delim)
 {
     CSVParser   parser;
+    QChar       tmpDelim(delim);
+    parser.setDelimiter(tmpDelim);
     // Open our CSV file
     if (!parser.openFile(csvFile, true)) {
         fprintf(stderr, "Unable to open '%s', aborting\n", csvFile);
@@ -174,6 +180,7 @@ void cleanDatabase()
     QSqlDbPool  pool;
     QSqlQuery   q(pool.qsqldb());
     QStringList tables;
+    tables  += "Accounts";
     tables  += "AcctsRecv";
     tables  += "Addresses";
     tables  += "AutoPayments";
@@ -188,6 +195,7 @@ void cleanDatabase()
     tables  += "Domains";
     tables  += "GL";
     tables  += "GLIndex";
+    tables  += "GLAccountTypes";
     tables  += "LoginFlagValues";
     tables  += "LoginTypeBillables";
     tables  += "LoginTypeFlags";
@@ -212,6 +220,78 @@ void cleanDatabase()
         q.exec(tmpStr);
     }
     fprintf(stderr, "\e[KFinished scrubbing %d tables...\n", tables.count());
+}
+
+/**
+ * loadGLAccountTypes()
+ *
+ * Loads the GLAccountTypes from a files.
+ */
+void loadAccountTypes()
+{
+    CSVParser   parser;
+    QChar       delim('\t');
+    parser.setDelimiter(delim);
+    // Open our CSV file
+    if (!parser.openFile("GLAccountTypes.tsv", true)) {
+        fprintf(stderr, "Unable to open GLAccountTypes.tsv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int acctTypeCol     = parser.header().findIndex("AccountType");
+    int descCol         = parser.header().findIndex("Description");
+
+    ADBTable    atDB("GLAccountTypes");
+
+    while(parser.loadRecord()) {
+        atDB.clearData();
+        atDB.setValue("AccountType",    parser.row()[acctTypeCol].ascii());
+        atDB.setValue("Description",    parser.row()[descCol].ascii());
+        atDB.ins();
+    }
+}
+
+/**
+ * loadChartOfAccounts()
+ *
+ * Loads the Accounts table from a file.
+ */
+void loadChartOfAccounts()
+{
+    CSVParser   parser;
+    QChar       delim('\t');
+    parser.setDelimiter(delim);
+    // Open our CSV file
+    if (!parser.openFile("Accounts.tsv", true)) {
+        fprintf(stderr, "Unable to open Accounts.tsv, aborting\n");
+        exit(-1);
+    }
+
+    // Get the index of certain columns from our header row.
+    int intAcctNoCol    = parser.header().findIndex("IntAccountNo");
+    int acctNoCol       = parser.header().findIndex("AccountNo");
+    int acctNameCol     = parser.header().findIndex("AcctName");
+    int parentIDCol     = parser.header().findIndex("ParentID");
+    int acctTypeCol     = parser.header().findIndex("AccountType");
+    int provAcctCol     = parser.header().findIndex("ProviderAccountNo");
+    int taxLineCol      = parser.header().findIndex("TaxLine");
+
+    ADBTable    acctDB("Accounts");
+
+    while(parser.loadRecord()) {
+        acctDB.clearData();
+        acctDB.setValue("IntAccountNo",   parser.row()[intAcctNoCol].ascii());
+        acctDB.setValue("AccountNo",      parser.row()[acctNoCol].ascii());
+        acctDB.setValue("AcctName",       parser.row()[acctNameCol].ascii());
+        acctDB.setValue("ParentID",       parser.row()[parentIDCol].ascii());
+        acctDB.setValue("AccountType",    parser.row()[acctTypeCol].ascii());
+        acctDB.setValue("ProviderAccountNo", parser.row()[provAcctCol].ascii());
+        acctDB.setValue("TaxLine",        parser.row()[taxLineCol].ascii());
+        acctDB.setValue("Balance",        (float) 0.0);
+        acctDB.setValue("TransCount",     0);
+        acctDB.ins();
+    }
 }
 
 /**
@@ -907,7 +987,7 @@ void importLoginTypes()
             buf->setValue("ItemID",         parser.row()[billableCol]);
             buf->setValue("Description",    parser.row()[descriptionCol]);
             buf->setValue("ItemType",       1);
-            buf->setValue("AccountNo",      9100);
+            buf->setValue("IntAccountNo",   17);
             buf->setValue("Priority",       10);
             buf->setValue("Active",         1);
             billablesIns += billables.insert();
@@ -1101,7 +1181,7 @@ void loadCustomers()
     int debitCol        = parser.header().findIndex("DebitSum");
     int creditCol       = parser.header().findIndex("CreditSum");
     int paymentTypeCol  = parser.header().findIndex("PaymentType");
-    int creditCardCol   = parser.header().findIndex("cardNumber");
+    int creditCardCol   = parser.header().findIndex("CreditCard");
     int expMonthCol     = parser.header().findIndex("ExpM");
     int expYearCol      = parser.header().findIndex("ExpYY");
     int svcPlanCol      = parser.header().findIndex("ServicePlan");
@@ -1462,6 +1542,7 @@ void saveCustomer(customerRecord *cust)
     // If they have an opening balance, create an AR charge for them.
     if (cust->currentBalance > 0.0) {
         AcctsRecv   AR;
+        AR.setGLAccount(SALESACCOUNT);
         CDB.get((long int)cust->customerID);
         AR.ARDB->setValue("CustomerID",     (long int) cust->customerID);
         AR.ARDB->setValue("LoginID",        CDB.getStr("PrimaryLogin"));

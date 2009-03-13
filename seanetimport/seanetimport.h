@@ -18,6 +18,7 @@
 #include <qptrlist.h>
 
 #define STARTING_CUSTOMERID 100000
+#define SALESACCOUNT "3745-07-01"
 
 struct billingCycleRecord {
     long    cycleID;
@@ -115,8 +116,10 @@ extern QPtrList<loginRecord> loginListFull;
 extern QPtrList<billingCycleRecord> billingCycleList;
 
 int main( int argc, char ** argv );
-void csvImport(const char *, const char *);
+void csvImport(const char *, const char *, char delim = ',');
 void cleanDatabase();
+void loadAccountTypes();
+void loadChartOfAccounts();
 void loadBillingCycles();
 long getBillingCycleID(int period);
 void loadDomains();

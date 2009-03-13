@@ -30,7 +30,7 @@ AcctsRecv::AcctsRecv(void)
 	
 	GL	 = new GenLedger;
 	ARDB = new AcctsRecvDB;
-	
+	myIntAcctNo = 0;
 }
 
 AcctsRecv::~AcctsRecv()
@@ -41,6 +41,48 @@ AcctsRecv::~AcctsRecv()
 	delete(ARDB);
 }
 
+/**
+ * setGLAccount()
+ *
+ * Overrides the GL Account that we post to - not the AcctsRecv side
+ * but the billable side of the transaction.
+ *
+ * Returns 1 if successful, 0 if not.
+ */
+int AcctsRecv::setGLAccount(const char *acctNo)
+{
+    int     retVal = 0;
+    ADB     DB;
+    DB.query("select IntAccountNo from Accounts where AccountNo = '%s'", acctNo);
+    if (DB.rowCount) { 
+        DB.getrow();
+        myIntAcctNo = atoi(DB.curRow["IntAccountNo"]);
+        retVal = 1;
+    }
+    return retVal;
+}
+
+/**
+ * setGLAccount()
+ *
+ * Overrides the GL Account that we post to - not the AcctsRecv side
+ * but the billable side of the transaction.
+ *
+ * Returns 1 if successful, 0 if not.
+ */
+int AcctsRecv::setGLAccount(int intAcctNo)
+{
+    int     retVal = 0;
+    ADB     DB;
+    DB.query("select IntAccountNo from Accounts where IntAccountNo = '%d'", intAcctNo);
+    if (DB.rowCount) { 
+        myIntAcctNo = intAcctNo;
+        retVal = 1;
+    }
+    return retVal;
+}
+
+/**
 /*
 ** GetTrans     - Loads the specified transaction and its splits into memory.
 **                Note:  It doesn't care if it has already loaded another
@@ -98,7 +140,8 @@ long AcctsRecv::SaveTrans(void)
 		        
 		    default:
 		        SrcAcct = ARAcct;
-		        DstAcct = BDB.getInt("IntAccountNo");
+                if (myIntAcctNo) DstAcct = myIntAcctNo;
+                else DstAcct = BDB.getInt("IntAccountNo");
 		        break;
 		}
 		
