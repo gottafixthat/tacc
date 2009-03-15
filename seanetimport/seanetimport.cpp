@@ -35,7 +35,7 @@ int main( int argc, char ** argv )
     loadTAAConfig();
     QApplication    a( argc, argv );
     bool            scrubDB = true;
-    doHistoricalData = 0;
+    doHistoricalData = 1;
 
     fprintf(stderr, "AcctsRecvAccount = '%s'\n", cfgVal("AcctsRecvAccount"));
 
@@ -75,7 +75,7 @@ int main( int argc, char ** argv )
                 scrubDB = false;
                 break;
             case    'h':
-                doHistoricalData = 1;
+                doHistoricalData = 0;
                 break;
             default:
                 break;
@@ -103,8 +103,8 @@ int main( int argc, char ** argv )
     importCustomers();
 
     if (doHistoricalData) {
-        loadCustomerPayments();
         loadCustomerCharges();
+        loadCustomerPayments();
     }
 
 }
@@ -599,8 +599,8 @@ void loadDialupStatic()
 {
     CSVParser   parser;
     // Open our CSV file
-    if (!parser.openFile("PLANS_dialup_static.csv", true)) {
-        fprintf(stderr, "Unable to open PLANS_dialup_static.csv, aborting\n");
+    if (!parser.openFile("PLANS_dialup_statics.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_dialup_statics.csv, aborting\n");
         exit(-1);
     }
 
@@ -727,8 +727,8 @@ void loadDSLAccessSet()
 {
     CSVParser   parser;
     // Open our CSV file
-    if (!parser.openFile("PLANS_AccessSet.csv", true)) {
-        fprintf(stderr, "Unable to open PLANS_AccessSet.csv, aborting\n");
+    if (!parser.openFile("PLANS_AccessSet_dsl.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_AccessSet_dsl.csv, aborting\n");
         exit(-1);
     }
 
@@ -1225,8 +1225,8 @@ void loadCustomers()
     }
 
     // Open the CSV file
-    if (!parser.openFile("PLANS_main_billable.csv", true)) {
-        fprintf(stderr, "Unable to open PLANS_main_billable.csv, aborting\n");
+    if (!parser.openFile("PLANS_mainBillable.csv", true)) {
+        fprintf(stderr, "Unable to open PLANS_mainBillable.csv, aborting\n");
         exit(-1);
     }
 
@@ -1251,7 +1251,7 @@ void loadCustomers()
     int debitCol        = parser.header().findIndex("DebitSum");
     int creditCol       = parser.header().findIndex("CreditSum");
     int paymentTypeCol  = parser.header().findIndex("PaymentType");
-    int creditCardCol   = parser.header().findIndex("CreditCard");
+    int creditCardCol   = parser.header().findIndex("cardNumber");
     int expMonthCol     = parser.header().findIndex("ExpM");
     int expYearCol      = parser.header().findIndex("ExpYY");
     int svcPlanCol      = parser.header().findIndex("ServicePlan");
@@ -1889,6 +1889,7 @@ void loadCustomerPayments()
     QStringList     tmpParts;
     QDate           paymentDate;
     QString         memo;
+    long            statementNo = 0;
     float           curProg = 0.00;
 
     // Now walk through the rows.
@@ -1914,10 +1915,19 @@ void loadCustomerPayments()
 
         if (custID) {
             curProg += parser.row()[amountCol].toFloat();
+            statementNo = 0;
             // Parse the dates.
             if (parser.row()[recvDateCol].length()) {
                 tmpParts = tmpParts.split(" ", parser.row()[recvDateCol]);
                 myDateToQDate(tmpParts[0].ascii(), paymentDate);
+                // Now grab the date from the database of the first
+                // billable with a statement that follows this the date
+                // of this transaction.
+                DB.query("select StatementNo from AcctsRecv where CustomerID = %ld and TransType <> 2 and TransDate > '%s' limit 1", custID, paymentDate.toString("yyyy-MM-dd").ascii());
+                if (DB.rowCount) {
+                    DB.getrow();
+                    statementNo = atol(DB.curRow["StatementNo"]);
+                }
             }
 
             memo = "Payment Received";
@@ -1939,6 +1949,7 @@ void loadCustomerPayments()
             AR.ARDB->setValue("Price",          parser.row()[amountCol].toFloat() * -1.0);
             AR.ARDB->setValue("Amount",         parser.row()[amountCol].toFloat() * -1.0);
             AR.ARDB->setValue("TransDate",      paymentDate.toString("yyyy-MM-dd").ascii());
+            AR.ARDB->setValue("StatementNo",    statementNo);
             AR.ARDB->setValue("Memo",           memo.ascii());
             AR.SaveTrans();
         }

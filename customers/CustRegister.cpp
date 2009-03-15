@@ -186,7 +186,7 @@ CustRegister::CustRegister
 	}
 
 
-    list->setSorting(7, TRUE);  // Sort by the internal transaction ID to
+    //list->setSorting(7, TRUE);  // Sort by the internal transaction ID to
                                 // make sure that our total works.
     
     // The numeric columns should be aligned to the right.
@@ -224,7 +224,7 @@ void CustRegister::refreshRegister(int)
 	RListViewItem   *curItem = NULL;
 	int     isOdd = 1;
 	
-	DB.query("select InternalID, TransDate, LoginID, ItemID, Quantity, Amount, Memo, PackageItem from AcctsRecv where CustomerID = %ld order by InternalID", myCustID);
+	DB.query("select InternalID, TransDate, LoginID, ItemID, Quantity, Amount, Memo, PackageItem from AcctsRecv where CustomerID = %ld order by TransDate, InternalID", myCustID);
 	
     list->clear();
 

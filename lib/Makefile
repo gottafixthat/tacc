@@ -39,6 +39,9 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			GenLedger.cpp AcctsRecv.cpp BrassClient.cpp\
 			AddressEditor.cpp AddressEditorData.cpp\
 			ParseFile.cpp SelectionList.cpp\
+			TAAService.cpp\
+			BRASSService.cpp\
+			LoginService.cpp\
 			TAALogin.cpp buildnum.cpp\
 			calendar.cpp holiday.cpp worktime.cpp\
 			RListViewItem.cpp\
