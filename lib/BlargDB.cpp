@@ -1928,6 +1928,33 @@ int CustomersDB::doSubscriptions(void)
 	return(RetVal);
 }
 
+/**
+ * getStatementEmailList()
+ *
+ * Gets the list of email addresses out of the database and returns
+ * them in a QStringList.  If no matches are found, we take the
+ * primary login ID and add the domain to it.
+ */
+QStringList CustomersDB::getStatementEmailList()
+{
+    QStringList retVal;
+
+    ADB     DB;
+    DB.query("select EmailAddress, Name from CustomerContacts where SendStatements > 0 and CustomerID = %ld group by EmailAddress", getLong("CustomerID"));
+    if (DB.rowCount) {
+        while (DB.getrow()) {
+            QString addr(DB.curRow["EmailAddress"]);
+            retVal += addr;
+        }
+    } else {
+        QString addr(getStr("PrimaryLogin"));
+        addr += "@";
+        addr += cfgVal("EmailDomain");
+        retVal += addr;
+    }
+
+    return retVal;
+}
 
 
 /*

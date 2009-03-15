@@ -79,6 +79,7 @@
 #include "VoIPServiceTypes.h"
 #include "CompanyEditor.h"
 #include "SettingsManager.h"
+#include <TemplateEditor.h>
 
 #include "UserPrivs.h"
 
@@ -304,6 +305,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
             otherMenu->insertItem("Billable Items", this, SLOT(billableitemslist()));
             otherMenu->insertItem("Billing Cycles", this, SLOT(billingCycleList()));
             otherMenu->insertItem("Company List", this, SLOT(openCompanyList()));
+            otherMenu->insertItem("Email Templates", this, SLOT(emailTemplateList()));
             otherMenu->insertItem("Package Editor", this, SLOT(packagelist()));
             otherMenu->insertItem("Payment Terms", this, SLOT(paymenttermslist()));
             otherMenu->insertItem("Login Types", this, SLOT(logintypelist()));
@@ -839,6 +841,13 @@ void CustomerCare::openCompanyList()
 {
     CompanyList *cl = new CompanyList();
     cl->show();
+    //cl->refreshList(1);
+}
+
+void CustomerCare::emailTemplateList()
+{
+    TemplateEditor *te = new TemplateEditor();
+    te->show();
     //cl->refreshList(1);
 }
 

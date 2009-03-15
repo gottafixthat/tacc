@@ -137,6 +137,7 @@ protected slots:
     void            voipServiceTypeList();
     void            manageRateCenters();
     void            openCompanyList();
+    void            emailTemplateList();
     void            toggleCallQueue();
     void            toggleAgentStatus();
     void            settings();

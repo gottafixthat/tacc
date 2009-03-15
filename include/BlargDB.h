@@ -44,6 +44,7 @@
 #include <mysql/mysql.h>
 #include <qstring.h>
 #include <qstrlist.h>
+#include <qstringlist.h>
 #include <qdatetm.h>
 #include <qpainter.h>
 #include "ADB.h"
@@ -270,6 +271,9 @@ public:
     void rerateBillingCycle(const char *effDate);
 
     int	doSubscriptions(void);
+
+    QStringList getStatementEmailList();
+
 };
 
 // Addresses

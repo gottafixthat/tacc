@@ -65,6 +65,7 @@ SOURCES =	BaseList.cpp BaseListData.cpp\
         BI_Measurement.cpp\
 		LoginTypeBillablesAdd.cpp\
 		LoginTypeFlagAdd.cpp\
+		TemplateEditor.cpp\
 		DomainTypeEdit.cpp\
 		DomainTypeBillablesAdd.cpp DomainTypeBillablesAddData.cpp\
 		DNS_Templates.cpp\
@@ -112,6 +113,7 @@ HEADERS =	BaseList.h BaseListData.h\
         BI_Measurement.h\
 		LoginTypeBillablesAdd.h\
 		LoginTypeFlagAdd.h\
+		TemplateEditor.h\
 		DomainTypeEdit.h\
 		DomainTypeBillablesAdd.h DomainTypeBillablesAddData.h\
 		DNS_Templates.h\
@@ -161,6 +163,7 @@ SRCMETA =	moc_BaseList.cpp moc_BaseListData.cpp\
 		moc_BI_Measurement.cpp\
 		moc_LoginTypeBillablesAdd.cpp\
 		moc_LoginTypeFlagAdd.cpp\
+		moc_TemplateEditor.cpp\
 		moc_DomainTypeEdit.cpp\
 		moc_DomainTypeBillablesAdd.cpp moc_DomainTypeBillablesAddData.cpp\
 		moc_DNS_Templates.cpp\
@@ -337,6 +340,9 @@ moc_LoginTypeBillablesAdd.cpp: LoginTypeBillablesAdd.h
 
 moc_LoginTypeFlagAdd.cpp: LoginTypeFlagAdd.h
 	$(MOC) LoginTypeFlagAdd.h -o moc_LoginTypeFlagAdd.cpp
+
+moc_TemplateEditor.cpp: TemplateEditor.h
+	$(MOC) TemplateEditor.h -o moc_TemplateEditor.cpp
 
 moc_DomainTypeEdit.cpp: DomainTypeEdit.h
 	$(MOC) DomainTypeEdit.h -o moc_DomainTypeEdit.cpp
