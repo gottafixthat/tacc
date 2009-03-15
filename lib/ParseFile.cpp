@@ -173,7 +173,7 @@ void    parseEmail(const char *tmplName, long CustomerID, const char *LoginID, c
     // Get our defaults from the passed in options.
     strcpy(msgFrom, emailFrom);
     if (strlen(emailTo)) strcpy(msgTo, emailTo);
-    else sprintf(msgTo, "%s@avvanta.com", LoginID);
+    else sprintf(msgTo, "%s@%s", LoginID, cfgVal("EmailDomain"));
 
     if (strlen(emailSubject)) strcpy(msgSubj, emailSubject);
     else strcpy(msgSubj, DB.curRow["DefaultSubject"]);

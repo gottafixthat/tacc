@@ -566,7 +566,12 @@ void CCMonetra::finishedPressed()
                 
             //fprintf(stderr, "Calling parseEmail()\n");
             // Finally, send it to them.
-            parseEmail(whichFile, atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), "", 1, "Avvanta Accounting <accounting@avvanta.com>", "", "", extVars);
+            // Get the list of email addresses to send it to.
+            QStringList addrs = CDB.getStatementEmailList();
+            for ( QStringList::Iterator it = addrs.begin(); it != addrs.end(); ++it ) {
+                QString toAddr = *it;
+                parseEmail(whichFile, atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), cfgVal("EmailDomain"), 0, cfgVal("StatementFromAddress"), toAddr.ascii(), "", extVars);
+            }
             
             emit(customerUpdated(atol(curItem->key(6,1))));
         }
