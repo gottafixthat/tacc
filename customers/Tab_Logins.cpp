@@ -50,6 +50,7 @@
 #include <qmessagebox.h>
 #include <ADB.h>
 #include <QSqlDbPool.h>
+#include <LoginService.h>
 #include "TAATools.h"
 
 Tab_Logins::Tab_Logins
@@ -180,9 +181,6 @@ Tab_Logins::~Tab_Logins()
 
 void Tab_Logins::refreshLoginList(int)
 {
-    QSqlDbPool  dbp;
-    QSqlDatabase    *qsql = dbp.qsqldb();
-
     ADB     DB;
     QString tmpstr = "";
     QString tmpQItemID = "";
@@ -1144,6 +1142,18 @@ void CustomLoginFlagEditor::saveClicked()
     ADB db;
 
     if (flagTable->numRows()) {
+        // Create a LoginService object to setup our flags.
+        LoginService    svc;
+        svc.setServiceID(QString(myLoginID));
+        if (!svc.loginExists()) {
+            QMessageBox::warning(this, "BRASS Error", svc.lastStatus());
+            return;
+        }
+        if (!svc.loadFlags()) {
+            QMessageBox::warning(this, "BRASS Error", svc.lastStatus());
+            return;
+        }
+
         // Loop through the rows, grabbing the key/value pairs
         for (int i = 0; i < flagTable->numRows(); i++) {
             long        result;
@@ -1151,12 +1161,14 @@ void CustomLoginFlagEditor::saveClicked()
             flag = flagTable->text(i-1,0);
             val  = flagTable->text(i-1,1);
             if (flag != NULL) {
+                svc.addFlag(flag, val, true);
                 result = db.dbcmd("replace into LoginFlagValues values ('%s', '%s', '%s')", myLoginID, flag.ascii(), val.ascii());
                 if (result < 0) {
 			        QMessageBox::warning(this, "Database Error", "Unable to save flag.");
                 }
             }
         }
+        svc.provision();
     }
 
     // Let our parent know that something has changed
