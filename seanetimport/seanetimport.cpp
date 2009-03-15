@@ -1329,7 +1329,11 @@ void loadCustomers()
             cust->password      = parser.row()[passwordCol];
 
             // Opening balance
-            cust->currentBalance = parser.row()[debitCol].toFloat() - parser.row()[creditCol].toFloat();
+            if (doHistoricalData) {
+                cust->currentBalance = 0.00;
+            } else {
+                cust->currentBalance = parser.row()[debitCol].toFloat() - parser.row()[creditCol].toFloat();
+            }
 
             // Payment info
             cust->paymentType   = parser.row()[paymentTypeCol].toInt();
@@ -1703,7 +1707,6 @@ void saveCustomer(customerRecord *cust)
             CDB.upd();
         }
         // Set the flags for this user
-        // MARC
         if (loginRec->serviceType == "DialupDynamic") {
             setLoginFlag(loginRec->userName, "Username",     loginRec->userName);
             setLoginFlag(loginRec->userName, "Password",     loginRec->password);
