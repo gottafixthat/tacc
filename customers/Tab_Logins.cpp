@@ -1160,7 +1160,7 @@ void CustomLoginFlagEditor::saveClicked()
             QString     flag, val;
             flag = flagTable->text(i-1,0);
             val  = flagTable->text(i-1,1);
-            if (flag != NULL) {
+            if (flag.length()) {
                 svc.addFlag(flag, val, true);
                 result = db.dbcmd("replace into LoginFlagValues values ('%s', '%s', '%s')", myLoginID, flag.ascii(), val.ascii());
                 if (result < 0) {

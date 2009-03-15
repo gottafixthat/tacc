@@ -11,6 +11,7 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
+#include <TAATools.h>
 #include <TAAService.h>
 
 /**
@@ -73,6 +74,10 @@ const QString TAAService::serviceID()
  */
 void TAAService::addFlag(QString k, QString v, bool replace)
 {
+    if (!k.length()) {
+        debug(1,"TAAService::addFlag() Warning! Attempt to set a null flag.\n");
+        return;
+    }
     ServiceFlag *flag;
 
     // If replace = true, find any matching flags and delete it/them

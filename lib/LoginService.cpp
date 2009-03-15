@@ -69,7 +69,7 @@ int LoginService::loadFlags()
     if (DB.rowCount) {
         while(DB.getrow()) {
             // Set replace = true so we override any standard flag values.
-            addFlag(QString(DB.curRow["Tag"]), QString(DB.curRow["Value"]), true);
+            addFlag(QString(DB.curRow["LoginFlag"]), QString(DB.curRow["FlagValue"]), true);
         }
     }
     return 1;
