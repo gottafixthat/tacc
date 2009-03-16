@@ -61,6 +61,11 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
     sections->addWidget(company, sectionCount);
     sectionCount++;
 
+    templates = new EmailTemplateSettings(this, "Email Templates");
+    sectionList->insertItem("Email Templates");
+    sections->addWidget(templates, sectionCount);
+    sectionCount++;
+
 
     HorizLine   *hLine = new HorizLine(this, "hLine");
     VertLine    *vLine = new VertLine(this, "vLine");
@@ -131,6 +136,13 @@ void SettingsManager::saveSettings()
         return;
     }
 
+    if (!templates->validateSettings()) {
+        sections->raiseWidget(templates);
+        sectionList->setSelected(sectionList->findItem(templates->name(), Qt::ExactMatch), true);
+        return;
+    }
+
+
 
     // Now call each of the widgets one by one to save their settings
     if (!accounting->saveSettings()) {
@@ -154,6 +166,12 @@ void SettingsManager::saveSettings()
     if (!company->saveSettings()) {
         sections->raiseWidget(company);
         sectionList->setSelected(sectionList->findItem(company->name(), Qt::ExactMatch), true);
+        return;
+    }
+
+    if (!templates->saveSettings()) {
+        sections->raiseWidget(templates);
+        sectionList->setSelected(sectionList->findItem(templates->name(), Qt::ExactMatch), true);
         return;
     }
 

@@ -118,6 +118,7 @@ int CompanyInfoSettings::saveSettings()
 {
     int retVal = 1;     // Assume success
 
+
     updateCfgVal("CompanyName", companyName->text().ascii());
     updateCfgVal("CompanyAddr1", addressLine1->text().ascii());
     updateCfgVal("CompanyAddr2", addressLine2->text().ascii());

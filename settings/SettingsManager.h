@@ -24,6 +24,7 @@
 #include "GeneralSettings.h"
 #include "BillingSettings.h"
 #include "CompanyInfoSettings.h"
+#include "EmailTemplateSettings.h"
 
 class SettingsManager : public TAAWidget
 {
@@ -45,6 +46,7 @@ protected:
     GeneralSettings     *general;
     BillingSettings     *billing;
     CompanyInfoSettings *company;
+    EmailTemplateSettings *templates;
 
 protected slots:
     void            saveSettings();

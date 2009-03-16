@@ -352,8 +352,8 @@ void CCBatch::finishedPressed()
     Today   = QDate::currentDate();
     QDatetomyDate(theDate, Today);
     
-    strcpy(DeclFile, "CCDeclined");
-    strcpy(RcptFile, "CCReceipt");
+    strcpy(DeclFile, cfgVal("CCDeclinedTemplate"));
+    strcpy(RcptFile, cfgVal("CCReceiptTemplate"));
     
     QApplication::setOverrideCursor(waitCursor);
     //QProgressDialog progress("Saving payments and sending messages...", "Abort", dbRows, 0, "Export Credit Cards");
@@ -493,7 +493,11 @@ void CCBatch::finishedPressed()
             
         //fprintf(stderr, "Calling parseEmail()\n");
         // Finally, send it to them.
-        parseEmail(whichFile, atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), "", 1, "Avvanta Accounting <accounting@avvanta.com>", "", "", extVars);
+        QStringList addrs = CDB.getStatementEmailList();
+        for ( QStringList::Iterator it = addrs.begin(); it != addrs.end(); ++it ) {
+            QString toAddr = *it;
+            parseEmail(whichFile, atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), cfgVal("EmailDomain"), 0, cfgVal("StatementFromAddress"), toAddr.ascii(), "", extVars);
+        }
         
         // Regardless of whether or not the card was accepted,
         // we update it in the batch so we don't run it again.
