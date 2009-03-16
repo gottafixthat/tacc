@@ -38,6 +38,7 @@ SOURCES =	SettingsManager.cpp\
 		GeneralSettings.cpp\
 		BillingSettings.cpp\
 		CompanyInfoSettings.cpp\
+		EmailTemplateSettings.cpp\
 		TelephonySettings.cpp
 
 HEADERS =	SettingsManager.h\
@@ -45,6 +46,7 @@ HEADERS =	SettingsManager.h\
 		GeneralSettings.h\
 		BillingSettings.h\
 		CompanyInfoSettings.h\
+		EmailTemplateSettings.h\
 		TelephonySettings.h
 
 OBJECTS =	$(SOURCES:.cpp=.o)
@@ -54,6 +56,7 @@ SRCMETA =	moc_SettingsManager.cpp\
 		moc_GeneralSettings.cpp\
 		moc_BillingSettings.cpp\
 		moc_CompanyInfoSettings.cpp\
+		moc_EmailTemplateSettings.cpp\
 		moc_TelephonySettings.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
@@ -108,6 +111,9 @@ moc_BillingSettings.cpp: BillingSettings.h
 
 moc_CompanyInfoSettings.cpp: CompanyInfoSettings.h
 	$(MOC) CompanyInfoSettings.h -o moc_CompanyInfoSettings.cpp
+
+moc_EmailTemplateSettings.cpp: EmailTemplateSettings.h
+	$(MOC) EmailTemplateSettings.h -o moc_EmailTemplateSettings.cpp
 
 moc_TelephonySettings.cpp: TelephonySettings.h
 	$(MOC) TelephonySettings.h -o moc_TelephonySettings.cpp

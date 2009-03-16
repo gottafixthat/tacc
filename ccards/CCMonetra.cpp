@@ -415,8 +415,8 @@ void CCMonetra::finishedPressed()
     Today   = QDate::currentDate();
     QDatetomyDate(theDate, Today);
     
-    strcpy(DeclFile, "CCDeclined");
-    strcpy(RcptFile, "CCReceipt");
+    strcpy(DeclFile, cfgVal("CCDeclinedTemplate"));
+    strcpy(RcptFile, cfgVal("CCReceiptTemplate"));
     
     QApplication::setOverrideCursor(waitCursor);
     //QProgressDialog progress("Saving payments and sending messages...", "Abort", dbRows, 0, "Export Credit Cards");
