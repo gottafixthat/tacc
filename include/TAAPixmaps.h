@@ -20,6 +20,7 @@ extern const char * user_icon_xpm[];
 extern const char * busy_xpm[];
 extern const char * down_xpm[];
 extern const char * up_xpm[];
+extern const char * edit_paste_xpm[];
 
 #endif
 
