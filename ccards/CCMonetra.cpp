@@ -75,6 +75,9 @@ CCMonetra::CCMonetra
     QApplication::setOverrideCursor(waitCursor);
 	setCaption( "Credit Card Batch Processing (Monetra)" );
 
+    QString tmpReceipts = cfgVal("GenerateCCReceipts");
+    doReceipts = tmpReceipts.toInt();
+
     // Create our widgets and our layout
 
     // The total number of cards in the batch
@@ -567,10 +570,12 @@ void CCMonetra::finishedPressed()
             //fprintf(stderr, "Calling parseEmail()\n");
             // Finally, send it to them.
             // Get the list of email addresses to send it to.
-            QStringList addrs = CDB.getStatementEmailList();
-            for ( QStringList::Iterator it = addrs.begin(); it != addrs.end(); ++it ) {
-                QString toAddr = *it;
-                parseEmail(whichFile, atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), cfgVal("EmailDomain"), 0, cfgVal("StatementFromAddress"), toAddr.ascii(), "", extVars);
+            if (doReceipts) {
+                QStringList addrs = CDB.getStatementEmailList();
+                for ( QStringList::Iterator it = addrs.begin(); it != addrs.end(); ++it ) {
+                    QString toAddr = *it;
+                    parseEmail(whichFile, atol(curItem->key(1,1)), CDB.getStr("PrimaryLogin"), cfgVal("EmailDomain"), 0, cfgVal("StatementFromAddress"), toAddr.ascii(), "", extVars);
+                }
             }
             
             emit(customerUpdated(atol(curItem->key(6,1))));

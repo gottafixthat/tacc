@@ -91,6 +91,7 @@ protected:
     QPushButton *startButton;
     QPushButton *finishedButton;
     QPushButton *cancelButton;
+    int         doReceipts;
 
 };
 #endif // CCMonetra_included

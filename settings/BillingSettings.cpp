@@ -51,6 +51,11 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     latexFile->setText(cfgVal("StatementLatexFile"));
     QToolTip::add(latexFile, "If billing is set to use LaTeX instead of the\ninternally generated statements, this is the\nsource file that will be used.");
 
+    chooseFileButton = new QPushButton(this, "chooseFileButton");
+    chooseFileButton->setText("...");
+    chooseFileButton->setFixedWidth(20);
+    connect(chooseFileButton, SIGNAL(clicked()), this, SLOT(chooseLatexFile()));
+
     QLabel *emailBodyLabel = new QLabel(this, "latexBodyLabel");
     emailBodyLabel->setText("Email Body Template:");
     emailBodyLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
@@ -58,6 +63,11 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     emailBodyFile = new QLineEdit(this, "emailBodyFile");
     emailBodyFile->setText(cfgVal("StatementLatexEmailBody"));
     QToolTip::add(emailBodyFile, "If billing is set to use LaTeX instead of the\ninternally generated statements, this is the\nsource file that will be used for the\nbody of the message.  A PDF file will be attached.");
+
+    chooseBodyFileButton = new QPushButton(this, "chooseBodyFileButton");
+    chooseBodyFileButton->setText("...");
+    chooseBodyFileButton->setFixedWidth(20);
+    connect(chooseBodyFileButton, SIGNAL(clicked()), this, SLOT(chooseEmailBodyFile()));
 
     QLabel *dateFormatLabel = new QLabel(this, "dateFormatLabel");
     dateFormatLabel->setText("Date Format:");
@@ -81,15 +91,11 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     else if (atoi(cfgVal("StatementLatexDebug"))) latexDebug->setChecked(true);
     else latexDebug->setChecked(false);
 
-    chooseFileButton = new QPushButton(this, "chooseFileButton");
-    chooseFileButton->setText("...");
-    chooseFileButton->setFixedWidth(20);
-    connect(chooseFileButton, SIGNAL(clicked()), this, SLOT(chooseLatexFile()));
-
-    chooseBodyFileButton = new QPushButton(this, "chooseBodyFileButton");
-    chooseBodyFileButton->setText("...");
-    chooseBodyFileButton->setFixedWidth(20);
-    connect(chooseBodyFileButton, SIGNAL(clicked()), this, SLOT(chooseEmailBodyFile()));
+    doCCReceipts = new QCheckBox(this, "doCCReceipt");
+    doCCReceipts->setText("Create credit card receipts/declined notices by default.");
+    QString tmpReceipt = cfgVal("GenerateCCReceipts");
+    if (tmpReceipt.toInt()) doCCReceipts->setChecked(true);
+    else doCCReceipts->setChecked(false);
 
     QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 1, 1);
 
@@ -138,6 +144,15 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     gl->addWidget(latexDebug,           curRow, 1);
     gl->setRowStretch(curRow, 0);
     curRow++;
+
+    gl->addMultiCellWidget(new HorizLine(this, "hLine"),   curRow, curRow, 0, 1);
+    gl->setRowStretch(curRow, 0);
+    curRow++;
+
+    gl->addWidget(doCCReceipts, curRow, 1);
+    gl->setRowStretch(curRow, 0);
+    curRow++;
+
 
     ml->addLayout(gl, 1);
     ml->addStretch(1);  // This can go away if we add an item that gets stretch in the grid
@@ -202,6 +217,12 @@ int BillingSettings::saveSettings()
         }
     } else {
         updateCfgVal("BuiltInPrintedStatements", "1");
+    }
+    // Credit card receipts
+    if (doCCReceipts->isChecked()) {
+        updateCfgVal("GenerateCCReceipts", "1");
+    } else {
+        updateCfgVal("GenerateCCReceipts", "0");
     }
     
     return retVal;
