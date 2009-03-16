@@ -631,7 +631,9 @@ const QString makeTmpFileName(const char *tpl)
     while(repStr.length() < 6) {
         int tmpChar = 1 + (int) (asciiChars.length() * (rand() / (RAND_MAX + 1.0)));
         //int tmpChar = rand() % asciiChars.length() + 1;
-        repStr += asciiChars[tmpChar];
+        if (tmpChar > 0 && tmpChar < asciiChars.length()) {
+            repStr += asciiChars[tmpChar-1];
+        }
     }
 
     retVal = myTpl.replace(QRegExp("XXXXXX"), repStr);

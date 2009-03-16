@@ -1245,8 +1245,8 @@ void loadCustomers()
     int busPhoneCol     = parser.header().findIndex("BusPhone");
     int faxPhoneCol     = parser.header().findIndex("FaxPhone");
     int emailCol        = parser.header().findIndex("Email");
-    int invoiceCol      = parser.header().findIndex("Invoice");
-    //int statementCol    = parser.header().findIndex("Statement");
+    //int invoiceCol      = parser.header().findIndex("Invoice");
+    int statementCol    = parser.header().findIndex("Statement");
     int passwordCol     = parser.header().findIndex("Password");
     int debitCol        = parser.header().findIndex("DebitSum");
     int creditCol       = parser.header().findIndex("CreditSum");
@@ -1323,7 +1323,7 @@ void loadCustomers()
             cust->faxPhone  = parser.row()[faxPhoneCol];
 
             // Statement type
-            cust->statementType = parser.row()[invoiceCol].toInt();
+            cust->statementType = parser.row()[statementCol].toInt();
 
             // Password
             cust->password      = parser.row()[passwordCol];
@@ -1616,6 +1616,8 @@ void saveCustomer(customerRecord *cust)
     // If they have an opening balance, create an AR charge for them.
     if (cust->currentBalance > 0.0 && !doHistoricalData) {
         AcctsRecv   AR;
+        QDate       yesterday = QDate::currentDate();
+        yesterday = yesterday.addDays(-1);
         AR.setGLAccount(SALESACCOUNT);
         CDB.get((long int)cust->customerID);
         AR.ARDB->setValue("CustomerID",     (long int) cust->customerID);
@@ -1624,9 +1626,9 @@ void saveCustomer(customerRecord *cust)
         AR.ARDB->setValue("Quantity",       1.0);
         AR.ARDB->setValue("Price",          cust->currentBalance);
         AR.ARDB->setValue("Amount",         cust->currentBalance);
-        AR.ARDB->setValue("TransDate",      timeToStr(rightNow(), YYYY_MM_DD));
-        AR.ARDB->setValue("StartDate",      timeToStr(rightNow(), YYYY_MM_DD));
-        AR.ARDB->setValue("EndDate",        timeToStr(rightNow(), YYYY_MM_DD));
+        AR.ARDB->setValue("TransDate",      yesterday.toString("yyyy-MM-dd").ascii());
+        AR.ARDB->setValue("StartDate",      yesterday.toString("yyyy-MM-dd").ascii());
+        AR.ARDB->setValue("EndDate",        yesterday.toString("yyyy-MM-dd").ascii());
         AR.ARDB->setValue("Memo",           "Transferred balance");
         AR.SaveTrans();
     }
