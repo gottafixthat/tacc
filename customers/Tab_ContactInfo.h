@@ -71,6 +71,7 @@ protected slots:
 	virtual void deleteCurrentContact();
 
 	virtual void editCurrentAddressL(const QString &tag);
+    virtual void copyContactInfoToClipboard();
 
 protected:
     QLineEdit   *fullName;

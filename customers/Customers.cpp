@@ -529,7 +529,20 @@ void Customers::refreshList(long)
         }
     }
 
-    // Fifth query.  LoginFlagValues Logins.LoginID or Logins.ContactName
+    // Fifth query.  Customers.RegNum - An ISOMEDIA-ism
+    if (!allLoaded) {
+        DB.query("select distinct CustomerID from Customers where RegNum LIKE '%%%s%%'", (const char *) tmpsub);
+        rowcnt = DB.rowCount;
+        if (rowcnt) {
+            while (DB.getrow()) {
+                curCustID = atol(DB.curRow["CustomerID"]);
+                // Load them into our loadedCusts map
+                if (loadedCusts[curCustID] != curCustID) loadedCusts.insert(curCustID, curCustID);
+            }
+        }
+    }
+
+    // Sixth query.  LoginFlagValues Logins.LoginID or Logins.ContactName
     if (!allLoaded) {
         DB.query("select distinct Logins.CustomerID from Logins, LoginFlagValues where Logins.LoginID = LoginFlagValues.LoginID and LoginFlagValues.FlagValue LIKE '%%%s%%'", (const char *) tmpsub);
         rowcnt = DB.rowCount;

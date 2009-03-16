@@ -26,9 +26,11 @@
 */
 
 
+#include <qclipboard.h>
 #include "Tab_ContactInfo.h"
 #include "BlargDB.h"
 #include "AddressEditor.h"
+#include <TAAPixmaps.h>
 #include <stdio.h>
 #include <qapp.h>
 #include <qpixmap.h>
@@ -108,6 +110,12 @@ Tab_ContactInfo::Tab_ContactInfo
 
     lastModified = new QLabel(this);
     lastModified->setAlignment(AlignLeft|AlignVCenter);
+
+    // Pixmaps
+    QPixmap     clipCopy(edit_paste_xpm);
+    QPushButton *copyButton = new QPushButton(this, "copyButton");
+    copyButton->setPixmap(clipCopy);
+    connect(copyButton, SIGNAL(clicked()), this, SLOT(copyContactInfoToClipboard()));
 
     // Now, the contact list.
     contactList = new QListView(this, "contactList");
@@ -206,6 +214,12 @@ Tab_ContactInfo::Tab_ContactInfo
     QBoxLayout  *hbl = new QBoxLayout(QBoxLayout::LeftToRight);
     hbl->addLayout(cngl, 1);
     hbl->addLayout(igl,  1);
+
+    // Our "special" layout for action buttons.
+    QBoxLayout *specl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    specl->addWidget(copyButton, 0);
+    specl->addStretch(1);
+    hbl->addLayout(specl,0);
 
     // And add the hbl to the main layout
     ml->addLayout(hbl, 0);
@@ -490,3 +504,30 @@ void Tab_ContactInfo::refreshCustomer(long custID)
     }
 }
 
+/**
+ * copyContactInfoToClipboard()
+ *
+ * Copies various information from a qstring to the global 
+ * clipboard.
+ */
+void Tab_ContactInfo::copyContactInfoToClipboard()
+{
+    QClipboard *cb = QApplication::clipboard();
+
+    QString tmpStr;
+    tmpStr = "Full Name: ";
+    tmpStr += fullName->text();
+    if (contactName->text().length()) {
+        tmpStr += "\nContact Name: ";
+        tmpStr += contactName->text();
+    }
+    if (contactList->currentItem()) {
+        tmpStr += "\nPhone Number: ";
+        tmpStr += contactList->currentItem()->key(2,0);
+    }
+    tmpStr += "\nRegNum: ";
+    tmpStr += regNum->text();
+
+    cb->setText(tmpStr, QClipboard::Clipboard);
+        
+}
