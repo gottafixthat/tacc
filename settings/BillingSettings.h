@@ -42,6 +42,7 @@ protected:
     QCheckBox       *qtyOneBlank;
     QPushButton     *chooseFileButton;
     QPushButton     *chooseBodyFileButton;
+    QCheckBox       *doCCReceipts;
 
 protected slots:
     void            builtInPrintedStatementChanged(bool);
