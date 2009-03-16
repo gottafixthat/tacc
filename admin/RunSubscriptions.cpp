@@ -24,14 +24,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "RunSubscriptions.h"
-
 #include <qdatetm.h>
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include "BlargDB.h"
 #include "BString.h"
 #include <ADB.h>
+#include <Cfg.h>
+
+#include "RunSubscriptions.h"
+
 
 #define Inherited RunSubscriptionsData
 
@@ -61,10 +63,7 @@ RunSubscriptions::RunSubscriptions
 	show();
 
     // Get the AR Account
-    ARAcct  = 0;
-    DB.query("select AccountNo from Accounts where AcctType = 1");
-    DB.getrow();
-    ARAcct  = atoi(DB.curRow["AccountNo"]);
+    ARAcct  = atoi(cfgVal("AcctsRecvAccount"));
 
     fillList();	
 
@@ -126,7 +125,7 @@ void RunSubscriptions::fillList(void)
 	    progressLabel->hide();
 	    
 	    // While our cursor is an hourglass, get the starting AR amount.
-	    DB.query("select Balance from Accounts where AccountNo = %d", ARAcct);
+	    DB.query("select Balance from Accounts where IntAccountNo = %d", ARAcct);
 	    DB.getrow();
 	    startingAR  = atof(DB.curRow["Balance"]);
 	    sprintf(tmpStr, "$%.2f", startingAR);
@@ -176,7 +175,7 @@ void RunSubscriptions::processSelections()
         CDB.doSubscriptions();
         
         // Now, refresh our AR amounts.
-	    DB.query("select Balance from Accounts where AccountNo = %d", ARAcct);
+	    DB.query("select Balance from Accounts where IntAccountNo = %d", ARAcct);
 	    DB.getrow();
 	    tmpAR  = atof(DB.curRow["Balance"]);
 	    sprintf(tmpStr, "$%.2f", tmpAR);

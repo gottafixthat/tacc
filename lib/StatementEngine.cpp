@@ -881,8 +881,8 @@ void StatementEngine::printStatement(uint StNo, int Force = 0, int Dup = 0)
  */
 void StatementEngine::emailLatexStatement(uint StNo)
 {
-    QSqlDbPool      dbpool;
-    QSqlQuery       q(dbpool.qsqldb());
+    ADB             DB;
+    CustomersDB     CDB;
     QStringList     emailAddrs;
 
     if (StNo != currentStatementNo) {
@@ -892,47 +892,13 @@ void StatementEngine::emailLatexStatement(uint StNo)
 
     wtpl *tpl = parseStatementTemplate(StNo, cfgVal("StatementLatexEmailBody"));
 
-    q.prepare("select EmailAddress, Name from CustomerContacts where SendStatements > 0 and CustomerID = (select CustomerID from Statements where StatementNo = :statementNo) group by EmailAddress");
-    q.bindValue(":statementNo", StNo);
-    if (!q.exec()) {
-        // FIXME.  There should be an error or something here.
-        return;
-    }
-    if (q.size()) {
-        while(q.next()) {
-            QString toAddress;
-            toAddress = q.value(0).toString();
-            if (q.value(1).toString().length()) {
-                toAddress = q.value(1).toString();
-                toAddress += " <";
-                toAddress += q.value(0).toString();
-                toAddress += ">";
-            }
-            emailAddrs += toAddress;
-        }
-    }
+    DB.query("select CustomerID from Statements where StatementNo = %d", StNo);
+    if (!DB.rowCount) return;
+    DB.getrow();
+    CDB.get(atol(DB.curRow["CustomerID"]));
+    emailAddrs = CDB.getStatementEmailList();
     
-    // If our list is empty, get the primary login for the customer and use that.
-    if (!emailAddrs.count()) {
-        q.prepare("select PrimaryLogin, FullName from Customers where CustomerID = (select CustomerID from Statements where StatementNo = :statementNo)");
-        q.bindValue(":statementNo", StNo);
-        if (q.exec() && q.size()) {
-            q.next();
-            QString toAddress;
-            toAddress = q.value(0).toString();
-            toAddress += "@";
-            toAddress += cfgVal("EmailDomain");
-            if (q.value(1).toString().length()) {
-                toAddress = q.value(1).toString();
-                toAddress += " <";
-                toAddress += q.value(0).toString();
-                toAddress += "@";
-                toAddress += cfgVal("EmailDomain");
-                toAddress += ">";
-            }
-            emailAddrs += toAddress;
-        }
-    }
+    if (!emailAddrs.count()) return;
 
     // Write the PDF file that we have in memory to disk.
     QString pdfFileName;
@@ -979,7 +945,7 @@ void StatementEngine::emailLatexStatement(uint StNo)
 void StatementEngine::generateLatexStatement(uint statementNo, int printIt)
 {
     StatementsDB        STDB;
-    char                fName[1024];
+    QString             fName;
     char                lfName[1024];
     char                tmpFName[1024];
     char                command[2048];
@@ -989,12 +955,14 @@ void StatementEngine::generateLatexStatement(uint statementNo, int printIt)
     wtpl *tpl = parseStatementTemplate(statementNo, cfgVal("StatementLatexFile"));
 
     // Create the ouptut file.
-    sprintf(fName, "/tmp/statement-%ld-%d-XXXXXX", STDB.getLong("CustomerID"), statementNo);
-    int fd;
-    fd = mkstemp(fName);
-    close(fd);
-    unlink(fName);
-    sprintf(lfName, "%s.tex", fName);
+    fName = fName.sprintf("/tmp/statement-%ld-%d-XXXXXX", STDB.getLong("CustomerID"), statementNo);
+    fName = makeTmpFileName(fName.ascii());
+    //sprintf(fName, "/tmp/statement-%ld-%d-XXXXXX", STDB.getLong("CustomerID"), statementNo);
+    //int fd;
+    //fd = mkstemp(fName);
+    //close(fd);
+    //unlink(fName);
+    sprintf(lfName, "%s.tex", fName.ascii());
 
     FILE *fp = fopen(lfName, "w");
     fprintf(fp, "%s", tpl->text().c_str());
@@ -1015,10 +983,10 @@ void StatementEngine::generateLatexStatement(uint statementNo, int printIt)
     // Run latex a second time to fix references
     system(command);
     // Turn it into a pdf
-    sprintf(command, "dvipdf %s.dvi %s.pdf", fName, fName);
+    sprintf(command, "dvipdf %s.dvi %s.pdf", fName.ascii(), fName.ascii());
     system(command);
     // And a .ps file
-    sprintf(command, "dvips %s.dvi -o %s.ps", fName, fName);
+    sprintf(command, "dvips %s.dvi -o %s.ps", fName.ascii(), fName.ascii());
     system(command);
 
     // Change back to our working directory.
@@ -1028,7 +996,7 @@ void StatementEngine::generateLatexStatement(uint statementNo, int printIt)
     clearOutputs();
     currentStatementNo = statementNo;
 
-    sprintf(tmpFName, "%s.pdf", fName);
+    sprintf(tmpFName, "%s.pdf", fName.ascii());
     QFile   file(tmpFName);
     if (file.open(IO_ReadOnly|IO_Raw)) {
         pdfOutput = file.readAll();
@@ -1036,7 +1004,7 @@ void StatementEngine::generateLatexStatement(uint statementNo, int printIt)
     }
     debug(5,"pdfOutput now contains %d bytes of data\n", pdfOutput.size());
 
-    sprintf(tmpFName, "%s.ps", fName);
+    sprintf(tmpFName, "%s.ps", fName.ascii());
     file.setName(tmpFName);
     if (file.open(IO_ReadOnly|IO_Raw)) {
         psOutput = file.readAll();
@@ -1048,20 +1016,20 @@ void StatementEngine::generateLatexStatement(uint statementNo, int printIt)
     if (!debugMode) {
         // Not debugging, finish processing.
         if (printIt) {
-            sprintf(command, "dvips %s.dvi", fName);
+            sprintf(command, "dvips %s.dvi", fName.ascii());
             system(command);
         }
-        sprintf(tmpFName, "%s.log", fName);
+        sprintf(tmpFName, "%s.log", fName.ascii());
         unlink(tmpFName);
-        sprintf(tmpFName, "%s.aux", fName);
+        sprintf(tmpFName, "%s.aux", fName.ascii());
         unlink(tmpFName);
-        sprintf(tmpFName, "%s.dvi", fName);
+        sprintf(tmpFName, "%s.dvi", fName.ascii());
         unlink(tmpFName);
-        sprintf(tmpFName, "%s.tex", fName);
+        sprintf(tmpFName, "%s.tex", fName.ascii());
         unlink(tmpFName);
-        sprintf(tmpFName, "%s.pdf", fName);
+        sprintf(tmpFName, "%s.pdf", fName.ascii());
         unlink(tmpFName);
-        sprintf(tmpFName, "%s.ps", fName);
+        sprintf(tmpFName, "%s.ps", fName.ascii());
         unlink(tmpFName);
     }
 
