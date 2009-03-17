@@ -26,6 +26,7 @@
 #define TRANSTYPE_PAYMENT       2
 #define TRANSTYPE_CCPAYMENT     3
 #define TRANSTYPE_DEPOSIT       4
+#define TRANSTYPE_CCREFUND      5
 
 struct GLAccountTypeRecord {
     int     accountType;

@@ -239,6 +239,7 @@ EditCustomer::EditCustomer
     payMenu->insertItem("Take &Credit Card", billingInfoTab, SLOT(takeCCard()), CTRL+Key_C);
     payMenu->insertItem("Cancel &Pending Charge", billingInfoTab, SLOT(cancelPendingCharge()));
     payMenu->insertItem("Remove &Automatic Payment Card", billingInfoTab, SLOT(removeAutoPaymentCard()));
+    if (isManager()) payMenu->insertItem("&Issue Credit Card Refund", billingInfoTab, SLOT(issueCardRefund()));
     payMenu->insertItem("Extend &Grace Period", billingInfoTab, SLOT(extendGracePeriod()), CTRL+Key_G);
     payMenu->insertItem("Recieve Check", this, SLOT(receivePayment()), CTRL+Key_R);
 

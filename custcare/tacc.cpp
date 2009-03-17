@@ -1013,6 +1013,7 @@ void CustomerCare::settleCCBatch()
     char        tmpStr[4096];
     int         totBatches = 0;
     long        batches[1024];
+    QString     tmpType;
 
     strcpy(mcveHost, cfgVal("MCVEHost"));
 
@@ -1120,7 +1121,14 @@ void CustomerCare::settleCCBatch()
                 totBatches++;
             }
         }
-        totAmount += atof(MCVE_GetCell(&mcvec, mcveid, "amount", j));
+        //debug(1, "MCVE Row = %d, Action = '%s', amount = %.2f\n", j, MCVE_GetCell(&mcvec,mcveid, "type", j), atof(MCVE_GetCell(&mcvec, mcveid, "amount", j)));
+        //totAmount += atof(MCVE_GetCell(&mcvec, mcveid, "amount", j));
+        tmpType = MCVE_GetCell(&mcvec, mcveid, "type", j);
+        if (!tmpType.compare(tmpType, "RETURN")) {
+            totAmount -= atof(MCVE_GetCell(&mcvec, mcveid, "amount", j));
+        } else {
+            totAmount += atof(MCVE_GetCell(&mcvec, mcveid, "amount", j));
+        }
         //fprintf(stderr, "\n");
     }
     setProgressMW(rows, rows);

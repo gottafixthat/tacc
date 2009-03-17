@@ -48,6 +48,7 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		LoginEdit.cpp\
 		NoteEdit.cpp\
 		CCEntry.cpp\
+		CCRefund.cpp\
 		ChangePassword.cpp ChangePasswordData.cpp\
 		DomainAdd.cpp\
 		DomainEdit.cpp DomainEditData.cpp\
@@ -90,6 +91,7 @@ HEADERS =	Customers.h NewCustomer.h\
 		LoginEdit.h\
 		NoteEdit.h\
 		CCEntry.h\
+		CCRefund.h\
 		ChangePassword.h ChangePasswordData.h\
 		DomainAdd.h\
 		DomainEdit.h DomainEditData.h\
@@ -132,6 +134,7 @@ SRCMETA =	moc_Customers.cpp \
 		moc_LoginEdit.cpp\
 		moc_NoteEdit.cpp\
 		moc_CCEntry.cpp\
+		moc_CCRefund.cpp\
 		moc_ChangePassword.cpp moc_ChangePasswordData.cpp\
 		moc_DomainAdd.cpp\
 		moc_DomainEdit.cpp moc_DomainEditData.cpp\
@@ -258,6 +261,9 @@ moc_NoteEdit.cpp: NoteEdit.h
 
 moc_CCEntry.cpp: CCEntry.h
 	$(MOC) CCEntry.h -o moc_CCEntry.cpp
+
+moc_CCRefund.cpp: CCRefund.h
+	$(MOC) CCRefund.h -o moc_CCRefund.cpp
 
 moc_ChangePassword.cpp: ChangePassword.h
 	$(MOC) ChangePassword.h -o moc_ChangePassword.cpp

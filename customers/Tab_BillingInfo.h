@@ -63,26 +63,27 @@ public:
 	virtual void fillStatementList(void);
 
 public slots:
-    virtual void showCustRegister();
-	virtual void takeCCard();
-	virtual void extendGracePeriod();
-    virtual void changeRatePlan();
-    virtual void changeBillingCycle();
-    virtual void generateStatement();
-    virtual void runSubscriptions();
-	void refreshBillingInfo(int);
-	void viewStatement(QListViewItem *curItem);
+    virtual void    showCustRegister();
+	virtual void    takeCCard();
+	virtual void    extendGracePeriod();
+    virtual void    changeRatePlan();
+    virtual void    changeBillingCycle();
+    virtual void    generateStatement();
+    virtual void    runSubscriptions();
+	void            refreshBillingInfo(int);
+	void            viewStatement(QListViewItem *curItem);
 
-    void         cancelPendingCharge();
-    void         removeAutoPaymentCard();
+    void            cancelPendingCharge();
+    void            removeAutoPaymentCard();
+    void            issueCardRefund();
 	
-	virtual void togglePrintedStatements();
-	virtual void toggleFreePrintedStatements();
+	virtual void    togglePrintedStatements();
+	virtual void    toggleFreePrintedStatements();
 
-    virtual void refreshCustomer(long);
+    virtual void    refreshCustomer(long);
 
 signals:
-    void         customerChanged(long);
+    void            customerChanged(long);
 
 protected:
     QLabel      *ratePlan;

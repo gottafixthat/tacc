@@ -34,14 +34,6 @@
 #include <qtimer.h>
 #include <mcve.h>
 
-#define TAACC_UNPROCESSED 0
-#define TAACC_SENT        1
-#define TAACC_AUTH        2
-#define TAACC_DECL        3
-#define TAACC_INVALID     4
-#define TAACC_EXPIRED     5
-#define TAACC_RETRY       6
-
 class CCMonetra : public TAAWidget
 {
     Q_OBJECT
