@@ -43,7 +43,8 @@
 #include <qmenubar.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "CCEntry.h"
+#include <CCEntry.h>
+#include <CCRefund.h>
 #include "ChangeRatePlan.h"
 #include "ChangeBillingCycle.h"
 #include "StatementView.h"
@@ -653,6 +654,18 @@ void Tab_BillingInfo::takeCCard()
 		CCE = new CCEntry(0, "", myCustID);
 		CCE->show();
 	}
+}
+
+/*
+** issueCardRefund - Brings up a window allowing the user to issue a credit
+**                   card refund payment.
+**
+*/
+void Tab_BillingInfo::issueCardRefund()
+{
+    CCRefund    *CCR;
+    CCR = new CCRefund();
+    CCR->setCustomerID(myCustID);
 }
 
 

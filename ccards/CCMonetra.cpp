@@ -53,6 +53,7 @@
 #include <qlayout.h>
 
 // Blarg includes
+#include <TAAStructures.h>
 #include <BlargDB.h>
 #include <BString.h>
 #include <AcctsRecv.h>
