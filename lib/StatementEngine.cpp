@@ -186,6 +186,27 @@ int StatementEngine::doStatement(uint CustID)
 	    DB.query("select StatementNo from Statements where CustomerID = %ld and StatementDate = '%s'", CustID, Today);
 	    if (!DB.rowCount) NeedsStatement = 1;
 	}
+
+    // MARC
+    // Check to see if they've had a statement within the last month.
+    // If they haven't, go ahead and create one.  If they have, skip them.
+    if (NeedsStatement) {
+        QDate   checkDate = QDate::currentDate();
+        checkDate = checkDate.addMonths(-1);
+        checkDate = checkDate.addDays(1);
+        // Now check to see if we've run a statment for them since this date.
+        // If we have run a statement for them since this date, they don't need another.
+        DB.query("select StatementNo from Statements where CustomerID = %ld and StatementDate >= '%s'", CustID, checkDate.toString("yyyy-MM-dd").ascii());
+        if (DB.rowCount) NeedsStatement = 0;
+        else {
+            // Okay, they haven't had a statement within the last month
+            // Check to see if we're at or past their "next statement date"
+            checkDate = QDate::currentDate();
+            DB.query("select NextStatementDate from Customers where CustomerID = %ld and NextStatementDate <= '%s'", CustID, checkDate.toString("yyyy-MM-dd").ascii());
+            if (!DB.rowCount) NeedsStatement = 0;
+        }
+    }
+
 	
 	// Now, check to see if they have active logins.
 	if (NeedsStatement) {
@@ -447,6 +468,18 @@ int StatementEngine::doStatement(uint CustID)
 			CDB.setValue("LastBilled", Today);
 			CDB.setValue("LastStatementNo", STDB.getLong("StatementNo"));
 			CDB.setValue("GraceDate", sGraceDate);
+
+            // Set their next statement date to be a month from their last one.
+            QDate   nextStDate;
+            myDatetoQDate(CDB.getStr("NextStatementDate"), &nextStDate);
+            if (nextStDate.isValid()) {
+                nextStDate = nextStDate.addMonths(1);
+            } else {
+                nextStDate = QDate::currentDate().addMonths(1);
+            }
+            CDB.setValue("NextStatementDate",   nextStDate.toString("yyyy-MM-dd").ascii());
+
+
 			CDB.upd();
 		} else {
 			// Their balance is really zero, so update their 
