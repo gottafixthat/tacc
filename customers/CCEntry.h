@@ -1,28 +1,15 @@
-/*
-** $Id: CCEntry.h,v 1.2 2004/01/13 01:15:58 marc Exp $
-**
-***************************************************************************
-**
-** CCEntry - Gets a credit card payment from the user.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CCEntry.h,v $
-** Revision 1.2  2004/01/13 01:15:58  marc
-** Added CV/Security Code processing and storage.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/**
+ * CCEntry.h - Class definition for taking a credit card payment from a
+ * customer.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef CCEntry_included
 #define CCEntry_included
@@ -34,6 +21,7 @@
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qradiobutton.h>
+#include <qspinbox.h>
 
 #include <TAAWidget.h>
 
@@ -55,6 +43,7 @@ public:
 protected slots:
     void        saveCCard();
     void        cancelCCard();
+    void        autoPayChanged(bool);
 
 protected:
     QLineEdit   *custName;
@@ -74,9 +63,8 @@ protected:
     QLineEdit   *cardNumber;
     QLineEdit   *expDate;
     QLineEdit   *cvInfo;
-    QRadioButton *chargeDate1;
-    QRadioButton *chargeDate2;
-    
+    QSpinBox    *chargeDay;
+
 private:
     long    myCustID;
 

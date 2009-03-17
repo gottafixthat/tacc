@@ -1,38 +1,15 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CCEntry - Takes a credit card payment from the user.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CCEntry.cpp,v $
-** Revision 1.5  2004/04/15 17:57:22  marc
-** Zero dollar amounts will no longer post a transaction.  Mantis bug ID 0000107.
-**
-** Revision 1.4  2004/01/19 20:57:13  marc
-** Logic bug fix that made the CVV code required
-**
-** Revision 1.3  2004/01/13 21:30:02  marc
-** Fixed bug that inserted zero dollar amount transactions.
-**
-** Revision 1.2  2004/01/13 01:15:58  marc
-** Added CV/Security Code processing and storage.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/**
+ * CCEntry.h - Allows the user to post a credit card payment from a
+ * customer.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include "CCEntry.h"
 #include "BlargDB.h"
@@ -148,19 +125,15 @@ CCEntry::CCEntry
 
     autoPay = new QCheckBox(this, "AutoPay");
     autoPay->setText("Use as automatic payment method");
+    connect(autoPay, SIGNAL(toggled(bool)), this, SLOT(autoPayChanged(bool)));
 
+    QLabel *chargeDayLabel = new QLabel(this, "chargeDayLabel");
+    chargeDayLabel->setAlignment(AlignRight|AlignVCenter);
+    chargeDayLabel->setText("Charge Day:");
 
-    QHButtonGroup   *chargeDateGroup = new QHButtonGroup(this, "ChargeDateGroup");
-    chargeDateGroup->setTitle("Auto Charge Date");
-    chargeDateGroup->setExclusive(true);
+    chargeDay = new QSpinBox(0, 28, 1, this, "chargeDay");
+    chargeDay->setEnabled(false);
 
-    chargeDate1 = new QRadioButton(chargeDateGroup);
-    chargeDate1->setText("7th");
-    chargeDate1->setChecked(true);
-
-    chargeDate2 = new QRadioButton(chargeDateGroup);
-    chargeDate2->setText("16th");
-    chargeDate2->setChecked(false);
 
     QLabel *balanceLabel = new QLabel(this);
     balanceLabel->setAlignment(AlignRight);
@@ -188,7 +161,7 @@ CCEntry::CCEntry
     QGridLayout *ewl = new QGridLayout(4, 5, 2);
     ewl->setColStretch(0, 0);
     ewl->setColStretch(1, 1);
-    ewl->setColStretch(2, 1);
+    ewl->setColStretch(2, 0);
     ewl->setColStretch(3, 1);
     
     int curRow = -1;
@@ -247,9 +220,8 @@ CCEntry::CCEntry
     ewl->addWidget(autoPay,             curRow, curCol++);
 
     curRow++; curCol = 2;
-    ewl->setRowStretch(curRow, 0);
-    ewl->addMultiCellWidget(chargeDateGroup, curRow, curRow, curCol, curCol+1);
-    curCol++;
+    ewl->addWidget(chargeDayLabel,      curRow, curCol++);
+    ewl->addWidget(chargeDay,           curRow, curCol++);
 
     
     ml->addLayout(ewl,0);
@@ -305,6 +277,7 @@ CCEntry::CCEntry
 	QToolTip::add(cvInfo,  "The security code for the card (optional but desired)\nThis is a three digit number following the card number on Visa or\nMastercard located above the signature on the back of the card.\nOn American Express cards, it is a four digit number located\non the front of the card above the card number.");
 
     QToolTip::add(chargeAmount, "Leave this blank or set to 0.00 if you are\nonly processing an automatic payment method.");
+	QToolTip::add(chargeDay, "The number of days from the time\na statement is processed until\nthe card is charged.");
 
 	balance->setText(CDB.getStr("CurrentBalance"));
 	
@@ -449,13 +422,7 @@ void CCEntry::saveCCard()
 
             // Default to charging 5 days after the statement date,
             // which would make it the 7th of the month.
-            APDB.setValue("ChargeDay",      5);
-            if (chargeDate2->isChecked()) {
-                // They selected the alternate day, which is 15 days
-                // after statements are processed, which would make it
-                // the 17th of the month.
-                APDB.setValue("ChargeDay",  15);
-            }
+            APDB.setValue("ChargeDay",      chargeDay->value());
             APDB.setValue("Name",           CCDB.getStr("Name"));
             APDB.setValue("Address",        CCDB.getStr("Address"));
             APDB.setValue("ZIP",            CCDB.getStr("ZIP"));
@@ -514,4 +481,15 @@ void CCEntry::cancelCCard()
     close();
 }
 
+/**
+ * autoPayChanged()
+ *
+ * Gets called when the user changes the use automatic payment
+ * checkbox.  Enables/disables our charge day field.
+ */
+void CCEntry::autoPayChanged(bool check)
+{
 
+    chargeDay->setEnabled(check);
+
+}
