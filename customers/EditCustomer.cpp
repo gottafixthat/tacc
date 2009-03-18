@@ -241,7 +241,7 @@ EditCustomer::EditCustomer
     payMenu->insertItem("Remove &Automatic Payment Card", billingInfoTab, SLOT(removeAutoPaymentCard()));
     if (isManager()) payMenu->insertItem("&Issue Credit Card Refund", billingInfoTab, SLOT(issueCardRefund()));
     payMenu->insertItem("Extend &Grace Period", billingInfoTab, SLOT(extendGracePeriod()), CTRL+Key_G);
-    payMenu->insertItem("Recieve Check", this, SLOT(receivePayment()), CTRL+Key_R);
+    payMenu->insertItem("Receive Check", this, SLOT(receivePayment()), CTRL+Key_R);
 
     QPopupMenu  *ticketMenu = new QPopupMenu();
     ticketMenu->insertItem("&Create Ticket",   this, SLOT(createTicket()));
