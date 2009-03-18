@@ -293,6 +293,8 @@ void GeneralLedgerDetailReport::refreshReport()
     ADB         DB;
     QStringList dispCols = filters->displayColumns();
 
+    QApplication::setOverrideCursor(waitCursor);
+    emit(setStatus("Generating report..."));
     // Set the report columns.  This will also clear the list.
     setReportColumns();
 
@@ -316,6 +318,8 @@ void GeneralLedgerDetailReport::refreshReport()
         }
         repBody->insertItem(curItem);
     }
+    emit(setStatus(""));
+    QApplication::restoreOverrideCursor();
 }
 
 /**
