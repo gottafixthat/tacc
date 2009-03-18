@@ -25,6 +25,7 @@ SUBDIRS =	gl
 
 SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			IClient.cpp BString.cpp TAAWidget.cpp\
+			ConfirmBox.cpp\
 			QSqlDbPool.cpp\
 			QListViewPrint.cpp\
 			EmailMessage.cpp\
@@ -58,6 +59,7 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_TAAWidget.cpp\
+			moc_ConfirmBox.cpp\
 			moc_QSqlDbPool.cpp\
 			moc_QListViewPrint.cpp\
 			moc_CustomerSearch.cpp\
@@ -116,6 +118,9 @@ moc_TAAWidget.cpp: TAAWidget.h
 
 moc_CustomerSearch.cpp: CustomerSearch.h
 	$(MOC) CustomerSearch.h -o moc_CustomerSearch.cpp
+
+moc_ConfirmBox.cpp: ConfirmBox.h
+	$(MOC) ConfirmBox.h -o moc_ConfirmBox.cpp
 
 moc_QSqlDbPool.cpp: QSqlDbPool.h
 	$(MOC) QSqlDbPool.h -o moc_QSqlDbPool.cpp
