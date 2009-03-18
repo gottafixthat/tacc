@@ -24,6 +24,7 @@
 #include <TAAStructures.h>
 #include <TAATools.h>
 #include <AcctsRecv.h>
+#include <ConfirmBox.h>
 #include <CCRefund.h>
 
 /**
@@ -319,6 +320,24 @@ void CCRefund::processRefund()
 
     // Okay, we have a valid card and we have a valid amount.  Issue the refund.
     // FIXME:  This should be in a library somewhere.
+    processButton->setEnabled(false);
+
+    // One last confirmation before proceeding.
+    ConfirmBox  *cb = new ConfirmBox(this, "confirmBox");
+    cb->setTitle("Confirm Refund");
+    QString tmpText = "Confirm that you wish to refund $";
+    tmpText += refundAmount->text();
+    tmpText += "\non the ";
+    tmpText += cardList->currentText();
+    tmpText += "\nfor ";
+    tmpText += customerName->text();
+    cb->setText(tmpText);
+    cb->setConfirmText("Check this box to confirm the transaction");
+    if (cb->exec() == QDialog::Rejected) {
+        processButton->setEnabled(true);
+        return;
+    }
+
     emit(setStatus("Connecting to Monetra server..."));
 
     MCVE_CONN   mcvec;
@@ -331,7 +350,8 @@ void CCRefund::processRefund()
 
     strcpy(mcveHost, cfgVal("MCVEHost"));
 
-    processButton->setEnabled(false);
+
+
     QApplication::setOverrideCursor(waitCursor);
     if (!MCVE_SetIP(&mcvec, mcveHost, atoi(cfgVal("MCVEPort")))) {
         emit(setStatus(""));
