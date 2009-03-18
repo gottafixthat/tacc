@@ -133,28 +133,21 @@ CCRefund::~CCRefund()
  */
 void CCRefund::setCustomerID(long custID)
 {
-    ADB         DB;
-    CustomersDB CDB;
-    CCTransDB   CCDB;
-    int         doIt = 0;
-    bool        foundIt;
+    ADB             DB;
+    CustomersDB     CDB;
+    CCTransDB       CCDB;
+    AutoPaymentsDB  APDB;
+    int             doIt = 0;
+    bool            foundIt;
 
     myCustID = custID;
 
     // If we're visible, hide.
     hide();
 
-    // Fill the list of cards.
     QApplication::setOverrideCursor(waitCursor);
-    DB.query("select InternalID from CCTrans where CustomerID = %ld order by TransDate desc", myCustID);
-    QApplication::restoreOverrideCursor();
-    if (!DB.rowCount) {
-        QMessageBox::critical(this, myMsgBoxTitle, "No credit card transactions were found for this customer.\n\nUnable to issue a refund.");
-        delete this;
-        return;
-    }
-
 	CDB.get(myCustID);
+    QApplication::restoreOverrideCursor();
 	if (!CDB.getFloat("CurrentBalance")) {
         if (QMessageBox::warning(this, myMsgBoxTitle, "The customer's balance is zero.\nDo you still want to issue a refund?", "&Yes", "&No", 0, 1) == 0) doIt = 1;
 	} else {
@@ -170,14 +163,55 @@ void CCRefund::setCustomerID(long custID)
     customerID->setText(CDB.getStr("CustomerID"));
     customerName->setText(CDB.getStr("FullName"));
 
-    // We'll only make it here if there are cards to process.
-    // Fill our list of cards
-    // First we create our index of CCTrans InternalID's for our list.
+    QApplication::setOverrideCursor(waitCursor);
+    // Figure out how many cards we could *potentially* have.
+    // Sucks to do two queries, but they should be small.
+    int idxCount = 0;
+    DB.query("select InternalID from CCTrans where CustomerID = %ld order by TransDate desc", myCustID);
+    idxCount += DB.rowCount;
+    // Now for the second query, we'll pull from the AutoPayments table and just loop
+    // through it.  We'll re-run the first query for the CCTrans table afterward
+    DB.query("select InternalID from AutoPayments where CustomerID = %ld and PaymentType = 1 order by AuthorizedOn desc", myCustID);
+    idxCount += DB.rowCount;
+    // Create the index pointer with a bit of padding
+    cardListIDX = new CCRefundCardRecord[idxCount+2];
     cardListCount = 0;
-    cardListIDX = new CCRefundCardRecord[DB.rowCount+2];
-    // Walk through the returned records now and gather up
-    // all of the unique cards that we've charged.
-    while(DB.getrow()) {
+
+    // Now walk through the AutoPayment list, adding any cards we find.
+    if (DB.rowCount) while(DB.getrow()) {
+        APDB.get(atol(DB.curRow["InternalID"]));
+        // Check our list for this card
+        foundIt = false;
+        if (cardListCount) {
+            for (int i = 0; i < cardListCount; i++) {
+                if (!cardListIDX[i].cardNo.compare(cardListIDX[i].cardNo, APDB.getStr("AcctNo"))) foundIt = true;
+            }
+        }
+        if (!foundIt) {
+            // Check to see if the card is expired.
+            QDate   expDate;
+            QDate   today = QDate::currentDate();
+            myDateToQDate(APDB.getStr("ExpDate"), expDate);
+            if (today.daysTo(expDate) >= 0) {
+                // Add it to the list.
+                cardListIDX[cardListCount].cardholder   = APDB.getStr("Name");
+                cardListIDX[cardListCount].addr         = APDB.getStr("Address");
+                cardListIDX[cardListCount].zip          = APDB.getStr("ZIP");
+                cardListIDX[cardListCount].cardType     = APDB.getInt("CardType");
+                cardListIDX[cardListCount].cardNo       = APDB.getStr("AcctNo");
+                cardListIDX[cardListCount].expDate      = expDate.toString("MMyy").ascii();
+                cardListIDX[cardListCount].ccv          = APDB.getStr("SecurityCode");
+
+                // Add it to the combo box.
+                cardListCount++;
+            }
+        }
+    }
+
+
+    // Do the CCTrans query again, getting whatever cards are there.
+    DB.query("select InternalID from CCTrans where CustomerID = %ld order by TransDate desc", myCustID);
+    if (DB.rowCount) while(DB.getrow()) {
         CCDB.get(atol(DB.curRow["InternalID"]));
         // Check our list for this card
         foundIt = false;
@@ -208,44 +242,51 @@ void CCRefund::setCustomerID(long custID)
                 cardListIDX[cardListCount].ccv          = CCDB.getStr("SecurityCode");
 
                 // Add it to the combo box.
-                QString dispStr;
-                switch (CCDB.getInt("CardType")) {
-                    case CCTYPE_MC:
-                        dispStr = "Mastercard";
-                        break;
-                    case CCTYPE_VISA:
-                        dispStr = "Visa";
-                        break;
-                    case CCTYPE_AMEX:
-                        dispStr = "AmEx";
-                        break;
-                    case CCTYPE_DINERS:
-                        dispStr = "Diners";
-                        break;
-                    case CCTYPE_DISC:
-                        dispStr = "Discover";
-                        break;
-                    default:
-                        dispStr = "Unknown";
-                        break;
-                }
-                dispStr += " ";
-                dispStr += cardListIDX[cardListCount].cardNo.left(1);
-                dispStr += "...";
-                dispStr += cardListIDX[cardListCount].cardNo.right(4);
-                dispStr += " Exp ";
-                dispStr += cardListIDX[cardListCount].expDate;
-                cardList->insertItem(dispStr);
                 cardListCount++;
             }
         }
     }
 
+    QApplication::restoreOverrideCursor();
     if (!cardListCount) {
         QMessageBox::critical(this, myMsgBoxTitle, "No valid credit cards were found for this customer.\n\nUnable to issue a refund.");
         delete this;
         return;
     }
+
+    // Walk through the card list, set the display strings and fill our list.
+    for (int i = 0; i < cardListCount; i++) {
+        switch (cardListIDX[i].cardType) {
+            case CCTYPE_MC:
+                cardListIDX[i].cardTypeStr = "Mastercard";
+                break;
+            case CCTYPE_VISA:
+                cardListIDX[i].cardTypeStr = "Visa";
+                break;
+            case CCTYPE_AMEX:
+                cardListIDX[i].cardTypeStr = "AmEx";
+                break;
+            case CCTYPE_DINERS:
+                cardListIDX[i].cardTypeStr = "Diners";
+                break;
+            case CCTYPE_DISC:
+                cardListIDX[i].cardTypeStr = "Discover";
+                break;
+            default:
+                cardListIDX[i].cardTypeStr = "Unknown";
+                break;
+        }
+        QString dispStr;
+        dispStr = cardListIDX[i].cardTypeStr;
+        dispStr += " ";
+        dispStr += cardListIDX[i].cardNo.left(1);
+        dispStr += "...";
+        dispStr += cardListIDX[i].cardNo.right(4);
+        dispStr += " Exp ";
+        dispStr += cardListIDX[i].expDate;
+        cardList->insertItem(dispStr);
+    }
+    
 
     // Finally, if our customer has a negative balance, default the
     // refund amount to be that balance.

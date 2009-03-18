@@ -26,6 +26,7 @@ struct CCRefundCardRecord {
     QString addr;
     QString zip;
     int     cardType;
+    QString cardTypeStr;
     QString cardNo;
     QString expDate;
     QString ccv;
