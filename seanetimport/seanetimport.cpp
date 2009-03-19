@@ -1353,8 +1353,16 @@ void loadCustomers()
                 subActive = 0;
             }
             
-            cust->accountOpened     = dateConvert(parser.row()[serviceStartCol]);
-            cust->nextBillDate      = dateConvert(parser.row()[nextBillDateCol]);
+            if (parser.row()[serviceStartCol].length()) {
+                cust->accountOpened = dateConvert(parser.row()[serviceStartCol]);
+            } else {
+                cust->accountOpened = QDate::currentDate();
+            }
+            if (parser.row()[nextBillDateCol].length()) {
+                cust->nextBillDate  = dateConvert(parser.row()[nextBillDateCol]);
+            } else {
+                cust->nextBillDate  = QDate::currentDate();
+            }
             cust->billingPeriod     = parser.row()[billPeriodCol].toInt();
             cust->billingCycleID    = getBillingCycleID(cust->billingPeriod);
             if (!cust->billingCycleID) {
