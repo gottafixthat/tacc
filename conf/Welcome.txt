@@ -1,0 +1,32 @@
+Subject: Welcome to Avvanta!
+
+We send out system mailings only when the system will be down for upgrades
+or when there is an important announcement. 
+
+To read your email, check your accounting history or make payment, please
+visit our Communications Control Center located at http://www.avvantamail.com. 
+There are many different tools located at www.avvantamail.com.
+
+For general support, please see our web site at http://www.avvanta.com/
+for general setup guides, information about creating web pages, and many
+other topics.
+
+
+     support@avvanta.com - If you need any assistance with your connection
+                           software, web site, please send email to support. 
+                           Emails are answered within 24 hours of receipt.
+                           
+  accounting@avvanta.com - Any billing questions or concerns should be sent
+                           here after checking your account information at
+                           https://www.avvantamail.com under the Accounting
+                           section.
+
+   webmaster@avvanta.com - General questions about the web, HTML, and how to
+                           setup your web site on Avvanta can be sent here. 
+                           Please note that we also have extensive web help
+                           available on our site under the Support - Web
+                           section.
+
+  hostmaster@avvanta.com - If you have any questions about your domain name,
+                           reverse DNS, etc., please email our Hostmaster.
+

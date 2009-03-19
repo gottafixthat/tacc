@@ -1,0 +1,44 @@
+<HTML>
+<FONT SIZE=-1>
+<HEAD>
+<TITLE>Login Count Report - {ReportDate}</TITLE>
+</HEAD>
+<BODY>
+
+<CENTER>
+<H2>Login Count Report</H2>
+<H3>{ReportDate}</H3>
+</CENTER>
+
+<TABLE WIDTH="100%" COLUMNS="5" BORDER="1" BORDERWIDTH="0">
+<TR>
+  <TD><B>Login Type</B></TD>
+  <TD><B>Description</B></TD>
+  <TD ALIGN="RIGHT"><B>Active</B></TD>
+  <TD ALIGN="RIGHT"><B>Inactive</B></TD>
+  <TD ALIGN="RIGHT"><B>System</B></TD>
+  <TD ALIGN="RIGHT"><B>Total</B></TD>
+</TR>
+{List ReportData}
+<TR>
+  <TD>{ReportData:LoginType}</TD>
+  <TD>{ReportData:Description}</TD>
+  <TD ALIGN="RIGHT">{ReportData:ActiveCount}</TD>
+  <TD ALIGN="RIGHT">{ReportData:InactiveCount}</TD>
+  <TD ALIGN="RIGHT">{ReportData:SystemCount}</TD>
+  <TD ALIGN="RIGHT">{ReportData:TotalCount}</TD>
+</TR>
+{EndList ReportData}
+<TR>
+  <TD ALIGN="RIGHT" COLSPAN="2">Total:</TD>
+  <TD ALIGN="RIGHT">{TotalActive}</TD>
+  <TD ALIGN="RIGHT">{TotalInactive}</TD>
+  <TD ALIGN="RIGHT">{TotalSystem}</TD>
+  <TD ALIGN="RIGHT">{GrandTotal}</TD>
+</TR>
+</TABLE>
+
+</FONT>
+</BODY>
+</HTML>
+

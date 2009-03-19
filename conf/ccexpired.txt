@@ -1,0 +1,17 @@
+From: Avvanta Accounting <accounting@{DomainName}>
+To: {LoginID}@{DomainName}
+Subject: Expired Credit Card
+
+This message is to inform you that the credit card we have on file for
+you has an expiration date of {ExpDate}.  This card will no longer 
+be used to process payments on your account.
+
+To update your automatic payment options, please visit the Accounting section
+of the Communications Control Center at https://www.avvantamail.com/tools.php .
+To update your credit card, simply make a payment, and specify $0.00 as the 
+amount to pay, and select the day of the month you wish your account to
+be charged.
+
+Please call our office at 425.818.6500 or 888.662.5274 if you have 
+any questions regarding this matter.
+

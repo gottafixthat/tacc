@@ -1,0 +1,177 @@
+# Setting DebugLevel to anything > 0 will result in many console
+# messages that are generally unneeded.
+DebugLevel = 0
+
+#
+# BrassHost is the FQDN of the server that we will make our connections to.
+# BrassPort is the port number that Brass is running on on the remote host.
+
+BrassHost   = 10.10.10.10
+BrassPort   = 900
+BrassUser   = tacc
+BrassPass   = password
+
+# The Hostmaster account is where all domains modification requests will
+# be sent.
+#
+HostmasterAccount = hostmaster@example.com
+ValidTLDs         = net:com:org:biz:info:web:cc:cx:us
+
+#
+# DefaultCustomerTerms - This is the default Payment Terms that are assigned
+#                        to new customers.  It is the InternalID from the
+#                        PaymentTerms table.
+#
+DefaultCustomerTerms = 1
+
+#
+# WelcomeFilePrefix - The directory that contains the welcome files that
+#                     will get sent to new logins that are created.
+#
+WelcomeFilePrefix = /usr/local/lib/taa
+
+#
+# PrimaryLoginWelcomeFiles - A colon delimited list of files to email to new
+#                            customers when they create their primary login 
+#                            ID.
+#
+PrimaryLoginWelcomeFiles = Welcome.txt:AUPInfo.txt:BillingTerms.txt
+
+#
+# AddOnLoginWelcomeFiles - A colon delimited list of files to email to newly
+#                          created logins that are not the primary login.
+#
+AddOnLoginWelcomeFiles = Welcome.txt:AUPInfo.txt
+
+#
+# AddOnLoginPrimaryFiles - A colon delimited list of files to email to the
+#                          primary Login ID when an add-on login is 
+#                          created.
+#
+AddOnLoginPrimaryFiles = AddOnActive.txt
+
+#
+# AdminNewLoginFiles - A colon delimited list of files to email to the
+#                      administrators when a new login has been created.
+#
+
+AdminNewLoginFiles = AdminEmail.txt
+
+#
+# AdminEmailList - Contains a colon delimited list of admin email addresses
+#                  to send AdminNewLoginFiles to.
+#
+AdminEmailList = user1:user2
+
+#
+# Administrators - The list of people who have administrative capabilities.
+#
+Administrators = user1:user2
+
+#
+# EmailDomain - This is what gets appended to various outbound email
+#                addresses.
+
+EmailDomain = example.com
+
+#
+# Credit Card Settings
+#
+
+MaxCCBatchSize = 500
+CCVSFileName   = ccvs
+CCDeclinedFile = /usr/local/lib/taa/CCDeclined.txt
+CCReceiptFile  = /usr/local/lib/taa/CCReceipt.txt
+
+#
+# The account where Collections are sent.
+#
+CollectionsAccount = 8000
+CollectionAgency = Acme Collection Agency
+CollectionAgencyAddress = 1234 Main Street, Anytown, US 12345
+CollectionAgencyNumber = 800.555.1212
+
+ReportPath = /usr/local/lib/taa/reports
+
+TemplatePath = /usr/local/lib/taa/templates
+
+
+#
+# Ticket stuff
+#
+UrgentTicketTag = <FONT SIZE=+1 COLOR=RED><I>Urgent</I></FONT>&nbsp;
+
+#
+# LDAP Stuff
+# 
+LDAPHost    = 10.10.10.10
+LDAPPort    = 389
+LDAPDN      = dc=exmaple,dc=com
+LDAPUser    = cn=manager,dc=examle,dc=com
+LDAPPass    = password
+
+#
+# TAA MySQL Stuff
+# 
+TAAMySQLHost    = localhost
+TAAMySQLPort    = 3306
+TAAMySQLDB      = tacc
+TAAMySQLUser    = tacc
+TAAMySQLPass    = Password
+TAASQLDriver    = QMYSQL3
+
+#
+# Some more configuration values...
+#
+MaxPasswordLength = 8
+MaxLoginIDLength  = 16
+
+#
+# CCC Integration
+#
+CCCMySQLHost    = 10.10.10.10
+CCCMySQLPort    = 3306
+CCCMySQLDB      = CCC
+CCCMySQLUser    = tacc
+CCCMySQLPass    = password
+
+#
+# Other databases
+#
+
+# The Postfix database
+MailSQLHost     = 10.10.10.10
+MailSQLPort     = 3306
+MailSQLDB       = postfix
+MailSQLUser     = tacc
+MailSQLPass     = password
+
+# MyDNS Database
+DNSSQLHost     = 10.10.10.10
+DNSSQLPort     = 3306
+DNSSQLDB       = mydns
+DNSSQLUser     = tacc
+DNSSQLPass     = password
+
+# The Apache VHost database
+VHostSQLHost   = 10.10.10.10
+VHostSQLPort   = 3306
+VHostSQLDB     = apache
+VHostSQLUser   = tacc
+VHostSQLPass   = password
+
+# Asterisk Manager
+AsteriskHost    = localhost
+AsteriskPort    = 1234
+AsteriskUser    = tacc
+AsteriskPass    = password
+
+#
+# Monetra/MCVE Settings
+#
+MCVEHost     = 10.10.10.10
+MCVEPort     = 8333
+MCVEUser     = tacc
+MCVEPass     = password
+MCVEMaxTrans = 950
+

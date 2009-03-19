@@ -1,0 +1,18 @@
+{NoteText}
+
+#<TABLE BORDER="0" WIDTH="100%">
+#  <TR>
+#    <TD ALIGN="RIGHT">By:</TD>
+#    <TD>{AddedBy}</TD>
+#    <TD ALIGN="RIGHT">Type:</TD>
+#    <TD>{NoteType}</TD>
+#    <TD ALIGN="RIGHT">Subject:</TD>
+#    <TD COLSPAN="3">{Subject}</TD>
+#  </TR>
+#</TABLE>
+#<TABLE BORDER="0" WIDTH="100%">
+#  <TR>
+#    <TD COLSPAN="4" BGCOLOR="#DDDDDD">{NoteText}</TD>
+# </TR>
+#</TABLE>
+

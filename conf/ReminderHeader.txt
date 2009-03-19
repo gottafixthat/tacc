@@ -1,0 +1,7 @@
+
+{CompanyName}
+{ContactName}
+
+Our records show that as of {CurrentDate}, your account is past due.
+The following items are now currently overdue:
+

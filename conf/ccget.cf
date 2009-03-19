@@ -1,0 +1,17 @@
+
+# The encode password for MySQL encoded transactions
+ENCODEKEY   = heP977aM
+
+# The CCC Database definitions
+REMOTEHOST  = 10.10.10.10
+REMOTEDBASE = CCC
+REMOTEUSER  = nobody
+REMOTEPASS  = password
+
+# The TAA definitions
+LOCALHOST   = localhost
+LOCALDBASE  = tacc
+LOCALUSER   = tacc
+LOCALPASS   = password
+
+

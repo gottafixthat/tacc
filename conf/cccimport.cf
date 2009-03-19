@@ -1,0 +1,25 @@
+#
+# Web-Accounting Sync configuration (wasync)
+#
+
+#RemoteHost = guysmiley
+#RemoteHost = beaker.blarg.net
+#RemoteDBase = CCC
+#RemoteUser  = nobody
+#RemotePass  = 3H8a35J0
+
+TAAMySQLHost    = localhost
+TAAMySQLPort    = 3306
+TAAMySQLDB      = tacc
+TAAMySQLUser    = tacc
+TAAMySQLPass    = password
+
+#CCCDBHost   = beaker.blarg.net
+CCCDBHost   = 10.10.10.10
+CCCDBName   = CCC
+CCCDBUser   = nobody
+CCCDBPass   = password
+
+EmailTemplate = /usr/local/lib/taa/AdminEmailCCC.txt
+
+

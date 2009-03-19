@@ -1,0 +1,15 @@
+
+TAAPath       = /usr/local/lib/taa
+MessageText   = ccexpired.txt
+DaysInAdvance = 14
+
+DomainName    = example.com
+
+MailSpool     = /var/spool/taamail
+
+DBHost        = localhost
+DBName        = tacc
+DBUser        = tacc
+DBPass        = password
+
+

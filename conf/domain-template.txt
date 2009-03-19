@@ -1,0 +1,123 @@
+To: hostmast@avvanta.com (Avvanta Hostmaster)
+Subject: NEW DOMAIN {DomainName}
+From: support@avvanta.com (Avvanta Support)
+
+********************************************************************* 
+Please DO NOT REMOVE Version Number or any of the information 
+below when submitting this template to Network Solutions 
+*********************************************************************
+
+Domain Version Number: 6.0
+
+*********************************************************************
+IMPORTANT: Business Account Program Members and Premier Partners 
+should email completed NEW domain requests to the mailto address 
+you have been provided with. MODIFY and DELETE requests should be 
+emailed to hostmaster@networksolutions.com 
+*********************************************************************
+
+AGREEMENT TO BE BOUND. By applying for a Network Solutions' service(s) 
+through our online application process or by applying for and 
+registering a domain name as part of our e-mail template application 
+process or by using the service(s) provided by Network Solutions under 
+the Service Agreement, Version 5.0, you acknowledge that you have read 
+and agree to be bound by all terms and conditions of this Agreement 
+and any pertinent rules or policies that are or may be published by 
+Network Solutions. 
+
+Please find the Network Solutions Service Agreement, Version 5.0 
+located at the URL:
+
+http://www.networksolutions.com/legal/service-agreement.html
+
+Explanation of Fields New to Template Version 6.0:
+
+Sections 9 and 10 are for New Registrations only.
+
+If the Registration Period is left blank, the default registration 
+will be for 2 years.
+
+The information you supply on this form may be shared unless you 
+opt out of the bulk Whois database as indicated in section 9b below.
+If you have any questions, please see the section entitled "With
+Whom We May Share Information" in our Privacy Policy available at
+http://www.networksolutions.com/legal/privacy-policy.html
+
+[ URL ftp://www.networksolutions.com ] [1/2000]
+
+Authorization
+0a.  (N)ew (M)odify (D)elete......: N
+0b.  Auth Scheme..................: 
+0c.  Auth Info....................: 
+
+1.   Comments.....................: Email/WWW
+
+2.   Complete Domain Name.........: {DomainName}
+
+Organization Using Domain Name
+3a.  Organization Name............: {CompanyName}
+3b.  Street Address...............: {Addr1} {Addr2}
+3c.  City.........................: {City}
+3d.  State........................: {State}
+3e.  Postal Code..................: {ZIP}
+3f.  Country......................: US
+
+Administrative Contact
+4a.  NIC Handle (if known)........: 
+4b.  (I)ndividual (R)ole..........: I
+4c.  Name (Last, First)...........: {NICName}
+4d.  Organization Name............: {CompanyName}
+4e.  Street Address...............: {Addr1} {Addr2}
+4f.  City.........................: {City}
+4g.  State........................: {State}
+4h.  Postal Code..................: {ZIP}
+4i.  Country......................: US
+4j.  Phone Number.................: {DayPhone}
+4k.  Fax Number...................: 
+4l.  E-Mailbox....................: {LoginID}@avvanta.com
+
+Technical Contact
+5a.  NIC Handle (if known)........: BS137-ORG
+5b.  (I)ndividual (R)ole..........: 
+5c.  Name (Last, First)...........: 
+5d.  Organization Name............: 
+5e.  Street Address...............: 
+5f.  City.........................: 
+5g.  State........................: 
+5h.  Postal Code..................: 
+5i.  Country......................: 
+5j.  Phone Number.................: 
+5k.  Fax Number...................: 
+5l.  E-Mailbox....................: 
+
+Billing Contact
+6a.  NIC Handle (if known)........: 
+6b.  (I)ndividual (R)ole..........: I
+6c.  Name (Last, First)...........: {NICName}
+6d.  Organization Name............: {CompanyName}
+6e.  Street Address...............: {Addr1} {Addr2}
+6f.  City.........................: {City}
+6g.  State........................: {State}
+6h.  Postal Code..................: {ZIP}
+6i.  Country......................: US
+6j.  Phone Number.................: {DayPhone}
+6k.  Fax Number...................: 
+6l.  E-Mailbox....................: {LoginID}@avvanta.com
+
+Primary Name Server
+7a.  Primary Server Hostname......: NS1.AVVANTA.COM
+7b.  Primary Server Netaddress....: 206.124.128.1
+
+Secondary Name Server(s)
+8a.  Secondary Server Hostname....: NS2.AVVANTA.COM
+8b.  Secondary Server Netaddress..: 206.124.128.3
+
+Product/Service Options (For New Registrations Only)
+9a.  Registration Period (1-10yrs): 2
+9b.  Bulk Whois Optout (Y/N)......: Y
+
+Channel Payment/Identifier Options
+10a. Channel Identifier...........: BA-100012763
+
+END OF AGREEMENT
+

@@ -1,0 +1,1 @@
+{List TicketLog}{TicketLog:Urgent}<I><B>{TicketLog:EntryTime} by {TicketLog:EntryBy}</B></I><BR>{TicketLog:EntryType}{TicketLog:LogNotes}<HR>{EndList TicketLog}

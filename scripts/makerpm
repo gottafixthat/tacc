@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Get our build number in the source tree
+VERSION=3.0.0
+BUILDNUM=`svn info | grep Revision | cut -f2 -d" "`
+
+echo "Creating tarball..."
+tar zcf /tmp/tacc-$VERSION-$BUILDNUM.tgz --exclude .svn --exclude *~ --exclude *.bak adb admin asterisk backend bdes bin ccards cccimport ccexpired ccget conf custcare customers doc include lib Makefile modembilling radimport reports scripts seanetimport settings taamaild taccupgrade tickets voicemail voip wasync
+mkdir /tmp/tacc-$VERSION
+pushd /tmp/tacc-$VERSION
+tar zxf /tmp/tacc-$VERSION-$BUILDNUM.tgz
+rm /tmp/tacc-$VERSION-$BUILDNUM.tgz
+cd /tmp
+tar zcf /tmp/tacc-$VERSION-$BUILDNUM.tgz tacc-$VERSION
+popd
+rm -rf /tmp/tacc-$VERSION
+mv /tmp/tacc-$VERSION-$BUILDNUM.tgz ~/rpmbuild/SOURCES/
+
+echo "Creating spec file..."
+pwd
+cat rpm/tacc.spec | sed -e s/{VERSION}/$VERSION/ -e s/{RELEASE}/$BUILDNUM/ > ~/rpmbuild/SPECS/tacc-$VERSION-$BUILDNUM.spec
+
+echo "Building RPMS..."
+rpmbuild -ba ~/rpmbuild/SPECS/tacc-$VERSION-$BUILDNUM.spec
+
+

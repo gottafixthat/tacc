@@ -1,0 +1,17 @@
+Subject:  New User {LoginID} - {LoginType}
+
+The following Login has been created:
+
+    Login: {LoginID}
+     Type: {LoginTypeD}
+ Customer: {CompanyName}
+  Contact: {ContactName}
+    Addr1: {Addr1}
+    Addr2: {Addr2}
+     City: {City}
+    State: {State}
+      ZIP: {ZIP}
+Day Phone: {DayPhone}
+Eve Phone: {EvePhone}
+
+

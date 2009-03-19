@@ -1,0 +1,315 @@
+%% file: Standard Multipage.tex
+%% Purpose: Multipage bill template for e-Bills
+%% 
+%% Created by Mark Asplen-Taylor
+%% Asplen Management Ltd
+%% www.asplen.co.uk
+%%
+%% Modified for Freeside by Kristian Hoffman
+%%
+%% Changes
+%% 	0.1	4/12/00	Created
+%%	0.2	18/10/01	More fields added
+%%	1.0	16/11/01	RELEASED
+%%	1.2	16/10/02	Invoice number added
+%%	1.3	2/12/02	Logo graphic added
+%%	1.4	7/2/03	Multipage headers/footers added
+%%      n/a     forked for Freeside; checked into CVS
+%%
+
+<!-- BEGIN: statement -->
+\batchmode
+\documentclass[letterpaper]{article}
+
+\usepackage{fancyhdr,lastpage,ifthen,longtable,afterpage}
+\usepackage{colortbl,graphicx}			% required for logo graphic
+
+\addtolength{\voffset}{-0.0cm}		% top margin to top of header
+\addtolength{\hoffset}{-0.6cm}		% left margin on page
+\addtolength{\topmargin}{-0.75cm}	% top margin to top of header
+\setlength{\headheight}{3.00cm} 	% height of header
+\setlength{\headsep}{1.5cm}		% between header and text
+\setlength{\footskip}{1.0cm}		% bottom of footer from bottom of text
+
+%\addtolength{\textwidth}{2.1in}    	% width of text
+\setlength{\textwidth}{19.5cm}
+\setlength{\textheight}{19.5cm}
+\setlength{\oddsidemargin}{-0.9cm} 	% odd page left margin
+\setlength{\evensidemargin}{-0.9cm} 	% even page left margin
+
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{1pt}
+
+% Adjust the inset of the mailing address
+\newcommand{\addressinset}[1][]{\hspace{1.0cm}}
+
+% Adjust the inset of the return address and logo
+\newcommand{\returninset}[1][]{\hspace{-0.25cm}}
+
+% New command for address lines i.e. skip them if blank
+\newcommand{\addressline}[1]{\ifthenelse{\equal{#1}{}}{}{#1\newline}}
+
+% Inserts dollar symbol
+\newcommand{\dollar}[1][]{\symbol{36}}
+
+% Remove plain style header/footer
+\fancypagestyle{plain}{
+  \fancyhead{}
+}
+\fancyhf{}
+
+% Define fancy header/footer for first and subsequent pages
+\fancyfoot[C]{
+  \ifthenelse{\equal{\thepage}{1}}
+  { % First page
+    \small{
+Cheetah I.S.~~~PO Box 5047~~~Bellevue, WA 98009-5047~~~425.818.9900~~~http://www.cheetahis.com/
+    }
+  }
+  { % ... pages
+    \small{
+Cheetah I.S.~~~PO Box 5047~~~Bellevue, WA 98009-5047~~~425.818.9900~~~http://www.cheetahis.com/
+    }
+  }
+}
+
+\fancyfoot[R]{
+  \ifthenelse{\equal{\thepage}{1}}
+  { % First page
+    \ifthenelse{\equal{\pageref{LastPage}}{1}}
+    {   % Single page statement
+    }
+    {   % Multi-page statement
+        \small{\thepage\ of \pageref{LastPage}}
+    }
+  }
+  { % ... pages
+    \small{\thepage\ of \pageref{LastPage}}
+  }
+}
+
+\fancyhead[L]{
+  \ifthenelse{\equal{\thepage}{1}}
+  { % First page
+    \returninset
+    \makebox{
+      \begin{tabular}{ll}
+%%      \includegraphics{XXconf_dirXX/freesidelogo.eps} &
+        \includegraphics[width=1.50cm]{/usr/local/lib/taa/cheetah-logo.eps} &
+        \begin{minipage}[b]{5.5cm}
+\textbf{Cheetah I.S.}\\*
+\em{Digital Voice Solutions} \\*
+PO Box 5047\\*
+Bellevue, WA~~98009-5047
+        \end{minipage}
+      \end{tabular}
+    }
+  }
+  { % ... pages
+    \includegraphics[width=1.50cm]{/usr/local/lib/taa/cheetah-logo.eps}	% Uncomment if you want the logo on all pages.
+  }
+}
+
+\fancyhead[R]{
+  \ifthenelse{\equal{\thepage}{1}}
+  { % First page
+    \begin{flushright}
+    \huge{\textbf{Service Invoice}}
+    \end{flushright}
+    \begin{tabular}{|c|c|c|}
+    \hline
+    \textbf{Invoice Date} & \textbf{Invoice \#} & \textbf{Customer ID}\\\hline
+%%    \vspace{0.2cm}
+    @--StatementDate--@ & @--StatementNumber--@ & @--CustomerID--@ \\\hline
+%%    \rule{0pt}{5ex} &~~ \huge{\textsc{Service Invoice}} & \\
+%%    \vspace{-0.2cm}
+%%     & & \\\hline
+    \end{tabular}
+  }
+  { % ... pages
+    \small{
+      \begin{tabular}{|c|c|c|}
+      \hline
+      \textbf{Invoice date} & \textbf{Invoice \#}& \textbf{Customer ID}\\\hline
+      @--StatementDate--@ & @--StatementNumber--@ & @--CustomerID--@\\\hline
+      \end{tabular}
+    }
+  }
+}
+
+\pagestyle{fancy}
+
+
+%% Font options are:
+%%	bch	Bitsream Charter
+%% 	put	Utopia
+%%	phv	Adobe Helvetica
+%%	pnc	New Century Schoolbook
+%%	ptm	Times
+%%	pcr	Courier
+
+\renewcommand{\familydefault}{phv}
+
+
+% Commands for freeside description...
+\newcommand{\FSdesc}[5]{
+  \multicolumn{1}{c}{\rule{0pt}{2.5ex}#1} &
+  \textbf{#2} &
+  \multicolumn{1}{r}{\rule{0pt}{1ex}#3} &
+  \multicolumn{1}{r}{#4} &
+  \multicolumn{1}{r}{\textbf{\dollar #5}}\\
+}
+% ...extended description...
+\newcommand{\FSextdesc}[1]{
+  \multicolumn{1}{l}{\rule{0pt}{1.0ex}} &
+  \multicolumn{3}{l}{\small{#1}} &
+  \multicolumn{1}{l}{\rule{0pt}{1.0ex}}\\
+}
+% ...and total line items.
+\newcommand{\FStotaldesc}[2]{
+  & \multicolumn{3}{l}{\textbf{#1}} & {\textbf{\dollar #2}}\\
+}
+
+
+\begin{document}
+%
+%%	Headers and footers defined for the first page
+%
+%%	The LH Heading comprising logo
+%%	UNCOMMENT the following FOUR lines and change the path if necssary to provide a logo
+%
+%%	The Heading comprising isue date, customer ref & INVOICE name
+%
+%%	Header & footer changes for subsequent pages
+%
+%
+%
+\begin{tabular}{ll}
+\addressinset \rule{0cm}{0cm} &
+\makebox{
+\begin{minipage}[t]{5.0cm}
+\vspace{0.25cm}
+\textbf{@--CustomerName--@}\\
+\addressline{@--CustomerAddr1--@}
+\addressline{@--CustomerAddr2--@}
+\addressline{@--CustomerAddr3--@}
+\addressline{@--CustomerAddr4--@}
+%%\addressline{XXcompanyXX}
+%%\addressline{XXaddress1XX}
+%%\addressline{XXaddress2XX}
+%%\addressline{XXcityXX, XXstateXX~~XXzipXX}
+%%\addressline{XXcountryXX}
+\end{minipage}}
+\end{tabular}
+\hfill
+\makebox{
+\begin{minipage}[t]{6.4cm}
+\begin{flushright}
+\begin{tabular}{rl}
+%Terms: & @--Terms--@\\
+%Payment Due By: & \textbf{@--DueDate--@}\\
+\end{tabular}
+%%XXpolineXX\\
+\end{flushright}
+\end{minipage}}
+\vspace{1.5cm}
+% Summary of charges
+\section*{\textbf{Invoice Summary}}\vspace{-0.65cm}
+%\hfill
+\begin{center}
+\begin{tabular}[t]{|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{Invoice \#} & \textbf{Invoice Date} & \textbf{Terms} & \textbf{Due Date} & \textbf{Cust ID} & \textbf{Prev Bal.} & \textbf{Credits} & \textbf{New Charges} & \textbf{Balance Due} \\\hline
+%%    \vspace{0.2cm}
+@--StatementNumber--@ & @--StatementDate--@ & @--Terms--@ & @--DueDate--@ & @--CustomerID--@ & \dollar@--PreviousBalance--@ & \dollar@--Credits--@ & \dollar@--NewCharges--@ & \textbf{\dollar@--TotalDue--@}\\\hline
+%%    \rule{0pt}{5ex} &~~ \huge{\textsc{Service Invoice}} & \\
+%%    \vspace{-0.2cm}
+%%     & & \\\hline
+\end{tabular}
+\end{center}
+%
+\section*{\textbf{Detailed Account Activity}}\vspace{-0.65cm}
+\begin{longtable}{clrrr}
+\hline
+\rule{0pt}{1.5ex}
+\makebox[1.2cm]{\textbf{Date}} & 
+\makebox[11.3cm][l]{\textbf{Description}} & 
+\makebox[1.0cm][r]{\textbf{Qty}} & 
+\makebox[1.6cm][r]{\textbf{Price}} &
+\makebox[1.6cm][r]{\textbf{Amount}} \\
+\hline
+\endfirsthead
+\multicolumn{5}{r}{\rule{0pt}{2.5ex}Continued from previous page}\\
+\hline
+\rule{0pt}{1.5ex}
+\makebox[1.2cm]{\textbf{Date}} & 
+\makebox[11.3cm][l]{\textbf{Description}} & 
+\makebox[1.0cm][r]{\textbf{Qty}} & 
+\makebox[1.6cm][r]{\textbf{Price}} &
+\makebox[1.6cm][r]{\textbf{Amount}} \\
+\hline
+\endhead
+\multicolumn{5}{r}{\rule{0pt}{2.5ex}Continued on next page...}\\
+\endfoot
+\hline
+%%[@--
+%%
+%%  foreach my \$line (@total_items) {
+%%    \$OUT .= '\FStotaldesc{' . \$line->{'total_item'} . '}' .
+%%            '{' . \$line->{'total_amount'} . '}' . "\n";
+%%  }
+%%
+%% begin total line
+\FStotaldesc{Total New Charges}{@--NewCharges--@}
+\FStotaldesc{Total Balance Due}{@--TotalDue--@}
+%% end total line
+%%--@]
+\hline
+\endlastfoot
+%%[@--
+%%
+%%  foreach my \$line (@detail_items) {
+%%    my \$ext_description = \$line->{'ext_description'};
+%%
+%%    # Don't break-up small packages.
+%%    my \$rowbreak = @\$ext_description < 5 ? '*' : '';
+%%
+%%    \$OUT .= "\\hline\n";
+%%    \$OUT .= '\FSdesc{' . \$line->{'ref'} . '}{' . \$line->{'description'} . '}' .
+%%            '{' . \$line->{'amount'} . "}\${rowbreak}\n";
+%%
+%%    foreach my \$ext_desc (@\$ext_description) {
+%%      \$ext_desc = substr(\$ext_desc, 0, 80) . '...'
+%%        if (length(\$ext_desc) > 80);
+%%      \$OUT .= '\FSextdesc{' . \$ext_desc . '}' . "\${rowbreak}\n";
+%%    }
+%%
+%%  }
+%%
+%%--@]
+%% begin line items
+%%<!-- BEGIN: lineitems -->
+%%<!-- BEGIN: normalline -->
+\hline
+\FSdesc{@--TransDate--@}{@--Description--@}{@--Quantity--@}{\dollar @--Price--@}{@--Amount--@}
+\FSextdesc{Service Period: @--StartDate--@ - @--EndDate--@}
+%%<!-- END: normalline -->
+%%<!-- BEGIN: nodaterange -->
+\hline
+\FSdesc{@--TransDate--@}{@--Description--@}{}{}{@--Amount--@}
+%%<!-- END: nodaterange -->
+%%<!-- END: lineitems -->
+%% End line items
+\end{longtable}
+\vfill
+%%
+%%      Add any customer specific notes in here
+%%
+\section*{\small{\textbf{Notes}}}\vspace{-0.35cm}
+\small{\begin{enumerate}
+\item Please make your check payable to \textbf{Cheetah IS}.
+\item If you have any questions please email \textbf{billing@CheetahIS.com}.
+\item Accounts more than 10 days past due are subject to a 12\% per annum finance charge with a minimum finance charge of \dollar 5.00.
+\end{enumerate}}
+\end{document}
+<!-- END: statement -->
