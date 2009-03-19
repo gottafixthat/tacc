@@ -1,0 +1,13 @@
+#
+# Web-Accounting Sync configuration (wasync)
+#
+RemoteHost = 10.10.10.10
+RemoteDBase = CCC
+RemoteUser  = nobody
+RemotePass  = password
+
+LocalHost  = localhost
+LocalDBase = tacc
+LocalUser  = tacc
+LocalPass  = password
+

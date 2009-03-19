@@ -1,0 +1,13 @@
+From: Avvanta Accounting <accounting@avvanta.com>
+To: {PrimaryLogin}@avvanta.com
+Subject: Declined Credit Card
+
+This message is to inform you that the payment on your {CardType},
+in the amount of ${ChargeAmount} was declined.  We will not attempt
+to reprocess this charge.
+
+The balance on your account is currently ${AccountBalance}.
+
+Please call our office at 425.818.6500 or 888.662.5274 if you have 
+any questions regarding this matter.
+

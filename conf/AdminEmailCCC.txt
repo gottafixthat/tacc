@@ -1,0 +1,13 @@
+From: Avvanta Support <support@avvanta.com>
+To: marc@avvanta.com
+Subject: CCC Login {Action} {LoginID} - {LoginType}
+
+     Action: {Action}
+Customer ID: {CustomerID}
+      Login: {LoginID}
+    Done By: {ParentID}
+       Type: {LoginTypeD}
+   Customer: {CompanyName}
+  Full Name: {ContactName}
+
+

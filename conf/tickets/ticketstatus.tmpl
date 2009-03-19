@@ -1,0 +1,19 @@
+From: support@avvanta.com
+To: {LoginID}@avvanta.com
+Subject: [T{TicketNo}] - {TicketSummary}
+
+The following ticket is {TicketStatus}
+=======================================================================
+Ticket Number:   {TicketNo}
+Owned By:        {TicketOwnedBy}
+Date Opened:     {TicketOpened}
+Last Modified:   {TicketModified}
+Customer:        {CustomerID} - {CustomerName}
+Ticket Type:     {TicketType}
+Ticket Status:   {TicketStatus}
+Summary:         {TicketSummary}
+=======================================================================
+Details:
+{List TicketLog}{TicketLog:EntryTime} by {TicketLog:EntryBy}
+{TicketLog:LogNotes}
+{EndList TicketLog}

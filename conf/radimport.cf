@@ -1,0 +1,20 @@
+
+RadiusHost  = 10.10.10.10
+RadiusDB    = radius
+RadiusUser  = radimport
+RadiusPass  = password
+RadiusTable = radacct
+
+AcctHost  = localhost
+AcctDB    = tacc
+AcctUser  = tacc
+AcctPass  = password
+AcctTable = ModemUsage
+
+# Specifying the domain name will strip it from the
+# hostname portion of the radius record.
+DomainName = example.com
+
+# Sleep time tells radimport the number of seconds to sleep 
+# between import runs.
+SleepTime  = 180
