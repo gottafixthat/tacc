@@ -99,6 +99,6 @@ install -m 644 conf/tickets/ticketstatus.tmpl $RPM_BUILD_ROOT%{prefix}/lib/taa/t
 %{prefix}/sbin
 
 # Config files
-%attr(0644, root, root) %config(noreplace) %{prefix}/etc
-%attr(0644, root, root) %config(noreplace) %{prefix}/lib/taa
+%attr(-, root, root) %config(noreplace) %{prefix}/etc/*
+%attr(-, root, root) %config(noreplace) %{prefix}/lib/taa/*
 
