@@ -21,15 +21,15 @@ Total Accountability Customer Care
 make RPM_OPT_FLAGS="$RPM_OPT_FLAGS"
 
 %install
-mkdir -p ${RPM_BUILD_ROOT}%{prefix}/bin
-mkdir -p ${RPM_BUILD_ROOT}%{prefix}/etc
-mkdir -p $RPM_BUILD_ROOT%{prefix}/lib/taa/customers
-mkdir -p $RPM_BUILD_ROOT%{prefix}/lib/taa/icons
-mkdir -p $RPM_BUILD_ROOT%{prefix}/lib/taa/reports
-mkdir -p $RPM_BUILD_ROOT%{prefix}/lib/taa/templates/customers
-mkdir -p $RPM_BUILD_ROOT%{prefix}/lib/taa/templates/tickets
-mkdir -p $RPM_BUILD_ROOT%{prefix}/lib/taa/tickets
-mkdir -p $RPM_BUILD_ROOT%{prefix}/sbin
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/bin
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/etc
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/lib/taa/customers
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/lib/taa/icons
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/lib/taa/reports
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/lib/taa/templates/customers
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/lib/taa/templates/tickets
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/lib/taa/tickets
+mkdir -p -m 755 $RPM_BUILD_ROOT%{prefix}/sbin
 
 # Our binaries
 install -m 755 bin/tacc $RPM_BUILD_ROOT%{prefix}/bin/
