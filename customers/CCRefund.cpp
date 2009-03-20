@@ -181,15 +181,7 @@ void CCRefund::setCustomerID(long custID)
     // Walk through the card list, set the display strings and fill our list.
     CreditCardRecord *card;
     for (card = cards.first(); card; card = cards.next()) {
-        QString dispStr;
-        dispStr = card->cardTypeStr;
-        dispStr += " ";
-        dispStr += card->cardNo.left(1);
-        dispStr += "...";
-        dispStr += card->cardNo.right(4);
-        dispStr += " Exp ";
-        dispStr += card->expDate;
-        cardList->insertItem(dispStr, card->idx);
+        cardList->insertItem(card->listText, card->idx);
     }
     
 
