@@ -25,6 +25,7 @@
 #include <TAATools.h>
 #include <AcctsRecv.h>
 #include <ConfirmBox.h>
+#include <CCTools.h>
 #include <CCRefund.h>
 
 /**
@@ -140,6 +141,7 @@ void CCRefund::setCustomerID(long custID)
     AutoPaymentsDB  APDB;
     int             doIt = 0;
     bool            foundIt;
+    CreditCardList  cards;
 
     myCustID = custID;
 
@@ -165,127 +167,29 @@ void CCRefund::setCustomerID(long custID)
     customerName->setText(CDB.getStr("FullName"));
 
     QApplication::setOverrideCursor(waitCursor);
-    // Figure out how many cards we could *potentially* have.
-    // Sucks to do two queries, but they should be small.
-    int idxCount = 0;
-    DB.query("select InternalID from CCTrans where CustomerID = %ld order by TransDate desc", myCustID);
-    idxCount += DB.rowCount;
-    // Now for the second query, we'll pull from the AutoPayments table and just loop
-    // through it.  We'll re-run the first query for the CCTrans table afterward
-    DB.query("select InternalID from AutoPayments where CustomerID = %ld and PaymentType = 1 order by AuthorizedOn desc", myCustID);
-    idxCount += DB.rowCount;
-    // Create the index pointer with a bit of padding
-    cardListIDX = new CCRefundCardRecord[idxCount+2];
-    cardListCount = 0;
 
-    // Now walk through the AutoPayment list, adding any cards we find.
-    if (DB.rowCount) while(DB.getrow()) {
-        APDB.get(atol(DB.curRow["InternalID"]));
-        // Check our list for this card
-        foundIt = false;
-        if (cardListCount) {
-            for (int i = 0; i < cardListCount; i++) {
-                if (!cardListIDX[i].cardNo.compare(cardListIDX[i].cardNo, APDB.getStr("AcctNo"))) foundIt = true;
-            }
-        }
-        if (!foundIt) {
-            // Check to see if the card is expired.
-            QDate   expDate;
-            QDate   today = QDate::currentDate();
-            myDateToQDate(APDB.getStr("ExpDate"), expDate);
-            if (today.daysTo(expDate) >= 0) {
-                // Add it to the list.
-                cardListIDX[cardListCount].cardholder   = APDB.getStr("Name");
-                cardListIDX[cardListCount].addr         = APDB.getStr("Address");
-                cardListIDX[cardListCount].zip          = APDB.getStr("ZIP");
-                cardListIDX[cardListCount].cardType     = APDB.getInt("CardType");
-                cardListIDX[cardListCount].cardNo       = APDB.getStr("AcctNo");
-                cardListIDX[cardListCount].expDate      = expDate.toString("MMyy").ascii();
-                cardListIDX[cardListCount].ccv          = APDB.getStr("SecurityCode");
-
-                // Add it to the combo box.
-                cardListCount++;
-            }
-        }
-    }
-
-
-    // Do the CCTrans query again, getting whatever cards are there.
-    DB.query("select InternalID from CCTrans where CustomerID = %ld order by TransDate desc", myCustID);
-    if (DB.rowCount) while(DB.getrow()) {
-        CCDB.get(atol(DB.curRow["InternalID"]));
-        // Check our list for this card
-        foundIt = false;
-        if (cardListCount) {
-            for (int i = 0; i < cardListCount; i++) {
-                if (!cardListIDX[i].cardNo.compare(cardListIDX[i].cardNo, CCDB.getStr("CardNo"))) foundIt = true;
-            }
-        }
-        if (!foundIt) {
-            // Check to see if the card is expired.
-            QString tmpExp = CCDB.getStr("ExpDate");
-            int     month = tmpExp.left(2).toInt();
-            int     year  = tmpExp.right(2).toInt();
-            if (year < 70) year += 2000;
-            else year += 1900;
-            QDate   expDate;
-            expDate.setYMD(year, month, 1);
-            expDate.setYMD(year, month, expDate.daysInMonth());
-            QDate   today = QDate::currentDate();
-            if (today.daysTo(expDate) >= 0) {
-                // Add it to the list.
-                cardListIDX[cardListCount].cardholder   = CCDB.getStr("Name");
-                cardListIDX[cardListCount].addr         = CCDB.getStr("Address");
-                cardListIDX[cardListCount].zip          = CCDB.getStr("ZIP");
-                cardListIDX[cardListCount].cardType     = CCDB.getInt("CardType");
-                cardListIDX[cardListCount].cardNo       = CCDB.getStr("CardNo");
-                cardListIDX[cardListCount].expDate      = CCDB.getStr("ExpDate");
-                cardListIDX[cardListCount].ccv          = CCDB.getStr("SecurityCode");
-
-                // Add it to the combo box.
-                cardListCount++;
-            }
-        }
-    }
+    // Get the credit card list
+    cards = getCreditCardList(myCustID);
 
     QApplication::restoreOverrideCursor();
-    if (!cardListCount) {
+    if (cards.isEmpty()) {
         QMessageBox::critical(this, myMsgBoxTitle, "No valid credit cards were found for this customer.\n\nUnable to issue a refund.");
         delete this;
         return;
     }
 
     // Walk through the card list, set the display strings and fill our list.
-    for (int i = 0; i < cardListCount; i++) {
-        switch (cardListIDX[i].cardType) {
-            case CCTYPE_MC:
-                cardListIDX[i].cardTypeStr = "Mastercard";
-                break;
-            case CCTYPE_VISA:
-                cardListIDX[i].cardTypeStr = "Visa";
-                break;
-            case CCTYPE_AMEX:
-                cardListIDX[i].cardTypeStr = "AmEx";
-                break;
-            case CCTYPE_DINERS:
-                cardListIDX[i].cardTypeStr = "Diners";
-                break;
-            case CCTYPE_DISC:
-                cardListIDX[i].cardTypeStr = "Discover";
-                break;
-            default:
-                cardListIDX[i].cardTypeStr = "Unknown";
-                break;
-        }
+    CreditCardRecord *card;
+    for (card = cards.first(); card; card = cards.next()) {
         QString dispStr;
-        dispStr = cardListIDX[i].cardTypeStr;
+        dispStr = card->cardTypeStr;
         dispStr += " ";
-        dispStr += cardListIDX[i].cardNo.left(1);
+        dispStr += card->cardNo.left(1);
         dispStr += "...";
-        dispStr += cardListIDX[i].cardNo.right(4);
+        dispStr += card->cardNo.right(4);
         dispStr += " Exp ";
-        dispStr += cardListIDX[i].expDate;
-        cardList->insertItem(dispStr);
+        dispStr += card->expDate;
+        cardList->insertItem(dispStr, card->idx);
     }
     
 

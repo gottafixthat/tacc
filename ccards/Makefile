@@ -27,11 +27,11 @@ endif
 
 SUBDIRS =	
 
-SOURCES =	CCBatch.cpp CCMonetra.cpp
+SOURCES =	CCTools.cpp CCBatch.cpp CCMonetra.cpp
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 
-SRCMETA =	moc_CCBatch.cpp moc_CCMonetra.cpp
+SRCMETA =	moc_CCTools.cpp moc_CCBatch.cpp moc_CCMonetra.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 
@@ -68,6 +68,9 @@ clean:
 FORCE:
 
 ####### Meta objects
+
+moc_CCTools.cpp: CCTools.h
+	$(MOC) CCTools.h -o moc_CCTools.cpp
 
 moc_CCBatch.cpp: CCBatch.h
 	$(MOC) CCBatch.h -o moc_CCBatch.cpp

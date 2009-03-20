@@ -4,7 +4,7 @@ USEDES = 1
 
 INCDIR	=  $(QTDIR)/include
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include -I../lib -I/usr/local/include
-CFLAGS += -I../reports -I../voicemail -I../tickets -I../adb
+CFLAGS += -I../reports -I../voicemail -I../tickets -I../adb -I../ccards
 CFLAGS += -DADBQT
 # CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
 LIBDIRS = -L/usr/local/lib/blarg -L/usr/local/lib
