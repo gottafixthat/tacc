@@ -26,6 +26,7 @@ struct CreditCardRecord {
     QString cardNo;
     QString expDate;
     QString ccv;
+    QString listText;
 };
 
 typedef QPtrList<CreditCardRecord> CreditCardList;

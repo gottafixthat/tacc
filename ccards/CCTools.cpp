@@ -107,7 +107,8 @@ CreditCardList getCreditCardList(long custID)
         }
     }
 
-    // Walk through the list again and set the card type string.
+    // Walk through the list again and set the card type string and the 
+    // text that functions can use to insert them into lists.
     if (!cards.isEmpty()) {
         CreditCardRecord *card;
         if (!cards.isEmpty()) for (card = cards.first(); card; card = cards.next()) {
@@ -131,6 +132,16 @@ CreditCardList getCreditCardList(long custID)
                     card->cardTypeStr = "Unknown";
                     break;
             }
+
+            QString dispStr;
+            dispStr = card->cardTypeStr;
+            dispStr += " ";
+            dispStr += card->cardNo.left(1);
+            dispStr += "...";
+            dispStr += card->cardNo.right(4);
+            dispStr += " Exp ";
+            dispStr += card->expDate;
+            card->listText = dispStr;
         }
     }
 

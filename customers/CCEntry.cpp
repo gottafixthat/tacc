@@ -24,6 +24,8 @@
 #include <qlayout.h>
 #include <qmessagebox.h>
 
+#include <CCTools.h>
+#include <ConfirmBox.h>
 #include <TAATools.h>
 #include <ADB.h>
 
@@ -86,6 +88,20 @@ CCEntry::CCEntry
     phone = new QLineEdit(this);
     phone->setMaxLength(15);
     
+    QLabel *cardListLabel = new QLabel(this, "cardListLabel");
+    cardListLabel->setAlignment(AlignRight|AlignVCenter);
+    cardListLabel->setText("Card to charge:");
+
+    // Our list of cards.
+    cards = getCreditCardList(CustID);
+    cardList = new QComboBox(false, this, "cardList");
+    cardList->insertItem("Charge New Card");
+    CreditCardRecord    *tmpCard;
+    for (tmpCard = cards.first(); tmpCard; tmpCard = cards.next()) {
+        cardList->insertItem(tmpCard->listText, tmpCard->idx+1);
+    }
+    connect(cardList, SIGNAL(activated(int)), this, SLOT(cardListChanged(int)));
+    
     QLabel  *chargeAmountLabel  = new QLabel(this);
     chargeAmountLabel->setAlignment(AlignRight|AlignVCenter);
     chargeAmountLabel->setText("Charge Amount:");
@@ -93,7 +109,7 @@ CCEntry::CCEntry
     chargeAmount = new QLineEdit(this);
     chargeAmount->setMaxLength(10);
     
-    QLabel  *cardTypeLabel  = new QLabel(this);
+    cardTypeLabel  = new QLabel(this);
     cardTypeLabel->setAlignment(AlignRight|AlignVCenter);
     cardTypeLabel->setText("Card Type:");
 
@@ -102,21 +118,21 @@ CCEntry::CCEntry
     cardType->insertItem("Visa");
     cardType->insertItem("American Express");
 
-    QLabel  *cardNumberLabel  = new QLabel(this);
+    cardNumberLabel  = new QLabel(this);
     cardNumberLabel->setAlignment(AlignRight|AlignVCenter);
     cardNumberLabel->setText("Card Number:");
 
     cardNumber = new QLineEdit(this);
     cardNumber->setMaxLength(18);
 
-    QLabel  *expDateLabel  = new QLabel(this);
+    expDateLabel  = new QLabel(this);
     expDateLabel->setAlignment(AlignRight|AlignVCenter);
     expDateLabel->setText("Expiration Date:");
 
     expDate = new QLineEdit(this);
     expDate->setMaxLength(18);
 
-    QLabel  *cvInfoLabel  = new QLabel(this);
+    cvInfoLabel  = new QLabel(this);
     cvInfoLabel->setAlignment(AlignRight|AlignVCenter);
     cvInfoLabel->setText("CV Security Code:");
 
@@ -127,7 +143,7 @@ CCEntry::CCEntry
     autoPay->setText("Use as automatic payment method");
     connect(autoPay, SIGNAL(toggled(bool)), this, SLOT(autoPayChanged(bool)));
 
-    QLabel *chargeDayLabel = new QLabel(this, "chargeDayLabel");
+    chargeDayLabel = new QLabel(this, "chargeDayLabel");
     chargeDayLabel->setAlignment(AlignRight|AlignVCenter);
     chargeDayLabel->setText("Charge Day:");
 
@@ -141,9 +157,6 @@ CCEntry::CCEntry
 
     balance = new QLabel(this);
     balance->setAlignment(AlignRight);
-
-    dateLabel = new QLabel(this);
-    dateLabel->setAlignment(AlignRight);
 
     saveButton = new QPushButton(this);
     saveButton->setText("&Save");
@@ -171,15 +184,15 @@ CCEntry::CCEntry
     ewl->setRowStretch(curRow, 0);
     ewl->addWidget(custNameLabel,       curRow, curCol++);
     ewl->addWidget(custName,            curRow, curCol++);
-    curCol++;
-    ewl->addWidget(dateLabel,           curRow, curCol++);
+    ewl->addWidget(balanceLabel,        curRow, curCol++);
+    ewl->addWidget(balance,             curRow, curCol++);
 
     curRow++; curCol = 0;
     ewl->setRowStretch(curRow, 0);
     ewl->addWidget(addr1Label,          curRow, curCol++);
     ewl->addWidget(addr1,               curRow, curCol++);
-    ewl->addWidget(balanceLabel,        curRow, curCol++);
-    ewl->addWidget(balance,             curRow, curCol++);
+    ewl->addWidget(cardListLabel,       curRow, curCol++);
+    ewl->addWidget(cardList,            curRow, curCol++);
 
     curRow++; curCol = 0;
     ewl->setRowStretch(curRow, 0);
@@ -237,41 +250,20 @@ CCEntry::CCEntry
     
 	setCaption( "Credit Card Entry" );
 
-	ADB			    DB;
-	CustomersDB		CDB;
-	AddressesDB		addrDB;
-	QDate			theDate;
-	char			tmpstr[1024];
-
-	
 	myCustID = CustID;
-	theDate	= QDate::currentDate();
+	CustomersDB		CDB;
+    CDB.get(myCustID);
 	
-	CDB.get(myCustID);
-	strcpy(tmpstr, CDB.getStr("BillingAddress"));
-	addrDB.get(REF_CUSTOMER, myCustID, tmpstr);
+    fillContactInfo();
 	
-	// There is no default phone number, so get the first one from the DB.
-	DB.query("select PhoneNumber from CustomerContacts where Active > 0 and CustomerID = %ld", myCustID);
-	if (DB.rowCount) {
-		DB.getrow();
-		phone->setText(DB.curRow["PhoneNumber"]);
-	}
 	
-	custName->setText(CDB.getStr("FullName"));
 	QToolTip::add(custName, "The full name exactly as it\nappears on the card.");
 	
-	addr1->setText(addrDB.Address1);
 	QToolTip::add(addr1, "The address _MUST_ be the address\nwhere the credit card statements\nare sent to.");
-	addr2->setText(addrDB.Address2);
 	QToolTip::add(addr2, "The address _MUST_ be the address\nwhere the credit card statements\nare sent to.");
-	city->setText(addrDB.City);
 	QToolTip::add(city, "The address _MUST_ be the address\nwhere the credit card statements\nare sent to.");
-	state->setText(addrDB.State);
 	QToolTip::add(state, "The address _MUST_ be the address\nwhere the credit card statements\nare sent to.");
-	zip->setText(addrDB.ZIP);
 	QToolTip::add(zip, "The address _MUST_ be the address\nwhere the credit card statements\nare sent to.");
-	dateLabel->setText(theDate.toString());
 	
 	QToolTip::add(expDate, "The Expiration date on the card in the form MMYY.");
 	QToolTip::add(cvInfo,  "The security code for the card (optional but desired)\nThis is a three digit number following the card number on Visa or\nMastercard located above the signature on the back of the card.\nOn American Express cards, it is a four digit number located\non the front of the card above the card number.");
@@ -283,8 +275,6 @@ CCEntry::CCEntry
 	
     custName->setFocus();
 
-    connect(this, SIGNAL(customerChanged(long)), mainWin(), SLOT(customerChanged(long)));
-    // connect(mainWin(), SIGNAL(refreshCustomer(long)), this, SLOT(refreshCustomer(long)));
 }
 
 
@@ -324,10 +314,24 @@ void CCEntry::saveCCard()
     CCDB.setValue("Address",      tmpstr);
     CCDB.setValue("ZIP",          (const char *) zip->text());
     CCDB.setValue("Amount",       (const char *) chargeAmount->text());
-    CCDB.setValue("CardType",     cardType->currentItem());
-    CCDB.setValue("ExpDate",      (const char *) expDate->text());
-    CCDB.setValue("CardNo",       (const char *) cardNumber->text());
-    CCDB.setValue("SecurityCode", (const char *) cvInfo->text());
+    if (cardList->currentItem()) {
+        // Using an existing card.
+        CreditCardRecord    *card;
+        for (card = cards.first(); card; card = cards.next()) {
+            if (card->idx + 1 == cardList->currentItem()) {
+                CCDB.setValue("CardType",       card->cardType);
+                CCDB.setValue("ExpDate",        card->expDate.ascii());
+                CCDB.setValue("CardNo",         card->cardNo.ascii());
+                CCDB.setValue("SecurityCode",   card->ccv.ascii());
+            }
+        }
+    } else {
+        // Using a new card
+        CCDB.setValue("CardType",     cardType->currentItem());
+        CCDB.setValue("ExpDate",      (const char *) expDate->text());
+        CCDB.setValue("CardNo",       (const char *) cardNumber->text());
+        CCDB.setValue("SecurityCode", (const char *) cvInfo->text());
+    }
     tmpAmt = CCDB.getFloat("Amount");
     
     if (CCDB.isValid() == CCARD_OK) {
@@ -381,6 +385,18 @@ void CCEntry::saveCCard()
         }
         // All done with the security code.
 
+        // One last check.  Confirm the amounts.
+        ConfirmBox  *cb = new ConfirmBox(this, "confirmBox");
+        cb->setTitle("Confirm Charge");
+        QString tmpText = "Confirm that you wish to charge $";
+        tmpText += chargeAmount->text();
+        tmpText += "\nfor ";
+        tmpText += custName->text();
+        cb->setText(tmpText);
+        cb->setConfirmText("Check this box to confirm the transaction");
+        if (cb->exec() == QDialog::Rejected) {
+            return;
+        }
 
         
         if (transIns) {
@@ -465,7 +481,7 @@ void CCEntry::saveCCard()
     }
     
     if (transIns || autoIns) {
-        emit(customerChanged(myCustID));
+        emit(customerUpdated(myCustID));
         close();
     }
 }
@@ -492,4 +508,94 @@ void CCEntry::autoPayChanged(bool check)
 
     chargeDay->setEnabled(check);
 
+}
+
+/**
+ * fillContactInfo()
+ *
+ * Grabs the default contact info for this customer and shoves
+ * it into the edit fields.
+ */
+void CCEntry::fillContactInfo()
+{
+    ADB             DB;
+    CustomersDB     CDB;
+	AddressesDB		addrDB;
+    QString         tmpStr;
+
+	// There is no default phone number, so get the first one from the DB.
+	DB.query("select PhoneNumber from CustomerContacts where Active > 0 and CustomerID = %ld", myCustID);
+	if (DB.rowCount) {
+		DB.getrow();
+		phone->setText(DB.curRow["PhoneNumber"]);
+	}
+
+	CDB.get(myCustID);
+	custName->setText(CDB.getStr("FullName"));
+
+    tmpStr = CDB.getStr("BillingAddress");
+
+	addrDB.get(REF_CUSTOMER, myCustID, tmpStr.ascii());
+
+	addr1->setText(addrDB.Address1);
+	addr2->setText(addrDB.Address2);
+	city->setText(addrDB.City);
+	state->setText(addrDB.State);
+	zip->setText(addrDB.ZIP);
+}
+
+
+/**
+ * cardListChanged()
+ *
+ * Gets called when the user selects an item in the card list.
+ * We'll either show all of the other input fields or hide them
+ * depending on whether or not they have selected to charge a new
+ * card or an existing card.
+ */
+void CCEntry::cardListChanged(int idx)
+{
+    bool    useExisting = true;
+    if (!idx) useExisting = false;
+
+    cardTypeLabel->setHidden(useExisting);
+    cardType->setHidden(useExisting);
+    cardNumberLabel->setHidden(useExisting);
+    cardNumber->setHidden(useExisting);
+    expDateLabel->setHidden(useExisting);
+    expDate->setHidden(useExisting);
+    cvInfoLabel->setHidden(useExisting);
+    cvInfo->setHidden(useExisting);
+    autoPay->setHidden(useExisting);
+    chargeDayLabel->setHidden(useExisting);
+    chargeDay->setHidden(useExisting);
+    
+    custName->setEnabled(!useExisting);
+    addr1->setEnabled(!useExisting);
+    addr2->setEnabled(!useExisting);
+    city->setEnabled(!useExisting);
+    state->setEnabled(!useExisting);
+    zip->setEnabled(!useExisting);
+    phone->setEnabled(!useExisting);
+
+    if (useExisting) {
+        // Set the address information from the card data.
+        CreditCardRecord *tmpCard;
+        for (tmpCard = cards.first(); tmpCard; tmpCard = cards.next()) {
+            if (tmpCard->idx == idx-1) {
+                custName->setText(tmpCard->cardholder);
+                addr1->setText(tmpCard->addr);
+                addr2->setText("");
+                city->setText("");
+                state->setText("");
+                zip->setText(tmpCard->zip);
+                phone->setText("");
+            }
+        }
+        // Make sure auto pay is NOT checked.
+        autoPay->setChecked(false);
+    } else {
+        // Grab the data from the customers database again.
+        fillContactInfo();
+    }
 }

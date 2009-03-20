@@ -23,6 +23,7 @@
 #include <qradiobutton.h>
 #include <qspinbox.h>
 
+#include <CCTools.h>
 #include <TAAWidget.h>
 
 class CCEntry : public TAAWidget
@@ -53,22 +54,34 @@ protected:
     QLineEdit   *state;
     QLineEdit   *zip;
     QLineEdit   *phone;
+    QComboBox   *cardList;
     QLineEdit   *chargeAmount;
+    QLabel      *autoPayLabel;
     QCheckBox   *autoPay;
     QPushButton *saveButton;
     QPushButton *cancelButton;
-    QLabel      *dateLabel;
     QLabel      *balance;
+    QLabel      *cardTypeLabel;
     QComboBox   *cardType;
+    QLabel      *cardNumberLabel;
     QLineEdit   *cardNumber;
+    QLabel      *expDateLabel;
     QLineEdit   *expDate;
+    QLabel      *cvInfoLabel;
     QLineEdit   *cvInfo;
+    QLabel      *chargeDayLabel;
     QSpinBox    *chargeDay;
 
+    void        fillContactInfo();
+
 private:
-    long    myCustID;
+    long            myCustID;
+    CreditCardList  cards;
+
+protected slots:
+    void        cardListChanged(int);
 
 signals:
-    void    customerChanged(long);
+    void        customerChanged(long);
 };
 #endif // CCEntry_included
