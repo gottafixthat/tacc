@@ -1,18 +1,23 @@
-/**********************************************************************
-
-	--- Qt Architect generated file ---
-
-	File: CityFilters.h
-	Last generated: Sun Apr 11 13:58:51 1999
-
- *********************************************************************/
+/**
+ * CityFilters.h - Filters for the Customer Cities report.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef CityFilters_included
 #define CityFilters_included
 
-#include "CityFiltersData.h"
+#include <qradiobutton.h>
 
-class CityFilters : public CityFiltersData
+#include <Report.h>
+
+class CityFilters : public ReportFilter
 {
     Q_OBJECT
 
@@ -37,5 +42,9 @@ public slots:
     virtual void applyFilters();
     virtual void applyAndExit();
 
+protected:
+    QRadioButton    *activeOnlyButton;
+    QRadioButton    *inactiveOnlyButton;
+    QRadioButton    *bothButton;
 };
 #endif // CityFilters_included

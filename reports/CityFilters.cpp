@@ -1,25 +1,43 @@
-/**********************************************************************
+/**
+ * CityFilters.h - Filters for the Customer City Report.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
+#include <qbuttongroup.h>
+#include <qlayout.h>
 
-	File: CityFilters.cpp
-	Last generated: Sun Apr 11 13:58:51 1999
+#include <CityFilters.h>
 
- *********************************************************************/
-
-#include "CityFilters.h"
-
-#define Inherited CityFiltersData
-
-CityFilters::CityFilters
-(
-	QWidget* parent,
-	const char* name
-)
-	:
-	Inherited( parent, name )
+CityFilters::CityFilters(QWidget* parent, const char* name) : 
+    ReportFilter( parent, name )
 {
 	setCaption( "Customer City Report Filters" );
+
+    QButtonGroup    *bgroup = new QButtonGroup(1, Qt::Horizontal, "Active Customer Selection", this, "bgroup");
+
+    activeOnlyButton = new QRadioButton(bgroup, "activeOnlyButton");
+    activeOnlyButton->setText("Active Only");
+    activeOnlyButton->setChecked(true);
+
+    inactiveOnlyButton = new QRadioButton(bgroup, "inactiveOnlyButton");
+    inactiveOnlyButton->setText("Inactive Only");
+
+    bothButton = new QRadioButton(bgroup, "bothButton");
+    bothButton->setText("Both");
+
+    bgroup->insert(activeOnlyButton);
+    bgroup->insert(inactiveOnlyButton);
+    bgroup->insert(bothButton);
+
+
+    ml->addWidget(bgroup, 1);
 }
 
 

@@ -31,6 +31,9 @@ CityReport::CityReport
 	repBody->addColumn("State");        repBody->setColumnAlignment(1, AlignLeft);
 	repBody->addColumn("Count");        repBody->setColumnAlignment(2, AlignRight);
 	
+    filters = new CityFilters();
+    connect(filters, SIGNAL(optionsUpdated()), this, SLOT(refreshReport()));
+
     allowDates(REP_NODATES);
     allowFilters(1);
     myShowActive = 0;
@@ -40,6 +43,7 @@ CityReport::CityReport
 
 CityReport::~CityReport()
 {
+    delete filters;
 }
 
 
@@ -51,6 +55,7 @@ CityReport::~CityReport()
 void CityReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
+    myShowActive = filters->getActiveStatus();
 
     repBody->clear();
     repBody->setSorting(2, FALSE);     // Sort by count, highest first.
@@ -139,16 +144,6 @@ void CityReport::refreshReport()
     QApplication::restoreOverrideCursor();
 }
 
-/*
-** applyFilters - Gets the new filters and refreshes the report.
-*/
-
-void CityReport::applyFilters(int newShowActive)
-{
-    myShowActive = newShowActive;
-    refreshReport();
-}
-
 
 /*
 ** listItemSelected - Loads the selected customer when the list item
@@ -176,9 +171,6 @@ void CityReport::listItemSelected(QListViewItem *curItem)
 
 void CityReport::editFilters()
 {
-    CityFilters *CF  = new CityFilters();
-    CF->setActiveStatus(myShowActive);
-    connect(CF, SIGNAL(filtersChanged(int)), SLOT(applyFilters(int)) );
-    CF->exec();
+    filters->show();
 }
 

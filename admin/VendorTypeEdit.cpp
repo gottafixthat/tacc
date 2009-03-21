@@ -21,24 +21,75 @@
 **
 */
 
-
-#include "VendorTypeEdit.h"
-#include "BlargDB.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <qlabel.h>
+#include <qlayout.h>
+
+#include <BlargDB.h>
 #include <ADB.h>
 
-#define Inherited VendorTypeEditData
+#include <VendorTypeEdit.h>
 
-VendorTypeEdit::VendorTypeEdit
-(
-	QWidget* parent,
-	const char* name,
-	int InternalID
-)
-	:
-	Inherited( parent, name )
+VendorTypeEdit::VendorTypeEdit(QWidget* parent, const char* name, int InternalID) :
+	TAAWidget( parent, name )
 {
+    // Create our layout
+    setCaption("New Vendor Type");
+
+    QLabel  *vendorTypeLabel = new QLabel(this, "vendorTypeLabel");
+    vendorTypeLabel->setAlignment(AlignRight|AlignVCenter);
+    vendorTypeLabel->setText("Vendor Type:");
+
+    vendorType = new QLineEdit(this, "vendorType");
+    vendorType->setMaxLength(60);
+
+    QLabel *subTypeListLabel = new QLabel(this, "subTypeListLabel");
+    subTypeListLabel->setAlignment(AlignRight|AlignVCenter);
+    subTypeListLabel->setText("Sub type of:");
+
+    subTypeList = new QComboBox(false, this, "subTypeList");
+
+    // Our buttons
+    QPushButton *saveButton = new QPushButton(this, "saveButton");
+    saveButton->setText("&Save");
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveVendType()));
+
+    QPushButton *cancelButton = new QPushButton(this, "cancelButton");
+    cancelButton->setText("&Cancel");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelVendType()));
+
+    // Create our layout now.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+
+    // A grid for our main widgets.
+    QGridLayout *gl = new QGridLayout(2, 2);
+    int curRow = 0;
+    gl->addWidget(vendorTypeLabel,      curRow, 0);
+    gl->addWidget(vendorType,           curRow, 1);
+    gl->setRowStretch(curRow, 0);
+    
+    curRow++;
+    gl->addWidget(subTypeListLabel,     curRow, 0);
+    gl->addWidget(subTypeList,          curRow, 1);
+    gl->setRowStretch(curRow, 0);
+
+    gl->setColStretch(0, 0);
+    gl->setColStretch(1, 1);
+
+    ml->addLayout(gl, 1);
+
+    // A button layout
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight);
+    bl->addStretch(1);
+    bl->addWidget(saveButton, 0);
+    bl->addWidget(cancelButton, 0);
+
+    ml->addStretch(1);
+    ml->addLayout(bl, 0);
+
+
     ADB     DB;
     char    tmpstr[128];
     int     indexPtr = 0;
@@ -59,7 +110,7 @@ VendorTypeEdit::VendorTypeEdit
     if (IntID) {
         VendorTypesDB VTDB;
         VTDB.get(IntID);
-        vendTypeEnt->setText(VTDB.VendorType);
+        vendorType->setText(VTDB.VendorType);
         tmpSubOf = VTDB.SubTypeOf.toInt();
     }
 
@@ -79,7 +130,7 @@ VendorTypeEdit::VendorTypeEdit
         }
     }
     
-    vendTypeEnt->setFocus();
+    vendorType->setFocus();
     
 }
 
@@ -106,20 +157,20 @@ void VendorTypeEdit::saveVendType()
     int     tmpID;
 
     // Get the data from the dialog    
-    strcpy(vendtype, vendTypeEnt->text());
+    strcpy(vendtype, vendorType->text());
     tmpID = intIDIndex[subTypeList->currentItem()];
     
     VendorTypesDB VTDB;
     
     if (!IntID) {
         // New record...
-        VTDB.VendorType = vendTypeEnt->text();
+        VTDB.VendorType = vendorType->text();
         VTDB.SubTypeOf.setNum(tmpID);
         VTDB.ins();
     } else {
         // Updating a record...
         VTDB.get(IntID);
-        VTDB.VendorType = vendTypeEnt->text();
+        VTDB.VendorType = vendorType->text();
         VTDB.SubTypeOf.setNum(tmpID);
         VTDB.upd();
     }
