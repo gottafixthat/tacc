@@ -34,22 +34,19 @@ endif
 
 SUBDIRS =	
 
-SOURCES =	BaseList.cpp BaseListData.cpp\
-		GLAccountTypes.cpp\
+SOURCES =	GLAccountTypes.cpp\
 		ChartOfAccounts.cpp\
 		GLAccountEditor.cpp\
 		RatePlans.cpp\
 		RatePlanEdit.cpp RatePlanEditData.cpp\
 		BillingCycles.cpp\
 		BillingCycleEdit.cpp\
-		VendorTypes.cpp VendorTypesData.cpp\
-		VendorTypeEdit.cpp VendorTypeEditData.cpp\
+		VendorTypes.cpp\
+		VendorTypeEdit.cpp\
 		Vendors.cpp\
 		VendorEdit.cpp VendorEditData.cpp\
 		PaymentTerms.cpp PaymentTermsData.cpp\
 		PaymentTermsEdit.cpp PaymentTermsEditData.cpp\
-		GenJournalEntry.cpp GenJournalEntryData.cpp\
-		AddBaseTypeLink.cpp AddBaseTypeLinkData.cpp\
 		EditLoginTypes.cpp\
 		ELT_General.cpp\
 		ELT_Flags.cpp\
@@ -79,25 +76,21 @@ SOURCES =	BaseList.cpp BaseListData.cpp\
 		MakeDeposits.cpp\
         UserEditor.cpp UserPrivs.cpp\
 		CompanyEditor.cpp\
-		LoginFlagList.cpp\
-        admin.cpp
+		LoginFlagList.cpp
 
-HEADERS =	BaseList.h BaseListData.h\
-		GLAccountTypes.h\
+HEADERS =	GLAccountTypes.h\
 		ChartOfAccounts.h\
 		GLAccountEditor.h\
 		RatePlans.h\
 		RatePlanEdit.h RatePlanEditData.h\
 		BillingCycles.h\
 		BillingCycleEdit.h\
-		VendorTypes.h VendorTypesData.h\
-		VendorTypeEdit.h VendorTypeEditData.h\
+		VendorTypes.h\
+		VendorTypeEdit.h\
 		Vendors.h\
 		VendorEdit.h VendorEditData.h\
 		PaymentTerms.h PaymentTermsData.h\
 		PaymentTermsEdit.h PaymentTermsEditData.h\
-		GenJournalEntry.h GenJournalEntryData.h\
-		AddBaseTypeLink.h AddBaseTypeLinkData.h\
 		EditLoginTypes.h EditLoginTypesData.h\
 		ELT_General.h ELT_GeneralData.h\
 		ELT_Flags.h\
@@ -127,27 +120,23 @@ HEADERS =	BaseList.h BaseListData.h\
 		TE_Cities.h TE_CitiesData.h\
 		UserEditor.h UserPrivs.h\
 		CompanyEditor.h\
-		LoginFlagList.h\
-		admin.h
+		LoginFlagList.h
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 
-SRCMETA =	moc_BaseList.cpp moc_BaseListData.cpp\
-		moc_GLAccountTypes.cpp\
+SRCMETA =	moc_GLAccountTypes.cpp\
 		moc_ChartOfAccounts.cpp\
 		moc_GLAccountEditor.cpp\
 		moc_RatePlans.cpp\
 		moc_RatePlanEdit.cpp moc_RatePlanEditData.cpp\
 		moc_BillingCycles.cpp\
 		moc_BillingCycleEdit.cpp\
-		moc_VendorTypes.cpp moc_VendorTypesData.cpp\
-		moc_VendorTypeEdit.cpp moc_VendorTypeEditData.cpp\
+		moc_VendorTypes.cpp\
+		moc_VendorTypeEdit.cpp\
 		moc_Vendors.cpp\
 		moc_VendorEdit.cpp moc_VendorEditData.cpp\
 		moc_PaymentTerms.cpp moc_PaymentTermsData.cpp\
 		moc_PaymentTermsEdit.cpp moc_PaymentTermsEditData.cpp\
-		moc_GenJournalEntry.cpp moc_GenJournalEntryData.cpp\
-		moc_AddBaseTypeLink.cpp moc_AddBaseTypeLinkData.cpp\
 		moc_EditLoginTypes.cpp\
 		moc_ELT_General.cpp\
 		moc_ELT_Flags.cpp\
@@ -177,8 +166,7 @@ SRCMETA =	moc_BaseList.cpp moc_BaseListData.cpp\
 		moc_TE_Cities.cpp moc_TE_CitiesData.cpp\
 		moc_UserEditor.cpp moc_UserPrivs.cpp\
 		moc_CompanyEditor.cpp\
-		moc_LoginFlagList.cpp\
-		moc_admin.cpp
+		moc_LoginFlagList.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 
@@ -218,26 +206,11 @@ FORCE:
 
 ####### Meta objects
 
-moc_admin.cpp: admin.h
-	$(MOC) admin.h -o moc_admin.cpp
-
-moc_BaseList.cpp: BaseList.h
-	$(MOC) BaseList.h -o moc_BaseList.cpp
-
-moc_BaseListData.cpp: BaseListData.h
-	$(MOC) BaseListData.h -o moc_BaseListData.cpp
-
 moc_VendorTypes.cpp: VendorTypes.h
 	$(MOC) VendorTypes.h -o moc_VendorTypes.cpp
 
-moc_VendorTypesData.cpp: VendorTypesData.h
-	$(MOC) VendorTypesData.h -o moc_VendorTypesData.cpp
-
 moc_VendorTypeEdit.cpp: VendorTypeEdit.h
 	$(MOC) VendorTypeEdit.h -o moc_VendorTypeEdit.cpp
-
-moc_VendorTypeEditData.cpp: VendorTypeEditData.h
-	$(MOC) VendorTypeEditData.h -o moc_VendorTypeEditData.cpp
 
 moc_Vendors.cpp: Vendors.h
 	$(MOC) Vendors.h -o moc_Vendors.cpp
@@ -259,12 +232,6 @@ moc_PaymentTermsEdit.cpp: PaymentTermsEdit.h
 
 moc_PaymentTermsEditData.cpp: PaymentTermsEditData.h
 	$(MOC) PaymentTermsEditData.h -o moc_PaymentTermsEditData.cpp
-
-moc_GenJournalEntry.cpp: GenJournalEntry.h
-	$(MOC) GenJournalEntry.h -o moc_GenJournalEntry.cpp
-
-moc_GenJournalEntryData.cpp: GenJournalEntryData.h
-	$(MOC) GenJournalEntryData.h -o moc_GenJournalEntryData.cpp
 
 moc_BillingCycles.cpp: BillingCycles.h
 	$(MOC) BillingCycles.h -o moc_BillingCycles.cpp
@@ -289,12 +256,6 @@ moc_ChartOfAccounts.cpp: ChartOfAccounts.h
 
 moc_GLAccountEditor.cpp: GLAccountEditor.h
 	$(MOC) GLAccountEditor.h -o moc_GLAccountEditor.cpp
-
-moc_AddBaseTypeLink.cpp: AddBaseTypeLink.h
-	$(MOC) AddBaseTypeLink.h -o moc_AddBaseTypeLink.cpp
-
-moc_AddBaseTypeLinkData.cpp: AddBaseTypeLinkData.h
-	$(MOC) AddBaseTypeLinkData.h -o moc_AddBaseTypeLinkData.cpp
 
 moc_EditLoginTypes.cpp: EditLoginTypes.h
 	$(MOC) EditLoginTypes.h -o moc_EditLoginTypes.cpp

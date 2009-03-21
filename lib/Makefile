@@ -38,7 +38,7 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 			DNSUtils.cpp\
 			VHostUtils.cpp\
 			GenLedger.cpp AcctsRecv.cpp BrassClient.cpp\
-			AddressEditor.cpp AddressEditorData.cpp\
+			AddressEditor.cpp\
 			ParseFile.cpp SelectionList.cpp\
 			TAAService.cpp\
 			BRASSService.cpp\
@@ -63,7 +63,7 @@ SRCMETA =	moc_TAAWidget.cpp\
 			moc_QSqlDbPool.cpp\
 			moc_QListViewPrint.cpp\
 			moc_CustomerSearch.cpp\
-			moc_AddressEditor.cpp moc_AddressEditorData.cpp\
+			moc_AddressEditor.cpp\
 			moc_SelectionList.cpp\
 			moc_TAALogin.cpp\
 			moc_calendar.cpp\
@@ -130,9 +130,6 @@ moc_QListViewPrint.cpp: QListViewPrint.h
 
 moc_AddressEditor.cpp: AddressEditor.h
 	$(MOC) AddressEditor.h -o moc_AddressEditor.cpp
-
-moc_AddressEditorData.cpp: AddressEditorData.h
-	$(MOC) AddressEditorData.h -o moc_AddressEditorData.cpp
 
 moc_SelectionList.cpp: SelectionList.h
 	$(MOC) SelectionList.h -o moc_SelectionList.cpp

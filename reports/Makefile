@@ -27,7 +27,6 @@ endif
 SUBDIRS =	
 
 SOURCES =	Report.cpp\
-		HTMLReport.cpp HTMLReportData.cpp\
 		ARReport.cpp\
 		LoginTypeReport.cpp\
 		LoginCountReport.cpp\
@@ -37,17 +36,13 @@ SOURCES =	Report.cpp\
 		RatePlanReport.cpp\
 		RatePlanDetailReport.cpp\
 		ModemUsageReport.cpp\
-		ModemSummaryReport.cpp\
-		ModemSummaryFilters.cpp ModemSummaryFiltersData.cpp\
 		BandwidthUsageReport.cpp\
 		ModemTotalsReport.cpp\
 		BandwidthSummaryReport.cpp\
 		CityReport.cpp\
 		CityDetailReport.cpp\
-		CityFilters.cpp CityFiltersData.cpp\
+		CityFilters.cpp\
 		CustCallLogReport.cpp\
-		UsersOnlineFilters.cpp UsersOnlineFiltersData.cpp\
-		UsersOnlineReport.cpp\
 		UnreleasedDomainsReport.cpp\
 		AllDomainsReport.cpp\
 		DNS_ManagedReport.cpp\
@@ -63,14 +58,9 @@ SOURCES =	Report.cpp\
 		AgingReport.cpp\
 		AllReports.cpp
 
-ifdef USEQWT
-SOURCES += Graph.cpp GraphData.cpp
-endif
-
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_Report.cpp\
-		moc_HTMLReport.cpp moc_HTMLReportData.cpp\
 		moc_ARReport.cpp\
 		moc_LoginTypeReport.cpp\
 		moc_LoginCountReport.cpp\
@@ -80,17 +70,13 @@ SRCMETA =	moc_Report.cpp\
 		moc_RatePlanReport.cpp\
 		moc_RatePlanDetailReport.cpp\
 		moc_ModemUsageReport.cpp\
-		moc_ModemSummaryReport.cpp\
-		moc_ModemSummaryFilters.cpp moc_ModemSummaryFiltersData.cpp\
 		moc_BandwidthUsageReport.cpp\
 		moc_ModemTotalsReport.cpp\
 		moc_BandwidthSummaryReport.cpp\
 		moc_CityReport.cpp\
 		moc_CityDetailReport.cpp\
-		moc_CityFilters.cpp moc_CityFiltersData.cpp\
+		moc_CityFilters.cpp\
 		moc_CustCallLogReport.cpp\
-		moc_UsersOnlineFilters.cpp moc_UsersOnlineFiltersData.cpp\
-		moc_UsersOnlineReport.cpp\
 		moc_UnreleasedDomainsReport.cpp\
 		moc_AllDomainsReport.cpp\
 		moc_DNS_ManagedReport.cpp\
@@ -105,9 +91,6 @@ SRCMETA =	moc_Report.cpp\
 		moc_GeneralLedgerReport.cpp\
 		moc_AgingReport.cpp\
 		moc_AllReports.cpp
-ifdef USEQWT
-SOURCES += moc_Graph.cpp moc_GraphData.cpp
-endif
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 
@@ -151,18 +134,6 @@ FORCE:
 moc_Report.cpp: Report.h
 	$(MOC) Report.h -o moc_Report.cpp
 
-moc_HTMLReport.cpp: HTMLReport.h
-	$(MOC) HTMLReport.h -o moc_HTMLReport.cpp
-
-moc_HTMLReportData.cpp: HTMLReportData.h
-	$(MOC) HTMLReportData.h -o moc_HTMLReportData.cpp
-
-moc_Graph.cpp: Graph.h
-	$(MOC) Graph.h -o moc_Graph.cpp
-
-moc_GraphData.cpp: GraphData.h
-	$(MOC) GraphData.h -o moc_GraphData.cpp
-
 moc_ARReport.cpp: ARReport.h
 	$(MOC) ARReport.h -o moc_ARReport.cpp
 
@@ -190,15 +161,6 @@ moc_RatePlanDetailReport.cpp: RatePlanDetailReport.h
 moc_ModemUsageReport.cpp: ModemUsageReport.h
 	$(MOC) ModemUsageReport.h -o moc_ModemUsageReport.cpp
 
-moc_ModemSummaryReport.cpp: ModemSummaryReport.h
-	$(MOC) ModemSummaryReport.h -o moc_ModemSummaryReport.cpp
-
-moc_ModemSummaryFilters.cpp: ModemSummaryFilters.h
-	$(MOC) ModemSummaryFilters.h -o moc_ModemSummaryFilters.cpp
-
-moc_ModemSummaryFiltersData.cpp: ModemSummaryFiltersData.h
-	$(MOC) ModemSummaryFiltersData.h -o moc_ModemSummaryFiltersData.cpp
-
 moc_BandwidthUsageReport.cpp: BandwidthUsageReport.h
 	$(MOC) BandwidthUsageReport.h -o moc_BandwidthUsageReport.cpp
 
@@ -217,20 +179,8 @@ moc_CityDetailReport.cpp: CityDetailReport.h
 moc_CityFilters.cpp: CityFilters.h
 	$(MOC) CityFilters.h -o moc_CityFilters.cpp
 
-moc_CityFiltersData.cpp: CityFiltersData.h
-	$(MOC) CityFiltersData.h -o moc_CityFiltersData.cpp
-
 moc_CustCallLogReport.cpp: CustCallLogReport.h
 	$(MOC) CustCallLogReport.h -o moc_CustCallLogReport.cpp
-
-moc_UsersOnlineFilters.cpp: UsersOnlineFilters.h
-	$(MOC) UsersOnlineFilters.h -o moc_UsersOnlineFilters.cpp
-
-moc_UsersOnlineFiltersData.cpp: UsersOnlineFiltersData.h
-	$(MOC) UsersOnlineFiltersData.h -o moc_UsersOnlineFiltersData.cpp
-
-moc_UsersOnlineReport.cpp: UsersOnlineReport.h
-	$(MOC) UsersOnlineReport.h -o moc_UsersOnlineReport.cpp
 
 moc_UnreleasedDomainsReport.cpp: UnreleasedDomainsReport.h
 	$(MOC) UnreleasedDomainsReport.h -o moc_UnreleasedDomainsReport.cpp

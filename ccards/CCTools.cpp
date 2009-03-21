@@ -10,6 +10,7 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
+#include <stdlib.h>
 #include <qstring.h>
 
 #include <ADB.h>
