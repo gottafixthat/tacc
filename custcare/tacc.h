@@ -33,7 +33,6 @@
 #include "TicketManager.h"
 #include "Customers.h"
 #include "ProcessVoiceMail.h"
-#include <admin.h>
 #include "AsteriskManager.h"
 #include "QueueMonitor.h"
 #include "AgentStatus.h"
@@ -50,7 +49,7 @@ public:
     TicketManager       *tickets;
     Customers           *custs;
     ProcessVoiceMail    *processVM;
-    Administration      *adm;
+    //Administration      *adm;
     QueueMonitor        *qMon;
     AgentStatus         *agents;
 
