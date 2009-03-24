@@ -1,9 +1,845 @@
-2004-08-29:  Updated various files removing the #define for the template path.
-             It is now set via cfgVal() settings.
-2004-08-29:  Updated tacc.cpp and TAAConfig.cpp to load configuration data
-             from ~/.taa/taa.cf mostly for development.
-2004-09-03:  Added a Call Log report.
-2004-09-04:  Added more date options to the Report class, Today, Yesterday,
-             This Week, Last Week.
-2004-09-04:  Re-wrote the layout for CustChargeEdit.
+------------------------------------------------------------------------
+r196 | marc | 2009-03-20 12:30:03 -0700 (Fri, 20 Mar 2009) | 2 lines
 
+Credit card payments can now be made against previously used cards.
+Added a ConfirmBox to credit card payments.
+------------------------------------------------------------------------
+r195 | marc | 2009-03-20 11:22:42 -0700 (Fri, 20 Mar 2009) | 2 lines
+
+Added new CCTools utilities.
+Updated CCRefund to use card list generated from CCTools.
+------------------------------------------------------------------------
+r194 | marc | 2009-03-19 15:40:13 -0700 (Thu, 19 Mar 2009) | 1 line
+
+Minor change to seanetimport to accomodate null dates for 'accountOpened' and 'nextBillDate'
+------------------------------------------------------------------------
+r193 | marc | 2009-03-19 14:52:36 -0700 (Thu, 19 Mar 2009) | 1 line
+
+Fixed the file permission problems in the spec file for real this time.
+------------------------------------------------------------------------
+r192 | marc | 2009-03-19 13:19:44 -0700 (Thu, 19 Mar 2009) | 1 line
+
+Minor spec filie tweaks to fix permissions
+------------------------------------------------------------------------
+r191 | marc | 2009-03-19 12:19:22 -0700 (Thu, 19 Mar 2009) | 1 line
+
+Added RPM creation scripts
+------------------------------------------------------------------------
+r190 | marc | 2009-03-19 11:38:10 -0700 (Thu, 19 Mar 2009) | 1 line
+
+Removed dependancy for external key from ccget
+------------------------------------------------------------------------
+r189 | marc | 2009-03-18 15:48:12 -0700 (Wed, 18 Mar 2009) | 2 lines
+
+Fixed FS#9 - Typo in customer Payments menu.
+Added wait cursor and status notification to General Ledger Detail Report
+------------------------------------------------------------------------
+r188 | marc | 2009-03-18 12:23:04 -0700 (Wed, 18 Mar 2009) | 2 lines
+
+New ConfirmBox class added for extra verification.
+Updated CCRefund to use the new ConfirmBox to verify the transaction
+------------------------------------------------------------------------
+r187 | marc | 2009-03-18 10:48:22 -0700 (Wed, 18 Mar 2009) | 1 line
+
+CCRefund will now handle AutoPayment cards as well as those from previous transactions.  Basically any card that a customer has ever paid with.
+------------------------------------------------------------------------
+r186 | marc | 2009-03-17 16:56:12 -0700 (Tue, 17 Mar 2009) | 1 line
+
+Credit Card Refunds now functional
+------------------------------------------------------------------------
+r185 | marc | 2009-03-17 11:23:49 -0700 (Tue, 17 Mar 2009) | 1 line
+
+Updated credit card payment charge day to a spinbox.
+------------------------------------------------------------------------
+r184 | marc | 2009-03-16 17:11:16 -0700 (Mon, 16 Mar 2009) | 1 line
+
+Fixed statement logic for anniversary billing
+------------------------------------------------------------------------
+r183 | marc | 2009-03-16 15:43:15 -0700 (Mon, 16 Mar 2009) | 2 lines
+
+Can now search by RegNum.
+Added clipboard copy.  Will copy FullName, ContactName, the currently selected PhoneNumber and RegNum to the clipboard.
+------------------------------------------------------------------------
+r182 | marc | 2009-03-16 13:21:25 -0700 (Mon, 16 Mar 2009) | 4 lines
+
+Fixed bug in tmpFileName.
+Updated RunSubscriptions class to use the correct columns in Accounts.
+Updated seanetimport to use 'Yesterday' for balance transfers.
+Cleaned up temp file handling in emailLatexStatements
+------------------------------------------------------------------------
+r181 | marc | 2009-03-16 09:57:47 -0700 (Mon, 16 Mar 2009) | 1 line
+
+Updated BillingSettings and CCMonetra to allow the credit card receipts and declined messages to be optional.
+------------------------------------------------------------------------
+r180 | marc | 2009-03-15 17:35:11 -0700 (Sun, 15 Mar 2009) | 3 lines
+
+Added new EmailTemplatesSettings class to configure credit card notices.
+Updated CCBatch and CCMonetra to use new configurable email template names.
+Updated CCBatch and CCMonetra to email to statement contacts instead of primary login.
+------------------------------------------------------------------------
+r179 | marc | 2009-03-15 15:26:23 -0700 (Sun, 15 Mar 2009) | 1 line
+
+Added an email template editor, updated CCMonetra.cpp to use config values for domains instead of the hardcoded ones
+------------------------------------------------------------------------
+r178 | marc | 2009-03-15 10:51:52 -0700 (Sun, 15 Mar 2009) | 1 line
+
+Minor fix for customer balance if doing historical data in seanetimport.cpp
+------------------------------------------------------------------------
+r177 | marc | 2009-03-15 09:18:35 -0700 (Sun, 15 Mar 2009) | 1 line
+
+Tracked down a null flag problem in LoginService.cpp
+------------------------------------------------------------------------
+r176 | marc | 2009-03-14 18:53:34 -0700 (Sat, 14 Mar 2009) | 2 lines
+
+Added the start of a base service class and started building on that for BRASS based services.
+Fixed custom flag editor to save its flags via the new LoginService class that is derived from the BRASSService class
+------------------------------------------------------------------------
+r175 | marc | 2009-03-13 16:46:07 -0700 (Fri, 13 Mar 2009) | 1 line
+
+Removed forced palette from the main window, finished seanet import for historical transactions
+------------------------------------------------------------------------
+r174 | marc | 2009-03-13 13:27:55 -0700 (Fri, 13 Mar 2009) | 2 lines
+
+Fixed the logic for overdue in statement processing.
+Added aging data to statement creation, moving it from statement printing.
+------------------------------------------------------------------------
+r173 | marc | 2009-03-13 12:14:00 -0700 (Fri, 13 Mar 2009) | 1 line
+
+Added more latexEscapeString calls for statement processing, specifically on customer name, address, and header and footer messages
+------------------------------------------------------------------------
+r172 | marc | 2009-03-13 11:47:19 -0700 (Fri, 13 Mar 2009) | 11 lines
+
+Added the following variables to Statement Exporting:
+IsOverdue - 0/1 Is the account overdue?
+NeedsPayment - 0/1 Does the customer need to pay (1) or do they have a credit (0)
+TotalOverdue - The total amount the customer is overdue by
+CurrentDue - The amount due from current charges only (i.e. not overdue charges)
+Overdue - The amount that is 1-30 days overdue
+Overdue30 - The amount that is 31-60 days overdue
+Overdue60 - The amount that is 61-90 days overdue
+Overdue90 - The amount that is 91 or more days overdue
+
+Also added historical data importing into seanetimport, now pulls in seanet_charges.csv
+------------------------------------------------------------------------
+r171 | marc | 2009-03-12 17:00:59 -0700 (Thu, 12 Mar 2009) | 3 lines
+
+Added chart of accounts to Seanet import.
+Added member functions to AcctsRecv object to allow override of the account to post for non payment transactions.
+Cleaned up configuration file loading, removing the redundant TAAConfig sources.
+------------------------------------------------------------------------
+r170 | marc | 2009-03-12 14:35:05 -0700 (Thu, 12 Mar 2009) | 1 line
+
+Changed BalanceStatus to BalanceForwardStatus and added BalanceStatus keyed from TotalDue
+------------------------------------------------------------------------
+r169 | marc | 2009-03-11 18:40:17 -0700 (Wed, 11 Mar 2009) | 1 line
+
+Finished Aging Report
+------------------------------------------------------------------------
+r168 | marc | 2009-03-11 17:35:14 -0700 (Wed, 11 Mar 2009) | 1 line
+
+Adding the aging report framework
+------------------------------------------------------------------------
+r167 | marc | 2009-03-11 17:29:08 -0700 (Wed, 11 Mar 2009) | 2 lines
+
+Added BalanceStatus export to statements parser, 0 = Account Current, 1 = Carrying a Credit, 2 = Payment overdue
+Added the framework for the Aging report
+------------------------------------------------------------------------
+r166 | marc | 2009-03-11 10:35:47 -0700 (Wed, 11 Mar 2009) | 1 line
+
+Fixed bug #17 - Subscriptions tab now shows price overrides
+------------------------------------------------------------------------
+r165 | marc | 2009-03-11 10:21:24 -0700 (Wed, 11 Mar 2009) | 1 line
+
+Fixed bug #16 - Changed text of Open/Close button in Logins Tab to (De)Activate
+------------------------------------------------------------------------
+r164 | marc | 2009-03-11 09:23:00 -0700 (Wed, 11 Mar 2009) | 1 line
+
+Added the beginning of the GL reports sections
+------------------------------------------------------------------------
+r163 | marc | 2009-03-09 18:40:51 -0700 (Mon, 09 Mar 2009) | 1 line
+
+Documentation updates
+------------------------------------------------------------------------
+r162 | marc | 2009-03-09 17:24:10 -0700 (Mon, 09 Mar 2009) | 1 line
+
+Upgraded schema version to 11 to include SavedReports table
+------------------------------------------------------------------------
+r161 | marc | 2009-03-09 16:58:51 -0700 (Mon, 09 Mar 2009) | 2 lines
+
+Added option to QListViewPrint to only print selected items.
+Added Print button to Make Deposits and rearranged the layout so the additional widgets look better
+------------------------------------------------------------------------
+r160 | marc | 2009-03-09 16:13:29 -0700 (Mon, 09 Mar 2009) | 1 line
+
+GeneralLedgerDetailReport can now load and save its filters
+------------------------------------------------------------------------
+r159 | marc | 2009-03-09 13:57:58 -0700 (Mon, 09 Mar 2009) | 1 line
+
+Basic report filter saving for GL Detail Report
+------------------------------------------------------------------------
+r158 | marc | 2009-03-09 08:00:46 -0700 (Mon, 09 Mar 2009) | 1 line
+
+Added new Company Info Settings to the Settings Manager
+------------------------------------------------------------------------
+r157 | marc | 2009-03-08 15:38:13 -0700 (Sun, 08 Mar 2009) | 1 line
+
+Extracted report printing to be a generic utility class called QListViewPrint.  It can now print any QListView.
+------------------------------------------------------------------------
+r156 | marc | 2009-03-06 16:57:04 -0800 (Fri, 06 Mar 2009) | 1 line
+
+Changing GL Detail Report column structure in preparation for saving
+------------------------------------------------------------------------
+r155 | marc | 2009-03-06 13:49:29 -0800 (Fri, 06 Mar 2009) | 1 line
+
+General Ledger now has the start of a detail report
+------------------------------------------------------------------------
+r154 | marc | 2009-03-05 15:55:56 -0800 (Thu, 05 Mar 2009) | 1 line
+
+Sales report now allows you to drill down
+------------------------------------------------------------------------
+r153 | marc | 2009-03-05 12:29:56 -0800 (Thu, 05 Mar 2009) | 1 line
+
+Fixed makefile for guides
+------------------------------------------------------------------------
+r152 | marc | 2009-03-05 12:10:22 -0800 (Thu, 05 Mar 2009) | 1 line
+
+Make deposits now allows date selection
+------------------------------------------------------------------------
+r151 | marc | 2009-03-04 18:56:38 -0800 (Wed, 04 Mar 2009) | 1 line
+
+Added the start of a general ledger report
+------------------------------------------------------------------------
+r150 | marc | 2009-03-03 16:11:03 -0800 (Tue, 03 Mar 2009) | 1 line
+
+Manual is now built along with standard make
+------------------------------------------------------------------------
+r149 | marc | 2009-03-03 15:58:31 -0800 (Tue, 03 Mar 2009) | 1 line
+
+Added the beginnings of the manual
+------------------------------------------------------------------------
+r148 | marc | 2009-03-03 14:23:48 -0800 (Tue, 03 Mar 2009) | 1 line
+
+Added PreviousBalanceDate to latex statement processing
+------------------------------------------------------------------------
+r147 | marc | 2009-03-03 11:31:37 -0800 (Tue, 03 Mar 2009) | 1 line
+
+Added BalanceForward in the statement processing engine
+------------------------------------------------------------------------
+r146 | marc | 2009-03-02 16:19:14 -0800 (Mon, 02 Mar 2009) | 1 line
+
+Fixed minor include problem for current gcc
+------------------------------------------------------------------------
+r145 | marc | 2009-03-02 16:08:46 -0800 (Mon, 02 Mar 2009) | 1 line
+
+GL should now be completely updated and flexible enough for ISO
+------------------------------------------------------------------------
+r144 | marc | 2009-03-01 19:10:43 -0800 (Sun, 01 Mar 2009) | 1 line
+
+More sweeping changes to GL accounts
+------------------------------------------------------------------------
+r143 | marc | 2009-02-27 14:56:08 -0800 (Fri, 27 Feb 2009) | 1 line
+
+Fixed Sales Report by Type
+------------------------------------------------------------------------
+r142 | marc | 2009-02-27 12:52:08 -0800 (Fri, 27 Feb 2009) | 2 lines
+
+More GL cleanup.  Subscriptions, payments and credit cards should now all post to the correct accounts
+Added AccountingSettings to Settings Manager
+------------------------------------------------------------------------
+r141 | marc | 2009-02-26 18:21:32 -0800 (Thu, 26 Feb 2009) | 1 line
+
+Forgot to add the new GLAccountEditor source files.  Oops.
+------------------------------------------------------------------------
+r140 | marc | 2009-02-26 18:10:31 -0800 (Thu, 26 Feb 2009) | 6 lines
+
+GL Cleanup:
+Renamed Accounts class to ChartOfAccounts
+Dropped AccountsEdit and replaced with GLAccountEdit
+Removed all old GL Account Types and replaced them with standard accounting account types
+Upgraded taccupgrade.cpp to convert old account types with new ones
+Still need to fix sub-accounts
+------------------------------------------------------------------------
+r139 | marc | 2009-02-25 15:36:36 -0800 (Wed, 25 Feb 2009) | 1 line
+
+fixed a schema issue
+------------------------------------------------------------------------
+r138 | marc | 2009-02-24 19:08:44 -0800 (Tue, 24 Feb 2009) | 1 line
+
+The Agent and Queue monitors can now be toggled from the brand new View menu
+------------------------------------------------------------------------
+r137 | marc | 2009-02-24 17:37:12 -0800 (Tue, 24 Feb 2009) | 1 line
+
+latex statement processing now creates blocks for charges and credits as well as regular line items
+------------------------------------------------------------------------
+r136 | marc | 2009-02-24 15:32:53 -0800 (Tue, 24 Feb 2009) | 3 lines
+
+EmailMessage class is now usable.
+Moved random number seed to tacc to avoid collisions
+Fixed statement engine to use PrimaryLogin if no contacts are found with billable email addresses.
+------------------------------------------------------------------------
+r135 | marc | 2009-02-24 14:24:39 -0800 (Tue, 24 Feb 2009) | 2 lines
+
+EmailMessage now does the correct filenames for attachments.
+Reports are now using the EmailMessage class for sending.
+------------------------------------------------------------------------
+r134 | marc | 2009-02-24 14:01:09 -0800 (Tue, 24 Feb 2009) | 1 line
+
+EmailMessage class functional, but needs to be re-worked a bit to fix the filenames
+------------------------------------------------------------------------
+r133 | marc | 2009-02-24 10:36:30 -0800 (Tue, 24 Feb 2009) | 2 lines
+
+More work done on the EmailMessage class.
+Fixed the non-virtual destructor in QSqlDbPool class
+------------------------------------------------------------------------
+r132 | marc | 2009-02-24 09:56:40 -0800 (Tue, 24 Feb 2009) | 2 lines
+
+Added QListViewToCSV utility class.
+Work continues on Reports::emailReport
+------------------------------------------------------------------------
+r131 | marc | 2009-02-23 17:01:28 -0800 (Mon, 23 Feb 2009) | 1 line
+
+Staring CSV file export.  Almost there, but segfaults in a strange way
+------------------------------------------------------------------------
+r130 | marc | 2009-02-23 15:08:52 -0800 (Mon, 23 Feb 2009) | 2 lines
+
+Fix: ADB now returns 0 if its not connected and sets rowCount to zero, it also does more Connected() checks before running queries and commands, should make it more robust.
+Added CheckPayments report
+------------------------------------------------------------------------
+r129 | marc | 2009-02-23 12:59:30 -0800 (Mon, 23 Feb 2009) | 1 line
+
+Forgot to actually display RegNum in Contact Info tab
+------------------------------------------------------------------------
+r128 | marc | 2009-02-23 12:56:51 -0800 (Mon, 23 Feb 2009) | 1 line
+
+Added RegNum to Customers table
+------------------------------------------------------------------------
+r127 | marc | 2009-02-23 12:15:25 -0800 (Mon, 23 Feb 2009) | 1 line
+
+A few ADB fixes to return 0 if not connected
+------------------------------------------------------------------------
+r126 | marc | 2009-02-22 16:43:38 -0800 (Sun, 22 Feb 2009) | 1 line
+
+Added Credit Card Transaction Detail Report and filters
+------------------------------------------------------------------------
+r125 | marc | 2009-02-22 12:11:03 -0800 (Sun, 22 Feb 2009) | 1 line
+
+First round of credit card payment detail report done.  Still needs filters added.
+------------------------------------------------------------------------
+r124 | marc | 2009-02-21 19:11:56 -0800 (Sat, 21 Feb 2009) | 1 line
+
+First of the ISO reports implemented, ccPaymentsByType
+------------------------------------------------------------------------
+r123 | marc | 2009-02-20 16:41:28 -0800 (Fri, 20 Feb 2009) | 1 line
+
+Added searching on FlagValues
+------------------------------------------------------------------------
+r122 | marc | 2009-02-20 15:15:28 -0800 (Fri, 20 Feb 2009) | 1 line
+
+Fixed date problems in the seanetimport.cpp.  Removed some debug in the StatementEngine
+------------------------------------------------------------------------
+r121 | marc | 2009-02-20 14:39:01 -0800 (Fri, 20 Feb 2009) | 1 line
+
+Fixed CustomerContactEditor to add Statements and it now displays the customer info in the window
+------------------------------------------------------------------------
+r120 | marc | 2009-02-20 12:43:06 -0800 (Fri, 20 Feb 2009) | 1 line
+
+StatementEngine now handles emailed PDF files
+------------------------------------------------------------------------
+r119 | marc | 2009-02-19 19:24:04 -0800 (Thu, 19 Feb 2009) | 1 line
+
+Fixed a bunch of compiles.  Added StatementEngine class, started working on emailing latex pdfs
+------------------------------------------------------------------------
+r118 | marc | 2009-02-19 12:21:25 -0800 (Thu, 19 Feb 2009) | 1 line
+
+Fixed billing cycles in seanetimport, fixed cycletype bug in BillingCyclesDB class
+------------------------------------------------------------------------
+r117 | marc | 2009-02-18 16:47:42 -0800 (Wed, 18 Feb 2009) | 1 line
+
+Fixed billing cycle dates to work with anniversary
+------------------------------------------------------------------------
+r116 | marc | 2009-02-18 13:29:43 -0800 (Wed, 18 Feb 2009) | 1 line
+
+Added PDF file creation to latex processing.  Added cycle dates and statement dates to customer table.
+------------------------------------------------------------------------
+r115 | marc | 2009-02-18 13:21:56 -0800 (Wed, 18 Feb 2009) | 1 line
+
+Added PDF file creation to latex processing.  Added cycle dates and statement dates to customer table.
+------------------------------------------------------------------------
+r114 | marc | 2009-02-18 13:21:51 -0800 (Wed, 18 Feb 2009) | 1 line
+
+Added PDF file creation to latex processing.  Added cycle dates and statement dates to customer table.
+------------------------------------------------------------------------
+r113 | marc | 2009-02-17 16:23:36 -0800 (Tue, 17 Feb 2009) | 1 line
+
+Minor fixes
+------------------------------------------------------------------------
+r112 | marc | 2009-02-17 16:08:47 -0800 (Tue, 17 Feb 2009) | 1 line
+
+CustomersDB::doSubscriptions() now handles anniversary billing.
+------------------------------------------------------------------------
+r111 | marc | 2009-02-17 12:52:27 -0800 (Tue, 17 Feb 2009) | 1 line
+
+Added anniversary billing schema values for Billable Items.  Updated Billable Items to remove the old QtArchitect files.  Still need to implement anniversary billing in main libraries.
+------------------------------------------------------------------------
+r110 | marc | 2009-02-15 16:59:09 -0800 (Sun, 15 Feb 2009) | 1 line
+
+Forgot new TAAStructures.h file in last commit
+------------------------------------------------------------------------
+r109 | marc | 2009-02-15 16:56:10 -0800 (Sun, 15 Feb 2009) | 1 line
+
+Removed somewhat broken PhoneNumbers table and replaced it with CustomerContacts.  Mostly updated.  Still need to modify statements and reports that rely on them.
+------------------------------------------------------------------------
+r108 | marc | 2009-02-13 16:16:13 -0800 (Fri, 13 Feb 2009) | 1 line
+
+All sets now import for seanet
+------------------------------------------------------------------------
+r107 | marc | 2009-02-13 13:20:22 -0800 (Fri, 13 Feb 2009) | 1 line
+
+seanetimport.cpp will now scrub the database before running unless the -s option is given
+------------------------------------------------------------------------
+r106 | marc | 2009-02-12 18:39:55 -0800 (Thu, 12 Feb 2009) | 1 line
+
+NailedSets now import
+------------------------------------------------------------------------
+r105 | marc | 2009-02-12 17:27:01 -0800 (Thu, 12 Feb 2009) | 1 line
+
+seanetimport now handles DSL accounts
+------------------------------------------------------------------------
+r104 | marc | 2009-02-12 16:10:20 -0800 (Thu, 12 Feb 2009) | 1 line
+
+Dialups now import correctly
+------------------------------------------------------------------------
+r103 | marc | 2009-02-11 15:48:49 -0800 (Wed, 11 Feb 2009) | 1 line
+
+Minor tweak to incrementing a variable to avoid warning message
+------------------------------------------------------------------------
+r102 | marc | 2009-02-11 15:48:18 -0800 (Wed, 11 Feb 2009) | 1 line
+
+More seanet tweaks
+------------------------------------------------------------------------
+r101 | marc | 2009-02-11 11:25:49 -0800 (Wed, 11 Feb 2009) | 1 line
+
+Silenced a bunch of GCC warnings
+------------------------------------------------------------------------
+r100 | marc | 2009-02-11 10:48:04 -0800 (Wed, 11 Feb 2009) | 1 line
+
+Silencing some GCC warnings
+------------------------------------------------------------------------
+r99 | marc | 2009-02-11 10:36:58 -0800 (Wed, 11 Feb 2009) | 1 line
+
+Minor tweak for gcc includes
+------------------------------------------------------------------------
+r98 | marc | 2009-02-11 09:27:31 -0800 (Wed, 11 Feb 2009) | 1 line
+
+Updated some include files for the latest GCC
+------------------------------------------------------------------------
+r97 | marc | 2009-02-09 16:19:20 -0800 (Mon, 09 Feb 2009) | 1 line
+
+More work on the seanetimport.cpp.  It now can cross reference services from dialup data.  Waiting for raw data or more input from ISO before continuing.
+------------------------------------------------------------------------
+r96 | marc | 2009-02-08 14:58:36 -0800 (Sun, 08 Feb 2009) | 1 line
+
+seanetimport.cpp now loads static and dynamic dialups/pop accounts and domain hosting plans
+------------------------------------------------------------------------
+r95 | marc | 2009-02-06 16:49:16 -0800 (Fri, 06 Feb 2009) | 1 line
+
+Moved schemaVersion() from taccupgrade to TAATools
+------------------------------------------------------------------------
+r94 | marc | 2009-02-06 16:41:45 -0800 (Fri, 06 Feb 2009) | 1 line
+
+custcare.cpp now checks the schema version and wont let the user run the program unless the program is updated
+------------------------------------------------------------------------
+r93 | marc | 2009-02-06 16:26:25 -0800 (Fri, 06 Feb 2009) | 1 line
+
+Created a taccupgrade program.  Seanet import is about 90 percent complete.
+------------------------------------------------------------------------
+r92 | marc | 2009-02-04 13:31:40 -0800 (Wed, 04 Feb 2009) | 1 line
+
+Fixed bug in QSqlDbPool that was using the default driver as the default host.  Moved configuration file loading to a library so it can be called from any application.  The Seanet import program can now import LoginTypes and Billables.
+------------------------------------------------------------------------
+r91 | marc | 2009-02-03 16:09:42 -0800 (Tue, 03 Feb 2009) | 1 line
+
+Added new CSV file parser.  Started with the EXPERIMENTAL flag that will remove certain code that is not yet completed.
+------------------------------------------------------------------------
+r90 | marc | 2009-01-28 10:29:50 -0800 (Wed, 28 Jan 2009) | 1 line
+
+Added new QSqlDatabase connection pooling class
+------------------------------------------------------------------------
+r89 | marc | 2009-01-26 11:27:20 -0800 (Mon, 26 Jan 2009) | 1 line
+
+Arbitrary flags are complete
+------------------------------------------------------------------------
+r88 | marc | 2009-01-26 10:16:03 -0800 (Mon, 26 Jan 2009) | 1 line
+
+Added arbitrary login flags
+------------------------------------------------------------------------
+r87 | marc | 2008-11-15 10:24:44 -0800 (Sat, 15 Nov 2008) | 1 line
+
+Integrated bdes and adb into build tree
+------------------------------------------------------------------------
+r86 | marc | 2008-07-05 09:59:02 -0700 (Sat, 05 Jul 2008) | 1 line
+
+Updated custstats to show correct quantitites from subscriptions
+------------------------------------------------------------------------
+r85 | marc | 2008-06-30 15:33:55 -0700 (Mon, 30 Jun 2008) | 1 line
+
+Added Quantity and Price to latex statements
+------------------------------------------------------------------------
+r84 | marc | 2007-12-02 10:34:07 -0800 (Sun, 02 Dec 2007) | 1 line
+
+Added notes about new packages for v4
+------------------------------------------------------------------------
+r83 | marc | 2007-11-26 14:46:07 -0800 (Mon, 26 Nov 2007) | 1 line
+
+Added custstats to the build tree and updated it to use config files
+------------------------------------------------------------------------
+r82 | marc | 2007-11-26 11:56:09 -0800 (Mon, 26 Nov 2007) | 1 line
+
+File/Print Statements uses printing from RunStatements.cpp instead of its own
+------------------------------------------------------------------------
+r81 | marc | 2007-11-25 18:44:56 -0800 (Sun, 25 Nov 2007) | 1 line
+
+Latex statement processing usable
+------------------------------------------------------------------------
+r80 | marc | 2007-11-24 10:37:55 -0800 (Sat, 24 Nov 2007) | 1 line
+
+Latext statement template basically finished
+------------------------------------------------------------------------
+r79 | marc | 2007-11-23 18:38:31 -0800 (Fri, 23 Nov 2007) | 1 line
+
+More latex statement tweaks
+------------------------------------------------------------------------
+r78 | marc | 2007-11-23 16:03:40 -0800 (Fri, 23 Nov 2007) | 1 line
+
+Further work on LaTeX based statements
+------------------------------------------------------------------------
+r77 | marc | 2007-11-23 09:25:12 -0800 (Fri, 23 Nov 2007) | 1 line
+
+More tweaks on the latex statement template
+------------------------------------------------------------------------
+r76 | marc | 2007-11-21 18:19:46 -0800 (Wed, 21 Nov 2007) | 1 line
+
+Adding a new template library, wtpl2.  Added BillingSettings widget.  Started work on latex processed statements from TAATools.cpp
+------------------------------------------------------------------------
+r75 | marc | 2007-11-21 13:29:04 -0800 (Wed, 21 Nov 2007) | 1 line
+
+Additional logic and control in SettingsManager.
+------------------------------------------------------------------------
+r74 | marc | 2007-11-21 11:55:09 -0800 (Wed, 21 Nov 2007) | 1 line
+
+Basic framework for a settings dialog
+------------------------------------------------------------------------
+r73 | marc | 2007-11-07 18:01:58 -0800 (Wed, 07 Nov 2007) | 1 line
+
+Added Payment Terms back into the menus
+------------------------------------------------------------------------
+r72 | marc | 2007-11-07 17:18:20 -0800 (Wed, 07 Nov 2007) | 1 line
+
+Fixed a null string error in BillingCycleEdit and changed BrassClient to use User/Pass instead of auth for cbrassd compatibility
+------------------------------------------------------------------------
+r71 | marc | 2007-11-07 11:18:57 -0800 (Wed, 07 Nov 2007) | 1 line
+
+Fixed segfaulting pointer bug in list indexes
+------------------------------------------------------------------------
+r70 | marc | 2007-11-06 17:09:29 -0800 (Tue, 06 Nov 2007) | 1 line
+
+Removed Qt Architect dialogs from RatePlans
+------------------------------------------------------------------------
+r69 | marc | 2007-10-29 20:51:56 -0700 (Mon, 29 Oct 2007) | 1 line
+
+Un Qt Architected Accounts
+------------------------------------------------------------------------
+r68 | marc | 2007-10-27 10:32:30 -0700 (Sat, 27 Oct 2007) | 1 line
+
+Fixed ccget to work under centos
+------------------------------------------------------------------------
+r67 | marc | 2007-10-15 12:27:24 -0700 (Mon, 15 Oct 2007) | 1 line
+
+Added ccget and wasync, fixed radimport so it compiles on modern distros
+------------------------------------------------------------------------
+r66 | marc | 2007-10-15 11:10:11 -0700 (Mon, 15 Oct 2007) | 1 line
+
+Switched from using new to calloc to fix email body corruption in messages
+------------------------------------------------------------------------
+r65 | marc | 2007-08-17 10:34:47 -0700 (Fri, 17 Aug 2007) | 1 line
+
+Updated taamaild to have a configurable SMTP host
+------------------------------------------------------------------------
+r64 | marc | 2007-08-14 18:32:40 -0700 (Tue, 14 Aug 2007) | 1 line
+
+Fixed a thinko in the debug for removeChannel
+------------------------------------------------------------------------
+r63 | marc | 2007-08-14 16:51:31 -0700 (Tue, 14 Aug 2007) | 1 line
+
+Added more debug, now have the ability to set debug via command line.
+------------------------------------------------------------------------
+r62 | marc | 2007-08-13 16:46:39 -0700 (Mon, 13 Aug 2007) | 1 line
+
+Removed queue settings
+------------------------------------------------------------------------
+r61 | marc | 2007-08-13 11:13:33 -0700 (Mon, 13 Aug 2007) | 1 line
+
+Added debug routines, pulled phone number formats back out.
+------------------------------------------------------------------------
+r60 | marc | 2007-08-13 07:45:32 -0700 (Mon, 13 Aug 2007) | 1 line
+
+Added masks to phone numbers
+------------------------------------------------------------------------
+r59 | marc | 2007-08-11 18:18:31 -0700 (Sat, 11 Aug 2007) | 1 line
+
+Removed callback verification and duplicate phone check
+------------------------------------------------------------------------
+r58 | marc | 2007-08-11 18:04:33 -0700 (Sat, 11 Aug 2007) | 1 line
+
+Staff editor now has Asterisk fields
+------------------------------------------------------------------------
+r57 | marc | 2007-08-11 10:07:55 -0700 (Sat, 11 Aug 2007) | 1 line
+
+Allowing for 4 digit extensions
+------------------------------------------------------------------------
+r56 | marc | 2007-03-30 14:26:09 -0700 (Fri, 30 Mar 2007) | 1 line
+
+Finished re-writing the agent status widgets
+------------------------------------------------------------------------
+r55 | marc | 2006-12-23 09:43:45 -0800 (Sat, 23 Dec 2006) | 1 line
+
+Asterisk Queue changes, new pixmaps source filer
+------------------------------------------------------------------------
+r54 | marc | 2006-11-29 09:41:13 -0800 (Wed, 29 Nov 2006) | 1 line
+
+Added a basic company editor, minor changes to VoIP Service types and rate center manager
+------------------------------------------------------------------------
+r53 | marc | 2006-11-03 17:21:28 -0800 (Fri, 03 Nov 2006) | 1 line
+
+Daily checkin
+------------------------------------------------------------------------
+r52 | marc | 2006-11-01 14:52:07 -0800 (Wed, 01 Nov 2006) | 1 line
+
+Added ServerGroupSelector widget.  Made some VoIP Service Type changes.
+------------------------------------------------------------------------
+r51 | marc | 2006-10-31 16:09:06 -0800 (Tue, 31 Oct 2006) | 1 line
+
+VoIP Service Types now functional
+------------------------------------------------------------------------
+r50 | marc | 2006-10-28 13:56:59 -0700 (Sat, 28 Oct 2006) | 1 line
+
+Continued progress on VoIP Provisioning.  Added Server Groups
+------------------------------------------------------------------------
+r49 | marc | 2006-10-23 17:19:43 -0700 (Mon, 23 Oct 2006) | 1 line
+
+DIDs can now be added to the inventory
+------------------------------------------------------------------------
+r48 | marc | 2006-10-21 19:37:11 -0700 (Sat, 21 Oct 2006) | 1 line
+
+Added some debug code
+------------------------------------------------------------------------
+r47 | marc | 2006-10-21 15:14:23 -0700 (Sat, 21 Oct 2006) | 1 line
+
+Additional changes to DID manager
+------------------------------------------------------------------------
+r46 | marc | 2006-10-20 18:21:15 -0700 (Fri, 20 Oct 2006) | 1 line
+
+RateCenterManager done except for delete, Origination Providers done except for delete, more progress on DID manager
+------------------------------------------------------------------------
+r45 | marc | 2006-10-02 07:00:58 -0700 (Mon, 02 Oct 2006) | 1 line
+
+
+------------------------------------------------------------------------
+r44 | marc | 2006-10-01 07:29:40 -0700 (Sun, 01 Oct 2006) | 1 line
+
+Added some VoIP stuff
+------------------------------------------------------------------------
+r43 | marc | 2006-10-01 07:28:48 -0700 (Sun, 01 Oct 2006) | 1 line
+
+Added some VoIP stuff
+------------------------------------------------------------------------
+r42 | marc | 2006-10-01 07:27:39 -0700 (Sun, 01 Oct 2006) | 1 line
+
+Minor tweaks to eliminate compile warnings
+------------------------------------------------------------------------
+r41 | marc | 2006-05-26 08:58:08 -0700 (Fri, 26 May 2006) | 1 line
+
+Call Detail Report defaults to today
+------------------------------------------------------------------------
+r40 | marc | 2006-05-25 17:43:38 -0700 (Thu, 25 May 2006) | 1 line
+
+Added info to notes showing number of open tickets.  Call Detail Reports now allow date selection
+------------------------------------------------------------------------
+r39 | marc | 2006-05-02 11:40:16 -0700 (Tue, 02 May 2006) | 2 lines
+
+Fixed the company name for printed statements.
+
+------------------------------------------------------------------------
+r38 | marc | 2006-05-01 17:13:36 -0700 (Mon, 01 May 2006) | 1 line
+
+Updated AR to better track packages, created a Sales report
+------------------------------------------------------------------------
+r37 | marc | 2006-04-11 15:31:03 -0700 (Tue, 11 Apr 2006) | 1 line
+
+Name change from Blarg to Avvanta
+------------------------------------------------------------------------
+r36 | marc | 2006-01-05 15:11:04 -0800 (Thu, 05 Jan 2006) | 1 line
+
+Fixed customer query bug.  Added agent timers and db status updates.  Started on a CDR report.
+------------------------------------------------------------------------
+r35 | marc | 2006-01-02 10:02:03 -0800 (Mon, 02 Jan 2006) | 1 line
+
+Added domain on the To address for statements
+------------------------------------------------------------------------
+r34 | marc | 2005-12-28 13:09:11 -0800 (Wed, 28 Dec 2005) | 1 line
+
+Admins can now change the status of other agents.
+------------------------------------------------------------------------
+r33 | marc | 2005-12-26 17:23:07 -0800 (Mon, 26 Dec 2005) | 1 line
+
+Added auto reconnect to Asterisk Manager, timers and more agent status.
+------------------------------------------------------------------------
+r32 | marc | 2005-12-23 14:48:47 -0800 (Fri, 23 Dec 2005) | 1 line
+
+First asterisk ingtegration
+------------------------------------------------------------------------
+r31 | marc | 2005-12-08 12:24:42 -0800 (Thu, 08 Dec 2005) | 1 line
+
+Themes and framework for Asterisk Manager
+------------------------------------------------------------------------
+r30 | marc | 2005-10-25 10:12:35 -0700 (Tue, 25 Oct 2005) | 1 line
+
+Added aggregate VPI to the IHost display
+------------------------------------------------------------------------
+r29 | marc | 2005-10-25 10:07:23 -0700 (Tue, 25 Oct 2005) | 1 line
+
+Updated to not send email to inactive logins
+------------------------------------------------------------------------
+r28 | marc | 2005-10-21 15:50:09 -0700 (Fri, 21 Oct 2005) | 1 line
+
+
+------------------------------------------------------------------------
+r27 | marc | 2005-10-21 15:49:27 -0700 (Fri, 21 Oct 2005) | 1 line
+
+Updated radimport to work with the new FreeRADIUS MySQL database schema
+------------------------------------------------------------------------
+r26 | marc | 2005-10-19 12:51:46 -0700 (Wed, 19 Oct 2005) | 1 line
+
+Added DSL qualification lookup and CO location
+------------------------------------------------------------------------
+r25 | marc | 2005-10-18 17:27:56 -0700 (Tue, 18 Oct 2005) | 1 line
+
+Added automatic LATA lookups
+------------------------------------------------------------------------
+r24 | marc | 2005-03-08 12:46:22 -0800 (Tue, 08 Mar 2005) | 1 line
+
+Fixed a minor bug in VHosts
+------------------------------------------------------------------------
+r23 | marc | 2005-03-02 10:42:07 -0800 (Wed, 02 Mar 2005) | 1 line
+
+Updated collection report to print to the printer.  Added administrative email messages for locking and unlocking accounts.
+------------------------------------------------------------------------
+r22 | marc | 2005-02-24 12:28:52 -0800 (Thu, 24 Feb 2005) | 1 line
+
+Added admin email when logins are changed
+------------------------------------------------------------------------
+r21 | marc | 2005-02-14 12:27:57 -0800 (Mon, 14 Feb 2005) | 1 line
+
+Minor updates for new statement stock
+------------------------------------------------------------------------
+r20 | marc | 2005-02-11 17:56:09 -0800 (Fri, 11 Feb 2005) | 1 line
+
+Fixed the collections reports.  Added collection agency info to notes when sending to collection.
+------------------------------------------------------------------------
+r19 | marc | 2005-02-11 15:05:46 -0800 (Fri, 11 Feb 2005) | 5 lines
+
+Fixed fonts in statement printing so it is compatible on SuSE
+Updated the reverse text in statements to be more portable
+Updated addresses on statements so they are vertically centered for
+better envelope compatibility.
+
+------------------------------------------------------------------------
+r18 | marc | 2005-02-01 10:20:06 -0800 (Tue, 01 Feb 2005) | 2 lines
+
+Fixed a bug in the credit card expiration date check.
+
+------------------------------------------------------------------------
+r17 | marc | 2004-09-06 16:11:47 -0700 (Mon, 06 Sep 2004) | 2 lines
+
+buildnum.cpp is now completely generated and not under version control
+
+------------------------------------------------------------------------
+r16 | marc | 2004-09-06 16:07:52 -0700 (Mon, 06 Sep 2004) | 1 line
+
+Removed .buildnum, updated BUILDNUM references
+------------------------------------------------------------------------
+r15 | marc | 2004-09-06 15:36:04 -0700 (Mon, 06 Sep 2004) | 2 lines
+
+Added BillingCycles and RatePlan editing back into the main menu.
+
+------------------------------------------------------------------------
+r14 | marc | 2004-09-06 06:47:55 -0700 (Mon, 06 Sep 2004) | 2 lines
+
+Removed some dead code
+
+------------------------------------------------------------------------
+r13 | marc | 2004-09-04 20:18:05 -0700 (Sat, 04 Sep 2004) | 2 lines
+
+Completely re-worked the customer charge edit widget/window.
+
+------------------------------------------------------------------------
+r12 | marc | 2004-09-04 14:01:46 -0700 (Sat, 04 Sep 2004) | 2 lines
+
+Working on fixing CustChargeEdit
+
+------------------------------------------------------------------------
+r11 | marc | 2004-09-04 12:52:36 -0700 (Sat, 04 Sep 2004) | 2 lines
+
+Removed the calendar drop down and replaced with QDateTimeEdit
+
+------------------------------------------------------------------------
+r10 | marc | 2004-09-04 11:30:41 -0700 (Sat, 04 Sep 2004) | 2 lines
+
+Added more filter options.
+
+------------------------------------------------------------------------
+r9 | marc | 2004-09-03 17:55:23 -0700 (Fri, 03 Sep 2004) | 2 lines
+
+Added added-by filter and set the default date to be the current date.
+
+------------------------------------------------------------------------
+r8 | marc | 2004-09-03 16:45:27 -0700 (Fri, 03 Sep 2004) | 2 lines
+
+Added a call log report
+
+------------------------------------------------------------------------
+r7 | marc | 2004-08-29 12:16:57 -0700 (Sun, 29 Aug 2004) | 2 lines
+
+Configuration template/path updates.
+
+------------------------------------------------------------------------
+r6 | marc | 2004-08-28 10:17:27 -0700 (Sat, 28 Aug 2004) | 2 lines
+
+Removed dependancies from makefiles
+
+------------------------------------------------------------------------
+r5 | marc | 2004-08-28 10:12:41 -0700 (Sat, 28 Aug 2004) | 2 lines
+
+Removed dependancies
+
+------------------------------------------------------------------------
+r4 | marc | 2004-08-28 10:11:52 -0700 (Sat, 28 Aug 2004) | 2 lines
+
+Removed dependancies
+
+------------------------------------------------------------------------
+r3 | marc | 2004-08-28 10:05:13 -0700 (Sat, 28 Aug 2004) | 2 lines
+
+Switched libblarg.a to libtaa.a, updated Makefiles
+
+------------------------------------------------------------------------
+r2 | marc | 2004-08-28 09:01:10 -0700 (Sat, 28 Aug 2004) | 2 lines
+
+Integrated the BTools and FParse libraries
+
+------------------------------------------------------------------------
+r1 | marc | 2004-08-27 09:45:13 -0700 (Fri, 27 Aug 2004) | 2 lines
+
+First subversion import
+
+------------------------------------------------------------------------
