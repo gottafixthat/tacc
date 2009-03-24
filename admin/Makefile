@@ -68,7 +68,7 @@ SOURCES =	GLAccountTypes.cpp\
 		DNS_Templates.cpp\
 		OverdueAccounts.cpp OverdueAccountsData.cpp\
 		WipedAccounts.cpp WipedAccountsData.cpp\
-		RunSubscriptions.cpp RunSubscriptionsData.cpp\
+		RunSubscriptions.cpp\
         TE_Main.cpp TE_MainData.cpp\
         TE_Message.cpp TE_MessageData.cpp\
         TE_LoginTypes.cpp TE_LoginTypesData.cpp\
@@ -112,7 +112,7 @@ HEADERS =	GLAccountTypes.h\
 		DNS_Templates.h\
 		OverdueAccounts.h OverdueAccountsData.h\
 		WipedAccounts.h WipedAccountsData.h\
-		RunSubscriptions.h RunSubscriptionsData.h\
+		RunSubscriptions.h\
 		MakeDeposits.h\
 		TE_Main.h TE_MainData.h\
 		TE_Message.h TE_MessageData.h\
@@ -158,7 +158,7 @@ SRCMETA =	moc_GLAccountTypes.cpp\
 		moc_DNS_Templates.cpp\
 		moc_OverdueAccounts.cpp moc_OverdueAccountsData.cpp\
 		moc_WipedAccounts.cpp moc_WipedAccountsData.cpp\
-		moc_RunSubscriptions.cpp moc_RunSubscriptionsData.cpp\
+		moc_RunSubscriptions.cpp\
 		moc_MakeDeposits.cpp\
 		moc_TE_Main.cpp moc_TE_MainData.cpp\
 		moc_TE_Message.cpp moc_TE_MessageData.cpp\
@@ -328,9 +328,6 @@ moc_WipedAccountsData.cpp: WipedAccountsData.h
 
 moc_RunSubscriptions.cpp: RunSubscriptions.h
 	$(MOC) RunSubscriptions.h -o moc_RunSubscriptions.cpp
-
-moc_RunSubscriptionsData.cpp: RunSubscriptionsData.h
-	$(MOC) RunSubscriptionsData.h -o moc_RunSubscriptionsData.cpp
 
 moc_MakeDeposits.cpp: MakeDeposits.h
 	$(MOC) MakeDeposits.h -o moc_MakeDeposits.cpp
