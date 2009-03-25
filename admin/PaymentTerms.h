@@ -1,48 +1,54 @@
-/**********************************************************************
-
-	--- Dlgedit generated file ---
-
-	File: PaymentTerms.h
-	Last generated: Wed Sep 17 20:41:04 1997
-
- *********************************************************************/
+/**
+ * PaymentTerms.h - Class definition for PaymentTerms which allows the
+ * user to view and edit the payment terms in TACC.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef PaymentTerms_included
 #define PaymentTerms_included
 
-#include "PaymentTermsData.h"
+#include <qlistview.h>
+#include <qmenubar.h>
 
-class PaymentTerms : public PaymentTermsData
+#include <TAAWidget.h>
+
+class PaymentTerms : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    PaymentTerms
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    PaymentTerms(QWidget* parent = NULL, const char* name = NULL);
     virtual ~PaymentTerms();
 
 signals:
     void refreshPaymentTermsList(int);
     
 public slots:
-    virtual void Hide();
+    virtual void closeClicked();
     virtual void refreshList(int);
 
-private slots:
+protected:
+    QListView       *termsList;
+    QMenuBar        *menu;
+
+protected slots:
     virtual void newPaymentTerms();
     virtual void editPaymentTerms();
     virtual void editPaymentTermsL(int msg = 0);
     virtual void deletePaymentTerms();
-    virtual int IntIDfromList(int ListNum);
+    virtual void editTerms(QListViewItem *);
 
 private:
+    int     intIDCol;
 
-    int *intIDIndex;
-    int indexPtr;
 };
-#endif // PaymentTerms_included
+
+#endif
