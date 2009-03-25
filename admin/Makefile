@@ -46,7 +46,7 @@ SOURCES =	GLAccountTypes.cpp\
 		Vendors.cpp\
 		VendorEdit.cpp\
 		PaymentTerms.cpp\
-		PaymentTermsEdit.cpp PaymentTermsEditData.cpp\
+		PaymentTermsEdit.cpp\
 		EditLoginTypes.cpp\
 		ELT_General.cpp\
 		ELT_Flags.cpp\
@@ -90,7 +90,7 @@ HEADERS =	GLAccountTypes.h\
 		Vendors.h\
 		VendorEdit.h\
 		PaymentTerms.h\
-		PaymentTermsEdit.h PaymentTermsEditData.h\
+		PaymentTermsEdit.h\
 		EditLoginTypes.h EditLoginTypesData.h\
 		ELT_General.h ELT_GeneralData.h\
 		ELT_Flags.h\
@@ -136,7 +136,7 @@ SRCMETA =	moc_GLAccountTypes.cpp\
 		moc_Vendors.cpp\
 		moc_VendorEdit.cpp\
 		moc_PaymentTerms.cpp\
-		moc_PaymentTermsEdit.cpp moc_PaymentTermsEditData.cpp\
+		moc_PaymentTermsEdit.cpp\
 		moc_EditLoginTypes.cpp\
 		moc_ELT_General.cpp\
 		moc_ELT_Flags.cpp\
@@ -223,9 +223,6 @@ moc_PaymentTerms.cpp: PaymentTerms.h
 
 moc_PaymentTermsEdit.cpp: PaymentTermsEdit.h
 	$(MOC) PaymentTermsEdit.h -o moc_PaymentTermsEdit.cpp
-
-moc_PaymentTermsEditData.cpp: PaymentTermsEditData.h
-	$(MOC) PaymentTermsEditData.h -o moc_PaymentTermsEditData.cpp
 
 moc_BillingCycles.cpp: BillingCycles.h
 	$(MOC) BillingCycles.h -o moc_BillingCycles.cpp

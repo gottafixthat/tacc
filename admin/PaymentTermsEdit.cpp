@@ -1,63 +1,175 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** PaymentTermsEdit - Allows the user to edit payment terms.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PaymentTermsEdit.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/**
+ * PaymentTermsEdit.cpp - Class file to edit payment terms.
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "PaymentTermsEdit.h"
-#include "BlargDB.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <qregexp.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qpushbutton.h>
+
+#include <BlargDB.h>
 #include <ADB.h>
 
+#include <PaymentTermsEdit.h>
 
-#define Inherited PaymentTermsEditData
-
-PaymentTermsEdit::PaymentTermsEdit
-(
-	QWidget* parent,
-	const char* name,
-	int InternalID
-)
-	:
-	Inherited( parent, name )
+PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int InternalID) :
+	TAAWidget( parent, name )
 {
 	setCaption( "Edit Payment Terms" );
 
-    IntID  = InternalID;
+    QLabel  *descLabel = new QLabel(this, "descLabel");
+    descLabel->setAlignment(AlignRight|AlignVCenter);
+    descLabel->setText("Description:");
+
+    desc = new QLineEdit(this, "desc");
+    desc->setMaxLength(60);
+
+    QLabel *dueDaysPrefix = new QLabel(this, "dueDaysPrefix");
+    dueDaysPrefix->setAlignment(AlignRight|AlignVCenter);
+    dueDaysPrefix->setText("Net due in");
+
+    dueDays = new QLineEdit(this, "dueDays");
+    dueDays->setMaxLength(3);
+    QSize   tmpSize = dueDays->minimumSizeHint();
+    int     charWidth = tmpSize.width();
+    dueDays->setMaximumWidth(3 * charWidth);
+
+    QLabel *dueDaysSuffix = new QLabel(this, "dueDaysSuffix");
+    dueDaysSuffix->setAlignment(AlignLeft|AlignVCenter);
+    dueDaysSuffix->setText("days.");
+
+    QLabel *graceDaysPrefix = new QLabel(this, "graceDaysPrefix");
+    graceDaysPrefix->setAlignment(AlignRight|AlignVCenter);
+    graceDaysPrefix->setText("Grace period of");
+
+    graceDays = new QLineEdit(this, "graceDays");
+    graceDays->setMaxLength(3);
+    graceDays->setMaximumWidth(3 * charWidth);
+
+    QLabel *graceDaysSuffix = new QLabel(this, "graceDaysSuffix");
+    graceDaysSuffix->setAlignment(AlignLeft|AlignVCenter);
+    graceDaysSuffix->setText("days.");
+
+    QLabel *financePctPrefix = new QLabel(this, "financePctPrefix");
+    financePctPrefix->setAlignment(AlignRight|AlignVCenter);
+    financePctPrefix->setText("Charge finance charge of");
+    
+    financePct = new QLineEdit(this, "financePct");
+    financePct->setMaxLength(5);
+    financePct->setMaximumWidth(5 * charWidth);
+    
+    QLabel *financePctSuffix = new QLabel(this, "financePctSuffix");
+    financePctSuffix->setAlignment(AlignLeft|AlignVCenter);
+    financePctSuffix->setText("percent, starting");
+
+    financeDays = new QLineEdit(this, "financeDays");
+    financeDays->setMaxLength(3);
+    financeDays->setMaximumWidth(3 * charWidth);
+    
+    QLabel *financeDaysSuffix = new QLabel(this, "financeDaysSuffix");
+    financeDaysSuffix->setAlignment(AlignLeft|AlignVCenter);
+    financeDaysSuffix->setText("days after grace period.");
+
+    QLabel *discountPctPrefix = new QLabel(this, "discountPctPrefix");
+    discountPctPrefix->setAlignment(AlignRight|AlignVCenter);
+    discountPctPrefix->setText("Auto apply discount of");
+
+    discountPct = new QLineEdit(this, "discountPct");
+    discountPct->setMaxLength(5);
+    discountPct->setMaximumWidth(5 * charWidth);
+    
+    QLabel *discountPctSuffix = new QLabel(this, "discountPctSuffix");
+    discountPctSuffix->setAlignment(AlignLeft|AlignVCenter);
+    discountPctSuffix->setText("percent if paid within");
+
+    discountDays = new QLineEdit(this, "discountPct");
+    discountDays->setMaxLength(3);
+    discountDays->setMaximumWidth(3 * charWidth);
+
+    QLabel *discountDaysSuffix = new QLabel(this, "discountDaysSuffix");
+    discountDaysSuffix->setAlignment(AlignLeft|AlignVCenter);
+    discountDaysSuffix->setText("days before due date.");
+
+    QPushButton *saveButton = new QPushButton(this, "saveButton");
+    saveButton->setText("&Save");
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(savePaymentTerms()));
+
+    QPushButton *cancelButton = new QPushButton(this, "cancelButton");
+    cancelButton->setText("&Cancel");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelPaymentTerms()));
+
+    // Create our layout
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+
+    QGridLayout *gl = new QGridLayout(5, 5);
+    int curRow = 0;
+    gl->addWidget(descLabel,            curRow, 0);
+    gl->addMultiCellWidget(desc,        curRow, curRow, 1, 4);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(dueDaysPrefix,        curRow, 0);
+    gl->addWidget(dueDays,              curRow, 1);
+    gl->addWidget(dueDaysSuffix,        curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(graceDaysPrefix,      curRow, 0);
+    gl->addWidget(graceDays,            curRow, 1);
+    gl->addWidget(graceDaysSuffix,      curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(financePctPrefix,     curRow, 0);
+    gl->addWidget(financePct,           curRow, 1);
+    gl->addWidget(financePctSuffix,     curRow, 2);
+    gl->addWidget(financeDays,          curRow, 3);
+    gl->addWidget(financeDaysSuffix,    curRow, 4);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(discountPctPrefix,    curRow, 0);
+    gl->addWidget(discountPct,          curRow, 1);
+    gl->addWidget(discountPctSuffix,    curRow, 2);
+    gl->addWidget(discountDays,         curRow, 3);
+    gl->addWidget(discountDaysSuffix,   curRow, 4);
+    gl->setRowStretch(curRow, 0);
+    gl->setColStretch(0, 0);
+    gl->setColStretch(1, 0);
+    gl->setColStretch(2, 0);
+    gl->setColStretch(3, 0);
+    gl->setColStretch(4, 1);
+
+    ml->addLayout(gl, 0);
+    ml->addStretch(1);
+
+    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(saveButton, 0);
+    bl->addWidget(cancelButton, 0);
+
+    ml->addLayout(bl, 0);
+
+    myIntID  = InternalID;
     
     if (InternalID) {
     	setCaption("Edit Payment Terms");
     } else {
         setCaption("New Payment Terms");
     }
-
-    // Clear our mappings to internal ID's
-    intIDIndex = NULL;
     
     // We're editing one, so get the data for it.
-    if (IntID) {
+    if (myIntID) {
         PaymentTermsDB PTDB;
-        if (PTDB.get(IntID)) {
+        if (PTDB.get(myIntID)) {
             desc->setText(PTDB.getStr("TermsDesc"));
             dueDays->setText(PTDB.getStr("DueDays"));
             graceDays->setText(PTDB.getStr("GraceDays"));
@@ -67,7 +179,7 @@ PaymentTermsEdit::PaymentTermsEdit
             discountDays->setText(PTDB.getStr("DiscountDays"));
         } else {
             // Switch it so that it seems like we're adding...
-            IntID = 0;
+            myIntID = 0;
         }
     }
     
@@ -78,9 +190,6 @@ PaymentTermsEdit::PaymentTermsEdit
 
 PaymentTermsEdit::~PaymentTermsEdit()
 {
-    if (intIDIndex != NULL) {
-        free(intIDIndex);
-    }
 }
 
 
@@ -109,13 +218,13 @@ void PaymentTermsEdit::savePaymentTerms()
     PTDB.setValue("DiscountPercent", discountPct->text());
     PTDB.setValue("DiscountDays",    discountDays->text());
     
-    if (!IntID) {
+    if (!myIntID) {
         // New record...
         // PTDB.InternalID = 0;
         PTDB.ins();
     } else {
         // Updating a record...
-        PTDB.setValue("InternalID", IntID);
+        PTDB.setValue("InternalID", myIntID);
         PTDB.upd();
     }
     
