@@ -21,6 +21,7 @@
 **
 */
 
+#include <qlayout.h>
 
 #include "PaymentTerms.h"
 #include "PaymentTermsEdit.h"
@@ -31,33 +32,63 @@
 #include <qmessagebox.h>
 #include <ADB.h>
 
-#define Inherited PaymentTermsData
 
-PaymentTerms::PaymentTerms
-(
-	QWidget* parent,
-	const char* name
-)
-	:
-	Inherited( parent, name )
+PaymentTerms::PaymentTerms(QWidget* parent, const char* name) :
+	TAAWidget( parent, name )
 {
 	setCaption( "Payment Terms" );
+
+    menu = new QMenuBar(this, "menu");
+
+    termsList = new QListView(this, "termsList");
+    termsList->addColumn("Terms");
+    intIDCol = 1;
+    connect(termsList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(editTerms(QListViewItem *)));
+
+    QPushButton *newButton = new QPushButton(this, "newButton");
+    newButton->setText("&New");
+    connect(newButton, SIGNAL(clicked()), this, SLOT(newPaymentTerms()));
+
+    QPushButton *editButton = new QPushButton(this, "editButton");
+    editButton->setText("&Edit");
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editPaymentTerms()));
+
+    QPushButton *deleteButton = new QPushButton(this, "deleteButton");
+    deleteButton->setText("&Delete");
+    connect(deleteButton, SIGNAL(clicked()), this, SLOT(deletePaymentTerms()));
+
+    QPushButton *closeButton = new QPushButton(this, "closeButton");
+    closeButton->setText("&Close");
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
+    
+    // Setup the layout.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    ml->addWidget(menu, 0);
+
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    bl->addWidget(newButton, 0);
+    bl->addWidget(editButton, 0);
+    bl->addWidget(deleteButton, 0);
+    bl->addWidget(closeButton, 0);
+    bl->addStretch(1);
+
+    ml->addLayout(bl, 0);
+    ml->addWidget(termsList, 1);
+
     // Set up the menu...
     
-    QPopupMenu * options = new QPopupMenu();
+    QPopupMenu * options = new QPopupMenu(this);
     CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newPaymentTerms()), CTRL+Key_N);
     options->insertItem("Edit", this, SLOT(editPaymentTerms()), CTRL+Key_E);
     options->insertItem("Delete", this, SLOT(deletePaymentTerms()), CTRL+Key_D);
     options->insertSeparator();
-    options->insertItem("Close", this, SLOT(Hide()), CTRL+Key_C);
+    options->insertItem("Close", this, SLOT(closeClicked()), CTRL+Key_C);
     
     menu->insertItem("&Options", options);
     
-    list->setFocus();
+    termsList->setFocus();
 
-    intIDIndex = NULL;    
-    indexPtr   = 0;
 }
 
 
@@ -65,9 +96,9 @@ PaymentTerms::~PaymentTerms()
 {
 }
 
-void PaymentTerms::Hide()
+void PaymentTerms::closeClicked()
 {
-    hide();
+    delete this;
 }
 
 //
@@ -82,37 +113,11 @@ void PaymentTerms::refreshList(int)
     int     rowcnt;
     
     // Save the state of the list.
-    tmpTop = list->topItem();
-    tmpCur = list->currentItem();
-    
-    list->setAutoUpdate(FALSE);
-    list->clear();
+    termsList->clear();
     DB.query("select * from PaymentTerms order by TermsDesc");
-    if (intIDIndex != NULL) {
-        delete(intIDIndex);
+    if (DB.rowCount) while(DB.getrow()) {
+        (void) new QListViewItem(termsList, DB.curRow["TermsDesc"], DB.curRow["InternalID"]);
     }
-    intIDIndex = new(int[DB.rowCount + 1]);
-    indexPtr = -1;
-    rowcnt = DB.rowCount;
-    while(DB.getrow()) {
-        indexPtr++;
-        QString tmpStr1 = DB.curRow["InternalID"];
-        intIDIndex[indexPtr] = tmpStr1.toInt(); //atoi(DB.curRow[0]);
-        sprintf (tmpstr, "%-60s", DB.curRow["TermsDesc"]);
-        list->insertItem(tmpstr);
-    }
-    list->setAutoUpdate(TRUE);
-    list->repaint();
-    
-    rowcnt = DB.rowCount - 1;
-    // Restore the state of the list.
-    if (tmpTop > -1) {
-        while(tmpTop > rowcnt) tmpTop--;
-        while(tmpCur > rowcnt) tmpCur--;
-        list->setCurrentItem(tmpCur);
-        list->setTopItem(tmpTop);
-    }
-
 }
 
 //
@@ -134,11 +139,22 @@ void PaymentTerms::newPaymentTerms()
 
 void PaymentTerms::editPaymentTerms()
 {
-    int itemNo = -1;
-    PaymentTermsEdit * newPaymentTerms;
-    itemNo = list->currentItem();
-    if (itemNo > -1) {
-        newPaymentTerms = new PaymentTermsEdit(0, "", intIDIndex[itemNo]);
+    QListViewItem   *curItem = termsList->currentItem();
+    editTerms(curItem);
+}
+
+/**
+ * editTerms()
+ *
+ * Gets called when the user double clicks on a list item.
+ * It brings up the payment terms editor.
+ */
+void PaymentTerms::editTerms(QListViewItem *curItem)
+{
+    if (curItem) {
+        int     tmpID = curItem->key(intIDCol, 0).toInt();
+        PaymentTermsEdit    *newPaymentTerms;
+        newPaymentTerms = new PaymentTermsEdit(0, "", tmpID);
         newPaymentTerms->show();
         connect(newPaymentTerms, SIGNAL(refresh(int)),this, SLOT(refreshList(int)));
     }
@@ -160,39 +176,23 @@ void PaymentTerms::editPaymentTermsL(int msg)
 
 void PaymentTerms::deletePaymentTerms()
 {
-    int    CurItem;
+    QListViewItem   *curItem;
     char   tmpstr[256];
     ADB    DB;
     
-    CurItem = list->currentItem();
-    if (CurItem > -1) {
-        DB.query("select TermsDesc from PaymentTerms where InternalID = %d", intIDIndex[CurItem]);
+    curItem = termsList->currentItem();
+    if (curItem) {
+        DB.query("select TermsDesc from PaymentTerms where InternalID = %d", curItem->key(intIDCol, 0).toInt());
         DB.getrow();
         sprintf(tmpstr, "Are you sure you wish to delete the payment\nterms '%s'?", DB.curRow["TermsDesc"]);
         if (QMessageBox::warning(this, "Delete Payment Terms", tmpstr, "&Yes", "&No", 0, 1) == 0) {
             PaymentTermsDB PTDB;
-            if (PTDB.del(intIDIndex[CurItem])) {
+            if (PTDB.del(curItem->key(intIDCol, 0).toInt())) {
                 QMessageBox::critical(this, "Delete Payment Terms", "Unable to delete payment terms.\nIt has been assigned to one or more customers or vendors.");
             } else {
                 refreshList(1);
             }
-        };
+        }
     }
 }
 
-//
-// IntIDfromList  - Gets a PaymentTerms InternalID from a list entry.
-//
-
-int PaymentTerms::IntIDfromList(int ListNum)
-{
-    int Ret = 0;
-
-    QString tmpStr1;
-    QString tmpStr2;    
-    
-    if (ListNum > -1) {
-        tmpStr1 = list->currentItem();
-    }
-    return (Ret);
-}
