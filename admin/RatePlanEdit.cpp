@@ -1,46 +1,183 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** RatePlanEdit - Lets the user edit a rateplan.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: RatePlanEdit.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
+// vim: expandtab
 
-#include "RatePlanEdit.h"
-#include "BlargDB.h"
-#include <stdio.h>
-#include <stdlib.h>
 #include <qstring.h>
-#include <ADB.h>
 #include <qmessagebox.h>
+#include <qlabel.h>
+#include <qbuttongroup.h>
+#include <qlayout.h>
 
-#define Inherited RatePlanEditData
+#include <BlargDB.h>
+#include <ADB.h>
+#include <TAATools.h>
 
-RatePlanEdit::RatePlanEdit
-(
-	QWidget* parent,
-	const char* name,
-	long IntID
-)
-	:
-	Inherited( parent, name )
+#include <RatePlanEdit.h>
+
+RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
+	TAAWidget( parent, name )
 {
+    setCaption("Edit Rate Plan");
+
+    QLabel *planTagLabel = new QLabel(this, "planTagLabel");
+    planTagLabel->setAlignment(AlignRight|AlignVCenter);
+    planTagLabel->setText("Tag:");
+
+    planTag = new QLineEdit(this, "planTag");
+    planTag->setMaxLength(16);
+
+    QLabel *descriptionLabel = new QLabel(this, "descriptionLabel");
+    descriptionLabel->setAlignment(AlignRight|AlignVCenter);
+    descriptionLabel->setText("Description:");
+
+    description = new QLineEdit(this, "description");
+    description->setMaxLength(80);
+
+    // Okay, we have another semi-complex layout that fits within a 
+    // qbutton group.
+    // Its going to look like this:
+    //
+    // +- Auto Conversion -------------------------------------+
+    // | ( ) Do not auto-convert                               |
+    // | ( ) Convert ___ days after the account is created     |
+    // | ( ) Convert on this date _________                    |
+    // |                                                       |
+    // |  Convert to:  [List Box of RatePlans]\/               |
+    // +-------------------------------------------------------+
+    //
+    // To do this, we'll need to create a widget within the 
+    // button group and then a layout within the widget.
+    
+    autoConvertGroup = new QButtonGroup(1, Horizontal, "Auto Conversion", this, "autoConvertGroup");
+    autoConvertGroup->setExclusive(true);
+
+    // The autoConvertGroup widget (acgw)
+    TAAWidget *acgw = new TAAWidget(autoConvertGroup, "acgw");
+
+    // The child widgets for the acgw widget
+    noAutoConvert = new QRadioButton("Do not auto-convert", acgw, "noAutoConvert");
+    noAutoConvert->setChecked(true);
+    connect(noAutoConvert, SIGNAL(toggled(bool)), this, SLOT(toggleAutoConvert(bool)));
+
+    autoConvertDays = new QRadioButton("Convert", acgw, "autoConvertDays");
+    connect(autoConvertDays, SIGNAL(toggled(bool)), this, SLOT(toggleConvertDays(bool)));
+
+    convertDaysLabel = new QLabel(acgw, "convertDaysLabel");
+    convertDaysLabel->setAlignment(AlignLeft|AlignVCenter);
+    convertDaysLabel->setText("days after the account is created");
+
+    convertDays = new QLineEdit(acgw, "convertDays");
+    convertDays->setMaxLength(3);
+
+    autoConvertDate = new QRadioButton("Convert on this date", acgw, "autoConvertDate");
+    connect(autoConvertDate, SIGNAL(toggled(bool)), this, SLOT(toggleConvertDate(bool)));
+
+    convertDate = new QDateEdit(QDate::currentDate(), acgw, "convertDate");
+
+    convertToLabel = new QLabel(acgw, "convertToLabel");
+    convertToLabel->setAlignment(AlignLeft|AlignVCenter);
+    convertToLabel->setText("Convert to:");
+    
+    convertToList = new QComboBox(false, acgw, "convertToList");
+
+    // Insert each button into the autoConvertGroup box.
+    autoConvertGroup->insert(noAutoConvert);
+    autoConvertGroup->insert(autoConvertDays);
+    autoConvertGroup->insert(autoConvertDate);
+
+    // Now create the layout for within acgw
+    QBoxLayout *acgwl = new QBoxLayout(acgw, QBoxLayout::TopToBottom, 3);
+    acgwl->addWidget(noAutoConvert, 0);
+    // We need a separate layout for each of the next three widget sets
+    QBoxLayout *acdaysl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    acdaysl->addWidget(autoConvertDays, 0);
+    acdaysl->addWidget(convertDays, 0);
+    acdaysl->addWidget(convertDaysLabel, 1);
+    acgwl->addLayout(acdaysl, 0);
+    
+    QBoxLayout *acdatel = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    acdatel->addWidget(autoConvertDate, 0);
+    acdatel->addWidget(convertDate, 0);
+    acdatel->addStretch(1);
+    acgwl->addLayout(acdatel, 0);
+
+    QBoxLayout *convtol = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    convtol->addWidget(convertToLabel, 1);
+    convtol->addWidget(convertToList, 1);
+    acgwl->addSpacing(10);
+    acgwl->addLayout(convtol, 0);
+    acgwl->addStretch(1);
+
+    // Now create the promotional plan widgets
+    promoPlan = new QCheckBox(this, "promoPlan");
+    promoPlan->setText("Promotional Plan");
+    connect(promoPlan, SIGNAL(toggled(bool)), this, SLOT(togglePromoPlan(bool)));
+
+    promoEndsOnLabel = new QLabel(this, "promoEndsOnLabel");
+    promoEndsOnLabel->setAlignment(AlignRight|AlignVCenter);
+    promoEndsOnLabel->setText("Promotion Ends On:");
+
+    promoEndsOn = new QDateEdit(QDate::currentDate(), this, "promoEndsOn");
+
+    // Our save and cancel buttons
+    QPushButton *saveButton = new QPushButton(this, "saveButton");
+    saveButton->setText("&Save");
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveRatePlan()));
+
+    QPushButton *cancelButton = new QPushButton(this, "cancelButton");
+    cancelButton->setText("&Cancel");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelRatePlan()));
+
+    // Finally, create our main layout.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+
+    // A grid layout for the top two rows.
+    QGridLayout *gl = new QGridLayout(2, 2);
+    int curRow = 0;
+    gl->addWidget(planTagLabel,     curRow, 0);
+    gl->addWidget(planTag,          curRow, 1);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(descriptionLabel, curRow, 0);
+    gl->addWidget(description,      curRow, 1);
+    gl->setRowStretch(curRow, 0);
+    gl->setColStretch(0, 0);
+    gl->setColStretch(1, 1);
+
+    ml->addLayout(gl, 0);
+    ml->addWidget(autoConvertGroup, 0);
+
+    // Another layout for our promo info
+    QBoxLayout *pl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    pl->addStretch(1);
+    pl->addWidget(promoPlan, 0);
+    pl->addStretch(1);
+    pl->addWidget(promoEndsOnLabel, 0);
+    pl->addWidget(promoEndsOn, 0);
+    pl->addStretch(1);
+
+    ml->addLayout(pl, 0);
+    ml->addStretch(1);
+
+    // Finally our button layout.
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(saveButton, 0);
+    bl->addWidget(cancelButton, 0);
+
+    ml->addLayout(bl, 0);
+
+
 	ADB         DB;
 	RatePlansDB RPDB;
 
@@ -74,7 +211,10 @@ RatePlanEdit::RatePlanEdit
 				convertDays->setText(RPDB.getStr("ConvertDays"));
 				promoPlan->setChecked(RPDB.getInt("PromoPlan"));
 				if (promoPlan->isChecked()) {
-					promoEndsOn->setText(RPDB.getStr("PromoEnds"));
+                    QDate   tmpDate;
+                    myDateToQDate(RPDB.getStr("PromoEnds"), tmpDate);
+                    promoEndsOn->setDate(tmpDate);
+					//promoEndsOn->setText(RPDB.getStr("PromoEnds"));
 				}
 				toggleConvertDays(TRUE);
 				break;
@@ -82,10 +222,18 @@ RatePlanEdit::RatePlanEdit
 			case 2:
 				noAutoConvert->setChecked(FALSE);
 				autoConvertDate->setChecked(TRUE);
-				convertDate->setText(RPDB.getStr("ConvertDate"));
+                {
+                    QDate   tmpDate;
+                    myDateToQDate(RPDB.getStr("ConvertDate"), tmpDate);
+                    convertDate->setDate(tmpDate);
+                }
+				//convertDate->setText(RPDB.getStr("ConvertDate"));
 				promoPlan->setChecked(RPDB.getInt("PromoPlan"));
 				if (promoPlan->isChecked()) {
-					promoEndsOn->setText(RPDB.getStr("PromoEnds"));
+                    QDate   tmpDate;
+                    myDateToQDate(RPDB.getStr("PromoEnds"), tmpDate);
+                    promoEndsOn->setDate(tmpDate);
+					//promoEndsOn->setText(RPDB.getStr("PromoEnds"));
 				}
 				toggleConvertDate(TRUE);
 				break;
@@ -239,19 +387,19 @@ void RatePlanEdit::saveRatePlan()
 		}
 		RPDB.setValue("PromoPlan", (int) promoPlan->isChecked());
 		if (promoPlan->isChecked()) {
-			RPDB.setValue("PromoPlan", promoEndsOn->text());
+			RPDB.setValue("PromoPlan", promoEndsOn->date().toString("yyyy-MM-dd").ascii());
 		} else {
 			RPDB.setValue("PromoPlan", "0000-00-00");
 		}
 	}
 	
 	if (!myIntID) {
-		RPDB.ins();
+		myIntID = RPDB.ins();
 	} else {
 		RPDB.setValue("InternalID", (long) myIntID);
 		RPDB.upd();
 	}
+    emit(ratePlanSaved((int) myIntID));
 	
-	close();
 	delete this;
 }

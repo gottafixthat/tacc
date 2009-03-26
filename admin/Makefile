@@ -38,7 +38,7 @@ SOURCES =	GLAccountTypes.cpp\
 		ChartOfAccounts.cpp\
 		GLAccountEditor.cpp\
 		RatePlans.cpp\
-		RatePlanEdit.cpp RatePlanEditData.cpp\
+		RatePlanEdit.cpp\
 		BillingCycles.cpp\
 		BillingCycleEdit.cpp\
 		VendorTypes.cpp\
@@ -82,7 +82,7 @@ HEADERS =	GLAccountTypes.h\
 		ChartOfAccounts.h\
 		GLAccountEditor.h\
 		RatePlans.h\
-		RatePlanEdit.h RatePlanEditData.h\
+		RatePlanEdit.h\
 		BillingCycles.h\
 		BillingCycleEdit.h\
 		VendorTypes.h\
@@ -128,7 +128,7 @@ SRCMETA =	moc_GLAccountTypes.cpp\
 		moc_ChartOfAccounts.cpp\
 		moc_GLAccountEditor.cpp\
 		moc_RatePlans.cpp\
-		moc_RatePlanEdit.cpp moc_RatePlanEditData.cpp\
+		moc_RatePlanEdit.cpp\
 		moc_BillingCycles.cpp\
 		moc_BillingCycleEdit.cpp\
 		moc_VendorTypes.cpp\
@@ -235,9 +235,6 @@ moc_RatePlans.cpp: RatePlans.h
 
 moc_RatePlanEdit.cpp: RatePlanEdit.h
 	$(MOC) RatePlanEdit.h -o moc_RatePlanEdit.cpp
-
-moc_RatePlanEditData.cpp: RatePlanEditData.h
-	$(MOC) RatePlanEditData.h -o moc_RatePlanEditData.cpp
 
 moc_GLAccountTypes.cpp: GLAccountTypes.h
 	$(MOC) GLAccountTypes.h -o moc_GLAccountTypes.cpp
