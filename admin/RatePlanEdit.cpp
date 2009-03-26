@@ -11,6 +11,8 @@
 
 // vim: expandtab
 
+#include <stdlib.h>
+
 #include <qstring.h>
 #include <qmessagebox.h>
 #include <qlabel.h>

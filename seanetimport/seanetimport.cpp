@@ -94,7 +94,8 @@ int main( int argc, char ** argv )
     importLoginTypes();
     loadDomains();
     loadWebSet();
-    loadVirtualSet();
+    loadVirtualSet("PLANS_virtmail_1.csv");
+    loadVirtualSet("PLANS_virtmail_2.csv");
     loadDialupStatic();
     loadDialupDynamic();
     loadDSLAccessSet();
@@ -536,12 +537,12 @@ void loadWebSet()
  *
  * Loads the domain records from the CSV file into memory.
  */
-void loadVirtualSet()
+void loadVirtualSet(const char *fName)
 {
     CSVParser   parser;
     // Open our CSV file
-    if (!parser.openFile("PLANS_virtmail_2.csv", true)) {
-        fprintf(stderr, "Unable to open PLANS_virtmail_2.csv, aborting\n");
+    if (!parser.openFile(fName, true)) {
+        fprintf(stderr, "Unable to open %s, aborting\n", fName);
         exit(-1);
     }
 

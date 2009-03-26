@@ -125,7 +125,7 @@ void loadBillingCycles();
 long getBillingCycleID(int period);
 void loadDomains();
 void loadWebSet();
-void loadVirtualSet();
+void loadVirtualSet(const char *fName);
 void loadDialupStatic();
 void loadDialupDynamic();
 void loadDSLAccessSet();
