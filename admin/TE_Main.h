@@ -40,9 +40,9 @@ public:
     TE_Main(QWidget* parent = NULL, const char* name = NULL);
     virtual ~TE_Main();
     
-    virtual void sendMessage();
 
 protected slots:
+    virtual void    sendMessage();
     virtual void    cancelClicked()                 { delete this; }
     virtual void    closeEvent(QCloseEvent *)       { delete this; }
     virtual void    raiseTab(int);
