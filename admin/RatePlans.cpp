@@ -123,7 +123,7 @@ void RatePlans::refreshList(int)
     DB.query("select InternalID, PlanTag, Description from RatePlans order by PlanTag");
     while(DB.getrow()) {
 
-        QListViewItem *curItem = new QListViewItem(list, DB.curRow["PlanTag"], DB.curRow["Description"], DB.curRow["InternalID"]);
+        (void) new QListViewItem(list, DB.curRow["PlanTag"], DB.curRow["Description"], DB.curRow["InternalID"]);
     }
 
 }
@@ -137,6 +137,7 @@ void RatePlans::newRatePlan()
 {
 	RatePlanEdit *newPlan;
 	newPlan = new RatePlanEdit();
+    connect(newPlan, SIGNAL(ratePlanSaved(int)), this, SLOT(refreshList(int)));
 	newPlan->show();
 }
 
@@ -152,6 +153,7 @@ void RatePlans::editRatePlan()
     curItem = list->currentItem();
 	if (curItem != NULL) {
 		editPlan = new RatePlanEdit(0, "", atoi(curItem->text(internalIDColumn)));
+        connect(editPlan, SIGNAL(ratePlanSaved(int)), this, SLOT(refreshList(int)));
 		editPlan->show();
 	}
 }
@@ -165,6 +167,7 @@ void RatePlans::editRatePlan(QListViewItem *curItem)
     if (curItem == NULL) return;
     RatePlanEdit    *editPlan;
     editPlan = new RatePlanEdit(0, "", atoi(curItem->text(internalIDColumn)));
+    connect(editPlan, SIGNAL(ratePlanSaved(int)), this, SLOT(refreshList(int)));
     editPlan->show();
 }
 
