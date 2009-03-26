@@ -1,48 +1,42 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** TE_Cities - Targeted Email - City selection.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: TE_Cities.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "TE_Cities.h"
 
 #include <qapplication.h>
+#include <qlayout.h>
 
-#include "BlargDB.h"
+#include <BlargDB.h>
 
-#define Inherited TE_CitiesData
+#include <TE_Cities.h>
 
-TE_Cities::TE_Cities
-(
-	QWidget* parent,
-	const char* name
-)
-	:
-	Inherited( parent, name )
+TE_Cities::TE_Cities(QWidget* parent, const char* name) :
+	TAAWidget( parent, name )
 {
-    
-    loadCities();
-    
+    allCitiesButton = new QCheckBox("Send to customers in all cities", this, "allCitiesButton");
+    connect(allCitiesButton, SIGNAL(clicked()), this, SLOT(allCitiesClicked()));
+
+    cityList = new QListView(this, "cityList");
+    cityList->addColumn("City");
+    cityList->addColumn("State");
     cityList->setAllColumnsShowFocus(TRUE);
     cityList->setMultiSelection(TRUE);
+    
+    // Basic layout, box top to bottom.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    ml->addWidget(allCitiesButton, 0);
+    ml->addWidget(cityList, 1);
+
+
+    loadCities();
+    
     
     allCitiesButton->setChecked(TRUE);
     allCitiesClicked();
@@ -121,3 +115,4 @@ int TE_Cities::isIncluded(const char *City)
 
 
 
+// vim: expandtab

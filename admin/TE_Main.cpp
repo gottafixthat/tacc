@@ -1,55 +1,42 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** TE_Main - Targeted Email - main window.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: TE_Main.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
-
-#include "TE_Main.h"
-
-#define Inherited TE_MainData
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <qapplication.h>
-#include <qprogressdialog.h>
 #include <qmessagebox.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include <qaccel.h>
 
-#include "BlargDB.h"
-#include "ParseFile.h"
+#include <BlargDB.h>
+#include <ParseFile.h>
 #include <ADB.h>
 
+#include <TE_Main.h>
 
-TE_Main::TE_Main
-(
-	QWidget* parent,
-	const char* name
-)
-	:
-	Inherited( parent, name )
+TE_Main::TE_Main(QWidget* parent, const char* name) :
+	TAAWidget( parent, name )
 {
 	setCaption( "Targeted Email" );
+
+    // Create our widgets.
+    theTabBar = new QTabBar(this, "theTabBar");
+
+    // Create the tabs for the tab bar.
+    theTabBar->addTab(new QTab("Message"));
+    theTabBar->addTab(new QTab("Login Types"));
+    theTabBar->addTab(new QTab("Cities"));
+
+    qws = new QWidgetStack(this, "widgetStack");
     
-    // qws is our QWidgetStack
+    // Create the actual tabs now, using the widget stack as the parent.
     tmessage = new TE_Message(qws);
     qws->addWidget(tmessage, 0);
     
@@ -58,8 +45,36 @@ TE_Main::TE_Main
     
     tcities = new TE_Cities(qws);
     qws->addWidget(tcities, 2);
+
+    // Buttons now.
+    QPushButton *sendButton = new QPushButton(this, "sendButton");
+    sendButton->setText("&Send");
+    connect(sendButton, SIGNAL(clicked()), this, SLOT(sendMessage()));
+
+    QPushButton *cancelButton = new QPushButton(this, "cancelButton");
+    cancelButton->setText("&Cancel");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+
+    // Create our layout.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    ml->addWidget(theTabBar, 0);
+    ml->addWidget(qws, 1);
+
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(sendButton, 0);
+    bl->addWidget(cancelButton, 0);
+
+    ml->addLayout(bl, 0);
     
     connect(theTabBar, SIGNAL(selected(int)), qws, SLOT(raiseWidget(int)));
+
+    // Create our Ctrl-1 through Ctrl-3 hotkeys
+    QAccel  *ac = new QAccel(this);
+    ac->insertItem(CTRL+Key_1, 0);
+    ac->insertItem(CTRL+Key_2, 1);
+    ac->insertItem(CTRL+Key_3, 2);
+    connect(ac, SIGNAL(activated(int)), this, SLOT(raiseTab(int)));
 }
 
 
@@ -103,25 +118,27 @@ void TE_Main::sendMessage()
     }
     
     
-    QApplication::setOverrideCursor(waitCursor);
-
     if (doIt) {
+        QApplication::setOverrideCursor(waitCursor);
+        emit(setStatus("Sending targeted email..."));
+
         char        srcfile[1024];
         char        dstfile[1024];
         ADB         DB;
         ADB         DB2;
         CustomersDB CDB;
         int         curStep = 0;
+        int         totSteps = 0;
         int         hitCount = 0;
         int         reqHits  = 3;
         
         DB.query("select LoginID, LoginType, CustomerID, Active from Logins where Wiped < '1970-01-01'");
         if (DB.rowCount) {
             strcpy(srcfile, tmessage->createMessage());
-            QProgressDialog     prog("Targeted Email", "Cancel", DB.rowCount);
+            totSteps = DB.rowCount;
             while (DB.getrow()) {
-                prog.setProgress(curStep++);
-                
+                emit(setProgress(curStep++, totSteps));
+
                 hitCount = 0;
                 hitCount += tlogins->isIncluded(atol(DB.curRow["LoginType"]), atoi(DB.curRow["Active"]));
                 
@@ -156,9 +173,21 @@ void TE_Main::sendMessage()
         }
        
         
+        emit(setStatus(""));
         QApplication::restoreOverrideCursor();
         close();
     }
 }
 
+/*
+ * raiseTab()
+ *
+ * Gets called by the accelerator key actions.
+ */
+void TE_Main::raiseTab(int tab)
+{
+    theTabBar->setCurrentTab(tab);
+}
+
+// vim: expandtab
 

@@ -1,29 +1,36 @@
-/**********************************************************************
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
+#ifndef TE_MESSAGE_H
+#define TE_MESSAGE_H
 
-	File: TE_Message.h
-	Last generated: Tue Jul 27 11:55:52 1999
+#include <qlineedit.h>
+#include <qmultilineedit.h>
 
- *********************************************************************/
+#include <TAAWidget.h>
 
-#ifndef TE_Message_included
-#define TE_Message_included
-
-#include "TE_MessageData.h"
-
-class TE_Message : public TE_MessageData
+/*!
+ * \brief A widget to compose a simple message.
+ *
+ * This widget allows the user to enter a simple message by providing who
+ * the message is from, the subject and the message body.
+ * It is used by the TE_Main class to send a targeted email.
+ */
+class TE_Message : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    TE_Message
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    TE_Message(QWidget* parent = NULL, const char* name = NULL);
     virtual ~TE_Message();
     
     char *createMessage();
@@ -33,6 +40,11 @@ public:
 protected slots:
     virtual void    closeEvent(QCloseEvent *)       { delete this; }
 
+protected:
+    QLineEdit       *fromLine;
+    QLineEdit       *msgSubject;
+    QMultiLineEdit  *msgText;
 
 };
 #endif // TE_Message_included
+// vim: expandtab

@@ -1,29 +1,34 @@
-/**********************************************************************
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
+#ifndef TE_LOGINTYPES_H
+#define TE_LOGINTYPES_H
 
-	File: TE_LoginTypes.h
-	Last generated: Tue Jul 27 12:19:36 1999
+#include <qcheckbox.h>
+#include <qlistview.h>
 
- *********************************************************************/
+#include <TAAWidget.h>
 
-#ifndef TE_LoginTypes_included
-#define TE_LoginTypes_included
-
-#include "TE_LoginTypesData.h"
-
-class TE_LoginTypes : public TE_LoginTypesData
+/*!
+ * \brief Part of the Targeted Email class, this allows the user to select 
+ * what login types to send to.
+ *
+ */
+class TE_LoginTypes : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    TE_LoginTypes
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    TE_LoginTypes(QWidget* parent = NULL, const char* name = NULL);
     virtual ~TE_LoginTypes();
 
     void    loadLoginTypes();
@@ -36,6 +41,14 @@ protected slots:
     virtual void allLoginsClicked();
     virtual void closeEvent(QCloseEvent *)       { delete this; }
 
+protected:
+    QCheckBox   *allLoginsButton;
+    QCheckBox   *includeInactive;
+    QCheckBox   *primaryOnlyCheckbox;
+    QListView   *loginTypeList;
 
 };
-#endif // TE_LoginTypes_included
+
+#endif
+// vim: expandtab
+

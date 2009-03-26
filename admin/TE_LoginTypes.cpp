@@ -1,45 +1,49 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** TE_LoginTypes - Targeted Email - Login Types Filter
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: TE_LoginTypes.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
-
-#include "TE_LoginTypes.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <qapplication.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <qlayout.h>
 
 #include <ADB.h>
 
-#define Inherited TE_LoginTypesData
+#include <TE_LoginTypes.h>
 
-TE_LoginTypes::TE_LoginTypes
-(
-	QWidget* parent,
-	const char* name
-)
-	:
-	Inherited( parent, name )
+
+TE_LoginTypes::TE_LoginTypes(QWidget* parent, const char* name) :
+	TAAWidget( parent, name )
 {
+
+    allLoginsButton = new QCheckBox("Send to all Login Types", this, "allLoginsButton");
+    connect(allLoginsButton, SIGNAL(clicked()), this, SLOT(allLoginsClicked()));
+
+    includeInactive = new QCheckBox("Include inactive accounts", this, "includeInactive");
+
+    primaryOnlyCheckbox = new QCheckBox("Send to Primary Logins only", this, "primaryOnlyChckebox");
+
+    loginTypeList = new QListView(this, "loginTypeList");
+    loginTypeList->addColumn("Type");
+    loginTypeList->addColumn("Description");
+    loginTypeList->addColumn("Inactive");
+    loginTypeList->setColumnAlignment(2, AlignRight);
+    loginTypeList->addColumn("Active");
+    loginTypeList->setColumnAlignment(3, AlignRight);
+
+
+    // Create the layout.  A simple box layout will do.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 1, 1);
+    ml->addWidget(allLoginsButton, 0);
+    ml->addWidget(includeInactive, 0);
+    ml->addWidget(primaryOnlyCheckbox, 0);
+    ml->addWidget(loginTypeList, 1);
+
     loadLoginTypes();
     loginTypeList->setAllColumnsShowFocus(TRUE);
     loginTypeList->setMultiSelection(TRUE);
@@ -133,3 +137,4 @@ int TE_LoginTypes::isIncluded(long LoginType, int Active)
 
 
 
+// vim: expandtab
