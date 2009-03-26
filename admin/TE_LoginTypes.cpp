@@ -9,6 +9,8 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
+#include <stdlib.h>
+
 #include <qapplication.h>
 #include <qlayout.h>
 
