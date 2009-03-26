@@ -69,10 +69,10 @@ SOURCES =	GLAccountTypes.cpp\
 		OverdueAccounts.cpp OverdueAccountsData.cpp\
 		WipedAccounts.cpp WipedAccountsData.cpp\
 		RunSubscriptions.cpp\
-        TE_Main.cpp TE_MainData.cpp\
-        TE_Message.cpp TE_MessageData.cpp\
-        TE_LoginTypes.cpp TE_LoginTypesData.cpp\
-        TE_Cities.cpp TE_CitiesData.cpp\
+        TE_Main.cpp\
+        TE_Message.cpp\
+        TE_LoginTypes.cpp\
+        TE_Cities.cpp\
 		MakeDeposits.cpp\
         UserEditor.cpp UserPrivs.cpp\
 		CompanyEditor.cpp\
@@ -114,10 +114,10 @@ HEADERS =	GLAccountTypes.h\
 		WipedAccounts.h WipedAccountsData.h\
 		RunSubscriptions.h\
 		MakeDeposits.h\
-		TE_Main.h TE_MainData.h\
-		TE_Message.h TE_MessageData.h\
-		TE_LoginTypes.h TE_LoginTypesData.h\
-		TE_Cities.h TE_CitiesData.h\
+		TE_Main.h\
+		TE_Message.h\
+		TE_LoginTypes.h\
+		TE_Cities.h\
 		UserEditor.h UserPrivs.h\
 		CompanyEditor.h\
 		LoginFlagList.h
@@ -160,10 +160,10 @@ SRCMETA =	moc_GLAccountTypes.cpp\
 		moc_WipedAccounts.cpp moc_WipedAccountsData.cpp\
 		moc_RunSubscriptions.cpp\
 		moc_MakeDeposits.cpp\
-		moc_TE_Main.cpp moc_TE_MainData.cpp\
-		moc_TE_Message.cpp moc_TE_MessageData.cpp\
-		moc_TE_LoginTypes.cpp moc_TE_LoginTypesData.cpp\
-		moc_TE_Cities.cpp moc_TE_CitiesData.cpp\
+		moc_TE_Main.cpp\
+		moc_TE_Message.cpp\
+		moc_TE_LoginTypes.cpp\
+		moc_TE_Cities.cpp\
 		moc_UserEditor.cpp moc_UserPrivs.cpp\
 		moc_CompanyEditor.cpp\
 		moc_LoginFlagList.cpp
@@ -332,26 +332,14 @@ moc_LoginFlagList.cpp: LoginFlagList.h
 moc_TE_Main.cpp: TE_Main.h
 	$(MOC) TE_Main.h -o moc_TE_Main.cpp
 
-moc_TE_MainData.cpp: TE_MainData.h
-	$(MOC) TE_MainData.h -o moc_TE_MainData.cpp
-
 moc_TE_Message.cpp: TE_Message.h
 	$(MOC) TE_Message.h -o moc_TE_Message.cpp
-
-moc_TE_MessageData.cpp: TE_MessageData.h
-	$(MOC) TE_MessageData.h -o moc_TE_MessageData.cpp
 
 moc_TE_LoginTypes.cpp: TE_LoginTypes.h
 	$(MOC) TE_LoginTypes.h -o moc_TE_LoginTypes.cpp
 
-moc_TE_LoginTypesData.cpp: TE_LoginTypesData.h
-	$(MOC) TE_LoginTypesData.h -o moc_TE_LoginTypesData.cpp
-
 moc_TE_Cities.cpp: TE_Cities.h
 	$(MOC) TE_Cities.h -o moc_TE_Cities.cpp
-
-moc_TE_CitiesData.cpp: TE_CitiesData.h
-	$(MOC) TE_CitiesData.h -o moc_TE_CitiesData.cpp
 
 moc_UserEditor.cpp: UserEditor.h
 	$(MOC) UserEditor.h -o moc_UserEditor.cpp

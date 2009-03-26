@@ -1,43 +1,59 @@
-/**********************************************************************
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
+// vim: expandtab
 
-	File: TE_Main.h
-	Last generated: Mon Jul 26 21:21:34 1999
 
- *********************************************************************/
+#ifndef TE_MAIN_H
+#define TE_MAIN_H
 
-#ifndef TE_Main_included
-#define TE_Main_included
+#include <qwidgetstack.h>
+#include <qtabbar.h>
 
-#include "TE_MainData.h"
-#include "TE_Message.h"
-#include "TE_LoginTypes.h"
-#include "TE_Cities.h"
+#include <TAAWidget.h>
 
-class TE_Main : public TE_MainData
+#include <TE_Message.h>
+#include <TE_LoginTypes.h>
+#include <TE_Cities.h>
+
+/*!
+ * \brief A widget to send a targeted email to customers.
+ *
+ * This widget gives a user the ability to send an email to all
+ * or some customers.  It allows the user to filter on Login/Service
+ * types or by city.
+ */
+class TE_Main : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    TE_Main
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    TE_Main(QWidget* parent = NULL, const char* name = NULL);
     virtual ~TE_Main();
     
     virtual void sendMessage();
 
 protected slots:
+    virtual void    cancelClicked()                 { delete this; }
     virtual void    closeEvent(QCloseEvent *)       { delete this; }
+    virtual void    raiseTab(int);
     
-private:
+protected:
     TE_Message      *tmessage;
     TE_LoginTypes   *tlogins;
     TE_Cities       *tcities;
+    QTabBar         *theTabBar;
+    QWidgetStack    *qws;
 
 };
-#endif // TE_Main_included
+
+#endif
