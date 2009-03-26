@@ -1,62 +1,135 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** WipedAccounts - Actions to take on wiped accounts.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: WipedAccounts.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "WipedAccounts.h"
+#include <stdlib.h>
 
 #include <qmessagebox.h>
 #include <qprogressbar.h>
 #include <qdatetm.h>
 #include <qapplication.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <qgroupbox.h>
+#include <qbuttongroup.h>
+#include <qlayout.h>
 
 #include <AcctsRecv.h>
 #include <BlargDB.h>
 #include <BString.h>
 #include <BrassClient.h>
-#include "EditCustomer.h"
-#include "ParseFile.h"
+#include <EditCustomer.h>
+#include <ParseFile.h>
 #include <CollReport.h>
 #include <Cfg.h>
 
-#define Inherited WipedAccountsData
+#include <WipedAccounts.h>
 
-WipedAccounts::WipedAccounts
-(
-	QWidget* parent,
-	const char* name
-)
-	:
-	Inherited( parent, name )
+WipedAccounts::WipedAccounts(QWidget* parent, const char* name) :
+	TAAWidget( parent, name )
 {
 	setCaption( "Overdue Account Processing (Inactive Accounts)" );
-	
-	// Set up our list.
+
+    // Create our widgets
+    list = new QListView(this, "list");
+    list->addColumn("Cust ID");
+    list->addColumn("Customer Name");
+    list->addColumn("Primary Login");
+    list->addColumn("Balance");
+    list->setColumnAlignment(3, AlignRight);
+    list->addColumn("Overdue");
+    list->setColumnAlignment(4, AlignRight);
+    list->addColumn("Newest");
+    list->setColumnAlignment(5, AlignRight);
 	list->setAllColumnsShowFocus(TRUE);
 	list->setMultiSelection(TRUE);
+    connect(list, SIGNAL(doubleClicked(QListViewItem *)), SLOT(editCustomer(QListViewItem *)));
+    connect(list, SIGNAL(returnPressed(QListViewItem *)), SLOT(editCustomer(QListViewItem *)));
+    connect(list, SIGNAL(selectionChanged()), SLOT(updateTotals()));
+
+    QGroupBox   *grpBox = new QGroupBox(2, Horizontal, "Summary Information", this, "grpBox");
+
+    QLabel *accountsOverdueLabel = new QLabel(grpBox, "accountsOverdueLabel");
+    accountsOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    accountsOverdueLabel->setText("Accounts Overdue:");
+
+    accountsOverdue = new QLabel(grpBox, "accountsOverdue");
+    accountsOverdue->setAlignment(AlignRight|AlignVCenter);
+    accountsOverdue->setText("");
+	
+    QLabel *accountsSelectedLabel = new QLabel(grpBox, "accountsSelectedLabel");
+    accountsSelectedLabel->setAlignment(AlignRight|AlignVCenter);
+    accountsSelectedLabel->setText("Accounts Selected:");
+
+    accountsSelected = new QLabel(grpBox, "accountsSelected");
+    accountsSelected->setAlignment(AlignRight|AlignVCenter);
+    accountsSelected->setText("");
+	
+    QLabel *selectedOverdueLabel = new QLabel(grpBox, "selectedOverdueLabel");
+    selectedOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    selectedOverdueLabel->setText("Total from selected:");
+
+    selectedOverdue = new QLabel(grpBox, "selectedOverdue");
+    selectedOverdue->setAlignment(AlignRight|AlignVCenter);
+    selectedOverdue->setText("");
+
+    QLabel *amountOverdueLabel = new QLabel(grpBox, "amountOverdueLabel");
+    amountOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    amountOverdueLabel->setText("Total Amount Overdue:");
+
+    amountOverdue = new QLabel(grpBox, "amountOverdue");
+    amountOverdue->setAlignment(AlignRight|AlignVCenter);
+    amountOverdue->setText("");
+
+    // Now the button group.
+    QButtonGroup *butGrp = new QButtonGroup(1, Horizontal, "Action", this, "butGrp");
+    butGrp->setExclusive(true);
+    noAction = new QRadioButton("Non&e", butGrp, "noAction");
+    sendFinal = new QRadioButton("&Send Final Notice", butGrp, "sendFinal");
+    sendToCollection = new QRadioButton("S&end to collection", butGrp, "sendToCollection");
+
+    // Our action buttons.
+    QPushButton *selectNoneButton = new QPushButton(this, "selectNoneButton");
+    selectNoneButton->setText("Select &None");
+    connect(selectNoneButton, SIGNAL(clicked()), this, SLOT(selectNone()));
+
+    QPushButton *selectAllButton = new QPushButton(this, "selectAllButton");
+    selectAllButton->setText("Select &All");
+    connect(selectAllButton, SIGNAL(clicked()), this, SLOT(selectAll()));
+
+    QPushButton *continueButton = new QPushButton(this, "continueButton");
+    continueButton->setText("C&ontinue");
+    connect(continueButton, SIGNAL(clicked()), this, SLOT(processSelections()));
+
+    QPushButton *cancelButton = new QPushButton(this, "cancelButton");
+    cancelButton->setText("&Cancel");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelOverdue()));
+
+    // Create our layout.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    ml->addWidget(list, 1);
+
+    // A left to right layout for the two group boxes and the buttons.
+    QBoxLayout *sl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    sl->addWidget(grpBox, 0);
+    sl->addWidget(butGrp, 0);
+    sl->addStretch(1);
+
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    bl->addStretch(1);
+    bl->addWidget(selectNoneButton, 0);
+    bl->addWidget(selectAllButton, 0);
+    bl->addWidget(continueButton, 0);
+    bl->addWidget(cancelButton, 0);
+    sl->addLayout(bl, 0);
+
+    ml->addLayout(sl, 0);
+
 	
     totAccts    = 0;
     selAccts    = 0;
@@ -65,12 +138,15 @@ WipedAccounts::WipedAccounts
     
     myAccountTypes = 0; // AccountTypes;
     	
-	show();
     fillList();
+
+    QSize   mainSize = sizeHint();
+    QSize   listSize = list->sizeHint();
+    mainSize.setWidth(listSize.width()+25);
+    resize(mainSize);
+
+	show();
     
-    connect(list, SIGNAL(doubleClicked(QListViewItem *)), SLOT(editCustomer(QListViewItem *)));
-    connect(list, SIGNAL(returnPressed(QListViewItem *)), SLOT(editCustomer(QListViewItem *)));
-    connect(list, SIGNAL(selectionChanged()), SLOT(updateTotals()));
 }
 
 
@@ -112,16 +188,12 @@ void WipedAccounts::fillList(void)
     theDate = QDate::currentDate();
     QDatetomyDate(today, theDate);
     
-    progressLabel->setText("Searching...");
-    progressLabel->show();
+    emit(setStatus("Searching wiped accounts..."));
     
-    progress->setProgress(0);
     DB.query("select CustomerID, FullName, PrimaryLogin, CurrentBalance from Customers where CurrentBalance > 0.00");
     totSteps    = DB.rowCount;
-    progress->setTotalSteps(totSteps);
-    progress->show();
     while (DB.getrow()) {
-        progress->setProgress(++curPos);
+        emit(setProgress(++curPos, totSteps));
         DB2.query("select Amount, ClearedAmount, DueDate from AcctsRecv where CustomerID = %ld and DueDate < '%s' and ClearedAmount <> Amount order by DueDate", atol(DB.curRow["CustomerID"]), today);
         if (DB2.rowCount) {
             // For this particular report, we need to make sure that they
@@ -178,8 +250,7 @@ void WipedAccounts::fillList(void)
     sprintf(tmpStr, "%.2f", totOverdue);
     amountOverdue->setText(tmpStr);
     
-    progress->hide();
-    progressLabel->hide();
+    emit(setStatus(""));
     QApplication::restoreOverrideCursor();
 }
 
@@ -290,8 +361,8 @@ void WipedAccounts::processSelections()
     totSelected = atol(accountsSelected->text());
     
     if (noAction->isChecked()) Action = 0;
-    if (actionOne->isChecked()) Action = 1;
-    if (actionTwo->isChecked()) Action = 2;
+    if (sendFinal->isChecked()) Action = 1;
+    if (sendToCollection->isChecked()) Action = 2;
     
     
     if (!totSelected) {
@@ -360,13 +431,7 @@ void WipedAccounts::sendToCollections(void)
     QListViewItem   *curItem;
     long            curCount = 0;
 
-    progressLabel->setText("Sending to collections...");
-    progressLabel->show();
-    
-    progress->setTotalSteps(totAccts);
-    progress->setProgress(curCount);
-    progress->show();
-    progress->reset();
+    emit(setStatus("Sending to collections..."));
     
     
     QApplication::setOverrideCursor(waitCursor);
@@ -374,7 +439,7 @@ void WipedAccounts::sendToCollections(void)
     // Scan through the list...
     curItem = list->firstChild();
     while (curItem != NULL) {
-        progress->setProgress(++curCount);
+        emit(setProgress(++curCount, totAccts));
         if (curItem->isSelected()) {
 
             // Do the collections report
@@ -417,7 +482,10 @@ void WipedAccounts::sendToCollections(void)
         updateTotals();
     }
     
+    emit(setStatus(""));
     QApplication::restoreOverrideCursor();
 
 }
 
+
+// vim: expandtab
