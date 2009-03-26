@@ -66,7 +66,7 @@ SOURCES =	GLAccountTypes.cpp\
 		DomainTypeEdit.cpp\
 		DomainTypeBillablesAdd.cpp DomainTypeBillablesAddData.cpp\
 		DNS_Templates.cpp\
-		OverdueAccounts.cpp OverdueAccountsData.cpp\
+		OverdueAccounts.cpp\
 		WipedAccounts.cpp WipedAccountsData.cpp\
 		RunSubscriptions.cpp\
         TE_Main.cpp\
@@ -110,7 +110,7 @@ HEADERS =	GLAccountTypes.h\
 		DomainTypeEdit.h\
 		DomainTypeBillablesAdd.h DomainTypeBillablesAddData.h\
 		DNS_Templates.h\
-		OverdueAccounts.h OverdueAccountsData.h\
+		OverdueAccounts.h\
 		WipedAccounts.h WipedAccountsData.h\
 		RunSubscriptions.h\
 		MakeDeposits.h\
@@ -156,7 +156,7 @@ SRCMETA =	moc_GLAccountTypes.cpp\
 		moc_DomainTypeEdit.cpp\
 		moc_DomainTypeBillablesAdd.cpp moc_DomainTypeBillablesAddData.cpp\
 		moc_DNS_Templates.cpp\
-		moc_OverdueAccounts.cpp moc_OverdueAccountsData.cpp\
+		moc_OverdueAccounts.cpp\
 		moc_WipedAccounts.cpp moc_WipedAccountsData.cpp\
 		moc_RunSubscriptions.cpp\
 		moc_MakeDeposits.cpp\
@@ -307,9 +307,6 @@ moc_DNS_Templates.cpp: DNS_Templates.h
 
 moc_OverdueAccounts.cpp: OverdueAccounts.h
 	$(MOC) OverdueAccounts.h -o moc_OverdueAccounts.cpp
-
-moc_OverdueAccountsData.cpp: OverdueAccountsData.h
-	$(MOC) OverdueAccountsData.h -o moc_OverdueAccountsData.cpp
 
 moc_WipedAccounts.cpp: WipedAccounts.h
 	$(MOC) WipedAccounts.h -o moc_WipedAccounts.cpp
