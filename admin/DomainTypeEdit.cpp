@@ -225,7 +225,6 @@ void DomainTypeEdit::itemSelected(QListViewItem *curItem)
 
     // Find the Template ID in the template list
     dnsTemplate->setCurrentItem(0);
-    long    idxPtr = 0;
     for (int i = 0; i < dnsTemplate->count(); i++) {
         if (atol(DB.curRow["TemplateID"]) == templateIDX[i]) {
             dnsTemplate->setCurrentItem(i);
@@ -248,6 +247,29 @@ void DomainTypeEdit::itemSelected(QListViewItem *curItem)
 	}
 }
 
+/*
+ * refreshBillablesList()
+ *
+ * Slot that is connected to the add domain type billable.
+ * If the current item matches the passed in one, we refresh
+ * the list of billables for the current item.
+ */
+void DomainTypeEdit::refreshBillablesList(int domTypeID)
+{
+    QListViewItem   *curItem = domainTypeList->currentItem();
+    if (curItem) {
+        if (curItem->key(1,0).toInt() == domTypeID) {
+            ADB DB;
+            billablesList->clear();
+            DB.query("select DomainTypeBillables.ItemNumber, Billables.ItemID from DomainTypeBillables, Billables where DomainTypeBillables.DomainTypeID = %ld and DomainTypeBillables.ItemNumber = Billables.ItemNumber order by Billables.ItemID", domTypeID);
+            if (DB.rowCount) {
+                while (DB.getrow()) {
+                    billablesList->insertItem(DB.curRow["ItemID"]);
+                }
+            }
+        }
+    }
+}
 
 /*
 ** addBillable - Brings up dialog box and lets the user add 
@@ -262,11 +284,8 @@ void DomainTypeEdit::addBillable()
     curItem = domainTypeList->currentItem();
     if (curItem == NULL) return;
 	
-    dtba = new DomainTypeBillablesAdd(this, "", atoi(curItem->key(1,0)));
-
     dtba = new DomainTypeBillablesAdd(0, "", atoi(curItem->key(1,0)));
-    dtba->show();
-    if (dtba->result()) itemSelected(curItem);
+    connect(dtba, SIGNAL(domainTypeBillableAdded(int)), this, SLOT(refreshBillablesList(int)));
 }
 
 /*

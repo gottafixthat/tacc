@@ -49,6 +49,7 @@ public:
 
 public slots:
     virtual void refreshList(void);
+    virtual void refreshBillablesList(int);
 
 protected slots: 
     virtual void itemSelected(QListViewItem *);

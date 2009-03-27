@@ -1,54 +1,58 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DomainTypeBillablesAdd - ??
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DomainTypeBillablesAdd.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "DomainTypeBillablesAdd.h"
-#include "BlargDB.h"
-#include "BString.h"
-#include <stdio.h>
 #include <stdlib.h>
+
 #include <qstrlist.h>
+#include <qpushbutton.h>
+#include <qlayout.h>
+
+#include <BlargDB.h>
+#include <BString.h>
 #include <ADB.h>
 
-#define Inherited DomainTypeBillablesAddData
+#include <DomainTypeBillablesAdd.h>
 
-DomainTypeBillablesAdd::DomainTypeBillablesAdd
-(
-	QWidget* parent,
-	const char* name,
-	int DomainTypeID
-)
-	:
-	Inherited( parent, name )
+DomainTypeBillablesAdd::DomainTypeBillablesAdd(QWidget* parent, const char* name, int DomainTypeID) :
+	TAAWidget( parent, name )
 {
 	setCaption( "Add Billable Item" );
 
+    // Create our widgets.
+    itemList = new QListView(this, "itemList");
+    itemList->addColumn("Billable");
+    itemList->addColumn("Description");
+    itemNumCol = 2;
+    itemList->setAllColumnsShowFocus(true);
+
+    QPushButton *addButton = new QPushButton("&Add", this, "addButton");
+    connect(addButton, SIGNAL(clicked()), this, SLOT(addBillableItem()));
+
+    QPushButton *cancelButton = new QPushButton("&Cancel", this, "cancelButton");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelBillableItemAdd()));
+
+    // Our layout.  Fairly straightforward, one box top to bottom, one for the buttons
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    ml->addWidget(itemList, 1);
+
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(addButton, 0);
+    bl->addWidget(cancelButton, 0);
+    ml->addLayout(bl, 0);
+   
 	ADB	DB;
 	char	tmpstr[1024];
 	
 	QStrList tmplist;
-
-	billableIDX = NULL;
 
 	if (!DomainTypeID) return;
 	
@@ -67,38 +71,41 @@ DomainTypeBillablesAdd::DomainTypeBillablesAdd
 	}
 	
 	// Fill the itemList with billable Items.
-	billableIDX = new(int[DB.rowCount + 1]);
-	int idxPtr = 0;
 	itemList->clear();
 	while (DB.getrow()) {
-		billableIDX[idxPtr] = atoi(DB.curRow["ItemNumber"]);
-		sprintf(tmpstr, "%-16s  %s", DB.curRow["ItemID"], DB.curRow["Description"]);
-		itemList->insertItem(tmpstr);
-		idxPtr++;
+        (void) new QListViewItem(itemList, DB.curRow["ItemID"], DB.curRow["Description"], DB.curRow["ItemNumber"]);
 	}
-	itemList->setCurrentItem(0);
 	
-	addButton->setDefault(TRUE);
+	//addButton->setDefault(TRUE);
 	// connect(saveButton, SIGNAL(clicked()), SLOT(accept()));
-	connect(cancelButton, SIGNAL(clicked()), SLOT(reject()));
+	//connect(cancelButton, SIGNAL(clicked()), SLOT(reject()));
 
+    show();
 }
 
 
 DomainTypeBillablesAdd::~DomainTypeBillablesAdd()
 {
-    if (billableIDX != NULL) delete(billableIDX);
 }
 
 
 void DomainTypeBillablesAdd::addBillableItem()
 {
-	ADB     DB;
-	
-	DB.dbcmd("insert into DomainTypeBillables values (0, %d, %d)", 
-	  myDomainTypeID, 
-	  billableIDX[itemList->currentItem()]
-	);
-	done(Accepted);
+    QListViewItem   *curItem = itemList->currentItem();
+    if (curItem) {
+        ADBTable    DTDB("DomainTypeBillables");
+        DTDB.setValue("DomainTypeID",   myDomainTypeID);
+        DTDB.setValue("ItemNumber",     curItem->key(itemNumCol, 0).toInt());
+        DTDB.ins();
+        emit(domainTypeBillableAdded(myDomainTypeID));
+        delete this;
+    }
 }
 
+void DomainTypeBillablesAdd::cancelBillableItemAdd()
+{
+    delete this;
+}
+
+
+// vim: expandtab
