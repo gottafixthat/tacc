@@ -64,7 +64,7 @@ SOURCES =	GLAccountTypes.cpp\
 		LoginTypeFlagAdd.cpp\
 		TemplateEditor.cpp\
 		DomainTypeEdit.cpp\
-		DomainTypeBillablesAdd.cpp DomainTypeBillablesAddData.cpp\
+		DomainTypeBillablesAdd.cpp\
 		DNS_Templates.cpp\
 		OverdueAccounts.cpp\
 		WipedAccounts.cpp\
@@ -108,7 +108,7 @@ HEADERS =	GLAccountTypes.h\
 		LoginTypeFlagAdd.h\
 		TemplateEditor.h\
 		DomainTypeEdit.h\
-		DomainTypeBillablesAdd.h DomainTypeBillablesAddData.h\
+		DomainTypeBillablesAdd.h\
 		DNS_Templates.h\
 		OverdueAccounts.h\
 		WipedAccounts.h\
@@ -154,7 +154,7 @@ SRCMETA =	moc_GLAccountTypes.cpp\
 		moc_LoginTypeFlagAdd.cpp\
 		moc_TemplateEditor.cpp\
 		moc_DomainTypeEdit.cpp\
-		moc_DomainTypeBillablesAdd.cpp moc_DomainTypeBillablesAddData.cpp\
+		moc_DomainTypeBillablesAdd.cpp\
 		moc_DNS_Templates.cpp\
 		moc_OverdueAccounts.cpp\
 		moc_WipedAccounts.cpp\
@@ -298,9 +298,6 @@ moc_DomainTypeEdit.cpp: DomainTypeEdit.h
 
 moc_DomainTypeBillablesAdd.cpp: DomainTypeBillablesAdd.h
 	$(MOC) DomainTypeBillablesAdd.h -o moc_DomainTypeBillablesAdd.cpp
-
-moc_DomainTypeBillablesAddData.cpp: DomainTypeBillablesAddData.h
-	$(MOC) DomainTypeBillablesAddData.h -o moc_DomainTypeBillablesAddData.cpp
 
 moc_DNS_Templates.cpp: DNS_Templates.h
 	$(MOC) DNS_Templates.h -o moc_DNS_Templates.cpp
