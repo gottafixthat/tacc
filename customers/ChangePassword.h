@@ -1,18 +1,29 @@
-/**********************************************************************
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
 
-	File: ChangePassword.h
-	Last generated: Fri May 22 18:03:34 1998
+#ifndef CHANGEPASSWORD_H
+#define CHANGEPASSWORD_H
 
- *********************************************************************/
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qlineedit.h>
+#include <qstring.h>
 
-#ifndef ChangePassword_included
-#define ChangePassword_included
+#include <TAAWidget.h>
 
-#include "ChangePasswordData.h"
-
-class ChangePassword : public ChangePasswordData
+/*!
+ * \brief Brings up the a password change dialog for a login.
+ */
+class ChangePassword : public TAAWidget
 {
     Q_OBJECT
 
@@ -28,16 +39,24 @@ public:
 
     virtual ~ChangePassword();
     
+protected slots:
     virtual void generatePassword();
     virtual void savePassword();
     virtual void cancelPassword();
-
-protected slots:
     virtual void QCloseEvent(QEvent *)              { delete this; }
 
-private:
+protected:
+    QLabel      *customerID;
+    QLabel      *customerName;
+    QLabel      *contactName;
+    QLabel      *loginID;
+    QLabel      *loginType;
+    QLineEdit   *newPassword;
+
     long    myCustID;
-    char    myLoginID[64];
+    QString myLoginID;
 
 };
 #endif // ChangePassword_included
+
+// vim: expandtab

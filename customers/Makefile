@@ -49,12 +49,12 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		NoteEdit.cpp\
 		CCEntry.cpp\
 		CCRefund.cpp\
-		ChangePassword.cpp ChangePasswordData.cpp\
+		ChangePassword.cpp\
 		DomainAdd.cpp\
 		DomainEdit.cpp DomainEditData.cpp\
 		DomainChecklist.cpp DomainChecklistData.cpp\
 		ChangeRatePlan.cpp ChangeRatePlanData.cpp\
-		ChangeBillingCycle.cpp ChangeBillingCycleData.cpp\
+		ChangeBillingCycle.cpp\
 		StatementView.cpp StatementViewData.cpp\
 		TransferLogin.cpp TransferLoginData.cpp\
 		ExtendGraceDate.cpp ExtendGraceDateData.cpp\
@@ -92,12 +92,12 @@ HEADERS =	Customers.h NewCustomer.h\
 		NoteEdit.h\
 		CCEntry.h\
 		CCRefund.h\
-		ChangePassword.h ChangePasswordData.h\
+		ChangePassword.h\
 		DomainAdd.h\
 		DomainEdit.h DomainEditData.h\
 		DomainChecklist.h DomainChecklistData.h\
 		ChangeRatePlan.h ChangeRatePlanData.h\
-		ChangeBillingCycle.h ChangeBillingCycleData.h\
+		ChangeBillingCycle.h\
 		StatementView.h StatementViewData.h\
 		TransferLogin.h TransferLoginData.h\
 		ExtendGraceDate.h ExtendGraceDateData.h\
@@ -135,12 +135,12 @@ SRCMETA =	moc_Customers.cpp \
 		moc_NoteEdit.cpp\
 		moc_CCEntry.cpp\
 		moc_CCRefund.cpp\
-		moc_ChangePassword.cpp moc_ChangePasswordData.cpp\
+		moc_ChangePassword.cpp\
 		moc_DomainAdd.cpp\
 		moc_DomainEdit.cpp moc_DomainEditData.cpp\
 		moc_DomainChecklist.cpp moc_DomainChecklistData.cpp\
 		moc_ChangeRatePlan.cpp moc_ChangeRatePlanData.cpp\
-		moc_ChangeBillingCycle.cpp moc_ChangeBillingCycleData.cpp\
+		moc_ChangeBillingCycle.cpp\
 		moc_StatementView.cpp moc_StatementViewData.cpp\
 		moc_TransferLogin.cpp moc_TransferLoginData.cpp\
 		moc_ExtendGraceDate.cpp moc_ExtendGraceDateData.cpp\
@@ -268,9 +268,6 @@ moc_CCRefund.cpp: CCRefund.h
 moc_ChangePassword.cpp: ChangePassword.h
 	$(MOC) ChangePassword.h -o moc_ChangePassword.cpp
 
-moc_ChangePasswordData.cpp: ChangePasswordData.h
-	$(MOC) ChangePasswordData.h -o moc_ChangePasswordData.cpp
-
 moc_DomainAdd.cpp: DomainAdd.h
 	$(MOC) DomainAdd.h -o moc_DomainAdd.cpp
 
@@ -294,9 +291,6 @@ moc_ChangeRatePlanData.cpp: ChangeRatePlanData.h
 
 moc_ChangeBillingCycle.cpp: ChangeBillingCycle.h
 	$(MOC) ChangeBillingCycle.h -o moc_ChangeBillingCycle.cpp
-
-moc_ChangeBillingCycleData.cpp: ChangeBillingCycleData.h
-	$(MOC) ChangeBillingCycleData.h -o moc_ChangeBillingCycleData.cpp
 
 moc_StatementView.cpp: StatementView.h
 	$(MOC) StatementView.h -o moc_StatementView.cpp

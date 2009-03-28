@@ -1,43 +1,46 @@
-/**********************************************************************
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
 
-	File: ChangeBillingCycle.h
-	Last generated: Tue Jul 28 12:55:25 1998
+#ifndef CHANGEBILLINGCYCLE_H
+#define CHANGEBILLINGCYCLE_H
 
- *********************************************************************/
+#include <qlabel.h>
+#include <qcombobox.h>
+#include <qdatetimeedit.h>
+#include <TAAWidget.h>
 
-#ifndef ChangeBillingCycle_included
-#define ChangeBillingCycle_included
-
-#include "ChangeBillingCycleData.h"
-
-class ChangeBillingCycle : public ChangeBillingCycleData
+class ChangeBillingCycle : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    ChangeBillingCycle
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL,
-        long CustID = 0
-    );
+    ChangeBillingCycle(QWidget* parent = NULL, const char* name = NULL, long CustID = 0);
 
     virtual ~ChangeBillingCycle();
 
+protected slots:
     virtual void saveBillingCycleChange();
     virtual void cancelBillingCycleChange();
-
-protected slots:
     virtual void QCloseEvent(QEvent *)              { delete this; }
     
-private:
+protected:
+    QLabel      *customer;
+    QComboBox   *cycleList;
+    QDateEdit   *effectiveDate;
+
     long    myCustID;
-    
-signals:
-    void customerChanged(long);
 
 };
-#endif // ChangeBillingCycle_included
+#endif
+
+// vim: expandtab
