@@ -74,8 +74,6 @@ public slots:
 	virtual void showNoteDetail(QListViewItem *newItem);
 	virtual void newNote();
 	virtual void hideAccountingChanged(bool);
-    virtual void showCallLog();
-    virtual void openCallLogBrowser();
     virtual void printNotes();
     void         ticketButtonPressed();
     virtual void refreshTicket(long);

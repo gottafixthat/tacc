@@ -167,15 +167,15 @@ Tab_BillingInfo::Tab_BillingInfo
     activeLabel->setText("Account Active:");
     activeLabel->setAlignment(AlignRight|AlignVCenter);
 
-    active = new QLabel(this, "Account Active");
+    active = new QLabel(this, "active");
     active->setText("");
     active->setAlignment(AlignLeft|AlignVCenter);
 
-    QLabel  *graceEndsLabel = new QLabel(this);
-    graceEndsLabel->setText("Account Active:");
+    QLabel  *graceEndsLabel = new QLabel(this, "graceEndsLabel");
+    graceEndsLabel->setText("Grace Ends:");
     graceEndsLabel->setAlignment(AlignRight|AlignVCenter);
 
-    graceEnds = new QLabel(this, "Account Active");
+    graceEnds = new QLabel(this, "graceEnds");
     graceEnds->setText("");
     graceEnds->setAlignment(AlignLeft|AlignVCenter);
 
@@ -700,8 +700,8 @@ void Tab_BillingInfo::viewStatement(QListViewItem *curItem)
     if (curItem != NULL) {
         StatementView   *SV;
         SV = new StatementView();
-        SV->show();
         SV->loadStatement(atol(curItem->key(0, TRUE)));
+        SV->show();
     }
 }
 
@@ -750,8 +750,7 @@ void Tab_BillingInfo::toggleFreePrintedStatements()
 void Tab_BillingInfo::extendGracePeriod()
 {
     ExtendGraceDate     *EGD;
-    EGD = new ExtendGraceDate(this, NULL, myCustID);
-    EGD->exec();
+    EGD = new ExtendGraceDate(0, NULL, myCustID);
 }
 
 /*

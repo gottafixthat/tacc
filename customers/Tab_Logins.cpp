@@ -179,7 +179,7 @@ Tab_Logins::~Tab_Logins()
  **
  **/
 
-void Tab_Logins::refreshLoginList(int)
+void Tab_Logins::refreshLoginList(long)
 {
     ADB     DB;
     QString tmpstr = "";
@@ -299,11 +299,11 @@ void Tab_Logins::hideWipedChanged(bool)
     refreshLoginList(1);
 }
 
-void Tab_Logins::refreshLoginListV(int)
+void Tab_Logins::refreshLoginListV(long)
 {
     recountAllowedMailboxes(myCustID);
 	refreshLoginList(1);
-    emit(refreshCust(myCustID));
+    emit(customerUpdated(myCustID));
 }
 
 /*
@@ -315,7 +315,7 @@ void Tab_Logins::createNewLogin(void)
 {
 	LoginEdit *le;
 	le = new LoginEdit(0, "", myCustID);
-	connect(le, SIGNAL(refreshLoginList(int)), SLOT(refreshLoginListV(int)));
+	connect(le, SIGNAL(refreshLoginList(long)), SLOT(refreshLoginListV(long)));
 	le->show();
 }
 
@@ -344,7 +344,7 @@ void Tab_Logins::editLogin(void)
 		if (LDB.getInt("Active")) {
 			LoginEdit *le;
 			le = new LoginEdit(0, "", myCustID, (const char *) curItem->text(0));
-			connect(le, SIGNAL(refreshLoginList(int)), SLOT(refreshLoginListV(int)));
+			connect(le, SIGNAL(refreshLoginList(long)), SLOT(refreshLoginListV(long)));
 			le->show();
 		} else {
 			QMessageBox::warning(this, "Unable to Edit", "Inactive accounts may not be edited.");
@@ -461,7 +461,6 @@ void Tab_Logins::unlockLogin(void)
                             }
                         }
                         
-                        emit(refreshCust(myCustID));
                         emit(customerUpdated(myCustID));
                         refreshLoginList(myCustID);
                         recountAllowedMailboxes(myCustID);
@@ -508,7 +507,6 @@ void Tab_Logins::unlockLogin(void)
 					CDB.doSubscriptions();
 
                     recountAllowedMailboxes(myCustID);
-					emit(refreshCust(myCustID));
                     emit(customerUpdated(myCustID));
 					refreshLoginList(myCustID);
 					QApplication::restoreOverrideCursor();
@@ -832,7 +830,7 @@ void Tab_Logins::updateDBForWipe(const char * LoginID)
 	LDB.get(myCustID, tmpLogin);
 	LDB.changeLoginID(newLogin);
 
-	emit(refreshCust(myCustID));
+	emit(customerUpdated(myCustID));
 	refreshLoginList(myCustID);
 	
 }
@@ -929,7 +927,7 @@ void Tab_Logins::setPrimaryLogin()
                 NDB.ins();
 
             	refreshLoginList(1);
-                emit(refreshCust(myCustID));
+                emit(customerUpdated(myCustID));
 		    } else {
             	QMessageBox::information(this, "Set Primary Login", "The specified login ID is\nalready the primary login ID.");
 		    }
@@ -951,7 +949,6 @@ void Tab_Logins::transferLogin()
 		TransferLogin   *TL;
 		TL = new TransferLogin;
 		TL->setSourceLogin(myCustID, (const char *) curItem->text(0));
-    	connect(TL, SIGNAL(refreshLoginList(int)), SLOT(refreshLoginListV(int)));
 		TL->show();
     }	
 }
@@ -1172,8 +1169,11 @@ void CustomLoginFlagEditor::saveClicked()
     }
 
     // Let our parent know that something has changed
-    emit(refreshCust(myCustID));
     emit(customerUpdated(myCustID));
     delete this;
 }
 
+void Tab_Logins::refreshCustomer(long custID)
+{
+    if (custID == myCustID) refreshLoginList(myCustID);
+}

@@ -1,45 +1,49 @@
-/**********************************************************************
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
+#ifndef TRANSFERLOGIN_H
+#define TRANSFERLOGIN_H
 
-	File: TransferLogin.h
-	Last generated: Mon Sep 14 17:28:19 1998
+#include <qlabel.h>
+#include <qlineedit.h>
+#include <qlistview.h>
+#include <qdatetimeedit.h>
 
- *********************************************************************/
+#include <TAAWidget.h>
+#include <CustomerSearch.h>
 
-#ifndef TransferLogin_included
-#define TransferLogin_included
-
-#include "TransferLoginData.h"
-
-class TransferLogin : public TransferLoginData
+class TransferLogin : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    TransferLogin
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    TransferLogin(QWidget* parent = NULL, const char* name = NULL);
     virtual ~TransferLogin();
 
     void    setSourceLogin(long custID, const char * LoginID);
 
+protected slots:
     virtual void doTransfer();
     virtual void cancelTransfer();
-    virtual void doQuery();
-        
 
-signals:
-    void    refreshLoginList(int);
-    void    refreshCust(int);
-
-private:
-    char    sourceLogin[64];
-    long    myCustID;
+protected:
+    QString         sourceLogin;
+    long            myCustID;
+    QLabel          *messageLabel;
+    CustomerSearch  *custSearch;
+    QDateEdit       *effectiveDate;
 
 };
-#endif // TransferLogin_included
+#endif
+
+// vim: expandtab
+

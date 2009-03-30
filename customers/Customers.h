@@ -68,7 +68,6 @@ private slots:
     virtual void receivePayment();
     virtual void clearQuery();
     virtual void takeCall();
-    virtual void newCustWizard();
     virtual void globalAliases();
 
 protected:

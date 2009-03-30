@@ -1,42 +1,48 @@
-/**********************************************************************
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
+#ifndef CHANGERATEPLAN_H
+#define CHANGERATEPLAN_H
 
-	File: ChangeRatePlan.h
-	Last generated: Thu Jul 23 19:19:55 1998
+#include <qlabel.h>
+#include <qcombobox.h>
+#include <qdatetimeedit.h>
 
- *********************************************************************/
+#include <TAAWidget.h>
 
-#ifndef ChangeRatePlan_included
-#define ChangeRatePlan_included
-
-#include "ChangeRatePlanData.h"
-
-class ChangeRatePlan : public ChangeRatePlanData
+class ChangeRatePlan : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    ChangeRatePlan
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL,
-        long CustID = 0
-    );
+    ChangeRatePlan(QWidget* parent = NULL, const char* name = NULL, long CustID = 0);
     virtual ~ChangeRatePlan();
 
+protected slots:
     virtual void saveRatePlanChange();
     virtual void cancelRatePlanChange();
-
-protected slots:
     virtual void QCloseEvent(QEvent *)              { delete this; }
 
-private:
-    long    myCustID;
+protected:
+    long        myCustID;
+    QComboBox   *ratePlanList;
+    QDateEdit   *effectiveDate;
+    QLabel      *customer;
 
 signals:
     void customerChanged(long);
 
 };
-#endif // ChangeRatePlan_included
+#endif
+
+// vim: expandtab
+

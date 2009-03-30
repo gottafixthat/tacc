@@ -25,6 +25,7 @@ OBJECTS =	$(SOURCES:.c=.o) libdes/*.o
 .SUFFIXES: .c
 
 .c.o:
+	echo Compiling  $<
 	$(CC) -c $(CFLAGS) -I$(INCDIR) $<
 
 ####### Build rules

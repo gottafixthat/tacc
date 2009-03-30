@@ -1,32 +1,30 @@
-/**********************************************************************
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-	--- Qt Architect generated file ---
 
-	File: ExtendGraceDate.h
-	Last generated: Wed Feb 24 13:08:55 1999
+#ifndef EXTENDGRACEDATE_H
+#define EXTENDGRACEDATE_H
 
- *********************************************************************/
+#include <qdatetime.h>
+#include <qlabel.h>
+#include <qspinbox.h>
+#include <TAAWidget.h>
 
-#ifndef ExtendGraceDate_included
-#define ExtendGraceDate_included
-
-#include "ExtendGraceDateData.h"
-
-#include <qdatetm.h>
-
-class ExtendGraceDate : public ExtendGraceDateData
+class ExtendGraceDate : public TAAWidget
 {
     Q_OBJECT
 
 public:
 
-    ExtendGraceDate
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL,
-        long CustomerID = 0
-    );
-
+    ExtendGraceDate(QWidget* parent = NULL, const char* name = NULL, long CustomerID = 0);
     virtual ~ExtendGraceDate();
 
 protected slots:
@@ -34,12 +32,17 @@ protected slots:
     virtual void cancelGrace();
     virtual void saveGrace();
 
-signals:
-    void        customerChanged(long);
-    
-private:
+protected:
     long        myCustID;
     QDate       origGrace;
     QDate       newGrace;
+
+    QLabel      *titleLabel;
+    QSpinBox    *extendDays;
+    QLabel      *currentGraceDate;
+    QLabel      *newGraceDate;
+
 };
-#endif // ExtendGraceDate_included
+#endif
+
+// vim: expandtab

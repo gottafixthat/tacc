@@ -1,50 +1,233 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DomainChecklist - Gives the user a checklist of domain tasks.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DomainChecklist.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
-#include <stdio.h>
 #include <stdlib.h>
-#include "DomainChecklist.h"
-#include "BlargDB.h"
+
+#include <qlayout.h>
+
+#include <BlargDB.h>
 #include <ADB.h>
+#include <TAATools.h>
 
-#define Inherited DomainChecklistData
+#include "DomainChecklist.h"
 
-DomainChecklist::DomainChecklist
-(
-	QWidget* parent,
-	const char* name,
-	long DomainID
-)
-	:
-	Inherited( parent, name )
+
+DomainChecklist::DomainChecklist(QWidget* parent, const char* name, long DomainID) :
+	TAAWidget( parent, name )
 {
 	setCaption( "Domain Checklist" );
 	
-	myDomainID = DomainID;
-	
 	if (!DomainID) return;
+	myDomainID = DomainID;
+
+    // Setup the widgets.  There are a bunch.
+    QLabel  *customerIDLabel = new QLabel("Customer ID:", this, "customerIDLabel");
+    customerIDLabel->setAlignment(AlignRight|AlignVCenter);
+
+    customerID = new QLabel(this, "customerID");
+    customerID->setAlignment(AlignLeft|AlignVCenter);
+
+    QLabel  *loginIDLabel = new QLabel("Login ID:", this, "loginIDLabel");
+    loginIDLabel->setAlignment(AlignRight|AlignVCenter);
+
+    loginID = new QLabel(this, "loginID");
+    loginID->setAlignment(AlignLeft|AlignVCenter);
 	
+    QLabel  *customerNameLabel = new QLabel("Customer Name:", this, "customerNameLabel");
+    customerNameLabel->setAlignment(AlignRight|AlignVCenter);
+
+    customerName = new QLabel(this, "customerName");
+    customerName->setAlignment(AlignLeft|AlignVCenter);
+
+    QLabel  *domainNameLabel = new QLabel("Domain Name:", this, "domainNameLabel");
+    domainNameLabel->setAlignment(AlignRight|AlignVCenter);
+
+    domainName = new QLabel(this, "domainName");
+    domainName->setAlignment(AlignLeft|AlignVCenter);
+
+    hostmasterSubmit = new QCheckBox("Request submitted to Hostmaster", this, "hostmasterSubmit");
+    hostmastDate = new QLabel(this, "hostmastDate");
+    hostmastDate->setAlignment(AlignRight|AlignVCenter);
+
+    internicSubmit = new QCheckBox("Request submitted to InterNIC", this, "internicSubmit");
+    nicReqDate = new QLabel(this, "nicReqDate");
+    nicReqDate->setAlignment(AlignRight|AlignVCenter);
+
+    dnsDone = new QCheckBox("DNS records created/updated", this, "dnsDone");
+    dnsDate = new QLabel(this, "dnsDate");
+    dnsDate->setAlignment(AlignRight|AlignVCenter);
+
+    mailDone = new QCheckBox("Mail system updated", this, "mailDone");
+    mailDate = new QLabel(this, "mailDate");
+    mailDate->setAlignment(AlignRight|AlignVCenter);
+
+    vserverDone = new QCheckBox("Virtual server setup completed", this, "vserverDone");
+    vserverDate = new QLabel(this, "vserverDate");
+    vserverDate->setAlignment(AlignRight|AlignVCenter);
+
+    QLabel *serverListLabel = new QLabel("Server:", this, "serverListLabel");
+    serverListLabel->setAlignment(AlignRight|AlignVCenter);
+
+    serverList = new QComboBox(true, this, "serverList");
+
+    QLabel *processListLabel = new QLabel("Process:", this, "processListLabel");
+    processListLabel->setAlignment(AlignRight|AlignVCenter);
+
+    processList = new QComboBox(true, this, "processList");
+
+    QLabel *ipAddressLabel = new QLabel("IP Address:", this, "ipAddressLabel");
+    ipAddressLabel->setAlignment(AlignRight|AlignVCenter);
+
+    ipAddress = new QLineEdit(this, "ipAddress");
+    ipAddress->setMaxLength(16);
+
+    internicDone = new QCheckBox("InterNIC request completed", this, "internicDone");
+    nicDoneDate = new QLabel(this, "nicDoneDate");
+    nicDoneDate->setAlignment(AlignRight|AlignVCenter);
+
+    QLabel *nicAdminIDLabel = new QLabel("NIC Admin ID:", this, "nicAdminIDLabel");
+    nicAdminIDLabel->setAlignment(AlignRight|AlignVCenter);
+    nicAdminID = new QLineEdit(this, "nicAdminID");
+    nicAdminID->setMaxLength(16);
+
+    QLabel *nicBillIDLabel = new QLabel("NIC Billing ID:", this, "nicBillIDLabel");
+    nicBillIDLabel->setAlignment(AlignRight|AlignVCenter);
+    nicBillID = new QLineEdit(this, "nicBillID");
+    nicBillID->setMaxLength(16);
+
+
+    domainDone = new QCheckBox("Domain released", this, "domainDone");
+    doneDate = new QLabel(this, "domainDate");
+    doneDate->setAlignment(AlignRight|AlignVCenter);
+
+    // Finally, our buttons.
+    QPushButton *updateButton = new QPushButton("&Update", this, "updateButton");
+    connect(updateButton, SIGNAL(clicked()), this, SLOT(updateClicked()));
+
+    QPushButton *saveButton = new QPushButton("&Save", this, "saveButton");
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveClicked()));
+
+    QPushButton *cancelButton = new QPushButton("&Cancel", this, "cancelButton");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
+
+    // And now for the layout.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 5);
+
+    // Our info grid.
+    QGridLayout *igrid = new QGridLayout(3, 4, 3);
+    int curRow = 0;
+    igrid->addWidget(customerIDLabel,   curRow, 0);
+    igrid->addWidget(customerID,        curRow, 1);
+    igrid->addWidget(loginIDLabel,      curRow, 2);
+    igrid->addWidget(loginID,           curRow, 3);
+    igrid->setRowStretch(curRow, 0);
+
+    curRow++;
+    igrid->addWidget(customerNameLabel,     curRow, 0);
+    igrid->addMultiCellWidget(customerName, curRow, curRow, 1, 3);
+    igrid->setRowStretch(curRow, 0);
+
+    curRow++;
+    igrid->addWidget(domainNameLabel,       curRow, 0);
+    igrid->addMultiCellWidget(domainName,   curRow, curRow, 1, 3);
+    igrid->setRowStretch(curRow, 0);
+
+    igrid->setColStretch(0, 0);
+    igrid->setColStretch(1, 1);
+    igrid->setColStretch(2, 0);
+    igrid->setColStretch(3, 0);
+
+    ml->addLayout(igrid, 0);
+    ml->addWidget(new HorizLine(this), 0);
+
+    QGridLayout *gl = new QGridLayout(12, 3, 3);
+
+    curRow = 0;
+    gl->addMultiCellWidget(hostmasterSubmit,    curRow, curRow, 0, 1);
+    gl->addWidget(hostmastDate,                 curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(internicSubmit,      curRow, curRow, 0, 1);
+    gl->addWidget(nicReqDate,                   curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(dnsDone,             curRow, curRow, 0, 1);
+    gl->addWidget(dnsDate,                      curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(mailDone,            curRow, curRow, 0, 1);
+    gl->addWidget(mailDate,                     curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(vserverDone,         curRow, curRow, 0, 1);
+    gl->addWidget(vserverDate,                  curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(serverListLabel,              curRow, 0);
+    gl->addMultiCellWidget(serverList,          curRow, curRow, 1, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(processListLabel,             curRow, 0);
+    gl->addMultiCellWidget(processList,         curRow, curRow, 1, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(ipAddressLabel,               curRow, 0);
+    gl->addMultiCellWidget(ipAddress,           curRow, curRow, 1, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(internicDone,        curRow, curRow, 0, 1);
+    gl->addWidget(nicDoneDate,                  curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(nicAdminIDLabel,              curRow, 0);
+    gl->addMultiCellWidget(nicAdminID,          curRow, curRow, 1, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(nicBillIDLabel,               curRow, 0);
+    gl->addMultiCellWidget(nicBillID,           curRow, curRow, 1, 2);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(domainDone,          curRow, curRow, 0, 1);
+    gl->addWidget(doneDate,                     curRow, 2);
+    gl->setRowStretch(curRow, 0);
+
+    gl->setColStretch(0, 0);
+    gl->setColStretch(1, 1);
+    gl->setColStretch(2, 0);
+
+    ml->addLayout(gl, 0);
+    ml->addStretch(1);
+    ml->addWidget(new HorizLine(this), 0);
+
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(updateButton, 0);
+    bl->addWidget(saveButton, 0);
+    bl->addWidget(cancelButton, 0);
+    ml->addLayout(bl, 0);
+
+
+
 	refreshCheckList();
 }
 
@@ -66,6 +249,7 @@ void DomainChecklist::refreshCheckList(void)
     
     DDB.get(myDomainID);
     
+    myCustID = DDB.getLong("CustomerID");
     customerID->setText(DDB.getStr("CustomerID"));
     loginID->setText(DDB.getStr("LoginID"));
     domainName->setText(DDB.getStr("DomainName"));
@@ -220,6 +404,7 @@ void DomainChecklist::saveChecklist()
     DDB.setValue("SubServer", processList->text(processList->currentItem()));
 
     DDB.upd();
+    emit(customerUpdated(myCustID));
 }
 
 /*
@@ -253,4 +438,7 @@ void DomainChecklist::updateClicked()
     saveChecklist();
     refreshCheckList();
 }
+
+
+// vim: expandtab
 

@@ -42,7 +42,6 @@ SOURCES =	Report.cpp\
 		CityReport.cpp\
 		CityDetailReport.cpp\
 		CityFilters.cpp\
-		CustCallLogReport.cpp\
 		UnreleasedDomainsReport.cpp\
 		AllDomainsReport.cpp\
 		DNS_ManagedReport.cpp\
@@ -76,7 +75,6 @@ SRCMETA =	moc_Report.cpp\
 		moc_CityReport.cpp\
 		moc_CityDetailReport.cpp\
 		moc_CityFilters.cpp\
-		moc_CustCallLogReport.cpp\
 		moc_UnreleasedDomainsReport.cpp\
 		moc_AllDomainsReport.cpp\
 		moc_DNS_ManagedReport.cpp\
@@ -101,6 +99,7 @@ OBJMETA =	$(SRCMETA:.cpp=.o)
 .SUFFIXES: .cpp
 
 .cpp.o:
+	echo Compiling  $<
 	$(CC) -c $(CFLAGS) -I$(INCDIR) $<
 
 ####### Build rules
@@ -178,9 +177,6 @@ moc_CityDetailReport.cpp: CityDetailReport.h
 
 moc_CityFilters.cpp: CityFilters.h
 	$(MOC) CityFilters.h -o moc_CityFilters.cpp
-
-moc_CustCallLogReport.cpp: CustCallLogReport.h
-	$(MOC) CustCallLogReport.h -o moc_CustCallLogReport.cpp
 
 moc_UnreleasedDomainsReport.cpp: UnreleasedDomainsReport.h
 	$(MOC) UnreleasedDomainsReport.h -o moc_UnreleasedDomainsReport.cpp

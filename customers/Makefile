@@ -44,27 +44,19 @@ SOURCES =	Customers.cpp NewCustomer.cpp\
 		Tab_Domains.cpp\
 		DomainAliases.cpp\
 		Tab_Notes.cpp\
-		Tab_Accounts.cpp Tab_AccountsData.cpp\
 		LoginEdit.cpp\
 		NoteEdit.cpp\
 		CCEntry.cpp\
 		CCRefund.cpp\
 		ChangePassword.cpp\
 		DomainAdd.cpp\
-		DomainEdit.cpp DomainEditData.cpp\
-		DomainChecklist.cpp DomainChecklistData.cpp\
-		ChangeRatePlan.cpp ChangeRatePlanData.cpp\
+		DomainChecklist.cpp\
+		ChangeRatePlan.cpp\
 		ChangeBillingCycle.cpp\
-		StatementView.cpp StatementViewData.cpp\
-		TransferLogin.cpp TransferLoginData.cpp\
-		ExtendGraceDate.cpp ExtendGraceDateData.cpp\
-		LogCall.cpp\
-		CustCallDetail.cpp CustCallDetailData.cpp\
-		CustomerPicker.cpp CustomerPickerData.cpp\
-		NewCustWizard.cpp NewCustWizardData.cpp\
-		NCWContact.cpp NCWContactData.cpp\
-		NCWAccount.cpp NCWAccountData.cpp\
-		NCWBilling.cpp NCWBillingData.cpp
+		StatementView.cpp\
+		TransferLogin.cpp\
+		ExtendGraceDate.cpp\
+		LogCall.cpp
 
 ifdef EXPERIMENTAL
 	SOURCES	+= Tab_VoIP.cpp
@@ -87,27 +79,19 @@ HEADERS =	Customers.h NewCustomer.h\
 		Tab_Domains.h\
 		DomainAliases.h\
 		Tab_Notes.h\
-		Tab_Accounts.h Tab_AccountsData.h\
 		LoginEdit.h\
 		NoteEdit.h\
 		CCEntry.h\
 		CCRefund.h\
 		ChangePassword.h\
 		DomainAdd.h\
-		DomainEdit.h DomainEditData.h\
-		DomainChecklist.h DomainChecklistData.h\
-		ChangeRatePlan.h ChangeRatePlanData.h\
+		DomainChecklist.h\
+		ChangeRatePlan.h\
 		ChangeBillingCycle.h\
-		StatementView.h StatementViewData.h\
-		TransferLogin.h TransferLoginData.h\
-		ExtendGraceDate.h ExtendGraceDateData.h\
-		LogCall.h\
-		CustCallDetail.h CustCallDetailData.h\
-		CustomerPicker.h CustomerPickerData.h\
-		NewCustWizard.h NewCustWizardData.h\
-		NCWContact.h NCWContactData.h\
-		NCWAccount.h NCWAccountData.h\
-		NCWBilling.h NCWBillingData.h
+		StatementView.h\
+		TransferLogin.h\
+		ExtendGraceDate.h\
+		LogCall.h
 
 ifdef EXPERIMENTAL
 	HEADERS	+= Tab_VoIP.h
@@ -130,27 +114,19 @@ SRCMETA =	moc_Customers.cpp \
 		moc_Tab_Domains.cpp\
 		moc_DomainAliases.cpp\
 		moc_Tab_Notes.cpp\
-		moc_Tab_Accounts.cpp moc_Tab_AccountsData.cpp\
 		moc_LoginEdit.cpp\
 		moc_NoteEdit.cpp\
 		moc_CCEntry.cpp\
 		moc_CCRefund.cpp\
 		moc_ChangePassword.cpp\
 		moc_DomainAdd.cpp\
-		moc_DomainEdit.cpp moc_DomainEditData.cpp\
-		moc_DomainChecklist.cpp moc_DomainChecklistData.cpp\
-		moc_ChangeRatePlan.cpp moc_ChangeRatePlanData.cpp\
+		moc_DomainChecklist.cpp\
+		moc_ChangeRatePlan.cpp\
 		moc_ChangeBillingCycle.cpp\
-		moc_StatementView.cpp moc_StatementViewData.cpp\
-		moc_TransferLogin.cpp moc_TransferLoginData.cpp\
-		moc_ExtendGraceDate.cpp moc_ExtendGraceDateData.cpp\
-		moc_LogCall.cpp\
-		moc_CustCallDetail.cpp moc_CustCallDetailData.cpp\
-		moc_CustomerPicker.cpp moc_CustomerPickerData.cpp\
-		moc_NewCustWizard.cpp moc_NewCustWizardData.cpp\
-		moc_NCWContact.cpp moc_NCWContactData.cpp\
-		moc_NCWAccount.cpp moc_NCWAccountData.cpp\
-		moc_NCWBilling.cpp moc_NCWBillingData.cpp
+		moc_StatementView.cpp\
+		moc_TransferLogin.cpp\
+		moc_ExtendGraceDate.cpp\
+		moc_LogCall.cpp
 
 ifdef EXPERIMENTAL
 	SRCMETA	+= moc_Tab_VoIP.cpp
@@ -165,6 +141,7 @@ TARGET	=	../lib/libcustomers.a
 .SUFFIXES: .cpp
 
 .cpp.o:
+	echo Compiling  $<
 	$(CC) -c $(CFLAGS) -I$(INCDIR) $<
 
 ####### Build rules
@@ -174,7 +151,7 @@ all: $(SRCMETA) $(OBJMETA) cust-lib
 cust-lib: $(OBJECTS)
 	ar r $(TARGET) $(OBJECTS) $(OBJMETA)
 	ranlib $(TARGET)
-	rm -f ../bin/admin ../bin/sam ../bin/taa
+	rm -f ../bin/tacc
 
 $(SUBDIRS): FORCE
 	cd $@; $(MAKE)
@@ -247,12 +224,6 @@ moc_Tab_Notes.cpp: Tab_Notes.h
 moc_Tab_VoIP.cpp: Tab_VoIP.h
 	$(MOC) Tab_VoIP.h -o moc_Tab_VoIP.cpp
 
-moc_Tab_Accounts.cpp: Tab_Accounts.h
-	$(MOC) Tab_Accounts.h -o moc_Tab_Accounts.cpp
-
-moc_Tab_AccountsData.cpp: Tab_AccountsData.h
-	$(MOC) Tab_AccountsData.h -o moc_Tab_AccountsData.cpp
-
 moc_LoginEdit.cpp: LoginEdit.h
 	$(MOC) LoginEdit.h -o moc_LoginEdit.cpp
 
@@ -271,23 +242,11 @@ moc_ChangePassword.cpp: ChangePassword.h
 moc_DomainAdd.cpp: DomainAdd.h
 	$(MOC) DomainAdd.h -o moc_DomainAdd.cpp
 
-moc_DomainEdit.cpp: DomainEdit.h
-	$(MOC) DomainEdit.h -o moc_DomainEdit.cpp
-
-moc_DomainEditData.cpp: DomainEditData.h
-	$(MOC) DomainEditData.h -o moc_DomainEditData.cpp
-
 moc_DomainChecklist.cpp: DomainChecklist.h
 	$(MOC) DomainChecklist.h -o moc_DomainChecklist.cpp
 
-moc_DomainChecklistData.cpp: DomainChecklistData.h
-	$(MOC) DomainChecklistData.h -o moc_DomainChecklistData.cpp
-
 moc_ChangeRatePlan.cpp: ChangeRatePlan.h
 	$(MOC) ChangeRatePlan.h -o moc_ChangeRatePlan.cpp
-
-moc_ChangeRatePlanData.cpp: ChangeRatePlanData.h
-	$(MOC) ChangeRatePlanData.h -o moc_ChangeRatePlanData.cpp
 
 moc_ChangeBillingCycle.cpp: ChangeBillingCycle.h
 	$(MOC) ChangeBillingCycle.h -o moc_ChangeBillingCycle.cpp
@@ -295,29 +254,14 @@ moc_ChangeBillingCycle.cpp: ChangeBillingCycle.h
 moc_StatementView.cpp: StatementView.h
 	$(MOC) StatementView.h -o moc_StatementView.cpp
 
-moc_StatementViewData.cpp: StatementViewData.h
-	$(MOC) StatementViewData.h -o moc_StatementViewData.cpp
-
 moc_TransferLogin.cpp: TransferLogin.h
 	$(MOC) TransferLogin.h -o moc_TransferLogin.cpp
-
-moc_TransferLoginData.cpp: TransferLoginData.h
-	$(MOC) TransferLoginData.h -o moc_TransferLoginData.cpp
 
 moc_ExtendGraceDate.cpp: ExtendGraceDate.h
 	$(MOC) ExtendGraceDate.h -o moc_ExtendGraceDate.cpp
 
-moc_ExtendGraceDateData.cpp: ExtendGraceDateData.h
-	$(MOC) ExtendGraceDateData.h -o moc_ExtendGraceDateData.cpp
-
 moc_LogCall.cpp: LogCall.h
 	$(MOC) LogCall.h -o moc_LogCall.cpp
-
-moc_CustCallDetail.cpp: CustCallDetail.h
-	$(MOC) CustCallDetail.h -o moc_CustCallDetail.cpp
-
-moc_CustCallDetailData.cpp: CustCallDetailData.h
-	$(MOC) CustCallDetailData.h -o moc_CustCallDetailData.cpp
 
 moc_CustomerPicker.cpp: CustomerPicker.h
 	$(MOC) CustomerPicker.h -o moc_CustomerPicker.cpp
@@ -325,29 +269,6 @@ moc_CustomerPicker.cpp: CustomerPicker.h
 moc_CustomerPickerData.cpp: CustomerPickerData.h
 	$(MOC) CustomerPickerData.h -o moc_CustomerPickerData.cpp
 
-moc_NewCustWizard.cpp: NewCustWizard.h
-	$(MOC) NewCustWizard.h -o moc_NewCustWizard.cpp
-
-moc_NewCustWizardData.cpp: NewCustWizardData.h
-	$(MOC) NewCustWizardData.h -o moc_NewCustWizardData.cpp
-
-moc_NCWContact.cpp: NCWContact.h
-	$(MOC) NCWContact.h -o moc_NCWContact.cpp
-
-moc_NCWContactData.cpp: NCWContactData.h
-	$(MOC) NCWContactData.h -o moc_NCWContactData.cpp
-
-moc_NCWAccount.cpp: NCWAccount.h
-	$(MOC) NCWAccount.h -o moc_NCWAccount.cpp
-
-moc_NCWAccountData.cpp: NCWAccountData.h
-	$(MOC) NCWAccountData.h -o moc_NCWAccountData.cpp
-
-moc_NCWBilling.cpp: NCWBilling.h
-	$(MOC) NCWBilling.h -o moc_NCWBilling.cpp
-
-moc_NCWBillingData.cpp: NCWBillingData.h
-	$(MOC) NCWBillingData.h -o moc_NCWBillingData.cpp
 
 
 

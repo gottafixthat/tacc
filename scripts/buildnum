@@ -12,6 +12,6 @@ then
     echo "#endif" >> include/buildnum.h
     echo "const char *BUILDNUM(void)" > lib/buildnum.cpp
     echo "{ return \"Revision $BUILDNUM, built on $BUILDDATE\";}" >> lib/buildnum.cpp
-    echo "Revision $BUILDNUM, built on $BUILDDATE"
+#    echo "Revision $BUILDNUM, built on $BUILDDATE"
 fi
 

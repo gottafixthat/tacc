@@ -33,9 +33,7 @@
 #include <qlayout.h>
 
 #include <BlargDB.h>
-#include <CustCallLogReport.h>
 
-#include "CustomerPicker.h"
 #include "TAATools.h"
 
 #define TICK_INCREMENT 60
@@ -85,14 +83,6 @@ LogCall::LogCall
     solutionLabel->setAlignment(AlignRight|AlignTop);
     
     // Now, our buttons.
-    appendButton = new QPushButton(this, "appendButton");
-    appendButton->setText("&Append to call");
-    connect(appendButton, SIGNAL(clicked()), this, SLOT(addToCall()));
-    
-    viewLogButton = new QPushButton(this, "viewLogButton");
-    viewLogButton->setText("&View Log");
-    connect(viewLogButton, SIGNAL(clicked()), this, SLOT(viewCallLog()));
-
     custWinButton = new QPushButton(this, "custWinButton");
     custWinButton->setText("&Customer Window");
     connect(custWinButton, SIGNAL(clicked()), this, SLOT(loadCustomer()));
@@ -142,16 +132,12 @@ LogCall::LogCall
     ml->addLayout(gl, 1);
 
     QBoxLayout  *abl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
-    abl->addWidget(appendButton, 1);
-    abl->addWidget(viewLogButton,  1);
     abl->addWidget(custWinButton,  1);
     abl->addWidget(clockButton,  1);
     abl->addWidget(doneButton,  1);
 
     // These options don't really work very well, so lets disable them for
     // now.
-    appendButton->hide();
-    viewLogButton->hide();
 
     ml->addLayout(abl, 0);
 
@@ -421,66 +407,7 @@ void LogCall::hangupCall()
     close();
 }
 
-/*
-** viewCallLog   - If a login/customer is selected, this will bring up
-**                 their previous call history in a new window.
-*/
 
-void LogCall::viewCallLog()
-{
-    if (myCustID) {
-        char    tmpStr[1024];
-        strcpy(tmpStr, statusLabel->text());
-        statusLabel->setText("Loading call log information...");
-        CustCallLogReport   *CCLR = new CustCallLogReport();
-        CCLR->setCustID(myCustID);
-        CCLR->show();
-        statusLabel->setText(tmpStr);
-    } else {
-        statusLabel->setText("No customer ID selected.");
-    }
-}
-
-/*
-** addToCall - If a login/customer is selected, this will bring up a 
-**             new window with all of the customers previous calls to allow
-**             a single problem to be tracked.
-*/
-
-void LogCall::addToCall()
-{
-    if (myCustID) {
-	    CallPicker  *CP = new CallPicker();
-	    CP->setCustID(myCustID);
-	    CP->show();
-        connect(CP, SIGNAL(CallSelected(long)), SLOT(callLinked(long)));
-    } else {
-        statusLabel->setText("No customer ID selected.");
-    }
-}
-
-/*
-** findLogin  - Brings up a search window to find the login ID of a customer.
-*/
-
-void LogCall::findLogin()
-{
-    CustomerPicker *CP = new CustomerPicker();
-    CP->show();
-    statusLabel->setText("Not yet implemented...");
-}
-
-/*
-** callLinked - Gets connected to the CallPicker when it is activated.
-*/
-
-void LogCall::callLinked(long callID)
-{
-    myLinkedCall = callID;
-    char    tmpStr[1024];
-    sprintf(tmpStr, "Linked to call ID %ld...", callID);
-    statusLabel->setText(tmpStr);
-}
 
 /*
 ** toggleTimer - Turns off the clock.
@@ -494,36 +421,4 @@ void LogCall::toggleTimer()
 }
 
 
-
-/*
-** CallPicker - The main widget that selects a previous call.
-*/
-
-CallPicker::CallPicker
-(
-	QWidget* parent,
-	const char* name
-)
-	:
-	CustCallLogReport( parent, name )
-{
-    allowReproduction(isManager());
-    setTitle("Select the call to link to");
-}
-
-CallPicker::~CallPicker()
-{
-}
-
-
-/*
-** listItemSelected - Gets called when an item in the list is double 
-**                    clicked.
-*/
-
-void CallPicker::listItemSelected(QListViewItem *curItem)
-{
-    emit CallSelected(atol(curItem->key(7,0)));
-    close();
-}
 
