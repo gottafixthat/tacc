@@ -13,8 +13,6 @@
 #include "ModemTotalsReport.h"
 #include "BandwidthSummaryReport.h"
 #include "ARReport.h"
-#include "CustCallLogReport.h"
-#include "CustCallDetail.h"
 #include "LoginCountReport.h"
 #include "LoginsToWipeReport.h"
 #include "UnreleasedDomainsReport.h"

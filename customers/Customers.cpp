@@ -16,8 +16,15 @@
 ***************************************************************************
 */
 
+#include <stdlib.h>
+#include <stdio.h>
 
+#include <qkeycode.h>
+#include <qcursor.h>
 #include <qlayout.h>
+#include <qapplication.h>
+#include <qregexp.h>
+
 #include "Customers.h"
 #include "NewCustomer.h"
 #include <BlargDB.h>
@@ -26,15 +33,9 @@
 #include "NoteEdit.h"
 #include "LogCall.h"
 #include <Cfg.h>
-#include <qkeycode.h>
-#include <qcursor.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <qapplication.h>
 #include <DomainAliases.h>
 
-#include "NewCustWizard.h"
-#include "TAATools.h"
+#include <TAATools.h>
 
 
 Customers::Customers ( QWidget* parent, const char* name) 
@@ -323,7 +324,6 @@ Customers::Customers ( QWidget* parent, const char* name)
         optionsMenu->insertItem("Domain Aliases (Global)", this, SLOT(globalAliases()));
     }
     //optionsMenu->insertItem("Close", this, SLOT(close()), CTRL+Key_C);
-    //optionsMenu->insertItem("New Customer &Wizard", this, SLOT(newCustWizard()), CTRL+Key_W);
 
     //menu->insertItem("&Options", options);
 
@@ -819,18 +819,6 @@ void Customers::newCustomer()
 	newCust->show();
 	connect(newCust, SIGNAL(refreshCustList()), SLOT(refreshListV()));
 }
-
-/*
-** newCustWizard - Brings up the New Customer Wizard.
-*/ 
-
-void Customers::newCustWizard()
-{
-	NewCustWizard   *ncw;
-	ncw = new NewCustWizard();
-	ncw->show();
-}
-
 
 /*
 ** editCustomer - The slot for editing a customer from the list.

@@ -26,7 +26,6 @@
 #define LogCall_included
 
 #include <TAAWidget.h>
-#include <CustCallLogReport.h>
 
 #include <qdatetm.h>
 #include <qtimer.h>
@@ -62,11 +61,6 @@ protected slots:
     virtual void loginIDChanged(const QString &newLoginID);
     virtual void hangupCall();
     
-    virtual void viewCallLog();
-    virtual void addToCall();
-    
-    virtual void findLogin();
-
     virtual void toggleTimer();
 
 protected:
@@ -86,9 +80,6 @@ protected:
     QPushButton     *custWinButton;
     QLabel          *statusLabel;
     QLCDNumber      *clockArea;
-
-private slots:
-    void         callLinked(long callID);
 
 private:
 
@@ -117,39 +108,5 @@ private slots:
 };
 
 
-/*
-** CallPicker is inherited from CustCallLogReport, it overrides the
-**            listItemSelected member to allow a user to select a call
-**            to link the current call to.
-**
-**            The caller must connect to the CallIDSelected signal, which
-**            will be emitted when a call is selected, just before the
-**            window is closed.
-**
-**            When a call is double clicked, the current call is linked
-**            to the call that was selected.
-*/
-
-class CallPicker : public CustCallLogReport
-{
-    Q_OBJECT
-
-public:
-
-    CallPicker
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
-    virtual ~CallPicker();
-
-public slots:
-    virtual void listItemSelected(QListViewItem *curItem);
-
-signals:
-    void CallSelected(long);
-
-};
 
 #endif // LogCall_included

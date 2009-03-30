@@ -2,6 +2,7 @@
 ## $Id: Makefile,v 1.4 2004/08/21 15:45:01 marc Exp $
 ##
 
+.SILENT:
 VERSION     = 3
 PATCHLEVEL  = 0
 SUBLEVEL    = 0
@@ -75,6 +76,7 @@ all: $(SUBDIRS)
 
 $(SUBDIRS): FORCE
 	$(BUILDNUM)
+	echo Entering directory $@
 	cd $@; $(MAKE)
 
 $(TARGET): $(SRCMETA) $(OBJECTS) $(OBJMETA)
@@ -88,7 +90,7 @@ showfiles:
 	@echo $(SOURCES) $(HEADERS) Makefile
 
 clean:
-	set -e; for i in $(SUBDIRS); do cd $$i ; $(MAKE) clean ; cd ..; done
+	set -e; for i in $(SUBDIRS); do cd $$i ; echo make clean in $$i ; $(MAKE) clean ; cd ..; done
 	-rm -f *.o *.bak *~ *% #*
 	-rm -f $(SRCMETA) $(TARGET) include/version.h
 

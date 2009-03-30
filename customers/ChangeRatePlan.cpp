@@ -1,71 +1,100 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** FileName     - ChangeRatePlan.cpp
-**
-**                Allows the user to change a customers rate plan.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ChangeRatePlan.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include <stdio.h>
 #include <stdlib.h>
-#include <qdatetm.h>
-#include <qapp.h>
+
+#include <qdatetime.h>
+#include <qapplication.h>
 #include <qcursor.h>
-#include "ChangeRatePlan.h"
-#include "BlargDB.h"
-#include "BString.h"
+#include <qlayout.h>
+
+#include <BlargDB.h>
+#include <BString.h>
 #include <TAATools.h>
 
-#define Inherited ChangeRatePlanData
+#include "ChangeRatePlan.h"
 
-ChangeRatePlan::ChangeRatePlan
-(
-	QWidget* parent,
-	const char* name,
-	long CustID
-)
-	:
-	Inherited( parent, name )
+ChangeRatePlan::ChangeRatePlan(QWidget* parent, const char* name, long CustID) :
+	TAAWidget( parent, name )
 {
 	setCaption( "Edit Customer Rate Plan" );
 	
 	if (!CustID) return;
-	
 	myCustID    = CustID;
-	
+
+    // Create our widgets
+    QLabel *customerLabel = new QLabel("Customer:", this, "customerLabel");
+    customerLabel->setAlignment(AlignRight|AlignVCenter);
+
+    customer = new QLabel(this, "customer");
+    customer->setAlignment(AlignLeft|AlignVCenter);
+
+    QLabel *ratePlanLabel = new QLabel("Customer:", this, "ratePlanLabel");
+    ratePlanLabel->setAlignment(AlignRight|AlignVCenter);
+
+    ratePlanList = new QComboBox(false, this, "ratePlanList");
+
+    QLabel *effectiveDateLabel = new QLabel("Effective Date:", this, "effectiveDateLabel");
+    effectiveDateLabel->setAlignment(AlignRight|AlignVCenter);
+
+    effectiveDate = new QDateEdit(QDate::currentDate(), this, "effectiveDate");
+
+    QPushButton *saveButton = new QPushButton("&Save", this, "saveButton");
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveRatePlanChange()));
+
+    QPushButton *cancelButton = new QPushButton("&Cancel", this, "cancelButton");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelRatePlanChange()));
+
+    // Our layout.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+
+    QGridLayout *gl = new QGridLayout(2, 3);
+    int curRow = 0;
+    gl->addWidget(customerLabel,        curRow, 0);
+    gl->addWidget(customer,             curRow, 1);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(ratePlanLabel,        curRow, 0);
+    gl->addWidget(ratePlanList,         curRow, 1);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(effectiveDateLabel,   curRow, 0);
+    gl->addWidget(effectiveDate,        curRow, 1);
+    gl->setRowStretch(curRow, 0);
+
+    gl->setColStretch(0, 0);
+    gl->setColStretch(1, 1);
+
+    ml->addLayout(gl, 0);
+    ml->addStretch(1);
+
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(saveButton, 0);
+    bl->addWidget(cancelButton, 0);
+
+    ml->addLayout(bl, 0);
+
 	// Load the list of rate plans.
 	ADB         DB;
 	CustomersDB CDB;
 	QDate       tmpDate;
-	char        theDate[16];
-	char        tmpStr[1024];
-	
-	tmpDate = QDate::currentDate();
-	
-	QDatetomyDate(theDate, tmpDate);
+    QString     tmpStr;
 	
 	CDB.get(CustID);
 	
-	sprintf(tmpStr, "%s (%ld)", (const char *) CDB.getStr("FullName"), myCustID);
-	customerLabel->setText(tmpStr);
+    tmpStr = tmpStr.sprintf("%s (%ld)", (const char *) CDB.getStr("FullName"), myCustID);
+	customer->setText(tmpStr);
 	
 	DB.query("select PlanTag,InternalID from RatePlans order by PlanTag");
 	while (DB.getrow()) {
@@ -75,9 +104,6 @@ ChangeRatePlan::ChangeRatePlan
 	    }
 	}
 	
-	effectiveDate->setText(theDate);
-	
-    connect(this, SIGNAL(customerChanged(long)), mainWin(), SLOT(customerChanged(long)));
 }
 
 
@@ -100,11 +126,11 @@ void ChangeRatePlan::saveRatePlanChange()
     DB.query("select InternalID from RatePlans where PlanTag = '%s'", (const char *) ratePlanList->text(ratePlanList->currentItem()));
     DB.getrow();
 
-    CDB.setValue("RatePlanDate", effectiveDate->text());
+    CDB.setValue("RatePlanDate", effectiveDate->date().toString("yyyy-MM-dd").ascii());
     CDB.setValue("RatePlan", atol(DB.curRow["InternalID"]));
     CDB.upd();
     QApplication::restoreOverrideCursor();
-    emit(customerChanged(myCustID));
+    emit(customerUpdated(myCustID));
     close();
 }
 
@@ -117,5 +143,4 @@ void ChangeRatePlan::cancelRatePlanChange()
     close();
 }
 
-
-
+// vim: expandtab

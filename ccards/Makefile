@@ -42,6 +42,7 @@ TARGET	=	../lib/libccards.a
 .SUFFIXES: .cpp
 
 .cpp.o:
+	echo Compiling  $<
 	$(CC) -c $(CFLAGS) -I$(INCDIR) $<
 
 ####### Build rules

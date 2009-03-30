@@ -56,7 +56,7 @@ ChangeBillingCycle::ChangeBillingCycle(QWidget* parent, const char* name, long C
 
     cycleList = new QComboBox(false, this, "cycleList");
 
-    QLabel *effectiveDateLabel = new QLabel("Customer:", this, "effectiveDateLabel");
+    QLabel *effectiveDateLabel = new QLabel("Effective Date:", this, "effectiveDateLabel");
     effectiveDateLabel->setAlignment(AlignRight|AlignVCenter);
 
     effectiveDate = new QDateEdit(QDate::currentDate(), this, "effectiveDate");
@@ -108,7 +108,7 @@ ChangeBillingCycle::ChangeBillingCycle(QWidget* parent, const char* name, long C
 	CDB.get(CustID);
 	
 	sprintf(tmpStr, "%s (%ld)", (const char *) CDB.getStr("FullName"), myCustID);
-	customerLabel->setText(tmpStr);
+	customer->setText(tmpStr);
 	
 	DB.query("select CycleID,InternalID from BillingCycles order by CycleID");
 	while (DB.getrow()) {

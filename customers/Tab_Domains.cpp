@@ -42,7 +42,6 @@
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
-#include "DomainEdit.h"
 #include "DomainAdd.h"
 #include "DomainChecklist.h"
 #include "DomainAliases.h"

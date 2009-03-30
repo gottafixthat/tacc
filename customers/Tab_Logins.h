@@ -48,13 +48,11 @@ public:
     );
 
     virtual ~Tab_Logins();
-	void refreshLoginList(int);
+	void refreshLoginList(long);
 
-signals:
-	void refreshCust(int);
-    
+
 public slots:
-	void refreshLoginListV(int);
+	void refreshLoginListV(long);
 	virtual void setPrimaryLogin();
 	virtual void transferLogin();
 	virtual void wipeLogin();
@@ -68,6 +66,7 @@ public slots:
 	virtual void changePassword();
     virtual void loginFlagsClicked();
     virtual void diskSpaceClicked();
+    virtual void refreshCustomer(long);
 
 protected:
     QPushButton *newButton;

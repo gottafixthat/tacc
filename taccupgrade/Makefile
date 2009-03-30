@@ -36,6 +36,7 @@ TARGET	=	../bin/upgradetacc
 .SUFFIXES: .cpp
 
 .cpp.o:
+	echo Compiling  $<
 	$(CC) -c $(CFLAGS) $(INCDIRS) $<
 
 ####### Build rules

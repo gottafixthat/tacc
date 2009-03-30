@@ -28,8 +28,6 @@
 
 #include <FParse.h>
 
-#include <CustCallLogReport.h>
-#include "CustCallDetail.h"
 #include "Tab_Notes.h"
 #include "BlargDB.h"
 #include "BString.h"
@@ -155,16 +153,6 @@ Tab_Notes::Tab_Notes
     newButton = new QPushButton(this);
     newButton->setText("&New");
     connect(newButton, SIGNAL(clicked()), this, SLOT(newNote()));
-    
-    QPushButton *followUpButton = new QPushButton(this);
-    followUpButton->setText("Follo&wup");
-    followUpButton->setEnabled(false);
-    // connect(folowUpButton, SIGNAL(clicked()), this, SLOT(newNote()));
-
-    QPushButton *callLogButton = new QPushButton(this);
-    callLogButton->setText("Call Log");
-    connect(callLogButton, SIGNAL(clicked()), this, SLOT(showCallLog()));
-    callLogButton->setEnabled(false);
 
     ticketButton= new QPushButton(this);
     ticketButton->setText("Open &Ticket");
@@ -279,8 +267,6 @@ Tab_Notes::Tab_Notes
     // Now, create a box to hold our action buttons.
     QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
     abl->addWidget(newButton, 0);
-    abl->addWidget(followUpButton, 0);
-    abl->addWidget(callLogButton, 0);
     abl->addWidget(ticketButton, 0);
     abl->addWidget(printButton, 0);
     abl->addStretch(1);
@@ -648,30 +634,6 @@ void Tab_Notes::newNote()
 void Tab_Notes::hideAccountingChanged(bool)
 {
 	refreshNotesList(1);
-}
-
-/*
-** showCallLog - Displays the customer's call log.
-*/
-
-void Tab_Notes::showCallLog()
-{
-    CustCallLogReport   *CCLR = new CustCallLogReport();
-    CCLR->setCustID(myCustID);
-    CCLR->setUserButton("&Browse");
-    connect(CCLR, SIGNAL(userButtonClicked()), this, SLOT(openCallLogBrowser()));
-    CCLR->show();
-}
-
-/*
-** openCallLogBrowser - Opens the call log browser for the current customer.
-*/
-
-void Tab_Notes::openCallLogBrowser()
-{
-    CustCallDetail  *CCD = new CustCallDetail();
-    CCD->setCustID(myCustID);
-    CCD->show();
 }
 
 
