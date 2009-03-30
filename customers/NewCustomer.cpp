@@ -1,58 +1,222 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** NewCustomer - 
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: NewCustomer.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "NewCustomer.h"
-#include "BlargDB.h"
-#include "BString.h"
-#include "EditCustomer.h"
-#include "LoginEdit.h"
-#include <CustomerContactsDB.h>
-#include <Cfg.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <qstring.h>
-#include <qstrlist.h>
-#include <qapp.h>
-#include <qcursor.h>
-#include <qdatetm.h>
 #include <time.h>
 #include <sys/timeb.h>
+
+#include <qmessagebox.h>
+#include <qstring.h>
+#include <qstrlist.h>
+#include <qapplication.h>
+#include <qcursor.h>
+#include <qdatetime.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qgroupbox.h>
+
+#include <BlargDB.h>
+#include <BString.h>
+#include <EditCustomer.h>
+#include <LoginEdit.h>
+#include <CustomerContactsDB.h>
+#include <Cfg.h>
 #include <ADB.h>
 #include <TAATools.h>
-#include <qmessagebox.h>
 
+#include "NewCustomer.h"
 
-#define Inherited NewCustomerData
-
-NewCustomer::NewCustomer
-(
-	QWidget* parent,
-	const char* name
-)
-	:
-	Inherited( parent, name )
+NewCustomer::NewCustomer(QWidget* parent, const char* name) :
+	TAAWidget( parent, name )
 {
+
+    // Create the widgets
+    QLabel *fullNameLabel = new QLabel("Name:", this);
+    fullNameLabel->setAlignment(AlignRight|AlignVCenter);
+
+    fullName = new QLineEdit(this, "fullName");
+    fullName->setMaxLength(80);
+
+    QLabel *contactNameLabel = new QLabel("Contact Name:", this);
+    contactNameLabel->setAlignment(AlignRight|AlignVCenter);
+
+    contactName = new QLineEdit(this, "contactName");
+    contactName->setMaxLength(80);
+
+    QLabel *altContactLabel = new QLabel("Alt Contact:", this);
+    altContactLabel->setAlignment(AlignRight|AlignVCenter);
+
+    altContact = new QLineEdit(this, "altContact");
+    altContact->setMaxLength(80);
+
+    QGroupBox *addrGrp = new QGroupBox(2, Horizontal, "Address", this, "addrGrp");
+    addrGrp->setInsideSpacing(1);
+    QLabel *address1Label = new QLabel("Address Line 1:", addrGrp);
+    address1Label->setAlignment(AlignRight|AlignVCenter);
+    address1 = new QLineEdit(addrGrp, "address1");
+    address1->setMaxLength(80);
+
+    QLabel *address2Label = new QLabel("Address Line 2:", addrGrp);
+    address2Label->setAlignment(AlignRight|AlignVCenter);
+    address2 = new QLineEdit(addrGrp, "address2");
+    address2->setMaxLength(80);
+
+    QLabel *cityStateZIPLabel = new QLabel("City, State ZIP", addrGrp);
+    cityStateZIPLabel->setAlignment(AlignRight|AlignVCenter);
+
+    // Now, create a widget to hold the city, state and zip
+    TAAWidget *cszWidget = new TAAWidget(addrGrp, "cszWidget");
+    city = new QLineEdit(cszWidget, "city");
+    city->setMaxLength(80);
+
+    state = new QLineEdit(cszWidget, "state");
+    state->setMaxLength(80);
+    QSize tmpSize = state->minimumSizeHint();
+    int charWidth = tmpSize.width();
+    state->setMinimumWidth(2 * charWidth);
+    state->setMaximumWidth(2 * charWidth);
+
+    zip = new QLineEdit(cszWidget, "zip");
+    zip->setMaxLength(16);
+    tmpSize = zip->minimumSizeHint();
+    charWidth = tmpSize.width();
+    zip->setMinimumWidth(3 * charWidth);
+    zip->setMaximumWidth(3 * charWidth);
+
+    // A layout for the city, state, zip widget
+    QBoxLayout *cszLayout = new QBoxLayout(cszWidget, QBoxLayout::LeftToRight);
+    cszLayout->addWidget(city, 1);
+    cszLayout->addWidget(state, 0);
+    cszLayout->addWidget(zip, 0);
+
+    QLabel *countryLabel = new QLabel("Country:", addrGrp);
+    countryLabel->setAlignment(AlignRight|AlignVCenter);
+
+    country = new QLineEdit(addrGrp, "country");
+    country->setMaxLength(80);
+
+    // Phone number group box.
+    QGroupBox *phoneGrp = new QGroupBox(2, Horizontal, "Phone Numbers", this, "phoneGrp");
+    phoneGrp->setInsideSpacing(1);
+    QLabel *dayPhoneLabel = new QLabel("Daytime:", phoneGrp);
+    dayPhoneLabel->setAlignment(AlignRight|AlignVCenter);
+    dayPhone = new QLineEdit(phoneGrp, "dayPhone");
+    dayPhone->setMaxLength(32);
+
+    QLabel *evePhoneLabel = new QLabel("Evening:", phoneGrp);
+    evePhoneLabel->setAlignment(AlignRight|AlignVCenter);
+    evePhone = new QLineEdit(phoneGrp, "evePhone");
+    evePhone->setMaxLength(32);
+
+    QLabel *faxPhoneLabel = new QLabel("Fax:", phoneGrp);
+    faxPhoneLabel->setAlignment(AlignRight|AlignVCenter);
+    faxPhone = new QLineEdit(phoneGrp, "faxPhone");
+    faxPhone->setMaxLength(32);
+
+    QLabel *altPhoneLabel = new QLabel("Other:", phoneGrp);
+    altPhoneLabel->setAlignment(AlignRight|AlignVCenter);
+    altPhone = new QLineEdit(phoneGrp, "altPhone");
+    altPhone->setMaxLength(32);
+
+    // Billing info, we'll use our own layout for this one.
+    QGroupBox *billGrp = new QGroupBox(1, Horizontal, "Billing Information", this, "billGrp");
+    TAAWidget *billWidget = new TAAWidget(billGrp, "billWidget");
+
+    QLabel *ratePlanLabel = new QLabel("Rate Plan:", billWidget);
+    ratePlanLabel->setAlignment(AlignRight|AlignVCenter);
+    ratePlan = new QComboBox(false, billWidget, "ratePlan");
+
+    QLabel *packageLabel = new QLabel("Package:", billWidget);
+    packageLabel->setAlignment(AlignRight|AlignVCenter);
+    package = new QComboBox(false, billWidget, "package");
+
+    QLabel *statementTypeLabel = new QLabel("Statement Type:", billWidget);
+    statementTypeLabel->setAlignment(AlignRight|AlignVCenter);
+    statementType = new QComboBox(false, billWidget, "statementType");
+    statementType->insertItem("Email Only");
+    statementType->insertItem("Email & Printed - Charge");
+    statementType->insertItem("Email & Printed - Free");
+
+    QLabel *referredByLabel = new QLabel("Marketing Info:", billWidget);
+    referredByLabel->setAlignment(AlignRight|AlignVCenter);
+    referredBy = new QComboBox(true, billWidget, "referredBy");
+
+    QGridLayout *billGrid = new QGridLayout(billWidget, 2, 4);
+    int curRow = 0;
+    billGrid->addWidget(ratePlanLabel, curRow, 0);
+    billGrid->addWidget(ratePlan, curRow, 1);
+    billGrid->addWidget(statementTypeLabel, curRow, 2);
+    billGrid->addWidget(statementType, curRow, 3);
+    billGrid->setRowStretch(curRow, 0);
+
+    curRow++;
+    billGrid->addWidget(packageLabel, curRow, 0);
+    billGrid->addWidget(package, curRow, 1);
+    billGrid->addWidget(referredByLabel, curRow, 2);
+    billGrid->addWidget(referredBy, curRow, 3);
+    billGrid->setRowStretch(curRow, 0);
+    billGrid->setColStretch(0, 0);
+    billGrid->setColStretch(1, 1);
+    billGrid->setColStretch(2, 0);
+    billGrid->setColStretch(3, 1);
+
+    // Now the "Misc" box.  Same as billing info box/grid
+    QGroupBox *miscGrp = new QGroupBox(1, Horizontal, "Initial Notes", this, "miscGrp");
+    initialNotes = new QMultiLineEdit(miscGrp, "initialNotes");
+
+    // Finally, our buttons.
+    QPushButton *addButton = new QPushButton("&Add", this, "addButton");
+    connect(addButton, SIGNAL(clicked()), this, SLOT(addCustomer()));
+
+    QPushButton *cancelButton = new QPushButton("&Cancel", this, "cancelButton");
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
+
+    // Create our layout now.
+    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    QGridLayout *gl = new QGridLayout(5, 4, 3);
+    curRow = 0;
+    gl->addWidget(fullNameLabel, curRow, 0);
+    gl->addWidget(fullName, curRow, 1);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addWidget(contactNameLabel, curRow, 0);
+    gl->addWidget(contactName, curRow, 1);
+    gl->addWidget(altContactLabel, curRow, 2);
+    gl->addWidget(altContact, curRow, 3);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(addrGrp, curRow, curRow, 0, 1);
+    gl->addMultiCellWidget(phoneGrp, curRow, curRow, 2, 3);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(billGrp, curRow, curRow, 0, 3);
+    gl->setRowStretch(curRow, 0);
+
+    curRow++;
+    gl->addMultiCellWidget(miscGrp, curRow, curRow, 0, 3);
+    gl->setRowStretch(curRow, 1);
+
+    ml->addLayout(gl, 1);
+
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl->addStretch(1);
+    bl->addWidget(addButton, 0);
+    bl->addWidget(cancelButton, 0);
+
+    ml->addLayout(bl, 0);
+
 	ADB     DB;
 	QDate   todaysDate;
 	QDate   packageDate;
@@ -92,7 +256,7 @@ NewCustomer::NewCustomer
 	}
 	
 	// doneButton->setFocus();
-	doneButton->setDefault(TRUE);
+	//doneButton->setDefault(TRUE);
 	fullName->setFocus();
 
 	QApplication::restoreOverrideCursor();
@@ -502,7 +666,7 @@ void NewCustomer::addCustomer()
 	emit(refreshCustList());
 		
 	// Close this window, we are done...
-	done(0);
+	close();
 }
 
 
@@ -561,3 +725,6 @@ int NewCustomer::checkPhone(char * phone)
 	return(0);
 	
 }
+
+// vim: expandtab
+

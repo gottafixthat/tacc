@@ -30,7 +30,6 @@ endif
 SUBDIRS =	
 
 SOURCES =	Customers.cpp NewCustomer.cpp\
-		NewCustomerData.cpp\
 		EditCustomer.cpp\
 		ReceivePayment.cpp\
 		CustChargeEdit.cpp\
@@ -65,7 +64,6 @@ endif
 
 
 HEADERS =	Customers.h NewCustomer.h\
-		NewCustomerData.h\
 		CustRegister.h\
 		EditCustomer.h\
 		ReceivePayment.h\
@@ -100,7 +98,7 @@ endif
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_Customers.cpp \
-		moc_NewCustomer.cpp moc_NewCustomerData.cpp \
+		moc_NewCustomer.cpp\
 		moc_CustRegister.cpp\
 		moc_EditCustomer.cpp\
 		moc_ReceivePayment.cpp\
@@ -178,9 +176,6 @@ moc_Customers.cpp: Customers.h
 
 moc_NewCustomer.cpp: NewCustomer.h
 	$(MOC) NewCustomer.h -o moc_NewCustomer.cpp
-
-moc_NewCustomerData.cpp: NewCustomerData.h
-	$(MOC) NewCustomerData.h -o moc_NewCustomerData.cpp
 
 moc_CustRegister.cpp: CustRegister.h
 	$(MOC) CustRegister.h -o moc_CustRegister.cpp
