@@ -1,38 +1,14 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CCMonetra - Runs a credit card batch through the Monetra Payment
-**             processing gateway.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2003, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CCMonetra.cpp,v $
-** Revision 1.5  2004/01/22 01:09:43  marc
-** Updated to use the TRANSTYPE_CCPAYMENT account
-**
-** Revision 1.4  2004/01/13 01:15:35  marc
-** Added CV Processing if available.
-**
-** Revision 1.3  2004/01/13 00:07:20  marc
-** Added AVS to the transactions
-**
-** Revision 1.2  2003/12/30 18:44:32  marc
-** Updated to use the new setProgressRT call for realtime updates.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
+
 
 
 #include "CCMonetra.h"
@@ -43,14 +19,18 @@
 #include <ctype.h>
 
 // Qt includes
-#include <qstring.h>
-#include <qmessagebox.h>
-#include <qprogressdialog.h>
-#include <qlistview.h>
-#include <qfiledialog.h>
-#include <qeventloop.h>
-#include <qregexp.h>
-#include <qlayout.h>
+#include <QtCore/QString>
+#include <QtCore/QEventLoop>
+#include <QtCore/QRegExp>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3progressdialog.h>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3filedialog.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3Frame>
 
 // Blarg includes
 #include <TAAStructures.h>
@@ -65,7 +45,7 @@
 // MCVE
 #include <mcve.h>
 
-
+using namespace Qt;
 
 CCMonetra::CCMonetra
 (
@@ -73,7 +53,7 @@ CCMonetra::CCMonetra
 	const char* name
 ) : TAAWidget ( parent, name )
 {
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(WaitCursor);
 	setCaption( "Credit Card Batch Processing (Monetra)" );
 
     QString tmpReceipts = cfgVal("GenerateCCReceipts");
@@ -88,7 +68,7 @@ CCMonetra::CCMonetra
 
     batchSize = new QLabel(this);
     batchSize->setAlignment(AlignRight|AlignVCenter);
-    batchSize->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    batchSize->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The total batch amount
     QLabel *batchAmountLabel = new QLabel(this);
@@ -97,7 +77,7 @@ CCMonetra::CCMonetra
 
     amount = new QLabel(this);
     amount->setAlignment(AlignRight|AlignVCenter);
-    amount->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    amount->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The number of approved cards
     QLabel *approvedCountLabel = new QLabel(this);
@@ -106,7 +86,7 @@ CCMonetra::CCMonetra
     
     approvedCount = new QLabel(this);
     approvedCount->setAlignment(AlignRight|AlignVCenter);
-    approvedCount->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    approvedCount->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The approved total
     QLabel *approvedTotalLabel = new QLabel(this);
@@ -115,7 +95,7 @@ CCMonetra::CCMonetra
     
     approvedTotal = new QLabel(this);
     approvedTotal->setAlignment(AlignRight|AlignVCenter);
-    approvedTotal->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    approvedTotal->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The number of declined cards
     QLabel *declinedCountLabel = new QLabel(this);
@@ -124,7 +104,7 @@ CCMonetra::CCMonetra
     
     declinedCount = new QLabel(this);
     declinedCount->setAlignment(AlignRight|AlignVCenter);
-    declinedCount->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    declinedCount->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The declined total
     QLabel *declinedTotalLabel = new QLabel(this);
@@ -133,11 +113,11 @@ CCMonetra::CCMonetra
     
     declinedTotal = new QLabel(this);
     declinedTotal->setAlignment(AlignRight|AlignVCenter);
-    declinedTotal->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    declinedTotal->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
 
     // Our list of transactions.
-    list = new QListView(this);
+    list = new Q3ListView(this);
     list->addColumn("Charge Date");
     list->addColumn("Cust ID");
     list->addColumn("Cardholder Name");
@@ -169,10 +149,10 @@ CCMonetra::CCMonetra
     // Now, create our layout, and add the widgets into it.
 
     // Our main layout first.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     
     // Now, the layout for status labels.
-    QGridLayout *stl = new QGridLayout(2, 6, 2);
+    Q3GridLayout *stl = new Q3GridLayout(2, 6, 2);
     stl->addWidget(batchSizeLabel,      0,0);
     stl->addWidget(batchSize,           0,1);
     stl->addWidget(batchAmountLabel,    1,0);
@@ -192,7 +172,7 @@ CCMonetra::CCMonetra
     ml->addWidget(list, 1);
 
     // Add the action buttons
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(startButton, 0);
     bl->addWidget(finishedButton, 0);
@@ -217,7 +197,7 @@ CCMonetra::CCMonetra
 	updateStatus();
 
     connect(list, SIGNAL(selectionChanged()), SLOT(updateStatus()));	
-    connect(list, SIGNAL(doubleClicked(QListViewItem *)), SLOT(custDoubleClicked(QListViewItem *)));
+    connect(list, SIGNAL(doubleClicked(Q3ListViewItem *)), SLOT(custDoubleClicked(Q3ListViewItem *)));
 
     QApplication::restoreOverrideCursor();
 
@@ -313,7 +293,7 @@ void CCMonetra::fillList()
 
 
         // Fill the list...
-        new QListViewItem(list, 
+        new Q3ListViewItem(list, 
           CCTDB.getStr("TransDate"),
           CCTDB.getStr("CustomerID"),
           CCTDB.getStr("Name"),
@@ -403,7 +383,7 @@ void CCMonetra::cancelPressed()
 
 void CCMonetra::finishedPressed()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     QDate           Today;
     char            theDate[16];
     //char            tmpStr[1024];
@@ -422,7 +402,7 @@ void CCMonetra::finishedPressed()
     strcpy(DeclFile, cfgVal("CCDeclinedTemplate"));
     strcpy(RcptFile, cfgVal("CCReceiptTemplate"));
     
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     //QProgressDialog progress("Saving payments and sending messages...", "Abort", dbRows, 0, "Export Credit Cards");
     //progress.show();
 
@@ -621,7 +601,7 @@ void CCMonetra::processPressed()
     int             ret_code;
     char            mcveHost[1024];
     char            tmpStr[4096];
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     long            counter = 0;
     CCTransDB       CCTDB;
     char            addrnum[1024];
@@ -672,7 +652,7 @@ void CCMonetra::processPressed()
     // If we made it to this point, we have a connection and can start
     // pumping in transactions.
     emit(setStatus("Sending cards to MCVE engine..."));
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(WaitCursor);
 
     curItem = list->firstChild();
     while (curItem != NULL) {
@@ -814,10 +794,12 @@ void CCMonetra::processPressed()
 ** custDoubleClicked  - Opens a customer window.
 */
 
-void CCMonetra::custDoubleClicked(QListViewItem *curItem)
+void CCMonetra::custDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) {
         emit(openCustomer(atol(curItem->key(1,0))));
     }
 }
 
+
+// vim: expandtab

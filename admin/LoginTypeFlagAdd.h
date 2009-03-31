@@ -27,7 +27,7 @@
 
 #include <qdialog.h>
 #include <qpushbutton.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 
 class LoginTypeFlagAdd : public QDialog
 {
@@ -46,12 +46,12 @@ public:
 
 protected:
 	int				myLoginTypeID;
-    QListBox        *flagList;
+    Q3ListBox        *flagList;
     QPushButton     *addButton;
     QPushButton     *cancelButton;
 
 protected slots:
-    void            flagDoubleClicked(QListBoxItem *);
+    void            flagDoubleClicked(Q3ListBoxItem *);
 	virtual void	addFlag();
     virtual void    cancelFlag();
 

@@ -26,7 +26,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
 
 #include <Report.h>
@@ -143,7 +143,7 @@ void LoginCountReport::refreshReport()
         parser.addColumn("SystemCount", tmpst3);
         parser.addColumn("TotalCount", tmpst4);
         */
-        (void) new QListViewItem(repBody, DB.curRow["LoginType"], DB.curRow["Description"], tmpst1, tmpst2, tmpst3, tmpst4, rowCountSt, DB.curRow["InternalID"]);
+        (void) new Q3ListViewItem(repBody, DB.curRow["LoginType"], DB.curRow["Description"], tmpst1, tmpst2, tmpst3, tmpst4, rowCountSt, DB.curRow["InternalID"]);
     }
 
     // Add the totals.
@@ -158,7 +158,7 @@ void LoginCountReport::refreshReport()
     parser.set("TotalSystem", tmpst3);
     parser.set("GrandTotal", tmpst4);
     */
-    (void) new QListViewItem(repBody, "TOTAL", "", tmpst1, tmpst2, tmpst3, tmpst4);
+    (void) new Q3ListViewItem(repBody, "TOTAL", "", tmpst1, tmpst2, tmpst3, tmpst4);
     /*
     char    fName[4096];
     strcpy(fName, cfgVal("ReportPath"));
@@ -176,7 +176,7 @@ void LoginCountReport::refreshReport()
 **                     clicked on login type.
 */
 
-void LoginCountReport::listItemSelected(QListViewItem *curItem)
+void LoginCountReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem) {
         if (atoi(curItem->key(7,0))) {

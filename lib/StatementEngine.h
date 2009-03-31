@@ -18,7 +18,7 @@
 #ifndef STATEMENTENGINE_H
 #define STATEMENTENGINE_H
 
-#include <qcstring.h>
+#include <Qt3Support/q3cstring.h>
 #include <wtpl2.h>
 
 class StatementEngine

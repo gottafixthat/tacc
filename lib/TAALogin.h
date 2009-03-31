@@ -15,12 +15,12 @@
 #ifndef TAALOGIN_H
 #define TAALOGIN_H
 
-#include <qdialog.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
-#include <qtextview.h>
+#include <QtGui/QDialog>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3textview.h>
 
 class TAALogin : public QDialog
 {
@@ -41,7 +41,7 @@ protected slots:
     void        inputChanged(const QString &);
 
 protected:
-    QTextView   *titleText;
+    Q3TextView   *titleText;
     QLineEdit   *userName;
     QLineEdit   *password;
     QPushButton *loginButton;

@@ -27,10 +27,13 @@
 #include "BlargDB.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <qkeycode.h>
+#include <qnamespace.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3PopupMenu>
 #include <ADB.h>
 
 
@@ -43,7 +46,7 @@ VendorTypes::VendorTypes
     setCaption("Vendor Types");
 
     // Create our widgets
-    list = new QListView(this, "vendorTypesList");
+    list = new Q3ListView(this, "vendorTypesList");
     list->addColumn("Vendor Type");
     
     menu = new QMenuBar(this, "menuBar");
@@ -64,13 +67,13 @@ VendorTypes::VendorTypes
 
     // Create our layout.
     // Main layout is a box from top to bottom.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Menu goes first.
     ml->addWidget(menu, 0);
 
     // Button bar
-    QBoxLayout *bb = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bb = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bb->addWidget(newButton, 0);
     bb->addWidget(editButton, 0);
     bb->addWidget(deleteButton, 0);
@@ -83,7 +86,7 @@ VendorTypes::VendorTypes
 
     // Set up the menu...
     
-    QPopupMenu * options = new QPopupMenu();
+    Q3PopupMenu * options = new Q3PopupMenu();
     CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newVendorType()), CTRL+Key_N);
     options->insertItem("Edit", this, SLOT(editVendorType()), CTRL+Key_E);
@@ -114,13 +117,13 @@ void VendorTypes::Hide()
  * @param   parentID - The parent ID to run the query on
  * @param   parent   - The QListViewItem that we should add to.
  */
-void VendorTypes::addToList(long parentID, QListViewItem *parent)
+void VendorTypes::addToList(long parentID, Q3ListViewItem *parent)
 {
     ADB     DB;
 
     DB.query("select * from VendorTypes where SubTypeOf = %ld order by VendorType", parentID);
     if (DB.rowCount) while(DB.getrow()) {
-        QListViewItem *curItem = new QListViewItem(parent, DB.curRow["VendorType"], DB.curRow["InternalID"]);
+        Q3ListViewItem *curItem = new Q3ListViewItem(parent, DB.curRow["VendorType"], DB.curRow["InternalID"]);
         if (atoi(DB.curRow["HasSubTypes"])) addToList(atoi(DB.curRow["InternalID"]), curItem);
     }
 }
@@ -138,7 +141,7 @@ void VendorTypes::refreshList(int)
     list->setRootIsDecorated(false);
     DB.query("select * from VendorTypes where SubTypeOf = 0 order by VendorType");
     if (DB.rowCount) while(DB.getrow()) {
-        QListViewItem *curItem = new QListViewItem(list, DB.curRow["VendorType"], DB.curRow["InternalID"]);
+        Q3ListViewItem *curItem = new Q3ListViewItem(list, DB.curRow["VendorType"], DB.curRow["InternalID"]);
         if (atoi(DB.curRow["HasSubTypes"])) {
             list->setRootIsDecorated(true);
             addToList(atoi(DB.curRow["InternalID"]), curItem);

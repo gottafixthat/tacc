@@ -15,6 +15,10 @@
 #include <qpushbutton.h>
 #include <qmessagebox.h>
 #include <qregexp.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 
 #include <mcve.h>
 
@@ -39,31 +43,31 @@ CCRefund::CCRefund(QWidget *parent, const char *name) :
     setCaption("Issue Credit Card Refund");
 
     QLabel *customerIDLabel = new QLabel(this, "customerIDLabel");
-    customerIDLabel->setAlignment(AlignRight|AlignVCenter);
+    customerIDLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     customerIDLabel->setText("Customer ID:");
 
     customerID = new QLabel(this, "customerID");
-    customerID->setAlignment(AlignLeft|AlignVCenter);
+    customerID->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
     QLabel *customerNameLabel = new QLabel(this, "customerNameLabel");
-    customerNameLabel->setAlignment(AlignRight|AlignVCenter);
+    customerNameLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     customerNameLabel->setText("Customer Name:");
 
     customerName = new QLabel(this, "customerName");
-    customerName->setAlignment(AlignLeft|AlignVCenter);
+    customerName->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
     QLabel *cardListLabel = new QLabel(this, "cardListLabel");
-    cardListLabel->setAlignment(AlignRight|AlignVCenter);
+    cardListLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     cardListLabel->setText("Card to refund:");
 
     cardList = new QComboBox(false, this, "cardList");
 
     QLabel *refundAmountLabel = new QLabel(this, "refundAmountLabel");
-    refundAmountLabel->setAlignment(AlignRight|AlignVCenter);
+    refundAmountLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     refundAmountLabel->setText("Refund Amount:");
 
     refundAmount = new QLineEdit(this, "refundAmount");
-    refundAmount->setAlignment(AlignRight);
+    refundAmount->setAlignment(Qt::AlignRight);
 
     processButton = new QPushButton(this, "processButton");
     processButton->setText("&Process");
@@ -73,9 +77,9 @@ CCRefund::CCRefund(QWidget *parent, const char *name) :
     cancelButton->setText("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
-    QGridLayout *gl = new QGridLayout(2, 2);
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
 
     int curRow = 0;
     gl->addWidget(customerIDLabel,      curRow, 0);
@@ -105,7 +109,7 @@ CCRefund::CCRefund(QWidget *parent, const char *name) :
     ml->addStretch(1);
 
     ml->addWidget(new HorizLine(this, "hLine"), 0);
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(processButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -148,7 +152,7 @@ void CCRefund::setCustomerID(long custID)
     // If we're visible, hide.
     hide();
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
 	CDB.get(myCustID);
     QApplication::restoreOverrideCursor();
 	if (!CDB.getFloat("CurrentBalance")) {
@@ -166,7 +170,7 @@ void CCRefund::setCustomerID(long custID)
     customerID->setText(CDB.getStr("CustomerID"));
     customerName->setText(CDB.getStr("FullName"));
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
 
     // Get the credit card list
     cards = getCreditCardList(myCustID);
@@ -248,7 +252,7 @@ void CCRefund::processRefund()
 
 
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     if (!MCVE_SetIP(&mcvec, mcveHost, atoi(cfgVal("MCVEPort")))) {
         emit(setStatus(""));
         QApplication::restoreOverrideCursor();

@@ -30,7 +30,7 @@
 #include <AgingReport.h>
 
 #include <TAAWidget.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 
 class AllReports : public TAAWidget
 {
@@ -40,7 +40,7 @@ public:
     AllReports(QWidget *parent = NULL, const char *name = NULL);
     virtual     ~AllReports();
 
-    QPopupMenu  *menu();
+    Q3PopupMenu  *menu();
 
 public slots:
     void        showLoginCountReport();
@@ -64,7 +64,7 @@ public slots:
     void        showAgingReport();
 
 private:
-    QPopupMenu  *reportMenu;
+    Q3PopupMenu  *reportMenu;
 };
 
 #endif /* ALLREPORTS_H */

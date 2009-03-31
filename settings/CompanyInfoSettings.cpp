@@ -16,6 +16,9 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 #include <TAATools.h>
 #include "Cfg.h"
 #include "CompanyInfoSettings.h"
@@ -59,9 +62,9 @@ CompanyInfoSettings::CompanyInfoSettings(QWidget *parent, const char *name) : TA
     addressLine3 = new QLineEdit(this, "addressLine3");
     addressLine3->setText(cfgVal("CompanyAddr3"));
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 1, 1);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 1, 1);
 
-    QGridLayout *gl = new QGridLayout(2,2);
+    Q3GridLayout *gl = new Q3GridLayout(2,2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     int curRow = 0;

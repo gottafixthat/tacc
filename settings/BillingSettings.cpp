@@ -14,9 +14,12 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
-#include <qfiledialog.h>
+#include <q3filedialog.h>
 #include <qfile.h>
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 #include <TAATools.h>
 #include "Cfg.h"
 #include "BillingSettings.h"
@@ -97,9 +100,9 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     if (tmpReceipt.toInt()) doCCReceipts->setChecked(true);
     else doCCReceipts->setChecked(false);
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 1, 1);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 1, 1);
 
-    QGridLayout *gl = new QGridLayout(2,2);
+    Q3GridLayout *gl = new Q3GridLayout(2,2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     int curRow = 0;
@@ -113,7 +116,7 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     gl->setRowStretch(curRow, 0);
     curRow++;
 
-    QBoxLayout *fbl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *fbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     fbl->addWidget(latexFile, 1);
     fbl->addWidget(chooseFileButton, 0);
 
@@ -122,7 +125,7 @@ BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(
     gl->setRowStretch(curRow, 0);
     curRow++;
 
-    QBoxLayout *bbl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *bbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bbl->addWidget(emailBodyFile, 1);
     bbl->addWidget(chooseBodyFileButton, 0);
 
@@ -255,7 +258,7 @@ void BillingSettings::chooseLatexFile()
 {
     QString     file;
 
-    file = QFileDialog::getOpenFileName(latexFile->text(), "LaTeX files (*.tex);;All Files (*)", this, "open file dialog", "Choose a LaTeX file");
+    file = Q3FileDialog::getOpenFileName(latexFile->text(), "LaTeX files (*.tex);;All Files (*)", this, "open file dialog", "Choose a LaTeX file");
 
     if (file.length()) {
         latexFile->setText(file);
@@ -271,7 +274,7 @@ void BillingSettings::chooseEmailBodyFile()
 {
     QString     file;
 
-    file = QFileDialog::getOpenFileName(emailBodyFile->text(), "Template files (*.tpl);;All Files (*)", this, "open file dialog", "Choose a template file");
+    file = Q3FileDialog::getOpenFileName(emailBodyFile->text(), "Template files (*.tpl);;All Files (*)", this, "open file dialog", "Choose a template file");
 
     if (file.length()) {
         emailBodyFile->setText(file);

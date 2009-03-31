@@ -16,13 +16,12 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <qapplication.h>
-#include <qlistview.h>
-#include <qdatetime.h>
-#include <qprinter.h>
-#include <qpainter.h>
-#include <qprogressdialog.h>
-#include <qheader.h>
+#include <QtGui/QApplication>
+#include <Qt3Support/q3listview.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QPrinter>
+#include <QtGui/QPainter>
+#include <Qt3Support/q3header.h>
 
 #include <Cfg.h>
 #include <QListViewPrint.h>
@@ -32,7 +31,7 @@
  *
  * Constructor.
  */
-QListViewPrint::QListViewPrint(QListView *srcList)
+QListViewPrint::QListViewPrint(Q3ListView *srcList)
 {
     myList = srcList;
     showDateLine = 0;
@@ -94,7 +93,7 @@ void QListViewPrint::print()
     QPrinter        prn(QPrinter::PrinterResolution);
     QPainter        *p;
     QBrush          bbrush;
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     int         pageNo = 1;
     int         totPages = 1;
@@ -108,7 +107,7 @@ void QListViewPrint::print()
     if (!prn.setup()) return;
     // prn.setOutputFileName("/tmp/Report.ps");
     // prn.setOutputToFile(TRUE);
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     
     p = new QPainter();
     p->begin(&prn);
@@ -168,10 +167,10 @@ void QListViewPrint::printHeader(QPainter *p)
     // Draw our Company Name header and the date at the top of the page
     p->setFont(QFont("helvetica", 10, QFont::Bold));
     rect.setCoords(prLeftMargin, 30,  399, 60);
-    p->drawText(rect, AlignLeft, cfgVal("CompanyName"));
+    p->drawText(rect, Qt::AlignLeft, cfgVal("CompanyName"));
     sprintf(tmpstr, "%s %s", (const char *) theDate.toString(), (const char *) theTime.toString());
     rect.setCoords(400, 30, prLeftMargin+540, 60);
-    p->drawText(rect, AlignRight, tmpstr);
+    p->drawText(rect, Qt::AlignRight, tmpstr);
     
     // Now, draw the report title, centered on the page.
     // If we have a date range for the report, shrink down the title by 12
@@ -180,14 +179,14 @@ void QListViewPrint::printHeader(QPainter *p)
     if (showDateLine) {
 	    p->setFont(QFont("helvetica", 18, QFont::Bold));
 	    rect.setCoords(0, 40, 611, 95);
-	    p->drawText(rect, AlignCenter|AlignVCenter, myTitle);
+	    p->drawText(rect, Qt::AlignCenter|Qt::AlignVCenter, myTitle);
 	    p->setFont(QFont("helvetica",  8, QFont::Normal));
 	    rect.setCoords(0, 96, 611, 112);
-	    p->drawText(rect, AlignCenter|AlignVCenter, myDateLine);
+	    p->drawText(rect, Qt::AlignCenter|Qt::AlignVCenter, myDateLine);
     } else {
 	    p->setFont(QFont("helvetica", 18, QFont::Bold));
 	    rect.setCoords(0, 40, 611, 112);
-	    p->drawText(rect, AlignCenter|AlignVCenter, myTitle);
+	    p->drawText(rect, Qt::AlignCenter|Qt::AlignVCenter, myTitle);
     }
 
     // Now, calculate the column widths.
@@ -206,7 +205,7 @@ void QListViewPrint::printHeader(QPainter *p)
     }
 
     // Now, get the longest item for each of the keys.
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     for (curItem = myList->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
         for (int i = 0; i < numCols; i++) {
             if (curItem->key(i, 0).length() > colWidths[i]) {
@@ -236,17 +235,17 @@ void QListViewPrint::printHeader(QPainter *p)
     p->setFont(QFont("helvetica", 8, QFont::Normal));
     for (int i = 0; i < numCols; i++) {
         rect.setCoords(xPos+1, 113, xPos + prColWidths[i] - 1, 129);
-        bbrush.setStyle(SolidPattern);
-        bbrush.setColor(black);
+        bbrush.setStyle(Qt::SolidPattern);
+        bbrush.setColor(Qt::black);
         //p->setBackgroundMode(OpaqueMode);
         p->setPen(Qt::white);
         p->fillRect(rect, bbrush);
-        p->drawText(rect, AlignCenter|AlignVCenter, myList->header()->label(i));
+        p->drawText(rect, Qt::AlignCenter|Qt::AlignVCenter, myList->header()->label(i));
         xPos += prColWidths[i];
     }
     // Reset our pen
-    p->setBackgroundMode(TransparentMode);
-    p->setPen(black);
+    p->setBackgroundMode(Qt::TransparentMode);
+    p->setPen(Qt::black);
 }
 
 void QListViewPrint::printFooter(QPainter *p, int PageNo, int totPages)
@@ -258,11 +257,11 @@ void QListViewPrint::printFooter(QPainter *p, int PageNo, int totPages)
     p->setFont(QFont("helvetica", 8, QFont::Normal));
     rect.setCoords(0, 735, 611, 750);
     sprintf(tmpstr, "Page %d of %d", PageNo, totPages);
-    p->drawText(rect, AlignCenter|AlignVCenter, tmpstr);
+    p->drawText(rect, Qt::AlignCenter|Qt::AlignVCenter, tmpstr);
 
 }
 
-QListViewItem *QListViewPrint::printRows(QPainter *p, QListViewItem *startItem)
+Q3ListViewItem *QListViewPrint::printRows(QPainter *p, Q3ListViewItem *startItem)
 {
     QRect       rect;
     QBrush      bbrush;
@@ -289,7 +288,7 @@ QListViewItem *QListViewPrint::printRows(QPainter *p, QListViewItem *startItem)
                 xPos     = prLeftMargin;
                 for (int i = 0; i < numCols; i++) {
                     rect.setCoords(xPos+1, yPos, xPos + prColWidths[i] - 1, yPos+11);
-                    p->drawText(rect, myList->columnAlignment(i)|AlignVCenter, startItem->key(i,0));
+                    p->drawText(rect, myList->columnAlignment(i)|Qt::AlignVCenter, startItem->key(i,0));
                     xPos += prColWidths[i];
                 }
                 yPos += 12;

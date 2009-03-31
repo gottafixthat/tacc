@@ -17,10 +17,10 @@
 
 #include "CollReport.h"
 
-#include <qmessagebox.h>
-#include <qprogressbar.h>
-#include <qdatetm.h>
-#include <qapplication.h>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/q3progressbar.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QApplication>
 
 #include <stdio.h>
 #include <stdlib.h>

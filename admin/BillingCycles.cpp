@@ -26,10 +26,12 @@
 #include "BillingCycles.h"
 #include "BillingCycleEdit.h"
 
-#include <qkeycode.h>
-#include <qstrlist.h>
+#include <qnamespace.h>
+#include <q3strlist.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 #include <stdio.h>
 #include <ADB.h>
 #include <qmessagebox.h>
@@ -42,7 +44,7 @@ BillingCycles::BillingCycles
 ) : TAAWidget( parent, name )
 {
     // Create our widgets.
-    list = new QListView(this, "Cycle List");
+    list = new Q3ListView(this, "Cycle List");
     list->addColumn("Cycle ID");
     list->addColumn("Type");
     list->addColumn("Description");
@@ -66,11 +68,11 @@ BillingCycles::BillingCycles
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
     // Our layout.  Very simple.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(list, 1);
 
     // Buttons.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(newButton, 0);
     bl->addWidget(editButton, 0);
@@ -110,14 +112,14 @@ void BillingCycles::closeClicked()
 void BillingCycles::refreshList(int)
 {
     ADB             DB;
-    QListViewItem   *curItem = NULL;
+    Q3ListViewItem   *curItem = NULL;
     
     // Save the state of the list.
     list->clear();
 
     DB.query("select CycleID, CycleType, Description from BillingCycles order by CycleID");
     if (DB.rowCount) while(DB.getrow()) {
-        curItem = new QListViewItem(list, DB.curRow["CycleID"], DB.curRow["CycleType"], DB.curRow["Description"]);
+        curItem = new Q3ListViewItem(list, DB.curRow["CycleID"], DB.curRow["CycleType"], DB.curRow["Description"]);
     }
     list->repaint();
 }
@@ -143,7 +145,7 @@ void BillingCycles::editCycle()
 {
     char tmpCycle[128];
     BillingCycleEdit * newBillingCycle;
-    QListViewItem   *curItem = NULL;
+    Q3ListViewItem   *curItem = NULL;
     
     curItem = list->currentItem();
     if (curItem != NULL) {
@@ -165,7 +167,7 @@ void BillingCycles::editCycle()
 void BillingCycles::deleteCycle()
 {
     char            tmpstr[256];
-    QListViewItem   *curItem = NULL;
+    Q3ListViewItem   *curItem = NULL;
     
     char tmpCycle[128];
     curItem = list->currentItem();

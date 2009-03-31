@@ -28,7 +28,7 @@
 
 #include <qdialog.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <TAAWidget.h>
@@ -69,7 +69,7 @@ protected:
     QLabel      *balanceLabel;
     QLineEdit   *checkNumber;
     QLineEdit   *amount;
-    QListView   *chargeList;
+    Q3ListView   *chargeList;
     QPushButton *saveButton;
     QPushButton *cancelButton;
 

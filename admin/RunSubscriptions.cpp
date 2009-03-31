@@ -17,9 +17,13 @@
 #include <stdlib.h>
 
 #include <qdatetime.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <QBoxLayout>
+#include <QLabel>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -38,7 +42,7 @@ RunSubscriptions::RunSubscriptions(QWidget* parent, const char* name) :
 	setCaption( "Run Subscriptions" );
 
     // Create our widgets
-    subscrList = new QListView(this, "subscrList");
+    subscrList = new Q3ListView(this, "subscrList");
     subscrList->addColumn("Cust ID");
     subscrList->addColumn("Customer Name");
     subscrList->addColumn("Primary Login");
@@ -49,7 +53,7 @@ RunSubscriptions::RunSubscriptions(QWidget* parent, const char* name) :
     // A group box to hold our summary information.
     // We'll use the group box's automatic layout, so we need to 
     // create the widgets in order.
-    QGroupBox   *summaryBox = new QGroupBox(2, Horizontal, "Summary Information", this, "summaryBox");
+    Q3GroupBox   *summaryBox = new Q3GroupBox(2, Horizontal, "Summary Information", this, "summaryBox");
 
     QLabel  *totalSubscriptionsLabel = new QLabel(summaryBox, "totalSubscriptionsLabel");
     totalSubscriptionsLabel->setText("Total Subscriptions:");
@@ -82,14 +86,14 @@ RunSubscriptions::RunSubscriptions(QWidget* parent, const char* name) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelAction()));
 
     // Create our layout now.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     ml->addWidget(subscrList, 1);
 
-    QBoxLayout *secLayout = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *secLayout = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     secLayout->addWidget(summaryBox, 1);
     secLayout->addStretch(1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(QBoxLayout::Q3BoxLayout::TopToBottom, 3);
     bl->addStretch(1);
     bl->addWidget(beginButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -154,7 +158,7 @@ void RunSubscriptions::fillList(void)
 	        sprintf(tmpTotSubs, "%ld", DB2.rowCount);
 	        totSubscriptions += DB2.rowCount;
 	        
-	        (void) new QListViewItem(subscrList, DB.curRow["CustomerID"], CDB.getStr("FullName"), CDB.getStr("PrimaryLogin"), tmpTotLogins, tmpTotSubs);
+	        (void) new Q3ListViewItem(subscrList, DB.curRow["CustomerID"], CDB.getStr("FullName"), CDB.getStr("PrimaryLogin"), tmpTotLogins, tmpTotSubs);
 	    }
 	    
 	    sprintf(tmpTotSubs, "%d", totSubscriptions);
@@ -192,7 +196,7 @@ void RunSubscriptions::fillList(void)
 
 void RunSubscriptions::processSelections()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     int             curCount = 0;
     CustomersDB     CDB;
     ADB             DB;

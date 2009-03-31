@@ -27,17 +27,24 @@
 **
 */
 
-#include <qapp.h>
-#include <qwidget.h>
+#include <QtGui/QApplication>
+#include <QtGui/QWidget>
+//Added by qt3to4:
+#include <Qt3Support/Q3Frame>
+#include <QtGui/QLabel>
 
 #include <TAATools.h>
 #include "TAAWidget.h"
 #include <ADB.h>
 
 
+TAAWidget::TAAWidget(QWidget *parent, const char *name, Qt::WFlags f) : QWidget(parent, f)
+{
+    TAAWidget::TAAWidget(parent, f);
+}
 
-TAAWidget::TAAWidget(QWidget *parent, const char *name, WFlags f)
-    : QWidget(parent, name, f)
+TAAWidget::TAAWidget(QWidget *parent, Qt::WFlags f)
+    : QWidget(parent, f)
 {
     // Connect the relay slots to the main window.
     connect(this, SIGNAL(openCustomer(long)), mainWin(), SLOT(openCustomerMW(long)));
@@ -95,10 +102,10 @@ const char *TAAWidget::getUserPref(const char *key, const char *subkey)
     return (const char *) retStr;
 }
     
-HorizLine::HorizLine(QWidget *parent, const char *name, WFlags f)
+HorizLine::HorizLine(QWidget *parent, const char *name, Qt::WFlags f)
     : QLabel(parent, name, f)
 {
-    setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    setFrameStyle(Q3Frame::HLine|Q3Frame::Sunken);
     setMinimumSize(0,4);
     setMaximumSize(32767, 4);
 }
@@ -107,10 +114,10 @@ HorizLine::~HorizLine()
 {
 }
 
-VertLine::VertLine(QWidget *parent, const char *name, WFlags f)
+VertLine::VertLine(QWidget *parent, const char *name, Qt::WFlags f)
     : QLabel(parent, name, f)
 {
-    setFrameStyle(QFrame::VLine|QFrame::Sunken);
+    setFrameStyle(Q3Frame::VLine|Q3Frame::Sunken);
     setMinimumSize(3,0);
     setMaximumSize(3,32767);
 }

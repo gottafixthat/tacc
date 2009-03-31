@@ -32,9 +32,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -92,7 +92,7 @@ void AllDomainsReport::refreshReport()
         if (dnsDB.rowCount) strcpy(doingDNS, "Yes");
         if (atoi(DB.curRow["Active"])) strcpy(isActive, "Yes");
 
-        (void) new QListViewItem(repBody, DB.curRow["DomainName"], DB.curRow["LoginID"], DB.curRow["DomainType"], DB.curRow["CustomerID"], isActive, doingDNS);
+        (void) new Q3ListViewItem(repBody, DB.curRow["DomainName"], DB.curRow["LoginID"], DB.curRow["DomainType"], DB.curRow["CustomerID"], isActive, doingDNS);
     }
     
 }
@@ -103,7 +103,7 @@ void AllDomainsReport::refreshReport()
 **                    is double clicked.
 */
 
-void AllDomainsReport::listItemSelected(QListViewItem *curItem)
+void AllDomainsReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         emit(openCustomer(atol(curItem->key(3,0))));

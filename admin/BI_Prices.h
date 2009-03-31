@@ -26,12 +26,12 @@
 #define BI_Prices_included
 
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 #include <TAAWidget.h>
 
 class BI_Prices : public TAAWidget
@@ -51,17 +51,17 @@ public:
     void setItemNumber(long newItemNumber);
 
 protected:
-    QListView       *pricingList;
+    Q3ListView       *pricingList;
     QLineEdit       *primaryPrice;
     QLineEdit       *secondaryPrice;
     QComboBox       *unitsList;
     QSpinBox        *trialPeriod;
-    QMultiLineEdit  *additionalDescription;
+    Q3MultiLineEdit  *additionalDescription;
     QPushButton     *saveButton;
 
 protected slots:
     void            checkForSave();
-    virtual void    listItemSelected(QListViewItem *curItem);
+    virtual void    listItemSelected(Q3ListViewItem *curItem);
     virtual void    primaryPriceChanged(const QString &)    { checkForSave(); }
     virtual void    secondaryPriceChanged(const QString &)  { checkForSave(); }
     virtual void    unitsChanged(int)                       { checkForSave(); }

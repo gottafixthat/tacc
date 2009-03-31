@@ -18,7 +18,7 @@
 
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <TAAWidget.h>
 
 class RunSubscriptions : public TAAWidget
@@ -35,7 +35,7 @@ protected slots:
     virtual void processSelections();
 
 protected:
-    QListView   *subscrList;
+    Q3ListView   *subscrList;
     QPushButton *beginButton;
     QPushButton *cancelButton;
     QLabel      *totalSubscriptions;

@@ -60,7 +60,7 @@
 #include <qlist.h>
 #include <qdatetm.h>
 #include <qregexp.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qstring.h>
 
 // Blarg includes

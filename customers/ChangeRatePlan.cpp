@@ -15,6 +15,10 @@
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -45,7 +49,7 @@ ChangeRatePlan::ChangeRatePlan(QWidget* parent, const char* name, long CustID) :
     QLabel *effectiveDateLabel = new QLabel("Effective Date:", this, "effectiveDateLabel");
     effectiveDateLabel->setAlignment(AlignRight|AlignVCenter);
 
-    effectiveDate = new QDateEdit(QDate::currentDate(), this, "effectiveDate");
+    effectiveDate = new Q3DateEdit(QDate::currentDate(), this, "effectiveDate");
 
     QPushButton *saveButton = new QPushButton("&Save", this, "saveButton");
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveRatePlanChange()));
@@ -54,9 +58,9 @@ ChangeRatePlan::ChangeRatePlan(QWidget* parent, const char* name, long CustID) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelRatePlanChange()));
 
     // Our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
-    QGridLayout *gl = new QGridLayout(2, 3);
+    Q3GridLayout *gl = new Q3GridLayout(2, 3);
     int curRow = 0;
     gl->addWidget(customerLabel,        curRow, 0);
     gl->addWidget(customer,             curRow, 1);
@@ -78,7 +82,7 @@ ChangeRatePlan::ChangeRatePlan(QWidget* parent, const char* name, long CustID) :
     ml->addLayout(gl, 0);
     ml->addStretch(1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

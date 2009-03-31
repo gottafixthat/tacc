@@ -26,6 +26,9 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -39,14 +42,14 @@ VendorTypeEdit::VendorTypeEdit(QWidget* parent, const char* name, int InternalID
     setCaption("New Vendor Type");
 
     QLabel  *vendorTypeLabel = new QLabel(this, "vendorTypeLabel");
-    vendorTypeLabel->setAlignment(AlignRight|AlignVCenter);
+    vendorTypeLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     vendorTypeLabel->setText("Vendor Type:");
 
     vendorType = new QLineEdit(this, "vendorType");
     vendorType->setMaxLength(60);
 
     QLabel *subTypeListLabel = new QLabel(this, "subTypeListLabel");
-    subTypeListLabel->setAlignment(AlignRight|AlignVCenter);
+    subTypeListLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     subTypeListLabel->setText("Sub type of:");
 
     subTypeList = new QComboBox(false, this, "subTypeList");
@@ -61,10 +64,10 @@ VendorTypeEdit::VendorTypeEdit(QWidget* parent, const char* name, int InternalID
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelVendType()));
 
     // Create our layout now.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
     // A grid for our main widgets.
-    QGridLayout *gl = new QGridLayout(2, 2);
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
     int curRow = 0;
     gl->addWidget(vendorTypeLabel,      curRow, 0);
     gl->addWidget(vendorType,           curRow, 1);
@@ -81,7 +84,7 @@ VendorTypeEdit::VendorTypeEdit(QWidget* parent, const char* name, int InternalID
     ml->addLayout(gl, 1);
 
     // A button layout
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

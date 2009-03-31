@@ -6,10 +6,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
-#include <qstrlist.h>
+#include <q3dict.h>
+#include <q3strlist.h>
 #include <ModemUsageReport.h>
 
 #include <ADB.h>
@@ -175,7 +175,7 @@ void ModemTotalsReport::refreshReport()
 		        }
 	            sprintf(fAvg, "%3d.%02d:%02d:%02ld", cDays, cHours, cMins, cSecs);
             
-	            (void) new QListViewItem(repBody, 
+	            (void) new Q3ListViewItem(repBody, 
 	              (const char *) loginList.at(i),
 	              fCount,
 	              fSess,
@@ -184,7 +184,7 @@ void ModemTotalsReport::refreshReport()
             }
         }
     } else {
-        (void) new QListViewItem(repBody, "No data for specified period");
+        (void) new Q3ListViewItem(repBody, "No data for specified period");
     }
     
     QApplication::restoreOverrideCursor();
@@ -196,7 +196,7 @@ void ModemTotalsReport::refreshReport()
 **                    report.
 */
 
-void ModemTotalsReport::listItemSelected(QListViewItem *curItem)
+void ModemTotalsReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         char    tmpLoginID[1024];

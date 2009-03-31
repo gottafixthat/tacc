@@ -26,11 +26,11 @@
 #ifndef SelectionList_included
 #define SelectionList_included
 
-#include <qdialog.h>
-#include <qlabel.h>
-#include <qlistview.h>
-#include <qpushbt.h>
-#include <qcombobox.h>
+#include <QtGui/QDialog>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QPushButton>
+#include <QtGui/QComboBox>
 
 class SelectionList : public QDialog
 {
@@ -51,18 +51,18 @@ public:
     
     void addColumn(const char *colName);
     
-    QListViewItem addItem(const char *,
+    Q3ListViewItem addItem(const char *,
       const char * = 0, const char * = 0, const char * = 0,
       const char * = 0, const char * = 0, const char * = 0,
       const char * = 0);
-    QListViewItem *getSelection();
+    Q3ListViewItem *getSelection();
 
 protected slots:
-    virtual void    itemSelected(QListViewItem *);
+    virtual void    itemSelected(Q3ListViewItem *);
     virtual void    acceptPressed();
 
 protected:
-    QListView   *list;
+    Q3ListView   *list;
     QLabel      *titleLabel;
     QPushButton *acceptButton;
     QPushButton *cancelButton;

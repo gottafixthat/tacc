@@ -34,11 +34,13 @@
 #include <stdlib.h>
 
 #include <qapplication.h>
-#include <qtabdialog.h>
-#include <qwidgetstack.h>
+#include <q3tabdialog.h>
+#include <q3widgetstack.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 #include <ADB.h>
 
@@ -51,11 +53,11 @@ PKG_Main::PKG_Main
 	setCaption( "Edit Packages" );
     
     // Create our widgets
-    packageList = new QListView(this, "packageList");
+    packageList = new Q3ListView(this, "packageList");
     packageList->addColumn("Package Name");
     packageList->addColumn("A");
     packageList->setAllColumnsShowFocus(true);
-    connect(packageList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(packageSelected(QListViewItem *)));
+    connect(packageList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(packageSelected(Q3ListViewItem *)));
 
     theTabBar = new QTabBar(this, "theTabBar");
     theTabBar->setMinimumSize(0, 25);
@@ -67,11 +69,11 @@ PKG_Main::PKG_Main
     theTabBar->addTab(new QTab("&Billables"));
 
     // Create a button group to hold the widget stack and other widgets
-    QButtonGroup    *bGroup = new QButtonGroup(this, "bGroup");
+    Q3ButtonGroup    *bGroup = new Q3ButtonGroup(this, "bGroup");
     bGroup->setFocusPolicy(QWidget::NoFocus);
 
     // Our widget stack
-    qws = new QWidgetStack(bGroup, "WidgetStack");
+    qws = new Q3WidgetStack(bGroup, "WidgetStack");
     qws->setFocusPolicy(QWidget::NoFocus);
     connect(theTabBar, SIGNAL(selected(int)), qws, SLOT(raiseWidget(int)));
     
@@ -102,22 +104,22 @@ PKG_Main::PKG_Main
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
     
     // Our layout.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QBoxLayout *wl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *wl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     wl->addWidget(packageList, 0);
 
-    QBoxLayout *sl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    Q3BoxLayout *sl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0);
     sl->addWidget(theTabBar, 0);
 
-    QBoxLayout *bgl = new QBoxLayout(bGroup, QBoxLayout::TopToBottom, 2);
+    Q3BoxLayout *bgl = new Q3BoxLayout(bGroup, Q3BoxLayout::TopToBottom, 2);
     bgl->addWidget(qws, 1);
     sl->addWidget(bGroup, 1);
 
     wl->addLayout(sl, 1);
     ml->addLayout(wl, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addWidget(newButton, 0);
     bl->addWidget(deleteButton, 0);
     bl->addStretch(1);
@@ -174,7 +176,7 @@ void PKG_Main::loadPackages()
             sprintf(tmpStr, "N");
         }
         
-        (void) new QListViewItem(packageList, DB.curRow["PackageTag"], tmpStr, DB.curRow["InternalID"]);
+        (void) new Q3ListViewItem(packageList, DB.curRow["PackageTag"], tmpStr, DB.curRow["InternalID"]);
     }
     
 
@@ -193,7 +195,7 @@ void PKG_Main::loadPackages()
 **                     information when a login type is selected.
 */
 
-void PKG_Main::packageSelected(QListViewItem *curItem)
+void PKG_Main::packageSelected(Q3ListViewItem *curItem)
 {
     long    pkgID = 0;
     if (curItem) {
@@ -222,7 +224,7 @@ void PKG_Main::packageSelected(QListViewItem *curItem)
 
 void PKG_Main::newPackage()
 {
-    QListViewItem   *newItem;
+    Q3ListViewItem   *newItem;
     ADBTable    PTDB;
     PTDB.setTableName("Packages");
     
@@ -240,7 +242,7 @@ void PKG_Main::newPackage()
     
     PTDB.ins();
     
-    newItem = new QListViewItem(packageList, PTDB.getStr("PackageTag"), "N", PTDB.getStr("InternalID"));
+    newItem = new Q3ListViewItem(packageList, PTDB.getStr("PackageTag"), "N", PTDB.getStr("InternalID"));
     packageList->setSelected(newItem, TRUE);
     packageList->setCurrentItem(newItem);
     
@@ -256,7 +258,7 @@ void PKG_Main::newPackage()
 
 void PKG_Main::deletePackage()
 {
-    QListViewItem   *curItem = packageList->currentItem();
+    Q3ListViewItem   *curItem = packageList->currentItem();
     // First, make sure that our current item is not null
     if (curItem == NULL) return;
     
@@ -302,7 +304,7 @@ void PKG_Main::deletePackage()
 
 void PKG_Main::updatePackage()
 {
-    QListViewItem   *curItem = packageList->currentItem();
+    Q3ListViewItem   *curItem = packageList->currentItem();
     
     if (curItem != NULL) {
         char        tmpStr[1024];

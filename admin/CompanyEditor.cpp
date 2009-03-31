@@ -25,6 +25,10 @@
 #include <qtimer.h>
 #include <qapplication.h>
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QLabel>
 #include <Cfg.h>
 
 #include <TAA.h>
@@ -38,12 +42,12 @@ CompanyList::CompanyList
 {
     setCaption( "Manage Companies" );
 
-    coList = new QListView(this, "Company List");
+    coList = new Q3ListView(this, "Company List");
     coList->setAllColumnsShowFocus(true);
     coList->setRootIsDecorated(true);
     coList->addColumn("Company Name");
     coList->addColumn("Active");
-    connect(coList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+    connect(coList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(itemDoubleClicked(Q3ListViewItem *)));
 
     idColumn        = 2;
 
@@ -64,11 +68,11 @@ CompanyList::CompanyList
     closeButton->setText("&Close");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(coList, 1);
 
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(editButton, 0);
@@ -98,7 +102,7 @@ void CompanyList::refreshList()
     myDB.query("select CompanyID, CompanyName, Active from Companies");
     if (myDB.rowCount) {
         while (myDB.getrow()) {
-            QListViewItem   *tmpItem = new QListViewItem(coList, myDB.curRow["CompanyName"], myDB.curRow["Active"], myDB.curRow["CompanyID"]);
+            Q3ListViewItem   *tmpItem = new Q3ListViewItem(coList, myDB.curRow["CompanyName"], myDB.curRow["Active"], myDB.curRow["CompanyID"]);
         }
     }
 
@@ -131,7 +135,7 @@ void CompanyList::addClicked()
 
 void CompanyList::editClicked()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     curItem = coList->currentItem();
     if (curItem) {
         long    tmpID;
@@ -169,7 +173,7 @@ void CompanyList::closeClicked()
   * itemDoubleClicked - When the user double clicks on an origination provider
   * this opens the edit window.
   */
-void CompanyList::itemDoubleClicked(QListViewItem *curItem)
+void CompanyList::itemDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) editClicked();
 }
@@ -259,9 +263,9 @@ CompanyEditor::CompanyEditor
     cancelButton->setText("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout();
+    Q3GridLayout *gl = new Q3GridLayout();
     int curRow = 0;
     gl->addWidget(companyTagLabel,          curRow, 0);
     gl->addWidget(companyTag,               curRow, 1);
@@ -297,7 +301,7 @@ CompanyEditor::CompanyEditor
     ml->addLayout(gl, 0);
     ml->addStretch(1);
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

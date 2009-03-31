@@ -12,9 +12,12 @@
 
 #include <BlargDB.h>
 #include <mysql/mysql.h>
-#include <qkeycode.h>
+#include <qnamespace.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3PopupMenu>
 #include <stdlib.h>
 #include <stdio.h>
 #include <TAATools.h>
@@ -35,17 +38,17 @@ ChartOfAccounts::ChartOfAccounts
     // Load the list of GL Account Types
     glAcctTypes = GLAccountTypesDB::getAccountTypeList();
 
-    QPopupMenu * options = new QPopupMenu();
+    Q3PopupMenu * options = new Q3PopupMenu();
     CHECK_PTR( options );
-    options->insertItem("New", this, SLOT(newAccount()), CTRL+Key_N);
-    options->insertItem("Edit", this, SLOT(editAccount()), CTRL+Key_E);
-    options->insertItem("Delete", this, SLOT(deleteAccount()), CTRL+Key_D);
+    options->insertItem("New", this, SLOT(newAccount()), Qt::CTRL+Qt::Key_N);
+    options->insertItem("Edit", this, SLOT(editAccount()), Qt::CTRL+Qt::Key_E);
+    options->insertItem("Delete", this, SLOT(deleteAccount()), Qt::CTRL+Qt::Key_D);
     if (isAdmin()) {
         options->insertSeparator();
         options->insertItem("Edit GL Account Types", this, SLOT(editAccountTypes()));
     }
     options->insertSeparator();
-    options->insertItem("Close", this, SLOT(Hide()), CTRL+Key_C);
+    options->insertItem("Close", this, SLOT(Hide()), Qt::CTRL+Qt::Key_C);
     
     menu = new QMenuBar(this, "MainMenu");
     menu->insertItem("&Options", options);
@@ -71,7 +74,7 @@ ChartOfAccounts::ChartOfAccounts
     registerButton->setText("Register");
     registerButton->setEnabled(false);
 
-    list = new QListView(this, "AccountList");
+    list = new Q3ListView(this, "AccountList");
     list->addColumn("Number");
     list->addColumn("Name");
     list->addColumn("Type");
@@ -83,11 +86,11 @@ ChartOfAccounts::ChartOfAccounts
     intAcctNoCol = 4;
 
     // Create our layout and add our widgets.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(menu, 0);
     
     // Add a widget for our menu buttons.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     bl->addWidget(newButton, 0);
     bl->addWidget(editButton, 0);
     bl->addWidget(deleteButton, 0);
@@ -123,13 +126,13 @@ void ChartOfAccounts::Hide()
 //                  handle one active query at a time...
 //
 
-int ChartOfAccounts::addToList(int ParentID, QListViewItem *parent)
+int ChartOfAccounts::addToList(int ParentID, Q3ListViewItem *parent)
 {
     ADB	            DB;
     QString         tmpBal;
     QString         tmpName;
     QString         tmpAcctType;
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     int             retVal = 0;
     int             intAcctNo;
         
@@ -151,8 +154,8 @@ int ChartOfAccounts::addToList(int ParentID, QListViewItem *parent)
                 }
             }
             
-            if (!parent) curItem = new QListViewItem(list, DB.curRow["AccountNo"], DB.curRow["AcctName"], tmpAcctType, DB.curRow["Balance"], DB.curRow["IntAccountNo"]);
-            else curItem = new QListViewItem(parent, DB.curRow["AccountNo"], DB.curRow["AcctName"], tmpAcctType, DB.curRow["Balance"], DB.curRow["IntAccountNo"]);
+            if (!parent) curItem = new Q3ListViewItem(list, DB.curRow["AccountNo"], DB.curRow["AcctName"], tmpAcctType, DB.curRow["Balance"], DB.curRow["IntAccountNo"]);
+            else curItem = new Q3ListViewItem(parent, DB.curRow["AccountNo"], DB.curRow["AcctName"], tmpAcctType, DB.curRow["Balance"], DB.curRow["IntAccountNo"]);
             if (addToList(intAcctNo, curItem)) {
                 curItem->setOpen(true);
             }
@@ -194,7 +197,7 @@ void ChartOfAccounts::newAccount()
 
 void ChartOfAccounts::editAccount()
 {
-    QListViewItem *curItem;
+    Q3ListViewItem *curItem;
     GLAccountEditor *account;
     curItem = list->currentItem();
     if (curItem != NULL) {
@@ -213,7 +216,7 @@ void ChartOfAccounts::deleteAccount()
 {
     char   tmpstr[256];
     ADB    DB;
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     curItem = list->currentItem();
     if (curItem != NULL) {

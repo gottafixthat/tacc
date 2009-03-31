@@ -15,7 +15,9 @@
 #include <qmessagebox.h>
 #include <qlayout.h>
 #include <qlabel.h>
-#include <qaccel.h>
+#include <q3accel.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ParseFile.h>
@@ -36,7 +38,7 @@ TE_Main::TE_Main(QWidget* parent, const char* name) :
     theTabBar->addTab(new QTab("Login Types"));
     theTabBar->addTab(new QTab("Cities"));
 
-    qws = new QWidgetStack(this, "widgetStack");
+    qws = new Q3WidgetStack(this, "widgetStack");
     
     // Create the actual tabs now, using the widget stack as the parent.
     tmessage = new TE_Message(qws);
@@ -58,11 +60,11 @@ TE_Main::TE_Main(QWidget* parent, const char* name) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     ml->addWidget(theTabBar, 0);
     ml->addWidget(qws, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(sendButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -72,10 +74,10 @@ TE_Main::TE_Main(QWidget* parent, const char* name) :
     connect(theTabBar, SIGNAL(selected(int)), qws, SLOT(raiseWidget(int)));
 
     // Create our Ctrl-1 through Ctrl-3 hotkeys
-    QAccel  *ac = new QAccel(this);
-    ac->insertItem(CTRL+Key_1, 0);
-    ac->insertItem(CTRL+Key_2, 1);
-    ac->insertItem(CTRL+Key_3, 2);
+    Q3Accel  *ac = new Q3Accel(this);
+    ac->insertItem(Qt::CTRL+Qt::Key_1, 0);
+    ac->insertItem(Qt::CTRL+Qt::Key_2, 1);
+    ac->insertItem(Qt::CTRL+Qt::Key_3, 2);
     connect(ac, SIGNAL(activated(int)), this, SLOT(raiseTab(int)));
 }
 
@@ -121,7 +123,7 @@ void TE_Main::sendMessage()
     
     
     if (doIt) {
-        QApplication::setOverrideCursor(waitCursor);
+        QApplication::setOverrideCursor(Qt::waitCursor);
         emit(setStatus("Sending targeted email..."));
 
         char        srcfile[1024];

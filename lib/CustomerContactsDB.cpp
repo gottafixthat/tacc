@@ -14,7 +14,9 @@
 #include <CustomerContactsDB.h>
 #include <TAATools.h>
 #include <QSqlDbPool.h>
-#include <qsqlcursor.h>
+#include <Qt3Support/Q3SqlCursor>
+//Added by qt3to4:
+#include <QtSql/QSqlQuery>
 
 /**
  * CustomerContactsDB()
@@ -45,7 +47,8 @@ uint CustomerContactsDB::loadContact(uint id)
 {
     uint            retVal = 0;
     QSqlDbPool      dbpool;
-    QSqlCursor      contacts("CustomerContacts", true, dbpool.qsqldb());
+    QSqlDatabase    db = dbpool.sqldb();
+    Q3SqlCursor     contacts(QString("CustomerContacts"), true, dbpool.sqldb());
     QSqlIndex       prikey = contacts.primaryIndex();
 
     contacts.setValue("ContactID",  id);
@@ -85,7 +88,7 @@ uint CustomerContactsDB::loadContact(uint id)
 customerContactList CustomerContactsDB::allCustomerContacts(uint id)
 {
     QSqlDbPool                      dbpool;
-    QSqlCursor                      contacts("CustomerContacts", true, dbpool.qsqldb());
+    Q3SqlCursor                     contacts(QString("CustomerContacts"), true, dbpool.sqldb());
     QSqlIndex                       prikey = contacts.primaryIndex();
     QList<customerContactRecord>    retVal;
     QString                         selStr;
@@ -115,7 +118,7 @@ customerContactList CustomerContactsDB::allCustomerContacts(uint id)
             if (!contactRec->flags) contactRec->flagList += "None";
             if (contactRec->flags & (customerContactFlags) Billing) contactRec->flagList += "Billing";
 
-            retVal.append(contactRec);
+            retVal.append(*contactRec);
         }
     }
 
@@ -187,7 +190,7 @@ int CustomerContactsDB::update()
 
     
     QSqlDbPool      dbpool;
-    QSqlCursor      contacts("CustomerContacts", true, dbpool.qsqldb());
+    Q3SqlCursor     contacts("CustomerContacts", true, dbpool.sqldb());
     QSqlIndex       prikey = contacts.primaryIndex();
 
     contacts.setValue("ContactID",  custContact.contactID);
@@ -213,7 +216,7 @@ int CustomerContactsDB::insert()
 
     
     QSqlDbPool      dbpool;
-    QSqlCursor      contacts("CustomerContacts", true, dbpool.qsqldb());
+    Q3SqlCursor     contacts("CustomerContacts", true, dbpool.sqldb());
 
     QSqlRecord *buf = contacts.primeInsert();
     setCursorValues(buf);
@@ -230,7 +233,7 @@ int CustomerContactsDB::insert()
 int CustomerContactsDB::del()
 {
     QSqlDbPool  dbpool;
-    QSqlQuery   q(dbpool.qsqldb());
+    QSqlQuery   q(dbpool.sqldb());
     q.prepare("delete from CustomerContacts where ContactID = :contactID");
     q.bindValue(":contactID", custContact.contactID);
     q.exec();

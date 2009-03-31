@@ -13,6 +13,9 @@
 #include <BillingCycleEdit.h>
 #include <BlargDB.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 #include <ADB.h>
 #include <qmessagebox.h>
 #include <qpushbutton.h>
@@ -94,10 +97,10 @@ BillingCycleEdit::BillingCycleEdit
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
     // Create the layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     
     // Create the main grid layout
-    QGridLayout *gl = new QGridLayout();
+    Q3GridLayout *gl = new Q3GridLayout();
     int curRow = 0;
     gl->addWidget(cycleIDLabel,     curRow, 0);
     gl->addWidget(cycleID,          curRow, 1);
@@ -115,7 +118,7 @@ BillingCycleEdit::BillingCycleEdit
     curRow++;
 
     // Create another grid for our months.
-    QGridLayout *mgrid = new QGridLayout();
+    Q3GridLayout *mgrid = new Q3GridLayout();
     int mRow = 0;
     mgrid->addWidget(january,       mRow, 0);
     mgrid->addWidget(february,      mRow, 1);
@@ -146,7 +149,7 @@ BillingCycleEdit::BillingCycleEdit
     ml->addLayout(gl, 0);
     ml->addStretch(1);
     // Create our button layout.
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

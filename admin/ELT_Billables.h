@@ -26,7 +26,7 @@
 #define ELT_Billables_included
 
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <TAAWidget.h>
 
@@ -47,12 +47,12 @@ public:
     void    setLoginTypeID(long newLoginTypeID);
 
 protected:
-    QListView   *billableList;
+    Q3ListView   *billableList;
     QPushButton *addButton;
     QPushButton *removeButton;
 
 protected slots:
-    virtual void itemSelected(QListViewItem *curItem);
+    virtual void itemSelected(Q3ListViewItem *curItem);
     virtual void removeBillable();
     virtual void addBillable();
     

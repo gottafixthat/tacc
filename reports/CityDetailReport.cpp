@@ -7,9 +7,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <ADB.h>
 #include <BString.h>
@@ -75,7 +75,7 @@ void CityDetailReport::refreshReport()
 	        if (DB2.rowCount) {
 	            DB2.getrow();
 	            if (atoi(DB2.curRow["Active"])) {
-	                (void) new QListViewItem(repBody, 
+	                (void) new Q3ListViewItem(repBody, 
 	                  DB2.curRow["CustomerID"], 
 	                  DB2.curRow["FullName"], 
 	                  DB2.curRow["PrimaryLogin"],
@@ -98,7 +98,7 @@ void CityDetailReport::refreshReport()
 **                    is double clicked.
 */
 
-void CityDetailReport::listItemSelected(QListViewItem *curItem)
+void CityDetailReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         long    CustID = atol(curItem->key(0,0));

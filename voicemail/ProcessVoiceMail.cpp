@@ -26,10 +26,14 @@
 
 #include <ADB.h>
 
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qapplication.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QLayout>
+#include <QtCore/QTimer>
+#include <QtGui/QApplication>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3PopupMenu>
 
 #include <TAA.h>
 #include "ProcessVoiceMail.h"
@@ -43,12 +47,12 @@ ProcessVoiceMail::ProcessVoiceMail
 {
     setCaption( "Process Voice Mail" );
 
-    vmList = new QListView(this, "Voice Mail List");
+    vmList = new Q3ListView(this, "Voice Mail List");
     vmList->addColumn("Date/Time");
     vmList->addColumn("Disposition");
     vmList->addColumn("Message");
     vmList->setAllColumnsShowFocus(true);
-    connect(vmList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(listItemChanged(QListViewItem *)));
+    connect(vmList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(listItemChanged(Q3ListViewItem *)));
 
     QLabel  *msgDateLabel = new QLabel(this);
     msgDateLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
@@ -80,7 +84,7 @@ ProcessVoiceMail::ProcessVoiceMail
     loggedAt->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     loggedAt->setText(" - logged at - ");
 
-    message = new QTextView(this, "Message Content");
+    message = new Q3TextView(this, "Message Content");
     message->setTextFormat(Qt::RichText);
 
     QLabel  *dispositionLabel= new QLabel(this);
@@ -132,9 +136,9 @@ ProcessVoiceMail::ProcessVoiceMail
     followUpLabel->setAlignment(Qt::AlignLeft);
     followUpLabel->setText("Follow-up:");
 
-    followUp = new QMultiLineEdit(this, "FollowUp");
-    followUp->setWordWrap(QMultiLineEdit::WidgetWidth);
-    followUp->setWrapPolicy(QMultiLineEdit::AtWhiteSpace);
+    followUp = new Q3MultiLineEdit(this, "FollowUp");
+    followUp->setWordWrap(Q3MultiLineEdit::WidgetWidth);
+    followUp->setWrapPolicy(Q3MultiLineEdit::AtWhiteSpace);
 
     processed = new QCheckBox(this, "Processed");
     processed->setText("Processed");
@@ -146,17 +150,17 @@ ProcessVoiceMail::ProcessVoiceMail
 
     // Create our layout.
     // Box layout, left to right, with a grid layout for the actions.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3); 
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3); 
 
     ml->addWidget(vmList, 0);
 
     // Now we add another layout, left to right where the log details go.
     // The voice mail data goes on the left and the followup goes on the 
     // right.
-    QBoxLayout *dl = new QBoxLayout(QBoxLayout::LeftToRight, 5);
+    Q3BoxLayout *dl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 5);
 
     // Create a grid of our widgets, 4 wide, 9 high.
-    QGridLayout *gl1 = new QGridLayout(9, 4, 2);
+    Q3GridLayout *gl1 = new Q3GridLayout(9, 4, 2);
     int curRow = 0;
     gl1->setColStretch(0, 0);
     gl1->setColStretch(1, 1);
@@ -185,7 +189,7 @@ ProcessVoiceMail::ProcessVoiceMail
     dl->addLayout(gl1, 0);
 
     // Create the second grid
-    QGridLayout *gl2 = new QGridLayout(9, 4, 2);
+    Q3GridLayout *gl2 = new Q3GridLayout(9, 4, 2);
     curRow = 0;
     gl2->addWidget(dispositionLabel,       curRow, 0);
     gl2->addMultiCellWidget(disposition,   curRow, curRow, 1, 3);
@@ -213,7 +217,7 @@ ProcessVoiceMail::ProcessVoiceMail
     curRow++;
 
     // A button layout in the middle of the grid...
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 0, 0);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0, 0);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
 
@@ -236,7 +240,7 @@ ProcessVoiceMail::ProcessVoiceMail
     vmList->setFocus();
 
     // Create a menu for our parent to pull into its own menu bar
-    vmMenu = new QPopupMenu(this, "Voice Mail Menu");
+    vmMenu = new Q3PopupMenu(this, "Voice Mail Menu");
     vmMenu->insertItem("&Log Voice Mail", this, SLOT(logVM()));
 
     myCustID = 0;
@@ -251,7 +255,7 @@ ProcessVoiceMail::~ProcessVoiceMail()
 ** menu - Returns the pointer to our QPopupMenu
 */
 
-QPopupMenu *ProcessVoiceMail::menu()
+Q3PopupMenu *ProcessVoiceMail::menu()
 {
     return vmMenu;
 }
@@ -312,7 +316,7 @@ void ProcessVoiceMail::refreshList()
     bool    foundIt;
     int     statusColumn = 4;
     char    dispStr[1024];
-    QListViewItem   *curItem = vmList->currentItem();
+    Q3ListViewItem   *curItem = vmList->currentItem();
     long    curSel = 0;
     
     // Save the currently selected item.
@@ -322,7 +326,7 @@ void ProcessVoiceMail::refreshList()
 
     // Scan through the list and mark all entries as removable
     {
-        QListViewItemIterator   tmpit(vmList);
+        Q3ListViewItemIterator   tmpit(vmList);
         for (;tmpit.current(); ++tmpit) tmpit.current()->setText(statusColumn, "0");
     }
 
@@ -342,7 +346,7 @@ void ProcessVoiceMail::refreshList()
             // See if we have this VM in the list already, if so, update
             // it rather than adding it.
             foundIt = false;
-            QListViewItemIterator   it(vmList);
+            Q3ListViewItemIterator   it(vmList);
             for (; it.current(); ++it) {
                 if ((atoi(it.current()->key(3,0))) == atoi(DB.curRow["MsgID"])) {
                     foundIt = true;
@@ -355,7 +359,7 @@ void ProcessVoiceMail::refreshList()
 
             if (!foundIt) {
                 // We don't have this one loaded, add it.
-                (void) new QListViewItem(vmList, DB.curRow["MsgDateTime"], dispStr, DB.curRow["Message"], DB.curRow["MsgID"], "1");
+                (void) new Q3ListViewItem(vmList, DB.curRow["MsgDateTime"], dispStr, DB.curRow["Message"], DB.curRow["MsgID"], "1");
             }
 
         }
@@ -364,7 +368,7 @@ void ProcessVoiceMail::refreshList()
     // Now, walk through the list and delete any items that were not
     // in the query result.
     {
-        QListViewItemIterator   tmpit(vmList);
+        Q3ListViewItemIterator   tmpit(vmList);
         for (; tmpit.current(); ++tmpit) {
             if (!atol(tmpit.current()->key(statusColumn,0))) {
                 vmList->takeItem(tmpit.current());
@@ -377,7 +381,7 @@ void ProcessVoiceMail::refreshList()
     // in the list.
     foundIt = false;
     {
-        QListViewItemIterator   tmpit(vmList);
+        Q3ListViewItemIterator   tmpit(vmList);
         for (; tmpit.current(); ++tmpit) {
             if (atol(tmpit.current()->key(3,0)) == curSel) foundIt = true;
         }
@@ -398,7 +402,7 @@ void ProcessVoiceMail::refreshList()
 **                   the selection changes.
 */
 
-void ProcessVoiceMail::listItemChanged(QListViewItem *curItem)
+void ProcessVoiceMail::listItemChanged(Q3ListViewItem *curItem)
 {
     if (curItem) {
         ADBTable    vmDB("VoiceMail");

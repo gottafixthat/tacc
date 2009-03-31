@@ -26,7 +26,7 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qspinbox.h>
@@ -50,7 +50,7 @@ public:
     void    setPackageID(long newPackageID);
 
 protected:
-    QListView   *billableList;
+    Q3ListView   *billableList;
     QComboBox   *itemList;
     QLineEdit   *description;
     QSpinBox    *qtySpin;
@@ -61,7 +61,7 @@ protected:
 
 protected slots:
     void         checkForSave();
-    virtual void billableSelected(QListViewItem *curItem);
+    virtual void billableSelected(Q3ListViewItem *curItem);
     virtual void save();
     virtual void addBillable();
     virtual void removeBillable();

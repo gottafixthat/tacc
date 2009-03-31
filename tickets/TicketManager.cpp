@@ -22,11 +22,14 @@
 #include "TicketManager.h"
 #include "TicketsCommon.h"
 
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qdatetm.h>
 #include <qlayout.h>
 #include <qfont.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3PopupMenu>
 
 #include <ADB.h>
 #include <TAATools.h>
@@ -42,7 +45,7 @@ TicketManager::TicketManager
 {
 
     // Create a menu for our parent to pull into its own menu bar.
-    ticketMenu = new QPopupMenu(this, "Ticket Menu");
+    ticketMenu = new Q3PopupMenu(this, "Ticket Menu");
     ticketMenu->setCheckable(true);
     showPersonalMenuID = ticketMenu->insertItem("Show Personal", this, SLOT(showPersonalSelected()));
     ticketMenu->setItemChecked(showPersonalMenuID, true);
@@ -52,7 +55,7 @@ TicketManager::TicketManager
         ticketMenu->setItemChecked(showAllPersonalMenuID, false);
     }
 
-    ticketList = new QListView(this);
+    ticketList = new Q3ListView(this);
     ticketList->addColumn("Ticket");
     ticketList->addColumn("CustID");
     ticketList->addColumn("Name");
@@ -63,11 +66,11 @@ TicketManager::TicketManager
     ticketList->setAllColumnsShowFocus(true);
     ticketList->setMargin(2);
 
-    connect(ticketList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(editTicket(QListViewItem *)));
-    connect(ticketList, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(editTicket(QListViewItem *)));
+    connect(ticketList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(editTicket(Q3ListViewItem *)));
+    connect(ticketList, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(editTicket(Q3ListViewItem *)));
 
     // Now, do the layout for the widget.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     ml->addWidget(ticketList, 1);
 
@@ -95,7 +98,7 @@ TicketManager::~TicketManager()
 ** menu  - Returns the pointer to our QPopupMenu.
 */
 
-QPopupMenu *TicketManager::menu()
+Q3PopupMenu *TicketManager::menu()
 {
     return ticketMenu;
 }
@@ -126,7 +129,7 @@ void TicketManager::refreshTicketList()
     // Scan through the list and mark all of the entries there
     // as "removable".
     {
-        QListViewItemIterator   tmpit(ticketList);
+        Q3ListViewItemIterator   tmpit(ticketList);
         for (; tmpit.current(); ++tmpit) tmpit.current()->setText(statusColumn,"0");
     }
 
@@ -137,7 +140,7 @@ void TicketManager::refreshTicketList()
         // If we find it, update it.
         tick.setTicketNo(atol(DB.curRow["TicketNo"]));
         foundIt = false;
-        QListViewItemIterator   it(ticketList);
+        Q3ListViewItemIterator   it(ticketList);
         for (; it.current(); ++it) {
             if ((atol(it.current()->key(0,0))) == atol(DB.curRow["TicketNo"])) {
                 myTicketCount++;
@@ -192,7 +195,7 @@ void TicketManager::refreshTicketList()
             if (okayToInsert) {
                 sprintf(tmpStr, "%ld", tick.customerID());
                 if (!tick.customerID()) strcpy(tmpStr, "N/A");
-                (void) new QListViewItem(ticketList,
+                (void) new Q3ListViewItem(ticketList,
                         DB.curRow["TicketNo"],
                         tmpStr,
                         tick.name(),
@@ -207,7 +210,7 @@ void TicketManager::refreshTicketList()
     }
     // Now, walk through the list and delete any items that were not
     // in the query result
-    QListViewItemIterator   tmpit(ticketList);
+    Q3ListViewItemIterator   tmpit(ticketList);
     for (; tmpit.current(); ++tmpit) {
         if (!atol(tmpit.current()->key(statusColumn,0))) {
             ticketList->takeItem(tmpit.current());
@@ -219,7 +222,7 @@ void TicketManager::refreshTicketList()
 ** editTicket - Starts the ticket editor on the current ticket.
 */
 
-void TicketManager::editTicket(QListViewItem *selItem)
+void TicketManager::editTicket(Q3ListViewItem *selItem)
 {
     if (selItem) {
         TicketEditor    *te = new TicketEditor(0);

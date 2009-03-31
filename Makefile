@@ -23,7 +23,7 @@ CC	= gcc
 
 ####### Files
 
-export QTDIR=/usr/lib/qt-3.3
+export QTDIR=/usr/lib/qt4
 export MYSQLLIB=/usr/lib/mysql
 export MYSQLINC=/usr/include/mysql
 BUILDNUM=scripts/buildnum
@@ -41,7 +41,6 @@ SUBDIRS += reports tickets admin settings custcare
 # SUBDIRS += gettraffic
 SUBDIRS += taccupgrade
 SUBDIRS += taamaild
-SUBDIRS += seanetimport
 SUBDIRS += ccexpired cccimport
 SUBDIRS += modembilling
 SUBDIRS += radimport

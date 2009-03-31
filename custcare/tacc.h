@@ -23,12 +23,14 @@
 #define TACC_H
 
 #include <qwidget.h>
-#include <qmainwindow.h>
+#include <q3mainwindow.h>
 #include <qlabel.h>
 #include <qtimer.h>
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
 #include <qtabbar.h>
-#include <qprogressbar.h>
+#include <q3progressbar.h>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 #include "TAATools.h"
 #include "TicketManager.h"
 #include "Customers.h"
@@ -67,11 +69,11 @@ protected:
     QTab            *customerTab;
     QTab            *voicemailTab;
     QTab            *adminTab;
-    QWidgetStack    *qws;
+    Q3WidgetStack    *qws;
 };
 
 
-class CustomerCare : public QMainWindow
+class CustomerCare : public Q3MainWindow
 {
     Q_OBJECT
 
@@ -148,15 +150,15 @@ protected:
     QTabBar         *tabs;
     QTab            *ticketTab;
     QTab            *customerTab;
-    QWidgetStack    *qws;
+    Q3WidgetStack    *qws;
     QLabel          *clockLabel;
     QTimer          *clockTimer;
     QLabel          *countLabel;
-    QProgressBar    *progressMeter;
+    Q3ProgressBar    *progressMeter;
     bool            realTimeProgress;
     AsteriskManager *am;
     Customers       *clist;
-    QPopupMenu      *viewMenu;
+    Q3PopupMenu      *viewMenu;
     int             showQueueMenuItem;
     int             showAgentsMenuItem;
 };

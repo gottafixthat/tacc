@@ -32,7 +32,7 @@
 #include <qpushbutton.h>
 #include <qlcdnumber.h>
 #include <qdatetime.h>
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
 #include <TAAWidget.h>
 
 #include "CallTypeSelector.h"
@@ -60,7 +60,7 @@ protected:
     QPushButton         *transferButton;
     QDateTime           callStart;
     QDateTime           callEnd;
-    QWidgetStack        *mainArea;
+    Q3WidgetStack        *mainArea;
     CallTypeSelector    *typeSel;
     int                 timerRunning;
 

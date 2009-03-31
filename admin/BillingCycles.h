@@ -23,8 +23,8 @@
 #define BillingCycles_included
 
 #include <TAAWidget.h>
-#include <qlistview.h>
-#include <qstrlist.h>
+#include <q3listview.h>
+#include <q3strlist.h>
 
 class BillingCycles : public TAAWidget
 {
@@ -50,6 +50,6 @@ protected slots:
     virtual void deleteCycle();
 
 protected:
-    QListView   *list;
+    Q3ListView   *list;
 };
 #endif // BillingCycles_included

@@ -13,7 +13,9 @@
 #define TE_CITIES_H
 
 #include <qcheckbox.h>
-#include <qlistview.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <QCloseEvent>
 
 #include <TAAWidget.h>
 
@@ -41,7 +43,7 @@ protected slots:
 
 protected:
     QCheckBox   *allCitiesButton;
-    QListView   *cityList;
+    Q3ListView   *cityList;
 
 };
 #endif

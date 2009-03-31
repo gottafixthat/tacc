@@ -16,8 +16,11 @@
 #include <qstring.h>
 #include <qmessagebox.h>
 #include <qlabel.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -31,14 +34,14 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     setCaption("Edit Rate Plan");
 
     QLabel *planTagLabel = new QLabel(this, "planTagLabel");
-    planTagLabel->setAlignment(AlignRight|AlignVCenter);
+    planTagLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     planTagLabel->setText("Tag:");
 
     planTag = new QLineEdit(this, "planTag");
     planTag->setMaxLength(16);
 
     QLabel *descriptionLabel = new QLabel(this, "descriptionLabel");
-    descriptionLabel->setAlignment(AlignRight|AlignVCenter);
+    descriptionLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     descriptionLabel->setText("Description:");
 
     description = new QLineEdit(this, "description");
@@ -59,7 +62,7 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     // To do this, we'll need to create a widget within the 
     // button group and then a layout within the widget.
     
-    autoConvertGroup = new QButtonGroup(1, Horizontal, "Auto Conversion", this, "autoConvertGroup");
+    autoConvertGroup = new Q3ButtonGroup(1, Qt::Horizontal, "Auto Conversion", this, "autoConvertGroup");
     autoConvertGroup->setExclusive(true);
 
     // The autoConvertGroup widget (acgw)
@@ -74,7 +77,7 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     connect(autoConvertDays, SIGNAL(toggled(bool)), this, SLOT(toggleConvertDays(bool)));
 
     convertDaysLabel = new QLabel(acgw, "convertDaysLabel");
-    convertDaysLabel->setAlignment(AlignLeft|AlignVCenter);
+    convertDaysLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     convertDaysLabel->setText("days after the account is created");
 
     convertDays = new QLineEdit(acgw, "convertDays");
@@ -83,10 +86,10 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     autoConvertDate = new QRadioButton("Convert on this date", acgw, "autoConvertDate");
     connect(autoConvertDate, SIGNAL(toggled(bool)), this, SLOT(toggleConvertDate(bool)));
 
-    convertDate = new QDateEdit(QDate::currentDate(), acgw, "convertDate");
+    convertDate = new Q3DateEdit(QDate::currentDate(), acgw, "convertDate");
 
     convertToLabel = new QLabel(acgw, "convertToLabel");
-    convertToLabel->setAlignment(AlignLeft|AlignVCenter);
+    convertToLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     convertToLabel->setText("Convert to:");
     
     convertToList = new QComboBox(false, acgw, "convertToList");
@@ -97,22 +100,22 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     autoConvertGroup->insert(autoConvertDate);
 
     // Now create the layout for within acgw
-    QBoxLayout *acgwl = new QBoxLayout(acgw, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *acgwl = new Q3BoxLayout(acgw, Q3BoxLayout::TopToBottom, 3);
     acgwl->addWidget(noAutoConvert, 0);
     // We need a separate layout for each of the next three widget sets
-    QBoxLayout *acdaysl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *acdaysl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     acdaysl->addWidget(autoConvertDays, 0);
     acdaysl->addWidget(convertDays, 0);
     acdaysl->addWidget(convertDaysLabel, 1);
     acgwl->addLayout(acdaysl, 0);
     
-    QBoxLayout *acdatel = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *acdatel = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     acdatel->addWidget(autoConvertDate, 0);
     acdatel->addWidget(convertDate, 0);
     acdatel->addStretch(1);
     acgwl->addLayout(acdatel, 0);
 
-    QBoxLayout *convtol = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *convtol = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     convtol->addWidget(convertToLabel, 1);
     convtol->addWidget(convertToList, 1);
     acgwl->addSpacing(10);
@@ -125,10 +128,10 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     connect(promoPlan, SIGNAL(toggled(bool)), this, SLOT(togglePromoPlan(bool)));
 
     promoEndsOnLabel = new QLabel(this, "promoEndsOnLabel");
-    promoEndsOnLabel->setAlignment(AlignRight|AlignVCenter);
+    promoEndsOnLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     promoEndsOnLabel->setText("Promotion Ends On:");
 
-    promoEndsOn = new QDateEdit(QDate::currentDate(), this, "promoEndsOn");
+    promoEndsOn = new Q3DateEdit(QDate::currentDate(), this, "promoEndsOn");
 
     // Our save and cancel buttons
     QPushButton *saveButton = new QPushButton(this, "saveButton");
@@ -140,10 +143,10 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelRatePlan()));
 
     // Finally, create our main layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
     // A grid layout for the top two rows.
-    QGridLayout *gl = new QGridLayout(2, 2);
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
     int curRow = 0;
     gl->addWidget(planTagLabel,     curRow, 0);
     gl->addWidget(planTag,          curRow, 1);
@@ -160,7 +163,7 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     ml->addWidget(autoConvertGroup, 0);
 
     // Another layout for our promo info
-    QBoxLayout *pl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *pl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     pl->addStretch(1);
     pl->addWidget(promoPlan, 0);
     pl->addStretch(1);
@@ -172,7 +175,7 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     ml->addStretch(1);
 
     // Finally our button layout.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

@@ -13,8 +13,8 @@
 #ifndef CCTOOLS_H
 #define CCTOOLS_H
 
-#include <qstring.h>
-#include <qptrlist.h>
+#include <QtCore/QString>
+#include <Qt3Support/q3ptrlist.h>
 
 struct CreditCardRecord {
     int     idx;
@@ -29,7 +29,7 @@ struct CreditCardRecord {
     QString listText;
 };
 
-typedef QPtrList<CreditCardRecord> CreditCardList;
+typedef Q3PtrList<CreditCardRecord> CreditCardList;
 
 CreditCardList getCreditCardList(long);
 

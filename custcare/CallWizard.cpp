@@ -27,11 +27,15 @@
 #include <CustomerSearch.h>
 
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <QLabel>
+#include <Q3Frame>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <qdatetm.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qprinter.h>
 #include <qpainter.h>
 #include <qrect.h>
@@ -39,7 +43,7 @@
 #include <qpushbutton.h>
 #include <math.h>
 #include <qlayout.h>
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
 
 CallWizard::CallWizard
 (
@@ -53,7 +57,7 @@ CallWizard::CallWizard
     titleBar->message("Call Logger");
 
     QLabel *hline1 = new QLabel(this);
-    hline1->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    hline1->setFrameStyle(Q3Frame::HLine|Q3Frame::Sunken);
     hline1->setMaximumHeight(3);
 
     hangupButton   = new QPushButton(this, "Hangup Button");
@@ -68,23 +72,23 @@ CallWizard::CallWizard
     proceedButton->setText("&Proceed");
     
     QLabel *hline2 = new QLabel(this);
-    hline2->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    hline2->setFrameStyle(Q3Frame::HLine|Q3Frame::Sunken);
     hline2->setMaximumHeight(3);
     status = new QStatusBar(this);
     status->message("Status bar here.");
 
-    mainArea = new QWidgetStack(this);
+    mainArea = new Q3WidgetStack(this);
     typeSel = new CallTypeSelector(mainArea, "CallTypeSelector");
     mainArea->addWidget(typeSel, 0);
     mainArea->raiseWidget(0);
 
     // Now, do the layout for the widget.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 0, 3);
     ml->addWidget(titleBar, 0);
     ml->addWidget(hline1, 0);
     ml->addWidget(mainArea, 1);
 
-    QBoxLayout  *butlay = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *butlay = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     butlay->addStretch(1);
     butlay->addWidget(hangupButton, 0);
     butlay->addWidget(transferButton, 0);

@@ -26,11 +26,16 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qdatetm.h>
 #include <qapplication.h>
 #include <qregexp.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <QLabel>
 
 #include <BlargDB.h>
 
@@ -71,14 +76,14 @@ LogCall::LogCall
     typeLabel = new QLabel(callType, "&Type", this);
     typeLabel->setAlignment(AlignRight|AlignVCenter);
 
-    reasonList = new QListView(this, "reasonList");
+    reasonList = new Q3ListView(this, "reasonList");
     reasonList->addColumn("Call Subject");
     reasonList->setMaximumHeight(125);
     reasonLabel = new QLabel(reasonList, "&Reason", this);
     reasonLabel->setAlignment(AlignRight|AlignTop);
     
-    solutionNotes = new QMultiLineEdit(this, "solutionNotes");
-    solutionNotes->setWordWrap(QMultiLineEdit::WidgetWidth);
+    solutionNotes = new Q3MultiLineEdit(this, "solutionNotes");
+    solutionNotes->setWordWrap(Q3MultiLineEdit::WidgetWidth);
     solutionLabel = new QLabel(solutionNotes, "S&olution", this);
     solutionLabel->setAlignment(AlignRight|AlignTop);
     
@@ -96,7 +101,7 @@ LogCall::LogCall
     connect(doneButton, SIGNAL(clicked()), this, SLOT(hangupCall()));
 
     statusLabel = new QLabel(this, "statusLabel");
-    statusLabel->setFrameStyle(QFrame::Sunken|QFrame::WinPanel);
+    statusLabel->setFrameStyle(Q3Frame::Sunken|Q3Frame::WinPanel);
 
     clockArea = new QLCDNumber(this, "clockArea");
     clockArea->setMode(QLCDNumber::DEC);
@@ -105,9 +110,9 @@ LogCall::LogCall
 
     
     // Main Layout, top to bottom, with a grid and stuff thrown in.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout(3, 5);
+    Q3GridLayout *gl = new Q3GridLayout(3, 5);
     gl->setRowStretch(0, 0);
     gl->setRowStretch(1, 0);
     gl->setRowStretch(2, 1);
@@ -131,7 +136,7 @@ LogCall::LogCall
 
     ml->addLayout(gl, 1);
 
-    QBoxLayout  *abl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout  *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     abl->addWidget(custWinButton,  1);
     abl->addWidget(clockButton,  1);
     abl->addWidget(doneButton,  1);
@@ -142,7 +147,7 @@ LogCall::LogCall
     ml->addLayout(abl, 0);
 
 
-    QBoxLayout  *sbl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *sbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
 
     sbl->addWidget(statusLabel,             1);
     sbl->addWidget(clockArea,               0);
@@ -200,34 +205,34 @@ void LogCall::callTypeChanged(int newType)
     switch(newType) {
         case    0:      // Support Call
             reasonList->clear();
-		    (void) new QListViewItem(reasonList, "General");
-		    (void) new QListViewItem(reasonList, "Connection Problems");
-		    (void) new QListViewItem(reasonList, "CCC Problems");
-		    (void) new QListViewItem(reasonList, "Mail Retrieval Problems");
+		    (void) new Q3ListViewItem(reasonList, "General");
+		    (void) new Q3ListViewItem(reasonList, "Connection Problems");
+		    (void) new Q3ListViewItem(reasonList, "CCC Problems");
+		    (void) new Q3ListViewItem(reasonList, "Mail Retrieval Problems");
             break;
             
         case    1:      // Sales/Info call
             reasonList->clear();
-		    (void) new QListViewItem(reasonList, "General Information");
+		    (void) new Q3ListViewItem(reasonList, "General Information");
             break;
 
         case    2:      // New User Setup
             reasonList->clear();
-            (void) new QListViewItem(reasonList, "New Add-on Account");
-		    (void) new QListViewItem(reasonList, "New User Setup");
+            (void) new Q3ListViewItem(reasonList, "New Add-on Account");
+		    (void) new Q3ListViewItem(reasonList, "New User Setup");
             break;
 
         case    3:      // Accounting Call
             reasonList->clear();
-            (void) new QListViewItem(reasonList, "Posted Payment");
-            (void) new QListViewItem(reasonList, "Grace Extension");
-		    (void) new QListViewItem(reasonList, "Duplicate Setup Charges");
-		    (void) new QListViewItem(reasonList, "Billing Dipsute");
-		    (void) new QListViewItem(reasonList, "Late Payment");
+            (void) new Q3ListViewItem(reasonList, "Posted Payment");
+            (void) new Q3ListViewItem(reasonList, "Grace Extension");
+		    (void) new Q3ListViewItem(reasonList, "Duplicate Setup Charges");
+		    (void) new Q3ListViewItem(reasonList, "Billing Dipsute");
+		    (void) new Q3ListViewItem(reasonList, "Late Payment");
             break;
     }
     // This one applies to all.
-    (void) new QListViewItem(reasonList, "Uncategorized/Other");
+    (void) new Q3ListViewItem(reasonList, "Uncategorized/Other");
 
     reasonList->repaint();
 }
@@ -366,7 +371,7 @@ void LogCall::hangupCall()
 	}
     
     // Verify that a reason has been selected
-    QListViewItem   *curItem = reasonList->currentItem();
+    Q3ListViewItem   *curItem = reasonList->currentItem();
     if (curItem == NULL) {
         statusLabel->setText("No call reason selected.  Select one before closing.");
         return;

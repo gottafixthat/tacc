@@ -8,10 +8,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
-#include <qstrlist.h>
+#include <q3dict.h>
+#include <q3strlist.h>
 
 #include <ADB.h>
 #include <BString.h>
@@ -58,14 +58,14 @@ void LoginAvgReport::refreshReport()
 {
     QApplication::setOverrideCursor(waitCursor);
 
-    QDict<AvgRepStruct>     repData;
+    Q3Dict<AvgRepStruct>     repData;
     AvgRepStruct            *curItem;
     char                    sDate[20];
     char                    eDate[20];
     long                    curCount = 0;
     ADB                     DB;
-    QStrList                keys(TRUE);
-    QStrList                contents(TRUE);
+    Q3StrList                keys(TRUE);
+    Q3StrList                contents(TRUE);
     int                     entryNo = 0;
     float                   *datum;
     char                    **labels;
@@ -132,7 +132,7 @@ void LoginAvgReport::refreshReport()
                 strcpy(itemAvg, "0");
             }
             sprintf(itemEntry, "%08d", entryNo++);
-            (void) new QListViewItem(repBody, itemName, itemMin, itemMax, itemAvg, itemEntry);
+            (void) new Q3ListViewItem(repBody, itemName, itemMin, itemMax, itemAvg, itemEntry);
             labels[i] = new char[256];
             strcpy(labels[i], itemName);
             // datum[i] = atof(itemAvg);
@@ -144,7 +144,7 @@ void LoginAvgReport::refreshReport()
         sprintf(itemMax, "%ld", TotalMax);
         sprintf(itemAvg, "%.1f", TotalAvg);
         sprintf(itemEntry, "%08d", entryNo++);
-        (void) new QListViewItem(repBody, itemName, itemMin, itemMax, itemAvg, itemEntry);
+        (void) new Q3ListViewItem(repBody, itemName, itemMin, itemMax, itemAvg, itemEntry);
         
         // Reset our sort key.
         repBody->setSorting(4);
@@ -158,7 +158,7 @@ void LoginAvgReport::refreshReport()
 	        datum[i] = tmpAvg / TotalAvg;
 	    }
     } else {
-        (void) new QListViewItem(repBody, "No data available for specified period");
+        (void) new Q3ListViewItem(repBody, "No data available for specified period");
     }
     
 

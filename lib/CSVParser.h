@@ -13,10 +13,10 @@
 #ifndef CSVPARSER_H
 #define CSVPARSER_H
 
-#include <qstring.h>
-#include <qfile.h>
-#include <qtextstream.h>
-#include <qstringlist.h>
+#include <QtCore/QString>
+#include <QtCore/QFile>
+#include <Qt3Support/q3textstream.h>
+#include <QtCore/QStringList>
 
 class CSVParser
 {
@@ -33,7 +33,7 @@ public:
 protected:
     QString     substSep(const QString &src, const QChar &srch, const QChar &repl);
     QFile       myFile;
-    QTextStream *myStream;
+    Q3TextStream *myStream;
     QChar       myDelim;
     QStringList curRow;
     QStringList myHeader;

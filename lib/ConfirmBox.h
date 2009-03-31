@@ -15,16 +15,16 @@
 #ifndef CONFIRMBOX_H
 #define CONFIRMBOX_H
 
-#include <qdialog.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
+#include <QtGui/QDialog>
+#include <QtGui/QCheckBox>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
 
 class ConfirmBox : public QDialog
 {
     Q_OBJECT
 public:
-    ConfirmBox(QWidget *parent = NULL, const char *name = NULL);
+    ConfirmBox(QWidget *parent = NULL);
     virtual ~ConfirmBox();
 
     void    setTitle(const QString);

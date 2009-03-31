@@ -21,18 +21,20 @@
 
 #include "TAATools.h"
 #include "TAAWidget.h"
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlistview.h>
-#include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+#include <QtCore/QEvent>
+#include <QtGui/QCloseEvent>
 #include <calendar.h>
-#include <qtextview.h>
-#include <qpopupmenu.h>
-#include <qsqldatabase.h>
-#include <qspinbox.h>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3popupmenu.h>
+#include <QtSql/QSqlDatabase>
+#include <QtGui/QSpinBox>
 
 #include <ServerGroups.h>
 
@@ -58,10 +60,10 @@ protected slots:
     virtual void editClicked();
     virtual void deleteClicked();
     virtual void closeClicked();
-    virtual void itemDoubleClicked(QListViewItem *);
+    virtual void itemDoubleClicked(Q3ListViewItem *);
 
 protected:
-    QListView       *vstList;
+    Q3ListView       *vstList;
     QPushButton     *addButton;
     QPushButton     *editButton;
     QPushButton     *deleteButton;
@@ -95,8 +97,8 @@ protected slots:
     virtual void    saveClicked();
     virtual void    cancelClicked();
     virtual void    addFlagClicked();
-    virtual void    availableFlagDoubleClicked(QListViewItem *);
-    virtual void    assignedFlagDoubleClicked(QListViewItem *);
+    virtual void    availableFlagDoubleClicked(Q3ListViewItem *);
+    virtual void    assignedFlagDoubleClicked(Q3ListViewItem *);
     virtual void    rmFlagClicked();
 
 protected:
@@ -107,8 +109,8 @@ protected:
     QComboBox           *billableItem;
     QSpinBox            *baseChannels;
     QComboBox           *channelBillable;
-    QListView           *flagsAvailable;
-    QListView           *flagsAssigned;
+    Q3ListView           *flagsAvailable;
+    Q3ListView           *flagsAssigned;
     ServerGroupSelector *serverGroups;
     QPushButton         *saveButton;
     QPushButton         *cancelButton;

@@ -22,12 +22,12 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qcheckbox.h>
 #include <qmenubar.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qlineedit.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qmap.h>
 
 #include <TAAWidget.h>
@@ -47,7 +47,7 @@ public:
     );
 
     virtual ~Customers();
-    QPopupMenu  *menu();
+    Q3PopupMenu  *menu();
 
 public slots:
     virtual void refreshList(long);
@@ -56,7 +56,7 @@ public slots:
 protected slots:
     void         refreshListV();
     virtual void listQueryS();
-    virtual void custSelected(QListViewItem * sitem);
+    virtual void custSelected(Q3ListViewItem * sitem);
     
     // These are inhereted from TAAWidget
     virtual void refreshCustomer(long custID);
@@ -74,8 +74,8 @@ protected:
     QLabel      *queryLabel;
     QLineEdit   *listQuery;
     QCheckBox   *autoOpenCustomer;
-    QListView   *list;
-    QPopupMenu  *optionsMenu;
+    Q3ListView   *list;
+    Q3PopupMenu  *optionsMenu;
 
     QLabel      *phoneNumberLabel;
     QLabel      *phoneNumber;

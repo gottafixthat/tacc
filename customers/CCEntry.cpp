@@ -16,6 +16,9 @@
 #include "BString.h"
 #include <AcctsRecv.h>
 #include <qdatetm.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 #include <stdio.h>
 #include <stdlib.h>
 #include <qtooltip.h>
@@ -168,10 +171,10 @@ CCEntry::CCEntry
 
 
     // Setup the layout for this window.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // The entry widgets go into a grid 4 columns wide.
-    QGridLayout *ewl = new QGridLayout(4, 5, 2);
+    Q3GridLayout *ewl = new Q3GridLayout(4, 5, 2);
     ewl->setColStretch(0, 0);
     ewl->setColStretch(1, 1);
     ewl->setColStretch(2, 0);
@@ -241,7 +244,7 @@ CCEntry::CCEntry
     ml->addStretch(1);
 
     // Do a layout for the buttons
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

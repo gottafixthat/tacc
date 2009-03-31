@@ -16,9 +16,11 @@
 #include <stdlib.h>
 
 #include <qfile.h>
-#include <qtextstream.h>
+#include <q3textstream.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
 
 #include <TE_Message.h>
 
@@ -28,27 +30,27 @@ TE_Message::TE_Message(QWidget* parent, const char* name) :
 	setCaption( "Message" );
 
     QLabel *fromLineLabel = new QLabel(this, "fromLineLabel");
-    fromLineLabel->setAlignment(AlignRight|AlignVCenter);
+    fromLineLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     fromLineLabel->setText("From:");
 
     fromLine = new QLineEdit(this, "fromLine");
     fromLine->setMaxLength(80);
 
     QLabel *msgSubjectLabel = new QLabel(this, "msgSubjectLabel");
-    msgSubjectLabel->setAlignment(AlignRight|AlignVCenter);
+    msgSubjectLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     msgSubjectLabel->setText("Subject:");
 
     msgSubject = new QLineEdit(this, "msgSubject");
     msgSubject->setMaxLength(80);
 
     QLabel *msgTextLabel = new QLabel(this, "msgTextLabel");
-    msgTextLabel->setAlignment(AlignRight|AlignTop);
+    msgTextLabel->setAlignment(Qt::AlignRight|Qt::AlignTop);
     msgTextLabel->setText("Message Text:");
 
-    msgText = new QMultiLineEdit(this, "msgText");
+    msgText = new Q3MultiLineEdit(this, "msgText");
 
     // A single grid layout is all we need for this widget.
-    QGridLayout *ml = new QGridLayout(this, 3, 2, 3);
+    Q3GridLayout *ml = new Q3GridLayout(this, 3, 2, 3);
     int curRow = 0;
     ml->addWidget(fromLineLabel,    curRow, 0);
     ml->addWidget(fromLine,         curRow, 1);
@@ -85,8 +87,8 @@ char * TE_Message::createMessage()
     strcpy(RetVal, tmpnam(NULL));
     
     QFile   qfp(RetVal);
-    if (qfp.open(IO_WriteOnly)) {
-        QTextStream ts(&qfp);
+    if (qfp.open(QIODevice::WriteOnly)) {
+        Q3TextStream ts(&qfp);
         
         ts << "To: {LoginID}@avvanta.com" << endl;
         ts << "From: " << fromLine->text() << endl;

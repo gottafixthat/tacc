@@ -25,12 +25,15 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
+//Added by qt3to4:
+#include <QEvent>
+#include <QCloseEvent>
 #include <calendar.h>
-#include <qtextview.h>
-#include <qpopupmenu.h>
+#include <q3textview.h>
+#include <q3popupmenu.h>
 #include <qsqldatabase.h>
 
 class CompanyList : public TAAWidget
@@ -55,10 +58,10 @@ protected slots:
     virtual void editClicked();
     virtual void deleteClicked();
     virtual void closeClicked();
-    virtual void itemDoubleClicked(QListViewItem *);
+    virtual void itemDoubleClicked(Q3ListViewItem *);
 
 protected:
-    QListView       *coList;
+    Q3ListView       *coList;
     QPushButton     *addButton;
     QPushButton     *editButton;
     QPushButton     *deleteButton;

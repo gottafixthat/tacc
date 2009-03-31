@@ -12,9 +12,9 @@
 
 #include "Report.h"
 
-#include <qdict.h>
-#include <qintdict.h>
-#include <qstrlist.h>
+#include <q3dict.h>
+#include <q3intdict.h>
+#include <q3strlist.h>
 
 struct ModemTotalStruct {
     int  loginCount;
@@ -37,10 +37,10 @@ public:
     
     virtual void refreshReport();
 
-    virtual void listItemSelected(QListViewItem *curItem);
+    virtual void listItemSelected(Q3ListViewItem *curItem);
     
 private:
-    QDict<ModemTotalStruct> loginDict;
-    QStrList                loginList;
+    Q3Dict<ModemTotalStruct> loginDict;
+    Q3StrList                loginList;
 };
 #endif // ModemTotalsReport_included

@@ -40,6 +40,8 @@
 #include <sys/wait.h>
 #include <qdir.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3CString>
 
 #include "Cfg.h"
 #include <ADB.h>
@@ -108,8 +110,8 @@ void scanDir(void)
     char     tmpbuf[1024];
     char     fromline[1024];
     char     toaddr[1024];
-    QCString tmpstr;
-    QCString tmpstr2;
+    Q3CString tmpstr;
+    Q3CString tmpstr2;
     FILE     *src;
     QDir     dir("/var/spool/taamail");
     char     *bigbuf;
@@ -297,8 +299,8 @@ void scanDb(void)
     char     tmpbuf[1024];
     char     fromline[1024];
     char     toaddr[1024];
-    QCString tmpstr;
-    QCString tmpstr2;
+    Q3CString tmpstr;
+    Q3CString tmpstr2;
     char     *bigbuf;
     int      respCode;
     

@@ -26,7 +26,7 @@
 #define ELT_Flags_included
 
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qstring.h>
@@ -49,7 +49,7 @@ public:
     void    setLoginTypeID(long newLoginTypeID);
     
 protected:
-    QListView       *flagList;
+    Q3ListView       *flagList;
     QLineEdit       *flagValue;
     QPushButton     *setValueButton;
     QPushButton     *addButton;
@@ -58,7 +58,7 @@ protected:
 protected slots:
     virtual void removeFlag();
     virtual void addFlag();
-    virtual void itemSelected(QListViewItem *curItem);
+    virtual void itemSelected(Q3ListViewItem *curItem);
     virtual void flagValueChanged(const QString &);
     virtual void setValue();
     

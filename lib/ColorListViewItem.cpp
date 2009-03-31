@@ -1,32 +1,32 @@
 
-#include <qapplication.h>
-#include <qpainter.h>
+#include <QtGui/QApplication>
+#include <QtGui/QPainter>
 #include "ColorListViewItem.h"
 
-ColorListViewItem::ColorListViewItem(QListView *Parent, QColor bgcolor) : QListViewItem(Parent)
+ColorListViewItem::ColorListViewItem(Q3ListView *Parent, QColor bgcolor) : Q3ListViewItem(Parent)
 {
     initialize(bgcolor);
 }
 
 
 ColorListViewItem::ColorListViewItem(
-    QListView *Parent)
-    : QListViewItem(Parent)
+    Q3ListView *Parent)
+    : Q3ListViewItem(Parent)
 {
     QColor  defaultcolor(255,255,255);
     initialize(defaultcolor);
 }
 
 ColorListViewItem::ColorListViewItem(
-    QListViewItem *Parent)
-    : QListViewItem(Parent)
+    Q3ListViewItem *Parent)
+    : Q3ListViewItem(Parent)
 {
     QColor  defaultcolor(255,255,255);
     initialize(defaultcolor);
 }
 
 ColorListViewItem::ColorListViewItem(
-    QListView *Parent, QColor bgcolor,
+    Q3ListView *Parent, QColor bgcolor,
     const char *s1,
     const char *s2,
     const char *s3,
@@ -35,13 +35,13 @@ ColorListViewItem::ColorListViewItem(
     const char *s6,
     const char *s7,
     const char *s8)
-    : QListViewItem(Parent, s1, s2, s3, s4, s5, s6, s7, s8)
+    : Q3ListViewItem(Parent, s1, s2, s3, s4, s5, s6, s7, s8)
 {
     initialize(bgcolor);
 }
 
 ColorListViewItem::ColorListViewItem(
-    QListViewItem *Parent,
+    Q3ListViewItem *Parent,
     const char *s1,
     const char *s2,
     const char *s3,
@@ -50,7 +50,7 @@ ColorListViewItem::ColorListViewItem(
     const char *s6,
     const char *s7,
     const char *s8)
-    : QListViewItem(Parent, s1, s2, s3, s4, s5, s6, s7, s8)
+    : Q3ListViewItem(Parent, s1, s2, s3, s4, s5, s6, s7, s8)
 {
     QColor  defaultcolor(255,255,255);
     initialize(defaultcolor);
@@ -71,7 +71,7 @@ void ColorListViewItem::paintCell(
     if( ! p)
 	return;
 
-    QListViewItem::paintCell(p, ColorGroup, col, width, align);
+    Q3ListViewItem::paintCell(p, ColorGroup, col, width, align);
 }
 
 void
@@ -95,7 +95,7 @@ ColorListViewItem::paintFocus(
  	else
  	    p->setPen(cg.text());
 
-	p->drawWinFocusRect( r );
+	//p->drawWinFocusRect( r );
     /*
     }
     */

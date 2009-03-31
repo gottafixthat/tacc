@@ -18,9 +18,10 @@
 #define MAXFIELDS    99
 
 #include <ADB.h>
-#include <qlist.h>
-#include <qstring.h>
-#include <qstringlist.h>
+#include <QtCore/QList>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <Qt3Support/Q3PtrList>
 
 #define TRANSTYPE_CUSTCHARGE    1
 #define TRANSTYPE_PAYMENT       2
@@ -33,7 +34,7 @@ struct GLAccountTypeRecord {
     QString description;
 };
 
-typedef QPtrList<GLAccountTypeRecord> GLAccountTypeList;
+typedef Q3PtrList<GLAccountTypeRecord> GLAccountTypeList;
 
 // GL Account Types
 class GLAccountTypesDB
@@ -99,7 +100,7 @@ public:
     int			SplitCount;
     QString		BaseDesc;
     
-    uint		CurSplitNo;
+    int		    CurSplitNo;
     GLDB		*CurrentSplit;
     
     // Transaction functions
@@ -114,7 +115,7 @@ public:
     int			DelSplit(int SplitNo);
 
 private:
-	QList<GLDB> Splits;
+	QList<GLDB *> Splits;
 };
 
 

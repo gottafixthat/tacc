@@ -15,7 +15,10 @@
 
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
+//Added by qt3to4:
+#include <QCloseEvent>
+#include <QEvent>
 #include <TAAWidget.h>
 
 class ChangeBillingCycle : public TAAWidget
@@ -36,7 +39,7 @@ protected slots:
 protected:
     QLabel      *customer;
     QComboBox   *cycleList;
-    QDateEdit   *effectiveDate;
+    Q3DateEdit   *effectiveDate;
 
     long    myCustID;
 

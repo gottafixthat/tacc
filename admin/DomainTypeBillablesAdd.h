@@ -13,7 +13,7 @@
 #ifndef DOMAINTYPEBILLABLESADD_H
 #define DOMAINTYPEBILLABLESADD_H
 
-#include <qlistview.h>
+#include <q3listview.h>
 
 #include <TAAWidget.h>
 
@@ -38,7 +38,7 @@ protected slots:
     virtual void    cancelBillableItemAdd();
 
 protected:
-    QListView       *itemList;
+    Q3ListView       *itemList;
 
 private:
     int             myDomainTypeID;

@@ -27,13 +27,13 @@
 #define SubscriptionEdit_included
 
 #include <TAAWidget.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <calendar.h>
 #include <qdatetm.h>
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 #include <qlineedit.h>
 #include <qcombobox.h>
 
@@ -78,7 +78,7 @@ protected:
     QCheckBox       *followItem;
     QCheckBox       *setupCharged;
     QLabel          *descriptionLabel;
-    QMultiLineEdit  *description;
+    Q3MultiLineEdit  *description;
     DateInput       *lastDate;
     DateInput       *endDate;
 
@@ -88,10 +88,10 @@ private:
     char            myCycleID[64];
     char            myParentID[64];
     long            *itemIndex;
-    QStrList        *loginIndex;
+    Q3StrList        *loginIndex;
     
-    QStrList        *myItemID;
-    QStrList        *myItemDescr;
+    Q3StrList        *myItemID;
+    Q3StrList        *myItemDescr;
     float           *myItemPrice;
     float           *myItemChildPrice;
     

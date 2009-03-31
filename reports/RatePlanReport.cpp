@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
 
 #include <ADB.h>
@@ -78,10 +78,10 @@ void RatePlanReport::refreshReport()
             // Now, add the entry into the list, including the last column,
             // which is not shown, containing the internal ID so we can
             // zoom in on it.
-            (void) new QListViewItem(repBody, DB.curRow["PlanTag"], DB.curRow["Description"], tmpActiveStr, tmpInactiveStr, DB.curRow["InternalID"]);
+            (void) new Q3ListViewItem(repBody, DB.curRow["PlanTag"], DB.curRow["Description"], tmpActiveStr, tmpInactiveStr, DB.curRow["InternalID"]);
         } 
     } else {
-        (void) new QListViewItem(repBody, "No rate plans found!!!");
+        (void) new Q3ListViewItem(repBody, "No rate plans found!!!");
     }
     
     
@@ -95,7 +95,7 @@ void RatePlanReport::refreshReport()
 **                    rate plan.
 */
 
-void RatePlanReport::listItemSelected(QListViewItem *curItem)
+void RatePlanReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         RatePlanDetailReport *RPDR = new RatePlanDetailReport();

@@ -27,7 +27,7 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qcombobox.h>
@@ -50,14 +50,14 @@ public:
     void    setPackageID(long newPackageID);
     
 protected:
-    QListView   *pricingList;
+    Q3ListView   *pricingList;
     QComboBox   *setupItemList;
     QLineEdit   *itemPrice;
     QPushButton *saveButton;
 
 protected slots:
     void         checkForSave();
-    virtual void listItemSelected(QListViewItem *curItem);
+    virtual void listItemSelected(Q3ListViewItem *curItem);
     virtual void setupItemChanged(int)                  { checkForSave(); }
     virtual void priceChanged(const QString &)          { checkForSave(); }
     

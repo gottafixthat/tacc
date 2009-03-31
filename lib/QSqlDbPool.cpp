@@ -14,12 +14,12 @@
  * written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
+#include <QtSql/QSqlDatabase>
+#include <Qt3Support/q3ptrlist.h>
+#include <QtSql/QSqlError>
 #include <QSqlDbPool.h>
-#include <qsqldatabase.h>
-#include <qptrlist.h>
-#include <qsqlerror.h>
 
-static QPtrList<sql_Connection_Info> connectionPool;
+static Q3PtrList<sql_Connection_Info> connectionPool;
 
 // Our default/global connection information.
 static char *poolDefDriver  = NULL;
@@ -284,6 +284,11 @@ QSqlDatabase *QSqlDbPool::qsqldb()
     return myConnection->db;
 }
 
+QSqlDatabase QSqlDbPool::sqldb()
+{
+    return *myConnection->db;
+}
+
 /**
  * activeConnectionCount()
  *
@@ -357,7 +362,7 @@ void QSqlDbPool::createNewConnection()
         char dbName[256];
         sprintf(dbName, "dbpool%06d", poolCounter);
         conn->connectionID = poolCounter;
-        conn->db = QSqlDatabase::addDatabase(mydbDriver, dbName);
+        conn->db = &QSqlDatabase::addDatabase(mydbDriver, dbName).database();
         conn->db->setHostName(mydbHost);
         conn->db->setDatabaseName(mydbName);
         conn->db->setUserName(mydbUser);

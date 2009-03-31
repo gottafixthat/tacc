@@ -14,7 +14,7 @@
 #ifndef GLACCOUNTTYPES_H
 #define GLACCOUNTTYPES_H
 
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qmenubar.h>
 
 #include <TAAWidget.h>
@@ -77,7 +77,7 @@ protected slots:
 protected:
     int         accountTypeCol;
     QMenuBar    *menu;
-    QListView   *acctTypeList;
+    Q3ListView   *acctTypeList;
 
     GLAccountTypeList   glAcctTypes;
 };

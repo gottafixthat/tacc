@@ -8,10 +8,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
-#include <qstrlist.h>
+#include <q3dict.h>
+#include <q3strlist.h>
 
 #include <ADB.h>
 #include <BString.h>
@@ -203,7 +203,7 @@ void BandwidthSummaryReport::refreshReport()
             sprintf(totStr,   "%.2f", grandTotal / BW_MBYTE);
             sprintf(gbtotStr, "%.2f", grandTotal / (BW_MBYTE * 1024));
 	        
-	        (void) new QListViewItem(repBody,
+	        (void) new Q3ListViewItem(repBody,
 	          DB2.curRow["LoginID"],
 	          inStr,
 	          outStr,
@@ -212,7 +212,7 @@ void BandwidthSummaryReport::refreshReport()
 	        );
         }
     } else {
-        (void) new QListViewItem(repBody, "No data for specified period");
+        (void) new Q3ListViewItem(repBody, "No data for specified period");
     }
     
     delete query;
@@ -225,7 +225,7 @@ void BandwidthSummaryReport::refreshReport()
 ** listItemSelected - Shows the selected customers bandwidth detail.
 */
 
-void BandwidthSummaryReport::listItemSelected(QListViewItem *curItem)
+void BandwidthSummaryReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         char    tmpLoginID[1024];

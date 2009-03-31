@@ -102,7 +102,7 @@ void LoginTypeReport::refreshReport()
         if ((!atoi(DB.curRow["Active"])) && showInactive) showIt = true;
 
         if (showIt) {
-            (void) new QListViewItem(repBody,
+            (void) new Q3ListViewItem(repBody,
                                      DB.curRow["LoginID"],
                                      DB.curRow["FullName"],
                                      modDate,
@@ -137,7 +137,7 @@ void LoginTypeReport::setLoginType(int newLoginType)
 ** listItemSelected  - Gets called when a user double clicks a list item.
 */
 
-void LoginTypeReport::listItemSelected(QListViewItem *curItem)
+void LoginTypeReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem) {
         emit(openCustomer(atol(curItem->key(custIDColumn,0))));

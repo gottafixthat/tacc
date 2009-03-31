@@ -14,7 +14,10 @@
 
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
+//Added by qt3to4:
+#include <QCloseEvent>
+#include <QEvent>
 
 #include <TAAWidget.h>
 
@@ -35,7 +38,7 @@ protected slots:
 protected:
     long        myCustID;
     QComboBox   *ratePlanList;
-    QDateEdit   *effectiveDate;
+    Q3DateEdit   *effectiveDate;
     QLabel      *customer;
 
 signals:

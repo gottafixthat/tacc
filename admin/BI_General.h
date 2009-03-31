@@ -37,7 +37,7 @@
 #include <qlineedit.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 #include <TAAWidget.h>
 
 class BI_General : public TAAWidget
@@ -69,7 +69,7 @@ protected slots:
     virtual void    save();
 
 protected:
-    QMultiLineEdit  *description;
+    Q3MultiLineEdit  *description;
     QCheckBox       *isActive;
     QPushButton     *saveButton;
     QLineEdit       *itemName;

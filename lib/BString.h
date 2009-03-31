@@ -6,12 +6,12 @@
 #ifndef BSTRING_H
 #define BSTRING_H
 
-#include <qdatetm.h>
-#include <qstring.h>
-#include <qstrlist.h>
 #include <stddef.h>
 #include <stdio.h>
 
+#include <QtCore/QDateTime>
+#include <QtCore/QString>
+#include <Qt3Support/q3strlist.h>
 
 const char * getField(char delim, int fieldNo, char * string);
 QString wrapString(uint maxCols, QString string);
@@ -20,8 +20,8 @@ void myDatetoQDate(const char * myDate, QDate * newDate);
 void myDateStamptoQDateTime(const char * myDate, QDateTime * newDate);
 void QDatetomyDate(char * myDate, QDate theDate);
 void QDateTimetomyTimeStamp(char * myTimeStamp, QDateTime theDate);
-void splitString(const char *src, char delim, QStrList &dst, int Fold = 1);
-void joinString(QStrList *src, char *delim, char *dst);
+void splitString(const char *src, char delim, Q3StrList &dst, int Fold = 1);
+void joinString(Q3StrList *src, char *delim, char *dst);
 void pwGen(char *pwstr);
 
 char *word_wrap(char *string, size_t line_len); 

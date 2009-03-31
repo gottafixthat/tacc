@@ -74,14 +74,14 @@
 #include <mysql/mysql.h>
 
 #ifdef ADBQT
-#include <qdatetm.h>
-#include <qdialog.h>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qtextview.h>
-#include <qlineedit.h>
-#include <qcombobox.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QDialog>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3textview.h>
+#include <QtGui/QLineEdit>
+#include <QtGui/QComboBox>
 #endif
 
 // As MySQL defines bigint as a long long, we need to define it so we don't
@@ -448,56 +448,6 @@ private:
     long    totKeys;
     long    curKeyNo;
 };
-
-
-#ifdef ADBQT
-class ADBLogin : public QDialog
-{
-    Q_OBJECT
-
-public:
-    ADBLogin(QWidget *parent = NULL, const char *name = NULL, bool showServer = true);
-    virtual ~ADBLogin();
-
-    void        setWindowTitle(const char *newTitle = NULL);
-    void        setTextTitle(const char *newTitle = NULL);
-
-    void        setDBName(const char *newDBName = NULL);
-    void        setDefaultUser(const char *user = NULL);
-    void        setUserEditable(bool allowUserEdit = true);
-    void        clearServerList();
-    void        addServer(const char *serverName);
-    void        setServerEditable(bool allowServerEdit = true);
-
-    const char *server();
-    const char *user();
-    const char *pass();
-
-    void        setADBDefaults();
-
-protected slots:
-    void        checkLogin();
-    void        inputChanged(const QString &);
-
-protected:
-    QTextView   *titleText;
-    QLabel      *serverLabel;
-    QComboBox   *serverList;
-    QLineEdit   *userName;
-    QLineEdit   *password;
-    QPushButton *loginButton;
-    QPushButton *cancelButton;
-    QLabel      *status;
-
-    int         currentAttempt;
-    int         maxAttempts;
-
-private:
-    void        badLogin();
-    char        *myDBName;
-};
-#endif
-
 
 
 #endif // ifdef ADB_H

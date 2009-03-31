@@ -11,6 +11,7 @@
 ****************************************************************************/
 
 #include <CSVParser.h>
+#include <Qt3Support/Q3TextStream>
 
 
 /**
@@ -51,7 +52,7 @@ QString CSVParser::substSep(const QString &src, const QChar &srch, const QChar &
 
     bool inBlock = false;
     
-    for( uint i = 0; i < retVal.length(); i++ ) {
+    for(int i = 0; i < retVal.length(); i++ ) {
         if( inBlock ) {
             if( retVal[i] == '\"' ) {
                 inBlock = false;   
@@ -78,8 +79,8 @@ bool CSVParser::openFile(const QString &fName, bool firstRowIsHeader)
 {
     if (myFile.isOpen()) myFile.close();
     myFile.setName(fName);
-    myFile.open(IO_ReadOnly);
-    myStream = new QTextStream(&myFile);
+    myFile.open(QIODevice::ReadOnly);
+    myStream = new Q3TextStream(&myFile);
     if (firstRowIsHeader && myFile.isOpen()) {
         loadRecord();
         myHeader = row();
@@ -110,11 +111,11 @@ Q_LONG CSVParser::loadRecord()
     if (myFile.atEnd()) return retVal;
     
     QString line = myStream->readLine();
-    if (line == NULL) return retVal;
+    if (line.isNull()) return retVal;
 
     curRow = QStringList::split("\n", substSep(line, myDelim, '\n'), true);
     // Strip the quotes from each of the columns if there are any.
-    for (unsigned int i = 0; i < curRow.count(); i++) {
+    for (int i = 0; i < curRow.count(); i++) {
         if (curRow[i][0] == '"' && curRow[i][curRow[i].length()-1] == '"') {
             curRow[i] = curRow[i].mid(1,curRow[i].length()-2);
         }

@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
 
 #include <ADB.h>
@@ -93,7 +93,7 @@ void LoginsToWipeReport::refreshReport()
         );
         
         myDateStamptoQDateTime(DB.curRow["LastModified"], &qDT);
-        (void) new QListViewItem(repBody,
+        (void) new Q3ListViewItem(repBody,
           custName,
           DB.curRow["CustomerID"],
           DB.curRow["LoginID"],
@@ -110,7 +110,7 @@ void LoginsToWipeReport::refreshReport()
 **                      item.  It will bring up the customer in question.
 */
 
-void LoginsToWipeReport::listItemSelected(QListViewItem *curItem)
+void LoginsToWipeReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         long    CustID = atol(curItem->key(1,0));

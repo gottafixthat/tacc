@@ -47,7 +47,7 @@ protected:
     bool    showWiped;
 
 protected slots:
-    virtual void listItemSelected(QListViewItem *curItem);
+    virtual void listItemSelected(Q3ListViewItem *curItem);
 };
 
 

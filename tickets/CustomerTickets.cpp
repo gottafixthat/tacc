@@ -25,11 +25,13 @@
 #include "CustomerTickets.h"
 
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <qdatetm.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qlayout.h>
 #include <qtimer.h>
 
@@ -44,18 +46,18 @@ CustomerTickets::CustomerTickets
 ) : TAAWidget( parent, name )
 {
 
-    ticketList = new QListView(this);
+    ticketList = new Q3ListView(this);
     ticketList->addColumn("Ticket");
     ticketList->addColumn("Status");
     ticketList->addColumn("Owner");
     ticketList->addColumn("Issue");
     ticketList->setAllColumnsShowFocus(true);
     ticketList->setMargin(2);
-    connect(ticketList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(ticketSelected(QListViewItem *)));
-    connect(ticketList, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(ticketSelected(QListViewItem *)));
+    connect(ticketList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(ticketSelected(Q3ListViewItem *)));
+    connect(ticketList, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(ticketSelected(Q3ListViewItem *)));
 
     // Now, do the layout for the widget.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 0, 3);
     ml->addWidget(ticketList, 1);
 
     // Create a timer to refresh the ticket list every 5 minutes
@@ -88,7 +90,7 @@ void CustomerTickets::refreshTicketList()
     // Scan through the list and mark all of the entries there
     // as "removable".
     {
-        QListViewItemIterator   tmpit(ticketList);
+        Q3ListViewItemIterator   tmpit(ticketList);
         for (; tmpit.current(); ++tmpit) tmpit.current()->setText(4,"0");
     }
 
@@ -101,7 +103,7 @@ void CustomerTickets::refreshTicketList()
             // If we find it, update it.
             curTicket.setTicketNo(atol(DB.curRow["TicketNo"]));
             foundIt = false;
-            QListViewItemIterator   it(ticketList);
+            Q3ListViewItemIterator   it(ticketList);
             for (; it.current(); ++it) {
                 if ((atol(it.current()->key(0,0))) == atol(DB.curRow["TicketNo"])) {
                     foundIt = true;
@@ -114,7 +116,7 @@ void CustomerTickets::refreshTicketList()
             }
 
             if (!foundIt) {
-                (void) new QListViewItem(ticketList,
+                (void) new Q3ListViewItem(ticketList,
                         DB.curRow["TicketNo"],
                         curTicket.statusStr(),
                         curTicket.owner(),
@@ -126,7 +128,7 @@ void CustomerTickets::refreshTicketList()
     }
     // Now, walk through the list and delete any items that were not
     // in the query result
-    QListViewItemIterator   tmpit(ticketList);
+    Q3ListViewItemIterator   tmpit(ticketList);
     for (; tmpit.current(); ++tmpit) {
         if (!atol(tmpit.current()->key(4,0))) {
             ticketList->takeItem(tmpit.current());
@@ -150,7 +152,7 @@ void CustomerTickets::setCustomerID(long newCustID)
 **                  on a ticket.
 */
 
-void CustomerTickets::ticketSelected(QListViewItem *curItem)
+void CustomerTickets::ticketSelected(Q3ListViewItem *curItem)
 {
     if (curItem) {
         emit openTicket(atol(curItem->key(0,0)));

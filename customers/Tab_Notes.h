@@ -27,12 +27,12 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
-#include <qtextview.h>
-#include <qstrlist.h>
+#include <q3textview.h>
+#include <q3strlist.h>
 #include <qpainter.h>
 #include <BlargDB.h>
 #include <TAAWidget.h>
@@ -56,8 +56,8 @@ protected:
     QPushButton *newButton;
     QPushButton *ticketButton;
     QCheckBox   *hideAccounting;
-    QListView   *list;
-    QTextView   *noteText;
+    Q3ListView   *list;
+    Q3TextView   *noteText;
     QLineEdit   *searchText;
     QLabel      *openTicketCount;
     QLabel      *addedBy;
@@ -71,7 +71,7 @@ protected:
 public slots:
 	void         refreshNotesList(int);
     void         startSearch();
-	virtual void showNoteDetail(QListViewItem *newItem);
+	virtual void showNoteDetail(Q3ListViewItem *newItem);
 	virtual void newNote();
 	virtual void hideAccountingChanged(bool);
     virtual void printNotes();
@@ -80,7 +80,7 @@ public slots:
 
 protected slots:
     virtual void refreshCustomer(long custID);
-    void         noteDoubleClicked(QListViewItem *);
+    void         noteDoubleClicked(Q3ListViewItem *);
 
 private:
 	long myCustID;

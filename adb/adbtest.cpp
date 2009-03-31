@@ -35,11 +35,6 @@
 #include <stdlib.h>
 #include <ADB.h>
 
-#ifdef ADBQT
-#include <qapplication.h>
-#include <qwindowsstyle.h>
-#endif
-
 #define DBHost  "localhost"
 #define DBName  "adbtest"
 #define DBUser  "marc"
@@ -54,18 +49,6 @@ main(int argc, char **argv)
 {
     printf("Turning up debugging...\n");
     ADB::setDebugLevel(9);
-#ifdef ADBQT
-    QApplication    app(argc, argv);
-    app.setStyle(new QWindowsStyle);
-    ADBLogin    *loginWindow = new ADBLogin();
-    loginWindow->clearServerList();
-    loginWindow->addServer("localhost");
-    loginWindow->setUserEditable(false);
-    loginWindow->setServerEditable(false);
-    app.setMainWidget(loginWindow);
-    loginWindow->exec();
-    app.exec();
-#endif
     test1();
     test2();
     test3();

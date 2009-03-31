@@ -11,9 +11,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <Cfg.h>
-#include <qstrlist.h>
-#include <qstring.h>
-#include <qregexp.h>
+
+#include <Qt3Support/q3strlist.h>
+#include <QtCore/QString>
+#include <QtCore/QRegExp>
+
 #include <BlargDB.h>
 #include <ADB.h>
 #include <FParse.h>
@@ -29,7 +31,7 @@ void    parseFile(const char *SrcFile, const char *DstFile, long CustomerID, con
 	FILE     *dfp;
 	char 	 tmpstr[1024];
     char     tmpDst[1024];
-	QStrList tmplist(TRUE);
+	Q3StrList tmplist(TRUE);
 	QString	 qst;
 	QString	 tmpqstr2;
 	char     contactName[256];
@@ -113,17 +115,15 @@ void    parseEmail(const char *tmplName, long CustomerID, const char *LoginID, c
 {
     FParser  parser;
 	char 	 tmpstr[1024];
-    char     tmpDst[1024];
     char     srcTextFile[1024];
     FILE     *srcTextFP;
     char     srcHTMLFile[1024];
     FILE     *srcHTMLFP;
     int      tmpFP;
     bool     doHTML = false;
-	QStrList tmplist(TRUE);
+	Q3StrList tmplist(TRUE);
 	QString	 qst;
 	QString	 tmpqstr2;
-	long     lineCount = 0;
 	char     contactName[256];
 	char     phoneNumber[32];
 
@@ -265,8 +265,8 @@ VParser::VParser()
     // Because all of our lists have dynamically allocated data, we do
     // not want the Qt libraries to try deallocating the lists, instead
     // we'll do it manually in our destructor.
-    elements.setAutoDelete(FALSE);
-    lists.setAutoDelete(FALSE);
+    //elements.setAutoDelete(FALSE);
+    //lists.setAutoDelete(FALSE);
     
     currentList     = NULL;
     currentListRow = NULL;
@@ -407,13 +407,11 @@ SElement *VParser::find(const char *name)
     SElement    *curItem;
     
     if (elements.count()) {
-        curItem = elements.first();
-        while (curItem != NULL) {
+        for (int i = 0; i < elements.count(); i++) {
+            curItem = elements.at(i);
             if (!strcmp(curItem->Name, name)) {
                 RetVal = curItem;
-                curItem = NULL;
-            } else {
-                curItem = elements.next();
+                i = elements.count();
             }
         }
     }
@@ -433,13 +431,11 @@ SElement *VParser::findColumn(const char *name, EList *row)
     SElement    *curItem;
     
     if (row->columns.count()) {
-        curItem = row->columns.first();
-        while (curItem != NULL) {
+        for (int i = 0; i < row->columns.count(); i++) {
+            curItem = row->columns.at(i);
             if (!strcmp(curItem->Name, name)) {
                 RetVal = curItem;
-                curItem = NULL;
-            } else {
-                curItem = row->columns.next();
+                i = row->columns.count();
             }
         }
     }
@@ -461,13 +457,11 @@ LList *VParser::findList(const char *listName)
     LList    *curItem;
     
     if (lists.count()) {
-        curItem = lists.first();
-        while (curItem != NULL) {
+        for (int i = 0; i < lists.count(); i++) {
+            curItem = lists.at(i);
             if (!strcmp(curItem->Name, listName)) {
                 RetVal = curItem;
-                curItem = NULL;
-            } else {
-                curItem = lists.next();
+                i = lists.count();
             }
         }
     }
@@ -543,7 +537,8 @@ void VParser::doParsing(void)
     int     toklen;
     char    tmpStr[1024];
     
-    for (curItem = fcontents.first(); curItem != 0; curItem = fcontents.next()) {
+    for (uint i = 0; i < fcontents.count(); i++) {
+        curItem = fcontents.at(i);
         if (curItem.find("{") >= 0) {
             // We have something to parse.
             // See if it is a list.  If it is not, then just do a replace on
@@ -579,7 +574,8 @@ void VParser::doParsing(void)
                 // things to the block we'll be sending through the
                 // parser.
                 listBlock = "";
-                for (curListItem = fcontents.next(); curListItem != 0; curListItem = fcontents.next()) {
+                for (uint j = 0; j < fcontents.count(); j++) {
+                    curListItem = fcontents.at(j);
                     if (curListItem.find(endTag) >= 0) {
                         // We've found our ending tag.  Abort the scan
                         break;
@@ -609,8 +605,8 @@ void VParser::doParsing(void)
                 if (tmpList != NULL) {
                     // Got it.  Parse the block for each list element.
                     EList       *curRow;
-                    
-    		        for (curRow = tmpList->rows.first(); curRow != 0; curRow = tmpList->rows.next()) {
+                    for (int n = 0; n < tmpList->rows.count(); n++) {
+                        curRow = tmpList->rows.at(n);
                         parseBlock(listBlock, &curRow->columns);
                     }
                 } else {
@@ -637,7 +633,7 @@ void VParser::doParsing(void)
 **               The list of elements must be passed to it.
 */
 
-void VParser::parseBlock(QString block, QList<SElement> *data)
+void VParser::parseBlock(QString block, QList<SElement *> *data)
 {
     QString     destStr;
     QString     workStr;
@@ -662,7 +658,7 @@ void VParser::parseBlock(QString block, QList<SElement> *data)
 	    SElement    *curItem;
 	    
 	    if (data->count()) {
-	        for (unsigned int i = 0; i < data->count(); i++) {
+	        for (int i = 0; i < data->count(); i++) {
     	        curItem = data->at(i);
                 if (!strcmp(curItem->Name, strtoken)) {
                     ReplVal = curItem->Value;
@@ -692,8 +688,9 @@ int VParser::writeParsedFile(const char *fileName)
     if (fp != NULL) {
         QString curItem;
     
-        for (curItem = pcontents.first(); curItem != 0; curItem = pcontents.next()) {
-            fprintf(fp, "%s", (const char *) curItem);
+        for (uint i = 0; i < pcontents.count(); i++) {
+            curItem = pcontents.at(i);
+            fprintf(fp, "%s", curItem.ascii());
         }
         fflush(fp);
         fclose(fp);
@@ -714,8 +711,9 @@ void VParser::showParsedFile(void)
 {
     QString curItem;
     
-    for (curItem = pcontents.first(); curItem != 0; curItem = pcontents.next()) {
-        fprintf(stdout, "%s", (const char *) curItem);
+    for (uint i = 0; i < pcontents.count(); i++) {
+        curItem = pcontents.at(i);
+        fprintf(stdout, "%s", curItem.ascii());
     }
     fflush(stdout);
 }
@@ -737,7 +735,8 @@ void VParser::_showDebugInfo(void)
     printf("Singular Elements: %d\n", elements.count());
 
     if (elements.count()) {
-        for (curElement = elements.first(); curElement != NULL; curElement = elements.next()) {
+        for (int i = 0; i < elements.count(); i++) {
+            curElement = elements.at(i);
             printf("   %s = %s\n", curElement->Name, curElement->Value);
         }
     }
@@ -746,14 +745,17 @@ void VParser::_showDebugInfo(void)
     printf("Lists: %d\n", lists.count());
 
     if (lists.count()) {
-        for (curList = lists.first(); curList != NULL; curList = lists.next()) {
+        for (int i = 0; i < lists.count(); i++) {
+            curList = lists.at(i);
             printf("-----\n");
             printf("  List Name = %s\n", curList->Name);
 		    printf("       Rows = %d\n", curList->rows.count());
 
 		    if (curList->rows.count()) {
-		        for (curRow = curList->rows.first(); curRow != NULL; curRow = curList->rows.next()) {
-		            for (curElement = curRow->columns.first(); curElement != NULL; curElement = curRow->columns.next()) {
+                for (int j = 0; j < curList->rows.count(); j++) {
+                    curRow = curList->rows.at(j);
+                    for (int n = 0; n < curRow->columns.count(); n++) {
+                        curElement = curRow->columns.at(n);
     		            printf(" %s = %s    ", curElement->Name, curElement->Value);
     		        }
 		            printf("\n");

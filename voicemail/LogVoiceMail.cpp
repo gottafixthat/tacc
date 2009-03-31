@@ -26,13 +26,16 @@
 
 #include "LogVoiceMail.h"
 
-#include <qlabel.h>
-#include <qdatetimeedit.h>
-#include <qlayout.h>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3datetimeedit.h>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3Frame>
+#include <QtCore/QRegExp>
 
 #include <TAAWidget.h>
 #include <TAATools.h>
-#include <qregexp.h>
 
 #include <ADB.h>
 
@@ -46,18 +49,18 @@ LogVoiceMail::LogVoiceMail
 
     // Create the widgets
     QLabel *dateLabel = new QLabel(this);
-    dateLabel->setAlignment(AlignRight|AlignVCenter);
+    dateLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     dateLabel->setText("D&ate/Time:");
 
-    msgDateTime = new QDateTimeEdit(QDateTime::currentDateTime(), this, "MsgDateTime");
+    msgDateTime = new Q3DateTimeEdit(QDateTime::currentDateTime(), this, "MsgDateTime");
     dateLabel->setBuddy(msgDateTime);
     
     QLabel *messageLabel = new QLabel(this);
-    messageLabel->setAlignment(AlignRight|AlignTop);
+    messageLabel->setAlignment(Qt::AlignRight|Qt::AlignTop);
     messageLabel->setText("M&essage:");
 
-    message = new QMultiLineEdit(this);
-    message->setWordWrap(QMultiLineEdit::WidgetWidth);
+    message = new Q3MultiLineEdit(this);
+    message->setWordWrap(Q3MultiLineEdit::WidgetWidth);
     messageLabel->setBuddy(message);
 
     saveButton = new QPushButton(this);
@@ -69,13 +72,13 @@ LogVoiceMail::LogVoiceMail
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
     statusLabel = new QLabel(this);
-    statusLabel->setAlignment(AlignLeft|AlignVCenter);
-    statusLabel->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    statusLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+    statusLabel->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
     statusLabel->setMinimumSize(0, 20);
 
     // Now, create our layouts
     // Date/time area.
-    QGridLayout *dtl = new QGridLayout(2, 4, 3);
+    Q3GridLayout *dtl = new Q3GridLayout(2, 4, 3);
     dtl->setColStretch(0, 0);
     dtl->setColStretch(1, 1);
     dtl->setColStretch(2, 0);
@@ -89,14 +92,14 @@ LogVoiceMail::LogVoiceMail
     dtl->addMultiCellWidget(message,        1, 1, 1, 3);
 
     // The action button layout.
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 5);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 5);
     abl->addStretch(1);
     abl->addWidget(saveButton, 0);
     abl->addWidget(closeButton, 0);
     abl->addSpacing(5);
 
     // The main layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 0);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 0, 0);
     ml->addSpacing(3);
     ml->addLayout(dtl, 1);
     ml->addSpacing(3);
@@ -136,7 +139,7 @@ void LogVoiceMail::saveMessage()
         vmDB.setValue("MsgDateTime", tmpDateTime);
         vmDB.setValue("LoggedBy",    curUser().userName);
         vmDB.setValue("LoggedAt",    curDateTime);
-        vmDB.setValue("Message", message->text().replace(QRegExp("\n"), "<BR>\n"));
+        vmDB.setValue("Message", message->text().replace(QRegExp("\n"), "<BR>\n").ascii());
 
         msgID = vmDB.ins();
 

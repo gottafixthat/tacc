@@ -3,15 +3,15 @@
 **                  within a QListView.
 */
 
-#include <qlistview.h>
+#include <Qt3Support/q3listview.h>
 
-class RListViewItem : public QListViewItem
+class RListViewItem : public Q3ListViewItem
 {
 public:
-    RListViewItem(QListView *Parent, int oddColor);
-    RListViewItem(QListView *Parent);
-    RListViewItem(QListViewItem *Parent); 
-    RListViewItem(QListView *Parent, int oddColor,
+    RListViewItem(Q3ListView *Parent, int oddColor);
+    RListViewItem(Q3ListView *Parent);
+    RListViewItem(Q3ListViewItem *Parent); 
+    RListViewItem(Q3ListView *Parent, int oddColor,
 		  const char *s1,
 		  const char *s2 = 0,
 		  const char *s3 = 0,
@@ -20,7 +20,7 @@ public:
 		  const char *s6 = 0,
 		  const char *s7 = 0,
 		  const char *s8 = 0);
-    RListViewItem(QListViewItem *Parent,
+    RListViewItem(Q3ListViewItem *Parent,
 		  const char *s1,
 		  const char *s2 = 0,
 		  const char *s3 = 0,

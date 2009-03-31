@@ -1,49 +1,28 @@
-/*
-** $Id: TAAWidget.h,v 1.3 2003/12/30 18:44:56 marc Exp $
-**
-***************************************************************************
-**
-** TAAWidget - The TAAWidget is the base class for all of the windows and
-**             widgets in Total AccountAbility.  It connects various
-**             various signals and slots to the MainWin for automatic
-**             inter-widget communication.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: TAAWidget.h,v $
-** Revision 1.3  2003/12/30 18:44:56  marc
-** Added a new real-time setProgress signal.
-**
-** Revision 1.2  2003/12/15 06:26:13  marc
-** Minor change to cause it to delete the widget when closing.
-**
-** Revision 1.1  2003/12/07 01:47:05  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef TAAWIDGET_H
 #define TAAWIDGET_H
 
-#include <qapp.h>
-#include <qmainwindow.h>
-#include <qwidget.h>
-#include <qlabel.h>
+#include <QtGui/QApplication>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
 
 class TAAWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    TAAWidget(QWidget *parent = NULL, const char *name = NULL, WFlags f = WDestructiveClose);
+    TAAWidget(QWidget *parent = NULL, Qt::WFlags f = Qt::Widget);
+    TAAWidget(QWidget *parent = NULL, const char *name = NULL, Qt::WFlags f = Qt::Widget);
     virtual ~TAAWidget();
 
     void        setUserPref(const char *key, const char *subkey, const char *val);
@@ -81,7 +60,7 @@ class HorizLine : public QLabel
     Q_OBJECT
 
 public:
-    HorizLine(QWidget *parent = NULL, const char *name = NULL, WFlags f = 0);
+    HorizLine(QWidget *parent = NULL, const char *name = NULL, Qt::WFlags f = 0);
     virtual ~HorizLine();
 };
 
@@ -92,10 +71,13 @@ class VertLine : public QLabel
     Q_OBJECT
 
 public:
-    VertLine(QWidget *parent = NULL, const char *name = NULL, WFlags f = 0);
+    VertLine(QWidget *parent = NULL, const char *name = NULL, Qt::WFlags f = 0);
     virtual ~VertLine();
 };
 
 #endif // TAAWIDGET_H
 
+
+
+// vim: expandtab
 

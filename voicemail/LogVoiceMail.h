@@ -25,13 +25,15 @@
 #ifndef LogVoiceMail_included
 #define LogVoiceMail_included
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qmultilinedit.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3multilineedit.h>
+#include <QtGui/QCloseEvent>
+#include <QtCore/QEvent>
 
 #include <TAAWidget.h>
-#include <qdatetimeedit.h>
+#include <Qt3Support/q3datetimeedit.h>
 
 class LogVoiceMail : public TAAWidget
 {
@@ -46,8 +48,8 @@ public:
     virtual ~LogVoiceMail();
 
 protected:
-    QDateTimeEdit   *msgDateTime;
-    QMultiLineEdit  *message;
+    Q3DateTimeEdit   *msgDateTime;
+    Q3MultiLineEdit  *message;
     QPushButton     *saveButton;
     QPushButton     *closeButton;
     QLabel          *statusLabel;

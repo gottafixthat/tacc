@@ -27,9 +27,12 @@
 #include "RatePlanEdit.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <qkeycode.h>
+#include <qnamespace.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3PopupMenu>
 #include <ADB.h>
 
 RatePlans::RatePlans
@@ -40,7 +43,7 @@ RatePlans::RatePlans
 {
 	setCaption( "Rate Plans" );
 
-    QPopupMenu * options = new QPopupMenu();
+    Q3PopupMenu * options = new Q3PopupMenu();
     CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newRatePlan()), CTRL+Key_N);
     options->insertItem("Edit", this, SLOT(editRatePlan()), CTRL+Key_E);
@@ -69,21 +72,21 @@ RatePlans::RatePlans
     closeButton->setText("Close");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(Hide()));
 
-    list = new QListView(this, "RatePlanList");
+    list = new Q3ListView(this, "RatePlanList");
     list->addColumn("Name");
     list->addColumn("Description");
     list->setFocus();
     list->setAllColumnsShowFocus(true);
     list->setRootIsDecorated(false);
-    connect(list, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(editRatePlan(QListViewItem *)));
+    connect(list, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(editRatePlan(Q3ListViewItem *)));
     internalIDColumn = 2;   // Change this if changing the list columns
 
     // Setup the layout and add our widgets
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(menu, 0);
 
     // The buttons need thier own layout
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addWidget(newButton, 0);
     bl->addWidget(editButton, 0);
     bl->addWidget(deleteButton, 0);
@@ -123,7 +126,7 @@ void RatePlans::refreshList(int)
     DB.query("select InternalID, PlanTag, Description from RatePlans order by PlanTag");
     while(DB.getrow()) {
 
-        (void) new QListViewItem(list, DB.curRow["PlanTag"], DB.curRow["Description"], DB.curRow["InternalID"]);
+        (void) new Q3ListViewItem(list, DB.curRow["PlanTag"], DB.curRow["Description"], DB.curRow["InternalID"]);
     }
 
 }
@@ -147,7 +150,7 @@ void RatePlans::newRatePlan()
 
 void RatePlans::editRatePlan()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
 	RatePlanEdit    *editPlan;
 
     curItem = list->currentItem();
@@ -162,7 +165,7 @@ void RatePlans::editRatePlan()
  * editRatePlan - A protected slot that gets called when the user double
  *                clicks on an item in the list.
  */
-void RatePlans::editRatePlan(QListViewItem *curItem)
+void RatePlans::editRatePlan(Q3ListViewItem *curItem)
 {
     if (curItem == NULL) return;
     RatePlanEdit    *editPlan;
@@ -178,7 +181,7 @@ void RatePlans::editRatePlan(QListViewItem *curItem)
 void RatePlans::deleteRatePlan()
 {
 	ADB     DB;
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
    
     curItem = list->currentItem();
     if (curItem == NULL) return;

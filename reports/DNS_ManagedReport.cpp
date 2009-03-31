@@ -30,9 +30,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -111,7 +111,7 @@ void DNS_ManagedReport::refreshReport()
         if (atoi(dnsDB.curRow["Active"])) strcpy(isActive, "Yes");
         else strcpy(isActive, "No");
 
-        (void) new QListViewItem(repBody, domainName, dnsDB.curRow["LoginID"], domainType, dnsDB.curRow["CustomerID"], isActive, templateName);
+        (void) new Q3ListViewItem(repBody, domainName, dnsDB.curRow["LoginID"], domainType, dnsDB.curRow["CustomerID"], isActive, templateName);
     }
     
 }
@@ -122,7 +122,7 @@ void DNS_ManagedReport::refreshReport()
 **                    is double clicked.
 */
 
-void DNS_ManagedReport::listItemSelected(QListViewItem *curItem)
+void DNS_ManagedReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         emit(openCustomer(atol(curItem->key(3,0))));
@@ -135,7 +135,7 @@ void DNS_ManagedReport::listItemSelected(QListViewItem *curItem)
 
 void DNS_ManagedReport::userButtonClickedInt()
 {
-    QListViewItem *curItem = repBody->currentItem();
+    Q3ListViewItem *curItem = repBody->currentItem();
     if (curItem != NULL) {
         DNSManager  *dnsm = new DNSManager();
         dnsm->setDomainName(curItem->key(0,0));

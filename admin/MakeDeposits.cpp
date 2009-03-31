@@ -18,6 +18,10 @@
 #include <qapplication.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 
 #include <BlargDB.h>
 #include <GenLedger.h>
@@ -37,7 +41,7 @@ MakeDeposits::MakeDeposits
 	setCaption( "Make Deposits" );
 
     // Create our widgets.
-    paymentList = new QListView(this, "paymentList");
+    paymentList = new Q3ListView(this, "paymentList");
     int curCol = 1;
     paymentList->addColumn("Date");             curCol++;
     paymentList->addColumn("Cust ID");          curCol++;
@@ -49,7 +53,7 @@ MakeDeposits::MakeDeposits
     paymentList->setAllColumnsShowFocus(true);
     paymentList->setMultiSelection(true);
     connect(paymentList, SIGNAL(selectionChanged()), this, SLOT(itemSelected()));
-    connect(paymentList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+    connect(paymentList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(itemDoubleClicked(Q3ListViewItem *)));
 
     QLabel  *selectedItemCountLabel = new QLabel(this, "selectedItemCountLabel");
     selectedItemCountLabel->setText("Items Selected:");
@@ -85,7 +89,7 @@ MakeDeposits::MakeDeposits
     transDateLabel->setText("Desposit Date:");
     transDateLabel->setAlignment(AlignRight | AlignVCenter);
 
-    transDate = new QDateEdit(QDate::currentDate(), this, "transDate");
+    transDate = new Q3DateEdit(QDate::currentDate(), this, "transDate");
 
     // Our buttons now.
     QPushButton *printButton = new QPushButton(this, "printButton");
@@ -109,12 +113,12 @@ MakeDeposits::MakeDeposits
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelSelected()));
 
     // Create our layout.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     ml->addWidget(paymentList, 1);
 
     // A grid for our labels and account selection.
-    QGridLayout *asl = new QGridLayout(3, 2);
+    Q3GridLayout *asl = new Q3GridLayout(3, 2);
     asl->setColStretch(0, 0);
     asl->setColStretch(1, 1);
     int curRow = 0;
@@ -136,7 +140,7 @@ MakeDeposits::MakeDeposits
     asl->setRowStretch(curRow++, 0);
 
     // Now our button layout
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(printButton,      0);
     bl->addWidget(selectAllButton,  0);
@@ -197,7 +201,7 @@ void MakeDeposits::fillDepositList()
     //DB.query("select * from GL where AccountNo = %d and LinkedTrans = 0", atoi(tmpStr));
     
     if (DB.rowCount) while (DB.getrow()) {
-        (void) new QListViewItem(paymentList, 
+        (void) new Q3ListViewItem(paymentList, 
           DB.curRow["TransDate"],
           DB.curRow["CustomerID"], 
           DB.curRow["FullName"],
@@ -245,7 +249,7 @@ void MakeDeposits::processSelections()
     // Now, setup the transaction.
     // Start by walking through each of the undeposited items and
     // then adding a split item for it.
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     int nameCol  = 2;
     int numCol   = 3;
     int amtCol   = 4;
@@ -322,7 +326,7 @@ void MakeDeposits::processSelections()
 
 void MakeDeposits::itemSelected()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     int amtCol = 4;
     int selCount = 0;
     selTotal = 0.00;
@@ -346,7 +350,7 @@ void MakeDeposits::itemSelected()
 **                     to open the customer window.
 */
 
-void MakeDeposits::itemDoubleClicked(QListViewItem *curItem)
+void MakeDeposits::itemDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem == NULL) return;
     emit(openCustomer(atol(curItem->key(1,0))));

@@ -1,25 +1,13 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CCBatch - Lets the user export a credit card batch.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CCBatch.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #include "CCBatch.h"
@@ -30,14 +18,19 @@
 #include <ctype.h>
 
 // Qt includes
-#include <qstring.h>
-#include <qmessagebox.h>
-#include <qprogressdialog.h>
-#include <qlistview.h>
-#include <qfiledialog.h>
-#include <qapplication.h>
-#include <qregexp.h>
-#include <qlayout.h>
+#include <QtCore/QString>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/q3progressdialog.h>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3filedialog.h>
+#include <QtGui/QApplication>
+#include <QtCore/QRegExp>
+#include <QtGui/QLayout>
+//Added by qt3to4:
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3Frame>
+#include <QtGui/QLabel>
 
 // Blarg includes
 #include <BlargDB.h>
@@ -56,68 +49,68 @@ CCBatch::CCBatch
 	const char* name
 ) : TAAWidget ( parent, name )
 {
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 	setCaption( "Credit Card Batch Processing" );
 
     // Create our widgets and our layout
 
     // The total number of cards in the batch
     QLabel  *batchSizeLabel = new QLabel(this);
-    batchSizeLabel->setAlignment(AlignRight|AlignVCenter);
+    batchSizeLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     batchSizeLabel->setText("Cards in batch:");
 
     batchSize = new QLabel(this);
-    batchSize->setAlignment(AlignRight|AlignVCenter);
-    batchSize->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    batchSize->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+    batchSize->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The total batch amount
     QLabel *batchAmountLabel = new QLabel(this);
-    batchAmountLabel->setAlignment(AlignRight|AlignVCenter);
+    batchAmountLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     batchAmountLabel->setText("Total batch amount:");
 
     amount = new QLabel(this);
-    amount->setAlignment(AlignRight|AlignVCenter);
-    amount->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    amount->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+    amount->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The number of approved cards
     QLabel *approvedCountLabel = new QLabel(this);
-    approvedCountLabel->setAlignment(AlignRight|AlignVCenter);
+    approvedCountLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     approvedCountLabel->setText("Approved cards:");
     
     approvedCount = new QLabel(this);
-    approvedCount->setAlignment(AlignRight|AlignVCenter);
-    approvedCount->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    approvedCount->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+    approvedCount->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The approved total
     QLabel *approvedTotalLabel = new QLabel(this);
-    approvedTotalLabel->setAlignment(AlignRight|AlignVCenter);
+    approvedTotalLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     approvedTotalLabel->setText("Approved total:");
     
     approvedTotal = new QLabel(this);
-    approvedTotal->setAlignment(AlignRight|AlignVCenter);
-    approvedTotal->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    approvedTotal->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+    approvedTotal->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The number of declined cards
     QLabel *declinedCountLabel = new QLabel(this);
-    declinedCountLabel->setAlignment(AlignRight|AlignVCenter);
+    declinedCountLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     declinedCountLabel->setText("Declined cards:");
     
     declinedCount = new QLabel(this);
-    declinedCount->setAlignment(AlignRight|AlignVCenter);
-    declinedCount->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    declinedCount->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+    declinedCount->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The declined total
     QLabel *declinedTotalLabel = new QLabel(this);
-    declinedTotalLabel->setAlignment(AlignRight|AlignVCenter);
+    declinedTotalLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     declinedTotalLabel->setText("Declined total:");
     
     declinedTotal = new QLabel(this);
-    declinedTotal->setAlignment(AlignRight|AlignVCenter);
-    declinedTotal->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    declinedTotal->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+    declinedTotal->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
 
     // Our list of transactions.
-    list = new QListView(this);
+    list = new Q3ListView(this);
     list->addColumn("Charge Date");
     list->addColumn("Cust ID");
     list->addColumn("Cardholder Name");
@@ -126,9 +119,9 @@ CCBatch::CCBatch
     list->addColumn("Entered By");
     list->addColumn("ID");
 
-    list->setColumnAlignment(1, AlignRight);
-    list->setColumnAlignment(4, AlignRight);
-    list->setColumnAlignment(6, AlignRight);
+    list->setColumnAlignment(1, Qt::AlignRight);
+    list->setColumnAlignment(4, Qt::AlignRight);
+    list->setColumnAlignment(6, Qt::AlignRight);
 
     // Export button...
     exportButton = new QPushButton(this);
@@ -148,10 +141,10 @@ CCBatch::CCBatch
     // Now, create our layout, and add the widgets into it.
 
     // Our main layout first.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     
     // Now, the layout for status labels.
-    QGridLayout *stl = new QGridLayout(2, 6, 2);
+    Q3GridLayout *stl = new Q3GridLayout(2, 6, 2);
     stl->addWidget(batchSizeLabel,      0,0);
     stl->addWidget(batchSize,           0,1);
     stl->addWidget(batchAmountLabel,    1,0);
@@ -171,7 +164,7 @@ CCBatch::CCBatch
     ml->addWidget(list, 1);
 
     // Add the action buttons
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(exportButton, 0);
     bl->addWidget(finishedButton, 0);
@@ -194,7 +187,7 @@ CCBatch::CCBatch
 	updateStatus();
 
     connect(list, SIGNAL(selectionChanged()), SLOT(updateStatus()));	
-    connect(list, SIGNAL(doubleClicked(QListViewItem *)), SLOT(custDoubleClicked(QListViewItem *)));
+    connect(list, SIGNAL(doubleClicked(Q3ListViewItem *)), SLOT(custDoubleClicked(Q3ListViewItem *)));
 
     QApplication::restoreOverrideCursor();
 }
@@ -253,7 +246,7 @@ void CCBatch::fillList()
 
 
         // Fill the list...
-        new QListViewItem(list, 
+        new Q3ListViewItem(list, 
           CCTDB.getStr("TransDate"),
           CCTDB.getStr("CustomerID"),
           CCTDB.getStr("Name"),
@@ -280,7 +273,7 @@ void CCBatch::updateStatus()
 {
     char    tmpstr[1024];
     
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     declCount  = 0;
     declAmount = 0.00;
@@ -338,10 +331,9 @@ void CCBatch::cancelPressed()
 
 void CCBatch::finishedPressed()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     QDate           Today;
     char            theDate[16];
-    char            tmpStr[1024];
     ADB             DB;
     long            counter = 0;
     char            DeclFile[1024];
@@ -355,7 +347,7 @@ void CCBatch::finishedPressed()
     strcpy(DeclFile, cfgVal("CCDeclinedTemplate"));
     strcpy(RcptFile, cfgVal("CCReceiptTemplate"));
     
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     //QProgressDialog progress("Saving payments and sending messages...", "Abort", dbRows, 0, "Export Credit Cards");
     //progress.show();
 
@@ -525,7 +517,7 @@ void CCBatch::finishedPressed()
 void CCBatch::exportPressed()
 {
 
-    QString fileName = QFileDialog::getSaveFileName("/public/qbpro", "*.txt", this);
+    QString fileName = Q3FileDialog::getSaveFileName("/public/qbpro", "*.txt", this);
 
     if (fileName.length()) {
 	    FILE *fp;
@@ -536,7 +528,7 @@ void CCBatch::exportPressed()
 	    char        addrnum[1024];
         long        counter = 0;
         QString     workStr;
-	    QListViewItem *curItem;
+	    Q3ListViewItem *curItem;
 	    
 	    Today = QDate::currentDate();
 	    QDatetomyDate(theDate, Today);
@@ -544,7 +536,7 @@ void CCBatch::exportPressed()
         emit(setStatus("Exporting credit cards..."));
 	    fp = fopen((const char *) fileName, "w");
 	    if (fp != NULL) {
-            QApplication::setOverrideCursor(waitCursor);
+            QApplication::setOverrideCursor(Qt::WaitCursor);
 
             // Loop through our list and export only those shown.
             emit(setProgress(0, totRows));
@@ -603,10 +595,13 @@ void CCBatch::exportPressed()
 ** custDoubleClicked  - Opens a customer window.
 */
 
-void CCBatch::custDoubleClicked(QListViewItem *curItem)
+void CCBatch::custDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) {
         emit(openCustomer(atol(curItem->key(1,0))));
     }
 }
+
+
+// vim: expandtab
 

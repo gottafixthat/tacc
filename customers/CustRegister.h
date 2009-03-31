@@ -12,8 +12,11 @@
 
 #include <TAAWidget.h>
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpainter.h>
+//Added by qt3to4:
+#include <QEvent>
+#include <QCloseEvent>
 #include <BlargDB.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
@@ -53,7 +56,7 @@ protected:
     QPushButton *editChargeButton;
     QPushButton *delChargeButton;
     QPushButton *voidChargeButton;
-    QListView *list;
+    Q3ListView *list;
     QLabel *customerName;
     QLabel *custIDLabel;
     QLabel *currentBalanceArea;

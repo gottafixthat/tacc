@@ -14,15 +14,15 @@
 #ifndef TAASERVICE_H
 #define TAASERVICE_H
 
-#include <qstring.h>
-#include <qptrlist.h>
+#include <QtCore/QString>
+#include <Qt3Support/q3ptrlist.h>
 
 struct ServiceFlag {
     QString key;
     QString val;
 };
 
-typedef QPtrList<ServiceFlag> ServiceFlagList;
+typedef Q3PtrList<ServiceFlag> ServiceFlagList;
 
 class TAAService {
 

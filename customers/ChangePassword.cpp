@@ -15,8 +15,12 @@
 #include "BrassClient.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QLabel>
 #include <ADB.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
@@ -77,9 +81,9 @@ ChangePassword::ChangePassword(QWidget* parent, const char* name, long CustomerI
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelPassword()));
     
     // Create our layout.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
-    QGridLayout *gl = new QGridLayout(2, 6);
+    Q3GridLayout *gl = new Q3GridLayout(2, 6);
     int curRow = 0;
     gl->addWidget(customerIDLabel,      curRow, 0);
     gl->addWidget(customerID,           curRow, 1);
@@ -117,7 +121,7 @@ ChangePassword::ChangePassword(QWidget* parent, const char* name, long CustomerI
     ml->addStretch(1);
 
     // Button layout.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(generateButton, 0);
     bl->addSpacing(10);

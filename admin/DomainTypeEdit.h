@@ -25,9 +25,9 @@
 #define DomainTypeEdit_Included
 
 #include <qwidget.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qpushbutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
@@ -52,7 +52,7 @@ public slots:
     virtual void refreshBillablesList(int);
 
 protected slots: 
-    virtual void itemSelected(QListViewItem *);
+    virtual void itemSelected(Q3ListViewItem *);
     virtual void addBillable();
     virtual void removeBillable();
     virtual void editDomainType()               {};
@@ -61,9 +61,9 @@ protected slots:
     virtual void saveDomainType();
 
 protected:
-    QListView   *domainTypeList;
+    Q3ListView   *domainTypeList;
     QLineEdit   *domainType;
-    QListBox    *billablesList;
+    Q3ListBox    *billablesList;
     QPushButton *newButton;
     QPushButton *delButton;
     QPushButton *addButton;

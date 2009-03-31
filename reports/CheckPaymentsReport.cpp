@@ -35,12 +35,12 @@ CheckPaymentsReport::CheckPaymentsReport
 	setCaption("Check Payments");
 	setTitle("Check Payments");
 	
-	repBody->setColumnText(0, "Date");     repBody->setColumnAlignment(0, AlignLeft);
-	repBody->addColumn("Amount");          repBody->setColumnAlignment(1, AlignRight);
-	repBody->addColumn("CustomerID");      repBody->setColumnAlignment(2, AlignLeft);
-	repBody->addColumn("Customer Name");   repBody->setColumnAlignment(3, AlignLeft);
-	repBody->addColumn("Company");         repBody->setColumnAlignment(4, AlignLeft);
-	repBody->addColumn("Comments");        repBody->setColumnAlignment(5, AlignLeft);
+	repBody->setColumnText(0, "Date");     repBody->setColumnAlignment(0, Qt::AlignLeft);
+	repBody->addColumn("Amount");          repBody->setColumnAlignment(1, Qt::AlignRight);
+	repBody->addColumn("CustomerID");      repBody->setColumnAlignment(2, Qt::AlignLeft);
+	repBody->addColumn("Customer Name");   repBody->setColumnAlignment(3, Qt::AlignLeft);
+	repBody->addColumn("Company");         repBody->setColumnAlignment(4, Qt::AlignLeft);
+	repBody->addColumn("Comments");        repBody->setColumnAlignment(5, Qt::AlignLeft);
 	
     //setStartDate(QDate(2007,6,1));
     //setEndDate(QDate(2007,6,30));
@@ -75,7 +75,7 @@ void CheckPaymentsReport::refreshReport()
     QString     query;
     double      total = 0.00;
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     repBody->clear();
 
     // Format our dates
@@ -101,7 +101,7 @@ void CheckPaymentsReport::refreshReport()
                 customerName = DB.curRow["FullName"];
             }
 
-            (void) new QListViewItem(repBody, 
+            (void) new Q3ListViewItem(repBody, 
                     DB.curRow["TransDate"],
                     amount,
                     DB.curRow["CustomerID"],
@@ -111,7 +111,7 @@ void CheckPaymentsReport::refreshReport()
         }
         // Add the total line
         amount = amount.sprintf("%.2f", total);
-        (void) new QListViewItem(repBody, 
+        (void) new Q3ListViewItem(repBody, 
                 "Total",
                 amount);
     }
@@ -127,7 +127,7 @@ void CheckPaymentsReport::refreshReport()
  * in the report, opening a ccPaymentDetails report for the specified
  * day.
  */
-void CheckPaymentsReport::listItemSelected(QListViewItem *curItem)
+void CheckPaymentsReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         // If they double click, open the customer's window.

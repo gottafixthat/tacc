@@ -12,8 +12,10 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <qlayout.h>
-#include <qstyle.h>
+#include <QtGui/QLayout>
+#include <QtGui/QBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QStyle>
 
 #include <TAAWidget.h>
 #include <ConfirmBox.h>
@@ -23,18 +25,18 @@
  *
  * Constructor.
  */
-ConfirmBox::ConfirmBox(QWidget *parent, const char *name) :
-    QDialog(parent, name, true)
+ConfirmBox::ConfirmBox(QWidget *parent) :
+    QDialog(parent)
 {
     setCaption("Confirmation");
     doExtraConfirm = true;
 
     QLabel  *iconLabel = new QLabel(this, "iconLabel");
-    iconLabel->setPixmap(QApplication::style().stylePixmap(QStyle::SP_MessageBoxQuestion));
-    iconLabel->setAlignment(AlignTop|AlignLeft);
+    iconLabel->setPixmap(QApplication::style()->standardPixmap(QStyle::SP_MessageBoxQuestion));
+    iconLabel->setAlignment(Qt::AlignTop|Qt::AlignLeft);
 
     textArea = new QLabel(this, "textArea");
-    textArea->setAlignment(AlignLeft|AlignTop);
+    textArea->setAlignment(Qt::AlignLeft|Qt::AlignTop);
 
     confirmation = new QCheckBox(this, "confirmation");
     confirmation->setText("Check this box to confirm this action before proceeding");
@@ -52,12 +54,12 @@ ConfirmBox::ConfirmBox(QWidget *parent, const char *name) :
     cancelButton->setFocus();
     //cancelButton->setDefault();
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    QBoxLayout *ml = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    QBoxLayout *ltrl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    QBoxLayout *ltrl = new QBoxLayout(QBoxLayout::LeftToRight);
     ltrl->addWidget(iconLabel, 0);
 
-    QBoxLayout *ttbl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    QBoxLayout *ttbl = new QBoxLayout(QBoxLayout::TopToBottom);
     ttbl->addWidget(textArea, 1);
     ttbl->addSpacing(10);
     ttbl->addWidget(confirmation, 0);
@@ -66,7 +68,7 @@ ConfirmBox::ConfirmBox(QWidget *parent, const char *name) :
     ml->addLayout(ltrl, 1);
     ml->addWidget(new HorizLine(this, "hLine"), 0);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight);
     bl->addStretch(1);
     bl->addWidget(confirmButton, 0);
     bl->addWidget(cancelButton, 0);

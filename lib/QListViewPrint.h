@@ -16,16 +16,16 @@
 #ifndef QLISTVIEWPRINT_H
 #define QLISTVIEWPRINT_H
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qlistview.h>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <Qt3Support/Q3ListView>
 
 class QListViewPrint : public QObject
 {
     Q_OBJECT
 
 public:
-    QListViewPrint(QListView *srcList = NULL);
+    QListViewPrint(Q3ListView *srcList = NULL);
     virtual ~QListViewPrint();
 
     void        setTitle(const QString newTitle);
@@ -38,7 +38,7 @@ protected:
     QString     myTitle;
     QString     myDateLine;
     int         myPrintSelectedOnly;
-    QListView   *myList;
+    Q3ListView   *myList;
     int         showDateLine;
 
     int         prColWidths[20];
@@ -47,7 +47,7 @@ protected:
 
     void printHeader(QPainter *p);
     void printFooter(QPainter *p, int PageNo, int totPages);
-    QListViewItem * printRows(QPainter *p, QListViewItem *startItem);
+    Q3ListViewItem * printRows(QPainter *p, Q3ListViewItem *startItem);
 
 };
 

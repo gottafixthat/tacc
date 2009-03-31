@@ -30,13 +30,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapp.h>
+#include <qapplication.h>
 #include <qwidget.h>
 #include <qlayout.h>
 #include <qtabbar.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qaccel.h>
+#include <q3accel.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3Frame>
+#include <Q3PopupMenu>
 
 #include <ADB.h>
 
@@ -79,7 +83,7 @@ EditCustomer::EditCustomer
     customerMenu->setFrameStyle( 35 );
     customerMenu->setLineWidth( 2 );
     customerMenu->setMidLineWidth( 0 );
-    customerMenu->QFrame::setMargin( 0 );
+    customerMenu->Q3Frame::setMargin( 0 );
 
     tabBar = new QTabBar(this, "Tabbar");
     tabBar->setMinimumSize(0, 25);
@@ -112,7 +116,7 @@ EditCustomer::EditCustomer
 
     connect(tabBar, SIGNAL(selected(int)), this, SLOT(tabSelected(int)));
     // Setup our hot keys for tabbed windows, Ctrl 1-6 to raise a tab.
-    QAccel  *ac = new QAccel(this);
+    Q3Accel  *ac = new Q3Accel(this);
     ac->connectItem(ac->insertItem(CTRL+Key_1), this, SLOT(raiseTab1()));
     ac->connectItem(ac->insertItem(CTRL+Key_2), this, SLOT(raiseTab2()));
     ac->connectItem(ac->insertItem(CTRL+Key_3), this, SLOT(raiseTab3()));
@@ -122,18 +126,18 @@ EditCustomer::EditCustomer
     ac->connectItem(ac->insertItem(CTRL+Key_7), this, SLOT(raiseTab7()));
 
 
-    qws = new QWidgetStack(this, "Widget Stack");
+    qws = new Q3WidgetStack(this, "Widget Stack");
 
     QLabel *hline1 = new QLabel(this);
     hline1->setMinimumSize(0, 3);
     hline1->setMaximumSize(32767, 3);
-    hline1->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    hline1->setFrameStyle(Q3Frame::HLine|Q3Frame::Sunken);
     hline1->setLineWidth(1);
 
     QLabel *hline2 = new QLabel(this);
     hline2->setMinimumSize(0, 3);
     hline2->setMaximumSize(32767, 3);
-    hline2->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    hline2->setFrameStyle(Q3Frame::HLine|Q3Frame::Sunken);
     hline2->setLineWidth(1);
 
     saveButton = new QPushButton(this, "Save Button");
@@ -146,7 +150,7 @@ EditCustomer::EditCustomer
 
    
     // Layout the widgets now
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 0);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 0, 0);
     ml->addStrut(0);
     ml->addWidget(customerMenu, 1);
     ml->addWidget(tabBar, 1);
@@ -155,7 +159,7 @@ EditCustomer::EditCustomer
     ml->addWidget(hline2, 1);
     ml->addSpacing(3);
     
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -228,14 +232,14 @@ EditCustomer::EditCustomer
     */
     
     // Create our menu.
-    QPopupMenu  *fileMenu = new QPopupMenu();
+    Q3PopupMenu  *fileMenu = new Q3PopupMenu();
     fileMenu->insertItem("&Save",   this, SLOT(saveCustomer()));
     fileMenu->insertItem("&Cancel", this, SLOT(close()));
 
-    QPopupMenu  *viewMenu = new QPopupMenu();
+    Q3PopupMenu  *viewMenu = new Q3PopupMenu();
     viewMenu->insertItem("&Register",   billingInfoTab, SLOT(showCustRegister()), ALT+Key_R);
     
-    QPopupMenu  *payMenu = new QPopupMenu();
+    Q3PopupMenu  *payMenu = new Q3PopupMenu();
     payMenu->insertItem("Take &Credit Card", billingInfoTab, SLOT(takeCCard()), CTRL+Key_C);
     payMenu->insertItem("Cancel &Pending Charge", billingInfoTab, SLOT(cancelPendingCharge()));
     payMenu->insertItem("Remove &Automatic Payment Card", billingInfoTab, SLOT(removeAutoPaymentCard()));
@@ -243,7 +247,7 @@ EditCustomer::EditCustomer
     payMenu->insertItem("Extend &Grace Period", billingInfoTab, SLOT(extendGracePeriod()), CTRL+Key_G);
     payMenu->insertItem("Receive Check", this, SLOT(receivePayment()), CTRL+Key_R);
 
-    QPopupMenu  *ticketMenu = new QPopupMenu();
+    Q3PopupMenu  *ticketMenu = new Q3PopupMenu();
     ticketMenu->insertItem("&Create Ticket",   this, SLOT(createTicket()));
 
     customerMenu->insertItem("&File", fileMenu);
@@ -252,13 +256,13 @@ EditCustomer::EditCustomer
     customerMenu->insertItem("&Tickets", ticketMenu);
     
     if (isManager()) {
-        QPopupMenu  *admMenu = new QPopupMenu();
+        Q3PopupMenu  *admMenu = new Q3PopupMenu();
         admMenu->insertItem("Change &Rate Plan", billingInfoTab, SLOT(changeRatePlan()));
         admMenu->insertItem("Change &Billing Cycle", billingInfoTab, SLOT(changeBillingCycle()));
         admMenu->insertItem("&Run Subscriptions", billingInfoTab, SLOT(runSubscriptions()));
         admMenu->insertItem("&Process a Statement", billingInfoTab, SLOT(generateStatement()));
 
-        stMenu = new QPopupMenu();
+        stMenu = new Q3PopupMenu();
         printedStatementID     = stMenu->insertItem("&Printed Statements", billingInfoTab, SLOT(togglePrintedStatements()));
         stMenu->setCheckable(TRUE);
         freePrintedStatementID = stMenu->insertItem("&Free Printed Statements", billingInfoTab, SLOT(toggleFreePrintedStatements()));

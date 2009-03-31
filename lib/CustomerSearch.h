@@ -26,10 +26,10 @@
 #define CUSTOMERSEARCH_H
 
 #include <TAAWidget.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qlistview.h>
-#include <qmap.h>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+#include <QtCore/QMap>
 
 typedef QMap<long, long> loadedCustMap;
 
@@ -39,7 +39,7 @@ class CustomerSearch : public TAAWidget
     Q_OBJECT
 
 public:
-    CustomerSearch(QWidget *parent = NULL, const char *name = NULL, WFlags f = 0);
+    CustomerSearch(QWidget *parent = NULL, const char *name = NULL, Qt::WFlags f = 0);
     virtual ~CustomerSearch();
 
     long            currentCustomer();
@@ -52,13 +52,13 @@ signals:
 protected:
     QLineEdit       *searchText;
     QPushButton     *searchButton;
-    QListView       *custList;
+    Q3ListView       *custList;
 
 protected slots:
     void            startSearch();
     void            clearSearch();
-    void            itemHighlighted(QListViewItem *);
-    void            itemSelected(QListViewItem *);
+    void            itemHighlighted(Q3ListViewItem *);
+    void            itemSelected(Q3ListViewItem *);
 
 private:
     loadedCustMap   loadedCusts;

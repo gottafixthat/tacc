@@ -15,9 +15,9 @@
 #ifndef Settings_included
 #define Settings_included
 
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qpushbutton.h>
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
 #include <qlabel.h>
 #include "TAAWidget.h"
 #include "AccountingSettings.h"
@@ -35,8 +35,8 @@ public:
     virtual ~SettingsManager();
 
 protected:
-    QListBox        *sectionList;
-    QWidgetStack    *sections;
+    Q3ListBox        *sectionList;
+    Q3WidgetStack    *sections;
     int             sectionCount;
     QLabel          *header;
     QPushButton     *saveButton;

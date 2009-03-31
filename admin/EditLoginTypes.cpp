@@ -40,12 +40,14 @@
 #include <stdlib.h>
 
 #include <qapplication.h>
-#include <qtabdialog.h>
-#include <qwidgetstack.h>
+#include <q3tabdialog.h>
+#include <q3widgetstack.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
-#include <qlistview.h>
-#include <qbuttongroup.h>
+#include <q3listview.h>
+#include <q3buttongroup.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -59,12 +61,12 @@ EditLoginTypes::EditLoginTypes
 	setCaption( "Edit Login Types" );
 
     // Create our widgets.  
-    loginTypeList = new QListView(this, "loginTypeList");
+    loginTypeList = new Q3ListView(this, "loginTypeList");
     //loginTypeList->setColumnText(0, "Login Type");
     loginTypeList->addColumn("Login Type");
     loginTypeList->addColumn("A");
     loginTypeList->setAllColumnsShowFocus(TRUE);
-    connect(loginTypeList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(loginTypeSelected(QListViewItem *)));
+    connect(loginTypeList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(loginTypeSelected(Q3ListViewItem *)));
 
     theTabBar = new QTabBar(this, "theTabBar");
     theTabBar->setMinimumSize(0, 25);
@@ -75,10 +77,10 @@ EditLoginTypes::EditLoginTypes
     theTabBar->addTab(new QTab("&Billables"));
     //connect(theTabBar, SIGNAL(selected(int)), this, SLOT(tabSelected(int)));
 
-    QButtonGroup *bGroup = new QButtonGroup(this, "bGroup");
+    Q3ButtonGroup *bGroup = new Q3ButtonGroup(this, "bGroup");
     bGroup->setFocusPolicy(QWidget::NoFocus);
 
-    qws = new QWidgetStack(bGroup, "WidgetStack");
+    qws = new Q3WidgetStack(bGroup, "WidgetStack");
     qws->setFocusPolicy(QWidget::NoFocus);
 	connect(theTabBar, SIGNAL(selected(int)), qws, SLOT(raiseWidget(int)));
 
@@ -106,22 +108,22 @@ EditLoginTypes::EditLoginTypes
 
 	
     // Create the layout now.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QBoxLayout *wl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *wl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     wl->addWidget(loginTypeList, 0);
 
-    QBoxLayout *sl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    Q3BoxLayout *sl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0);
     sl->addWidget(theTabBar, 0);
 
-    QBoxLayout *bgl = new QBoxLayout(bGroup, QBoxLayout::TopToBottom, 2);
+    Q3BoxLayout *bgl = new Q3BoxLayout(bGroup, Q3BoxLayout::TopToBottom, 2);
     bgl->addWidget(qws, 1);
     sl->addWidget(bGroup, 1);
 
     wl->addLayout(sl, 1);
     ml->addLayout(wl, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addWidget(newButton, 0);
     bl->addWidget(deleteButton, 0);
     bl->addStretch(1);
@@ -165,7 +167,7 @@ void EditLoginTypes::loadLoginTypes()
             sprintf(tmpStr, "N");
         }
         
-        (void) new QListViewItem(loginTypeList, DB.curRow["LoginType"], tmpStr, DB.curRow["InternalID"]);
+        (void) new Q3ListViewItem(loginTypeList, DB.curRow["LoginType"], tmpStr, DB.curRow["InternalID"]);
     }
 
     for (unsigned int i = 0; i < 3 ; i++) {
@@ -182,7 +184,7 @@ void EditLoginTypes::loadLoginTypes()
 **                     information when a login type is selected.
 */
 
-void EditLoginTypes::loginTypeSelected(QListViewItem *curItem)
+void EditLoginTypes::loginTypeSelected(Q3ListViewItem *curItem)
 {
     long    typeID = 0;
     if (curItem) {
@@ -211,7 +213,7 @@ void EditLoginTypes::loginTypeSelected(QListViewItem *curItem)
 
 void EditLoginTypes::updateLoginType()
 {
-    QListViewItem   *curItem = loginTypeList->currentItem();
+    Q3ListViewItem   *curItem = loginTypeList->currentItem();
     
     if (curItem != NULL) {
         char        tmpStr[1024];
@@ -239,7 +241,7 @@ void EditLoginTypes::updateLoginType()
 
 void EditLoginTypes::newLoginType()
 {
-    QListViewItem   *newItem;
+    Q3ListViewItem   *newItem;
     ADBTable    LTDB;
     LTDB.setTableName("LoginTypes");
     
@@ -254,7 +256,7 @@ void EditLoginTypes::newLoginType()
     
     LTDB.ins();
     
-    newItem = new QListViewItem(loginTypeList, LTDB.getStr("LoginType"), "N", LTDB.getStr("InternalID"));
+    newItem = new Q3ListViewItem(loginTypeList, LTDB.getStr("LoginType"), "N", LTDB.getStr("InternalID"));
     loginTypeList->setSelected(newItem, TRUE);
     loginTypeList->setCurrentItem(newItem);
     
@@ -269,7 +271,7 @@ void EditLoginTypes::newLoginType()
 
 void EditLoginTypes::deleteLoginType()
 {
-    QListViewItem   *curItem = loginTypeList->currentItem();
+    Q3ListViewItem   *curItem = loginTypeList->currentItem();
     // First, make sure that our current item is not null
     if (curItem == NULL) return;
     

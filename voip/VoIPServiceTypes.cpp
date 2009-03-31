@@ -20,11 +20,14 @@
 
 #include <ADB.h>
 
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QLayout>
+#include <QtCore/QTimer>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <QtGui/QLabel>
 #include <Cfg.h>
 
 #include <TAA.h>
@@ -39,14 +42,14 @@ VoIPServiceTypes::VoIPServiceTypes
 {
     setCaption( "VoIP Services" );
 
-    vstList = new QListView(this, "VoIP Services");
+    vstList = new Q3ListView(this, "VoIP Services");
     vstList->setAllColumnsShowFocus(true);
     vstList->setRootIsDecorated(true);
     vstList->addColumn("Service Name/Flags");
     vstList->addColumn("Type");
     vstList->addColumn("Chan");
-    connect(vstList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
-    connect(vstList, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+    connect(vstList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(itemDoubleClicked(Q3ListViewItem *)));
+    connect(vstList, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(itemDoubleClicked(Q3ListViewItem *)));
 
     idColumn        = 3;
 
@@ -67,11 +70,11 @@ VoIPServiceTypes::VoIPServiceTypes
     closeButton->setText("&Close");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(vstList, 1);
 
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(editButton, 0);
@@ -117,7 +120,7 @@ void VoIPServiceTypes::refreshList()
                     break;
             }
                     
-            QListViewItem   *parentItem = new QListViewItem(vstList, myDB.curRow["ServiceName"], typeStr, myDB.curRow["BaseChannels"], myDB.curRow["VoIPServiceID"]);
+            Q3ListViewItem   *parentItem = new Q3ListViewItem(vstList, myDB.curRow["ServiceName"], typeStr, myDB.curRow["BaseChannels"], myDB.curRow["VoIPServiceID"]);
 
             // Now get the flags for this service type
             myDB2.query("select VoIPServiceItemID, ServiceFlag from VoIP_Service_Items where VoIPServiceID = %ld", atoi(myDB.curRow["VoIPServiceID"]));
@@ -127,7 +130,7 @@ void VoIPServiceTypes::refreshList()
 
                     strcpy(flagStr, voipServiceFlagStr(atoi(myDB2.curRow["ServiceFlag"])));
 
-                    QListViewItem   *curItem = new QListViewItem(parentItem, flagStr, "", "", myDB.curRow["VoIPServiceID"]);
+                    Q3ListViewItem   *curItem = new Q3ListViewItem(parentItem, flagStr, "", "", myDB.curRow["VoIPServiceID"]);
 
                 }
             }
@@ -163,7 +166,7 @@ void VoIPServiceTypes::addClicked()
 
 void VoIPServiceTypes::editClicked()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     curItem = vstList->currentItem();
     if (curItem) {
         long    tmpID;
@@ -184,7 +187,7 @@ void VoIPServiceTypes::editClicked()
   * itemDoubleClicked - Gets called when the user double clicks an item.
   */
 
-void VoIPServiceTypes::itemDoubleClicked(QListViewItem *curItem)
+void VoIPServiceTypes::itemDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) editClicked();
 }
@@ -262,15 +265,15 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
         channelBillable->insertItem(DB.curRow["ItemID"]);
     }
 
-    flagsAvailable = new QListView(this, "flagsAvailable");
+    flagsAvailable = new Q3ListView(this, "flagsAvailable");
     flagsAvailable->addColumn("Available Flags");
-    connect(flagsAvailable, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(availableFlagDoubleClicked(QListViewItem *)));
+    connect(flagsAvailable, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(availableFlagDoubleClicked(Q3ListViewItem *)));
 
     int fCount = 0;
     char sfStr[1024];
     while (strlen(voipServiceFlagText[fCount])) {
         sprintf(sfStr, "%d", fCount+1);
-        QListViewItem *curItem = new QListViewItem(flagsAvailable, voipServiceFlagText[fCount], sfStr);
+        Q3ListViewItem *curItem = new Q3ListViewItem(flagsAvailable, voipServiceFlagText[fCount], sfStr);
         fCount++;
     }
 
@@ -282,9 +285,9 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
     rmFlagButton->setText("&Remove");
     connect(rmFlagButton, SIGNAL(clicked()), this, SLOT(rmFlagClicked()));
 
-    flagsAssigned = new QListView(this, "flagsAssigned");
+    flagsAssigned = new Q3ListView(this, "flagsAssigned");
     flagsAssigned->addColumn("Assigned Flags");
-    connect(flagsAssigned, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(assignedFlagDoubleClicked(QListViewItem *)));
+    connect(flagsAssigned, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(assignedFlagDoubleClicked(Q3ListViewItem *)));
 
     // Server groups.
     serverGroups = new ServerGroupSelector(this, "serverGroupSelector");
@@ -299,9 +302,9 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
     cancelButton->setText("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout();
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
     int curRow = 0;
     gl->addWidget(serviceNameLabel,         curRow, 0);
     gl->addWidget(serviceName,              curRow, 1);
@@ -324,10 +327,10 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
     curRow++;
 
     // Create a layout for the flags
-    QBoxLayout *fl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *fl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     fl->addWidget(flagsAvailable, 1);
 
-    QBoxLayout *fbl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *fbl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     fbl->addStretch(1);
     fbl->addWidget(addFlagButton, 0);
     fbl->addWidget(rmFlagButton, 0);
@@ -355,7 +358,7 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
     ml->addLayout(gl, 0);
     //ml->addStretch(1);
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -403,10 +406,10 @@ int VoIPServiceTypeEditor::setServiceID(long newID)
         }
 
         // Now set the flags
-        QListViewItem   *curItem = flagsAssigned->firstChild();
+        Q3ListViewItem   *curItem = flagsAssigned->firstChild();
         if (curItem) {
             while(curItem) {
-                QListViewItem *tmpItem = new QListViewItem(flagsAvailable, curItem->key(0,0), curItem->key(1,0));
+                Q3ListViewItem *tmpItem = new Q3ListViewItem(flagsAvailable, curItem->key(0,0), curItem->key(1,0));
                 flagsAvailable->setCurrentItem(tmpItem);
                 flagsAssigned->removeItem(curItem);
                 curItem = curItem->itemBelow();
@@ -420,7 +423,7 @@ int VoIPServiceTypeEditor::setServiceID(long newID)
             curItem = flagsAvailable->firstChild();
             while(curItem) {
                 if (atoi(myDB.curRow["ServiceFlag"]) == atoi(curItem->key(1,0))) {
-                    QListViewItem *tmpItem = new QListViewItem(flagsAssigned, curItem->key(0,0), curItem->key(1,0));
+                    Q3ListViewItem *tmpItem = new Q3ListViewItem(flagsAssigned, curItem->key(0,0), curItem->key(1,0));
                     flagsAvailable->removeItem(curItem);
                     curItem = 0;
                 } else {
@@ -502,10 +505,10 @@ void VoIPServiceTypeEditor::saveClicked()
     }
 
     // Now insert the Service Items
-    QListViewItem *curItem = flagsAssigned->firstChild();
+    Q3ListViewItem *curItem = flagsAssigned->firstChild();
     if (curItem) {
         while(curItem) {
-            QListViewItem *tmpItem = new QListViewItem(flagsAvailable, curItem->key(0,0), curItem->key(1,0));
+            Q3ListViewItem *tmpItem = new Q3ListViewItem(flagsAvailable, curItem->key(0,0), curItem->key(1,0));
             DB.dbcmd("insert into VoIP_Service_Items (VoIPServiceID, ServiceFlag) values (%ld, %d)", voipServiceID, atoi(curItem->key(1,0)));
             curItem = curItem->itemBelow();
         }
@@ -541,9 +544,9 @@ void VoIPServiceTypeEditor::cancelClicked()
   */
 void VoIPServiceTypeEditor::addFlagClicked()
 {
-    QListViewItem   *curItem = flagsAvailable->currentItem();
+    Q3ListViewItem   *curItem = flagsAvailable->currentItem();
     if (curItem) {
-        QListViewItem *tmpItem = new QListViewItem(flagsAssigned, curItem->key(0,0), curItem->key(1,0));
+        Q3ListViewItem *tmpItem = new Q3ListViewItem(flagsAssigned, curItem->key(0,0), curItem->key(1,0));
         flagsAssigned->setCurrentItem(tmpItem);
         flagsAvailable->removeItem(curItem);
     }
@@ -555,9 +558,9 @@ void VoIPServiceTypeEditor::addFlagClicked()
   */
 void VoIPServiceTypeEditor::rmFlagClicked()
 {
-    QListViewItem   *curItem = flagsAssigned->currentItem();
+    Q3ListViewItem   *curItem = flagsAssigned->currentItem();
     if (curItem) {
-        QListViewItem *tmpItem = new QListViewItem(flagsAvailable, curItem->key(0,0), curItem->key(1,0));
+        Q3ListViewItem *tmpItem = new Q3ListViewItem(flagsAvailable, curItem->key(0,0), curItem->key(1,0));
         flagsAvailable->setCurrentItem(tmpItem);
         flagsAssigned->removeItem(curItem);
     }
@@ -567,7 +570,7 @@ void VoIPServiceTypeEditor::rmFlagClicked()
   * availableFlagDoubleClicked - When the user double clicks on a flag,
   * this is called.
   */
-void VoIPServiceTypeEditor::availableFlagDoubleClicked(QListViewItem *curItem)
+void VoIPServiceTypeEditor::availableFlagDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) addFlagClicked();
 }
@@ -576,7 +579,7 @@ void VoIPServiceTypeEditor::availableFlagDoubleClicked(QListViewItem *curItem)
   * assignedFlagDoubleClicked - When the user double clicks on a flag,
   * this is called.
   */
-void VoIPServiceTypeEditor::assignedFlagDoubleClicked(QListViewItem *curItem)
+void VoIPServiceTypeEditor::assignedFlagDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) rmFlagClicked();
 }

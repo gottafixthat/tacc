@@ -16,13 +16,16 @@
 
 #include <qmessagebox.h>
 #include <qstring.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qapplication.h>
 #include <qcursor.h>
 #include <qdatetime.h>
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -58,7 +61,7 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
     altContact = new QLineEdit(this, "altContact");
     altContact->setMaxLength(80);
 
-    QGroupBox *addrGrp = new QGroupBox(2, Horizontal, "Address", this, "addrGrp");
+    Q3GroupBox *addrGrp = new Q3GroupBox(2, Horizontal, "Address", this, "addrGrp");
     addrGrp->setInsideSpacing(1);
     QLabel *address1Label = new QLabel("Address Line 1:", addrGrp);
     address1Label->setAlignment(AlignRight|AlignVCenter);
@@ -93,7 +96,7 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
     zip->setMaximumWidth(3 * charWidth);
 
     // A layout for the city, state, zip widget
-    QBoxLayout *cszLayout = new QBoxLayout(cszWidget, QBoxLayout::LeftToRight);
+    Q3BoxLayout *cszLayout = new Q3BoxLayout(cszWidget, Q3BoxLayout::LeftToRight);
     cszLayout->addWidget(city, 1);
     cszLayout->addWidget(state, 0);
     cszLayout->addWidget(zip, 0);
@@ -105,7 +108,7 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
     country->setMaxLength(80);
 
     // Phone number group box.
-    QGroupBox *phoneGrp = new QGroupBox(2, Horizontal, "Phone Numbers", this, "phoneGrp");
+    Q3GroupBox *phoneGrp = new Q3GroupBox(2, Horizontal, "Phone Numbers", this, "phoneGrp");
     phoneGrp->setInsideSpacing(1);
     QLabel *dayPhoneLabel = new QLabel("Daytime:", phoneGrp);
     dayPhoneLabel->setAlignment(AlignRight|AlignVCenter);
@@ -128,7 +131,7 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
     altPhone->setMaxLength(32);
 
     // Billing info, we'll use our own layout for this one.
-    QGroupBox *billGrp = new QGroupBox(1, Horizontal, "Billing Information", this, "billGrp");
+    Q3GroupBox *billGrp = new Q3GroupBox(1, Horizontal, "Billing Information", this, "billGrp");
     TAAWidget *billWidget = new TAAWidget(billGrp, "billWidget");
 
     QLabel *ratePlanLabel = new QLabel("Rate Plan:", billWidget);
@@ -150,7 +153,7 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
     referredByLabel->setAlignment(AlignRight|AlignVCenter);
     referredBy = new QComboBox(true, billWidget, "referredBy");
 
-    QGridLayout *billGrid = new QGridLayout(billWidget, 2, 4);
+    Q3GridLayout *billGrid = new Q3GridLayout(billWidget, 2, 4);
     int curRow = 0;
     billGrid->addWidget(ratePlanLabel, curRow, 0);
     billGrid->addWidget(ratePlan, curRow, 1);
@@ -170,8 +173,8 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
     billGrid->setColStretch(3, 1);
 
     // Now the "Misc" box.  Same as billing info box/grid
-    QGroupBox *miscGrp = new QGroupBox(1, Horizontal, "Initial Notes", this, "miscGrp");
-    initialNotes = new QMultiLineEdit(miscGrp, "initialNotes");
+    Q3GroupBox *miscGrp = new Q3GroupBox(1, Horizontal, "Initial Notes", this, "miscGrp");
+    initialNotes = new Q3MultiLineEdit(miscGrp, "initialNotes");
 
     // Finally, our buttons.
     QPushButton *addButton = new QPushButton("&Add", this, "addButton");
@@ -181,8 +184,8 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
     // Create our layout now.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
-    QGridLayout *gl = new QGridLayout(5, 4, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
+    Q3GridLayout *gl = new Q3GridLayout(5, 4, 3);
     curRow = 0;
     gl->addWidget(fullNameLabel, curRow, 0);
     gl->addWidget(fullName, curRow, 1);
@@ -210,7 +213,7 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
 
     ml->addLayout(gl, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -317,7 +320,7 @@ void NewCustomer::addCustomer()
 	PhoneQuery = "";	
 	strcpy(PhoneQueryFMT, "PhoneNumber LIKE '%s'");
 	
-	QStrList matchList(TRUE);
+	Q3StrList matchList(TRUE);
 	
 	char	theDate[16];
 	time_t	ti = time(NULL);

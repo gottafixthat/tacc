@@ -13,9 +13,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -75,7 +75,7 @@ void salesByServiceReport::refreshReport()
         //DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         //sprintf(tmpStr, "%5d", DB2.rowCount);
         if (atof(DB.curRow[2]) > 0.0) {
-            new QListViewItem(repBody, 
+            new Q3ListViewItem(repBody, 
                     DB.curRow[1], 
                     DB.curRow[2],
                     DB.curRow[0],    // The Item ID
@@ -92,7 +92,7 @@ void salesByServiceReport::refreshReport()
         //sprintf(tmpStr, "%5d", DB2.rowCount);
         sprintf(tmpStr, "%s - Package", DB.curRow[1]);
         if (atof(DB.curRow[2]) > 0.0) {
-            new QListViewItem(repBody, 
+            new Q3ListViewItem(repBody, 
                     tmpStr,
                     DB.curRow[2],
                     DB.curRow["PackageItem"],   // The Package ID
@@ -108,7 +108,7 @@ void salesByServiceReport::refreshReport()
         //sprintf(tmpStr, "%5d", DB2.rowCount);
         //sprintf(tmpStr, "%s - Package", DB.curRow[1]);
         if (atof(DB.curRow[0]) > 0.0) {
-            QListViewItem *curItem = new QListViewItem(repBody, 
+            Q3ListViewItem *curItem = new Q3ListViewItem(repBody, 
                     "[Unknown Items]",
                     DB.curRow[0]
                     );
@@ -117,7 +117,7 @@ void salesByServiceReport::refreshReport()
     }
 
     sprintf(tmpStr, "%.2f", grandTotal);
-    new QListViewItem(repBody, "Total", tmpStr);
+    new Q3ListViewItem(repBody, "Total", tmpStr);
 
     sprintf(tmpStr, "Sales by Service\n%02d-%02d-%04d through %02d-%02d-%04d, $%.2f", sDate.year(), sDate.month(), sDate.day(), eDate.year(), eDate.month(), eDate.day(), grandTotal);
 	setTitle(tmpStr);
@@ -131,7 +131,7 @@ void salesByServiceReport::refreshReport()
 **                    is double clicked.
 */
 
-void salesByServiceReport::listItemSelected(QListViewItem *curItem)
+void salesByServiceReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         if (curItem->key(2,0).length()) {
@@ -244,7 +244,7 @@ void salesByServiceDetailReport::refreshReport()
         } else {
             customerName = DB.curRow["FullName"];
         }
-        new QListViewItem(repBody, 
+        new Q3ListViewItem(repBody, 
                 DB.curRow["TransDate"],
                 DB.curRow["Amount"], 
                 DB.curRow["CustomerID"],
@@ -255,7 +255,7 @@ void salesByServiceDetailReport::refreshReport()
         grandTotal += atof(DB.curRow["Amount"]);
     }
     tmpStr = tmpStr.sprintf("%.2f", grandTotal);
-    new QListViewItem(repBody, "Total", tmpStr);
+    new Q3ListViewItem(repBody, "Total", tmpStr);
 
     QApplication::restoreOverrideCursor();
 }
@@ -265,7 +265,7 @@ void salesByServiceDetailReport::refreshReport()
  *
  * Gets called when the user double clicks an item in the report.
  */
-void salesByServiceDetailReport::listItemSelected(QListViewItem *curItem)
+void salesByServiceDetailReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (!curItem) return;
     QString custID;

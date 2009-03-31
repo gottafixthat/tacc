@@ -26,8 +26,8 @@
 #define BI_Main_included
 
 #include <qwidget.h>
-#include <qwidgetstack.h>
-#include <qlistview.h>
+#include <q3widgetstack.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qtabbar.h>
 #include <TAAWidget.h>
@@ -53,15 +53,15 @@ public:
     void    refreshBillables(void);
 
 protected:
-    QListView       *billableList;
+    Q3ListView       *billableList;
     QPushButton     *newButton;
     QPushButton     *deleteButton;
     QPushButton     *closeButton;
     QTabBar         *theTabBar;
-    QWidgetStack    *qws;
+    Q3WidgetStack    *qws;
 
 protected slots:
-    virtual void    billableSelected(QListViewItem *curItem);
+    virtual void    billableSelected(Q3ListViewItem *curItem);
     virtual void    newBillable();
     virtual void    deleteBillable();
     virtual void    updateBillable();

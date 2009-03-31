@@ -14,8 +14,8 @@
 
 #include <qlabel.h>
 #include <qlineedit.h>
-#include <qlistview.h>
-#include <qdatetimeedit.h>
+#include <q3listview.h>
+#include <q3datetimeedit.h>
 
 #include <TAAWidget.h>
 #include <CustomerSearch.h>
@@ -40,7 +40,7 @@ protected:
     long            myCustID;
     QLabel          *messageLabel;
     CustomerSearch  *custSearch;
-    QDateEdit       *effectiveDate;
+    Q3DateEdit       *effectiveDate;
 
 };
 #endif

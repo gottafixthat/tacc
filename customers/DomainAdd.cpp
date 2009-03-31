@@ -49,6 +49,11 @@
 #include <BrassClient.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
+#include <Q3StrList>
 
 DomainAdd::DomainAdd
 (
@@ -119,10 +124,10 @@ DomainAdd::DomainAdd
 
 
     // Create our layout.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Most of the widgets go into the grid layout.
-    QGridLayout *gl = new QGridLayout(8, 2);
+    Q3GridLayout *gl = new Q3GridLayout(8, 2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     int curRow = 0;
@@ -152,7 +157,7 @@ DomainAdd::DomainAdd
     ml->addStretch(1);
 
     // Create the layout for our buttons.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -215,8 +220,8 @@ void DomainAdd::saveDomain()
     QString     tmpqstr;
     QString     tmpqstr2;
     QString     ext;
-    QStrList    parts;
-    QStrList    validtlds;
+    Q3StrList    parts;
+    Q3StrList    validtlds;
     char        tmpstr[1024];
     char        dstFile[1024];
     char        tmpLogin[1024];

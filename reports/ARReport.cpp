@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
 
 #include <ADB.h>
@@ -57,25 +57,25 @@ void ARReport::refreshReport()
     
     tmpFloat = DB.sumFloat("select SUM(Amount) from AcctsRecv where TransDate >= '%s' and TransDate <= '%s' and Amount >= 0.00 and TransType = 0", sDate, eDate);
     sprintf(tmpSt, "%.2f", tmpFloat);
-    (void) new QListViewItem(repBody, "Amount Billed", tmpSt);
+    (void) new Q3ListViewItem(repBody, "Amount Billed", tmpSt);
     total += tmpFloat;
     
     tmpFloat = DB.sumFloat("select SUM(Amount) from AcctsRecv where TransDate >= '%s' and TransDate <= '%s' and Amount <= 0.00 and TransType = 0", sDate, eDate);
     sprintf(tmpSt, "%.2f", tmpFloat);
-    (void) new QListViewItem(repBody, "Adjustments/credits", tmpSt);
+    (void) new Q3ListViewItem(repBody, "Adjustments/credits", tmpSt);
     total += tmpFloat;
     
     tmpFloat = DB.sumFloat("select SUM(Amount) from AcctsRecv where TransDate >= '%s' and TransDate <= '%s' and TransType = 2", sDate, eDate);
     sprintf(tmpSt, "%.2f", tmpFloat);
-    (void) new QListViewItem(repBody, "Payments Received", tmpSt);
+    (void) new Q3ListViewItem(repBody, "Payments Received", tmpSt);
     total += tmpFloat;
 
     tmpFloat = DB.sumFloat("select SUM(Amount) from AcctsRecv where TransDate >= '%s' and TransDate <= '%s'", sDate, eDate);
     sprintf(tmpSt, "%.2f", tmpFloat);
-    (void) new QListViewItem(repBody, "Balance", tmpSt);
+    (void) new Q3ListViewItem(repBody, "Balance", tmpSt);
 
     sprintf(tmpSt, "%.2f", total);
-    (void) new QListViewItem(repBody, "Total", tmpSt);
+    (void) new Q3ListViewItem(repBody, "Total", tmpSt);
     
     QApplication::restoreOverrideCursor();
 }

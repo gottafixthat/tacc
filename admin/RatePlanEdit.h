@@ -16,10 +16,10 @@
 #define RATEPLANEDIT_H
 
 #include <qlabel.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
 #include <qradiobutton.h>
 #include <qcombobox.h>
 
@@ -56,19 +56,19 @@ signals:
 protected:
     QLineEdit       *planTag;
     QLineEdit       *description;
-    QButtonGroup    *autoConvertGroup;
+    Q3ButtonGroup    *autoConvertGroup;
     QRadioButton    *noAutoConvert;
     QRadioButton    *autoConvertDays;
     QLabel          *convertDaysLabel;
     QRadioButton    *autoConvertDate;
     QLineEdit       *convertDays;
-    QDateEdit       *convertDate;
+    Q3DateEdit       *convertDate;
     QLabel          *convertToLabel;
     QComboBox       *convertToList;
 
     QCheckBox       *promoPlan;
     QLabel          *promoEndsOnLabel;
-    QDateEdit       *promoEndsOn;
+    Q3DateEdit       *promoEndsOn;
 
 private:
 	long	        myIntID;

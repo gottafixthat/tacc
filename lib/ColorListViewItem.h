@@ -2,16 +2,16 @@
   * of the item to be specified.
   */
 
-#include <qlistview.h>
-#include <qpainter.h>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QPainter>
 
-class ColorListViewItem : public QListViewItem
+class ColorListViewItem : public Q3ListViewItem
 {
 public:
-    ColorListViewItem(QListView *Parent, QColor bgcolor);
-    ColorListViewItem(QListView *Parent);
-    ColorListViewItem(QListViewItem *Parent); 
-    ColorListViewItem(QListView *Parent, QColor bgcolor,
+    ColorListViewItem(Q3ListView *Parent, QColor bgcolor);
+    ColorListViewItem(Q3ListView *Parent);
+    ColorListViewItem(Q3ListViewItem *Parent); 
+    ColorListViewItem(Q3ListView *Parent, QColor bgcolor,
 		  const char *s1,
 		  const char *s2 = 0,
 		  const char *s3 = 0,
@@ -20,7 +20,7 @@ public:
 		  const char *s6 = 0,
 		  const char *s7 = 0,
 		  const char *s8 = 0);
-    ColorListViewItem(QListViewItem *Parent,
+    ColorListViewItem(Q3ListViewItem *Parent,
 		  const char *s1,
 		  const char *s2 = 0,
 		  const char *s3 = 0,

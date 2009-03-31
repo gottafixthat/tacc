@@ -31,7 +31,7 @@ public:
     void    setRatePlanID(long newPlanID);
 
 public slots:
-    virtual void listItemSelected(QListViewItem *curItem);
+    virtual void listItemSelected(Q3ListViewItem *curItem);
 
 private:
     long    myRatePlanID;

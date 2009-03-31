@@ -29,13 +29,13 @@
 #include <qdatetm.h>
 #include <calendar.h>
 #include <qpainter.h>
-#include <qlistview.h>
-#include <qtextview.h>
+#include <q3listview.h>
+#include <q3textview.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 
 
 class TicketManager : public TAAWidget
@@ -47,21 +47,21 @@ public:
     TicketManager(QWidget* parent = NULL, const char* name = NULL);
     virtual ~TicketManager();
 
-    QPopupMenu  *menu();
+    Q3PopupMenu  *menu();
 
     int         ticketCount();
 
 public slots:
     void        refreshTicketList();
-    void        editTicket(QListViewItem *);
+    void        editTicket(Q3ListViewItem *);
 
 protected slots:
     void        showPersonalSelected();
     void        showAllPersonalSelected();
 
 protected:
-    QListView   *ticketList;
-    QPopupMenu  *ticketMenu;
+    Q3ListView   *ticketList;
+    Q3PopupMenu  *ticketMenu;
     int         showPersonalMenuID;
     int         showAllPersonalMenuID;
     int         myTicketCount;

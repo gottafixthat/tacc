@@ -39,6 +39,9 @@
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include <ADB.h>
 
@@ -62,7 +65,7 @@ PKG_General::PKG_General
     descriptionLabel->setText("Description:");
     descriptionLabel->setAlignment(AlignRight|AlignTop);
 
-    description = new QMultiLineEdit(this, "description");
+    description = new Q3MultiLineEdit(this, "description");
     connect(description, SIGNAL(textChanged()), this, SLOT(descriptionChanged()));
 
     isActive = new QCheckBox(this, "isActive");
@@ -110,10 +113,10 @@ PKG_General::PKG_General
     connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // The grid to hold most of our data
-    QGridLayout *gl = new QGridLayout(5, 2);
+    Q3GridLayout *gl = new Q3GridLayout(5, 2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     int curRow = 0;
@@ -146,7 +149,7 @@ PKG_General::PKG_General
     ml->addLayout(gl, 1);
 
     // Create the layout for our row of button.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
 

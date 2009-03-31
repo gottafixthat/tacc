@@ -25,12 +25,12 @@
 #ifndef AddressEditor_included
 #define AddressEditor_included
 
-#include <qdialog.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlineedit.h>
+#include <QtGui/QDialog>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QCheckBox>
+#include <QtGui/QComboBox>
+#include <QtGui/QLineEdit>
 #include <TAAWidget.h>
 #include <BlargDB.h>
 #include <ADB.h>

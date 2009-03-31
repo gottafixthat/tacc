@@ -14,6 +14,9 @@
 #include <qmap.h>
 #include <qstringlist.h>
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <QLabel>
 
 #include <GeneralLedgerReport.h>
 #include <ADB.h>
@@ -37,10 +40,10 @@ GeneralLedgerReport::GeneralLedgerReport
 	setCaption("General Ledger");
 	setTitle("General Ledger");
 	
-	repBody->setColumnText(0, "Account");  repBody->setColumnAlignment(0, AlignLeft);
-	repBody->addColumn("Name");            repBody->setColumnAlignment(1, AlignLeft);
-	repBody->addColumn("Type");            repBody->setColumnAlignment(2, AlignLeft);
-	repBody->addColumn("Amount");          repBody->setColumnAlignment(3, AlignRight);
+	repBody->setColumnText(0, "Account");  repBody->setColumnAlignment(0, Qt::AlignLeft);
+	repBody->addColumn("Name");            repBody->setColumnAlignment(1, Qt::AlignLeft);
+	repBody->addColumn("Type");            repBody->setColumnAlignment(2, Qt::AlignLeft);
+	repBody->addColumn("Amount");          repBody->setColumnAlignment(3, Qt::AlignRight);
 	
     // By default use the current month.
     setDateRange(d_thisMonth);
@@ -78,7 +81,7 @@ void GeneralLedgerReport::refreshReport()
     int         intAcct;
     QString     query;
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     repBody->clear();
 
     // Load the list of accounts into the map
@@ -141,7 +144,7 @@ void GeneralLedgerReport::refreshReport()
         intAcctNo.setNum(it.data().intAccountNo);
         balance.setNum(it.data().balance);
         balance.sprintf("%.2f", balance.toDouble());
-        new QListViewItem(repBody,
+        new Q3ListViewItem(repBody,
                 it.data().accountNo,
                 it.data().acctName,
                 it.data().accountTypeName,
@@ -160,7 +163,7 @@ void GeneralLedgerReport::refreshReport()
  * in the report, opening a ccPaymentDetails report for the specified
  * day.
  */
-void GeneralLedgerReport::listItemSelected(QListViewItem *curItem)
+void GeneralLedgerReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         // If they double click, open the customer's window.
@@ -264,7 +267,7 @@ GeneralLedgerDetailReport::GeneralLedgerDetailReport
     filters->setDisplayColumns(startingCols);
     connect(filters, SIGNAL(optionsUpdated()), this, SLOT(refreshReport()));
 
-	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, AlignLeft);
+	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, Qt::AlignLeft);
 	
     // By default use the current month.
     setDateRange(d_thisMonth);
@@ -293,7 +296,7 @@ void GeneralLedgerDetailReport::refreshReport()
     ADB         DB;
     QStringList dispCols = filters->displayColumns();
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     emit(setStatus("Generating report..."));
     // Set the report columns.  This will also clear the list.
     setReportColumns();
@@ -308,7 +311,7 @@ void GeneralLedgerDetailReport::refreshReport()
     int     curCol;
     if (DB.rowCount) while (DB.getrow()) {
         curCol = 0;
-        QListViewItem   *curItem = new QListViewItem(repBody);
+        Q3ListViewItem   *curItem = new Q3ListViewItem(repBody);
 
         QStringList::Iterator it;
         for (it = dispCols.begin(); it != dispCols.end(); ++it) {
@@ -344,9 +347,9 @@ void GeneralLedgerDetailReport::setReportColumns()
         colName = *it;
         repBody->addColumn(colName);
         repBody->setColumnAlignment(curCol, Qt::AlignLeft);
-        if (colName == "Amount") repBody->setColumnAlignment(curCol, AlignRight);
-        if (colName == "Quantity") repBody->setColumnAlignment(curCol, AlignRight);
-        if (colName == "Price") repBody->setColumnAlignment(curCol, AlignRight);
+        if (colName == "Amount") repBody->setColumnAlignment(curCol, Qt::AlignRight);
+        if (colName == "Quantity") repBody->setColumnAlignment(curCol, Qt::AlignRight);
+        if (colName == "Price") repBody->setColumnAlignment(curCol, Qt::AlignRight);
         if (colName == "Customer ID") myCustomerIDCol = curCol;
         curCol++;
     }
@@ -382,7 +385,7 @@ void GeneralLedgerDetailReport::setIntAccountNo(int intAccountNo)
  *
  * Gets called when the user double clicks on a list item.
  */
-void GeneralLedgerDetailReport::listItemSelected(QListViewItem *curItem)
+void GeneralLedgerDetailReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (!curItem) return;
     if (myCustomerIDCol < 0) return;
@@ -415,8 +418,8 @@ GeneralLedgerDetailFilters::GeneralLedgerDetailFilters(QWidget* parent, const ch
     columnListLabel->setText("Display Columns:");
     columnListLabel->setAlignment(Qt::AlignRight|Qt::AlignTop);
 
-    columnList = new QListBox(this, "columnList");
-    columnList->setSelectionMode(QListBox::Multi);
+    columnList = new Q3ListBox(this, "columnList");
+    columnList->setSelectionMode(Q3ListBox::Multi);
 
     QPushButton *upButton = new QPushButton(this, "upButton");
     upButton->setText("Move Up");
@@ -427,7 +430,7 @@ GeneralLedgerDetailFilters::GeneralLedgerDetailFilters(QWidget* parent, const ch
     connect(dnButton, SIGNAL(clicked()), this, SLOT(downClicked()));
 
     // Our main layout is already created for us
-    QGridLayout *gl = new QGridLayout(2, 2);
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
     int curRow = 0;
     gl->addWidget(columnListLabel,      curRow, 0);
     gl->addWidget(columnList,           curRow, 1);
@@ -483,7 +486,7 @@ void GeneralLedgerDetailFilters::setDisplayColumns(QStringList dispCols)
     QStringList::Iterator it;
     for (it = dispCols.begin(); it != dispCols.end(); ++it) {
         for (uint i = 0; i < columnList->count(); i++) {
-            QListBoxItem *itm = columnList->item(i);
+            Q3ListBoxItem *itm = columnList->item(i);
             if (!itm->text().compare(*it)) {
                 columnList->setSelected(i, true);
             }
@@ -503,7 +506,7 @@ QStringList GeneralLedgerDetailFilters::displayColumns()
     for (uint i = 0; i < columnList->count(); i++) {
         if (columnList->isSelected(i)) {
             // This one is selected, add it to our return value.
-            QListBoxItem *itm = columnList->item(i);
+            Q3ListBoxItem *itm = columnList->item(i);
             retList += itm->text();
         }
     }
@@ -519,7 +522,7 @@ void GeneralLedgerDetailFilters::upClicked()
 {
     uint curIdx = columnList->currentItem();
     if (curIdx > 0) {
-        QListBoxItem    *curItem = columnList->item(curIdx);
+        Q3ListBoxItem    *curItem = columnList->item(curIdx);
         columnList->takeItem(curItem);
         columnList->insertItem(curItem, curIdx-1);
         columnList->setCurrentItem(curItem);
@@ -535,7 +538,7 @@ void GeneralLedgerDetailFilters::downClicked()
 {
     uint curIdx = columnList->currentItem();
     if (curIdx < columnList->count() - 1) {
-        QListBoxItem    *curItem = columnList->item(curIdx);
+        Q3ListBoxItem    *curItem = columnList->item(curIdx);
         columnList->takeItem(curItem);
         columnList->insertItem(curItem, curIdx+1);
         columnList->setCurrentItem(curItem);
@@ -586,7 +589,7 @@ void GeneralLedgerDetailFilters::saveFilters()
     // Walk through the list box and add the columns in the order they appear.
     QStringList  tmpList;
     for (uint i = 0; i < columnList->count(); i++) {
-        QListBoxItem *itm = columnList->item(i);
+        Q3ListBoxItem *itm = columnList->item(i);
         tmpList += itm->text();
     }
     repData += tmpList.join(":");
@@ -596,7 +599,7 @@ void GeneralLedgerDetailFilters::saveFilters()
     tmpList.clear();
     for (uint i = 0; i < columnList->count(); i++) {
         // This one is selected, add it to our return value.
-        QListBoxItem *itm = columnList->item(i);
+        Q3ListBoxItem *itm = columnList->item(i);
         if (itm->isSelected()) tmpList += itm->text();
     }
     repData += tmpList.join(":");

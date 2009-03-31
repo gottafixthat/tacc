@@ -30,8 +30,10 @@
 #include "BString.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 #include <ADB.h>
 
 LoginTypeFlagAdd::LoginTypeFlagAdd
@@ -44,8 +46,8 @@ LoginTypeFlagAdd::LoginTypeFlagAdd
 	setCaption( "Add Login Type Flag" );
     
     // Create our widgets.
-    flagList = new QListBox(this, "flagList");
-    connect(flagList, SIGNAL(doubleClicked(QListBoxItem *)), this, SLOT(flagDoubleClicked(QListBoxItem *)));
+    flagList = new Q3ListBox(this, "flagList");
+    connect(flagList, SIGNAL(doubleClicked(Q3ListBoxItem *)), this, SLOT(flagDoubleClicked(Q3ListBoxItem *)));
 
     addButton = new QPushButton(this, "addButton");
     addButton->setText("&Add");
@@ -57,10 +59,10 @@ LoginTypeFlagAdd::LoginTypeFlagAdd
     
     // Create our layout.
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(flagList, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -71,7 +73,7 @@ LoginTypeFlagAdd::LoginTypeFlagAdd
 	ADB	    DB;
 	char	tmpstr[4096];
 	
-	QStrList tmplist;
+	Q3StrList tmplist;
 
 	if (!LoginTypeID) return;
 	
@@ -128,7 +130,7 @@ void LoginTypeFlagAdd::addFlag()
 	done(Accepted);
 }
 
-void LoginTypeFlagAdd::flagDoubleClicked(QListBoxItem *)
+void LoginTypeFlagAdd::flagDoubleClicked(Q3ListBoxItem *)
 {
     addFlag();
 }

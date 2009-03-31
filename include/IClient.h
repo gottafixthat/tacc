@@ -13,7 +13,7 @@
 #include <mimepp/protocol.h>
 #include <mimepp/string.h>
 #include <stdio.h>
-#include <qstrlist.h>
+#include <Qt3Support/q3strlist.h>
 
 
 /*
@@ -84,7 +84,7 @@ public:
     void endData(void);
 
 private:
-    QStrList    *bufferedData;
+    Q3StrList    *bufferedData;
     
 
 };

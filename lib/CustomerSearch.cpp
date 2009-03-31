@@ -26,18 +26,20 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qlistview.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
+
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
 
-CustomerSearch::CustomerSearch(QWidget *parent, const char *name, WFlags f)
-    : TAAWidget(parent, name, f)
+CustomerSearch::CustomerSearch(QWidget *parent, const char *name, Qt::WFlags f)
+    : TAAWidget(parent, f)
 {
     // A simple (in appearance) widget that will allow the user to
     // search for, and select, a customer.
@@ -65,7 +67,7 @@ CustomerSearch::CustomerSearch(QWidget *parent, const char *name, WFlags f)
     
     QLabel  *queryLabel = new QLabel(this, "Query Label");
     queryLabel->setText("&Query:");
-    queryLabel->setAlignment(AlignRight|AlignVCenter);
+    queryLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     queryLabel->setBuddy(searchText);
 
     searchButton = new QPushButton(this, "SearchButton");
@@ -76,19 +78,19 @@ CustomerSearch::CustomerSearch(QWidget *parent, const char *name, WFlags f)
     clearButton->setText("C&lear");
     connect(clearButton, SIGNAL(clicked()), this, SLOT(clearSearch()));
 
-    custList = new QListView(this, "SearchResults");
+    custList = new Q3ListView(this, "SearchResults");
     custList->setMargin(2);
     custList->setAllColumnsShowFocus(true);
     custList->setRootIsDecorated(true);
     custList->addColumn("Account Name");
     custList->addColumn("LoginID");
     custList->addColumn("Cust ID");
-    connect(custList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(itemHighlighted(QListViewItem *)));
-    connect(custList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemSelected(QListViewItem *)));
-    connect(custList, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(itemSelected(QListViewItem *)));
+    connect(custList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(itemHighlighted(Q3ListViewItem *)));
+    connect(custList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(itemSelected(Q3ListViewItem *)));
+    connect(custList, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(itemSelected(Q3ListViewItem *)));
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 0);
-    QBoxLayout *sl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 0, 0);
+    Q3BoxLayout *sl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     sl->addSpacing(3);
     sl->addWidget(queryLabel, 0);
     sl->addSpacing(3);
@@ -135,11 +137,11 @@ void CustomerSearch::startSearch()
     char    *isActive  = new char[64];
     
     // Change the cursor to an hourglass
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     emit(setStatus("Searching..."));
     
     // Save the state of the list.
-    QListViewItem       *tmpCur;
+    Q3ListViewItem       *tmpCur;
     tmpCur  = custList->currentItem();
     
     emit(customerHighlighted(0));
@@ -154,7 +156,7 @@ void CustomerSearch::startSearch()
     // If there is no query at all, simply return since the
     // list is now empty.
     if (!tmpsub.length()) return;
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::WaitCursor);
 
     
     // First query.  CustomerID
@@ -246,7 +248,7 @@ void CustomerSearch::startSearch()
             else strcpy(isActive, "No");
 
             // Create the parent record.
-            tmpCur = new QListViewItem(custList, 
+            tmpCur = new Q3ListViewItem(custList, 
               tmpstr,               // FullName/Contact Name
               custDB.getStr("PrimaryLogin"),
               custDB.getStr("CustomerID"),
@@ -261,7 +263,7 @@ void CustomerSearch::startSearch()
                 if (strcmp(custDB.getStr("PrimaryLogin"), DB2.curRow["LoginID"])) {
                     if (atoi(DB2.curRow["Active"])) strcpy(isActive, "Yes");
                     else strcpy(isActive, "No");
-                    (void) new QListViewItem(tmpCur,
+                    (void) new Q3ListViewItem(tmpCur,
                                              DB2.curRow["ContactName"],
                                              DB2.curRow["LoginID"],
                                              custDB.getStr("CustomerID"),
@@ -293,7 +295,7 @@ void CustomerSearch::startSearch()
 long CustomerSearch::currentCustomer()
 {
     long            curCust  = 0;
-    QListViewItem   *curItem = custList->currentItem();
+    Q3ListViewItem   *curItem = custList->currentItem();
     if (curItem) {
         curCust = atol(curItem->key(2,0));
     }
@@ -305,7 +307,7 @@ long CustomerSearch::currentCustomer()
 **                   selects an item from the list.
 */
 
-void CustomerSearch::itemHighlighted(QListViewItem *curItem)
+void CustomerSearch::itemHighlighted(Q3ListViewItem *curItem)
 {
     if (curItem) {
         emit(customerHighlighted(atol(curItem->key(2,0))));
@@ -317,7 +319,7 @@ void CustomerSearch::itemHighlighted(QListViewItem *curItem)
 **                  clicks or presses enter on a list item.
 */
 
-void CustomerSearch::itemSelected(QListViewItem *curItem)
+void CustomerSearch::itemSelected(Q3ListViewItem *curItem)
 {
     if (curItem) {
         emit(customerSelected(atol(curItem->key(2,0))));

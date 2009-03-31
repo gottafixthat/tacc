@@ -29,7 +29,7 @@
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 
 class NoteEdit : public TAAWidget
 {
@@ -64,7 +64,7 @@ private:
 protected:
     QComboBox       *noteType;
     QComboBox       *loginID;
-    QMultiLineEdit  *noteText;
+    Q3MultiLineEdit  *noteText;
     QLabel          *dateText;
     QLabel          *addedByText;
 

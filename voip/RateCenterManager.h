@@ -21,17 +21,19 @@
 
 #include "TAATools.h"
 #include "TAAWidget.h"
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlistview.h>
-#include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+#include <QtCore/QEvent>
+#include <QtGui/QCloseEvent>
 #include <calendar.h>
-#include <qtextview.h>
-#include <qpopupmenu.h>
-#include <qsqldatabase.h>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3popupmenu.h>
+#include <QtSql/QSqlDatabase>
 
 class RateCenterManager : public TAAWidget
 {
@@ -55,10 +57,10 @@ protected slots:
     virtual void    editClicked();
     virtual void    deleteClicked();
     virtual void    closeClicked();
-    virtual void    itemDoubleClicked(QListViewItem *);
+    virtual void    itemDoubleClicked(Q3ListViewItem *);
 
 protected:
-    QListView       *rcList;
+    Q3ListView       *rcList;
     QPushButton     *addButton;
     QPushButton     *editButton;
     QPushButton     *deleteButton;

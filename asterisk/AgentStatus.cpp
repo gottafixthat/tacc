@@ -13,7 +13,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <qlayout.h>
-#include <qlistview.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
+#include <Q3PopupMenu>
+#include <QSqlQuery>
 
 #include "ColorListViewItem.h"
 
@@ -66,7 +72,7 @@ AgentInfo::AgentInfo
     //QBoxLayout *ml = new QBoxLayout(QBoxLayout::TopToBottom, 4);
     
     // Create a layout for each agent
-    QGridLayout *wl = new QGridLayout(this, 3, 4, 0, 0);
+    Q3GridLayout *wl = new Q3GridLayout(this, 3, 4, 0, 0);
     wl->setColStretch(0, 0);
     wl->setColStretch(1, 1);
     wl->setColStretch(2, 1);
@@ -352,14 +358,14 @@ AgentStatus::AgentStatus
         i++;
     }
 
-    QBoxLayout *cl = new QBoxLayout(this, QBoxLayout::LeftToRight, 0, 0);
+    Q3BoxLayout *cl = new Q3BoxLayout(this, Q3BoxLayout::LeftToRight, 0, 0);
     VertLine *vertBar = new VertLine(this);
     cl->addWidget(vertBar, 0);
 
-    QBoxLayout *ml = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    Q3BoxLayout *ml = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0);
     
     // Create a layout for each agent
-    QGridLayout *wl = new QGridLayout(2, agentCount * 3, 0);
+    Q3GridLayout *wl = new Q3GridLayout(2, agentCount * 3, 0);
     int curRow = 0;
     for (i = 0; i < agentCount; i++) {
         wl->addMultiCellWidget(agentList.at(i), curRow, curRow, 0, 2);
@@ -369,20 +375,20 @@ AgentStatus::AgentStatus
     ml->addLayout(wl, 0);
     ml->addStretch(1);
 
-    setStatusMenu = new QPopupMenu(this);
+    setStatusMenu = new Q3PopupMenu(this);
     setStatusMenu->insertItem(avail, "Available", am, SLOT(signMeIn()));
     setStatusMenu->insertItem(onbreak, "On Break", am, SLOT(goOnBreak()));
     setStatusMenu->insertItem(signedout, "Signed Out", am, SLOT(signMeOut()));
     if (isAdmin()) {
         setStatusMenu->insertSeparator();
-        QPopupMenu *agentsMenu = new QPopupMenu(this);
+        Q3PopupMenu *agentsMenu = new Q3PopupMenu(this);
         ADB     db;
         db.query("select * from Staff where Active > 0 and Extension <> '' order by LoginID");
         if (db.rowCount) {
             // Add in all agents but ourselves.
             while (db.getrow()) if (strcmp(curUser().userName, db.curRow["LoginID"])) {
                 int i;
-                QPopupMenu *agent = new QPopupMenu(this);
+                Q3PopupMenu *agent = new Q3PopupMenu(this);
 
                 i = agent->insertItem(avail, "Available", atoi(db.curRow["Extension"])+10000);
                 agent->connectItem(i, this, SLOT(agentSetStatus(int)));

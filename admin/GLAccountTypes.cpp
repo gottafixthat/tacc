@@ -15,6 +15,11 @@
 #include <mysql/mysql.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QLabel>
+#include <Q3PopupMenu>
 
 #include <ADB.h>
 #include <GLAccountTypes.h>
@@ -49,9 +54,9 @@ GLAccountTypeEditor::GLAccountTypeEditor
     cancelButton->setText("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
-    QGridLayout *gl = new QGridLayout(3,3);
+    Q3GridLayout *gl = new Q3GridLayout(3,3);
     int curRow = 0;
     gl->addWidget(descriptionLabel, curRow, 0);
     gl->addWidget(description,      curRow, 1);
@@ -62,7 +67,7 @@ GLAccountTypeEditor::GLAccountTypeEditor
     ml->addLayout(gl, 0);
     ml->addStretch(1);
 
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -151,13 +156,13 @@ GLAccountTypes::GLAccountTypes
     // Load the list of GL Account Types
     glAcctTypes = GLAccountTypesDB::getAccountTypeList();
 
-    QPopupMenu * options = new QPopupMenu();
+    Q3PopupMenu * options = new Q3PopupMenu();
     CHECK_PTR( options );
-    options->insertItem("New", this, SLOT(newAcctType()), CTRL+Key_N);
-    options->insertItem("Edit", this, SLOT(editAcctType()), CTRL+Key_E);
-    options->insertItem("Delete", this, SLOT(deleteAcctType()), CTRL+Key_D);
+    options->insertItem("New", this, SLOT(newAcctType()), Qt::CTRL+Qt::Key_N);
+    options->insertItem("Edit", this, SLOT(editAcctType()), Qt::CTRL+Qt::Key_E);
+    options->insertItem("Delete", this, SLOT(deleteAcctType()), Qt::CTRL+Qt::Key_D);
     options->insertSeparator();
-    options->insertItem("Close", this, SLOT(closeClicked()), CTRL+Key_C);
+    options->insertItem("Close", this, SLOT(closeClicked()), Qt::CTRL+Qt::Key_C);
     
     menu = new QMenuBar(this, "MainMenu");
     menu->insertItem("&Options", options);
@@ -179,18 +184,18 @@ GLAccountTypes::GLAccountTypes
     closeButton->setText("&Close");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
-    acctTypeList = new QListView(this, "acctTypeList");
+    acctTypeList = new Q3ListView(this, "acctTypeList");
     acctTypeList->addColumn("Name");
     acctTypeList->setAllColumnsShowFocus(true);
     acctTypeList->setRootIsDecorated(false);
     accountTypeCol = 1;
 
     // Create our layout and add our widgets.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(menu, 0);
     
     // Add a widget for our menu buttons.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     bl->addWidget(newButton, 0);
     bl->addWidget(editButton, 0);
     bl->addWidget(deleteButton, 0);
@@ -228,7 +233,7 @@ void GLAccountTypes::refreshList(int)
     for (rec = glAcctTypes.first(); rec; rec = glAcctTypes.next()) {
         QString idStr;
         idStr.setNum(rec->accountType);
-        new QListViewItem(acctTypeList, rec->description, idStr);
+        new Q3ListViewItem(acctTypeList, rec->description, idStr);
     }
 }
 
@@ -252,7 +257,7 @@ void GLAccountTypes::newAcctType()
 
 void GLAccountTypes::editAcctType()
 {
-    QListViewItem *curItem;
+    Q3ListViewItem *curItem;
     GLAccountTypeEditor *acctType;
     curItem = acctTypeList->currentItem();
     if (curItem != NULL) {
@@ -271,7 +276,7 @@ void GLAccountTypes::deleteAcctType()
 {
     char   tmpstr[256];
     ADB    DB;
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     curItem = acctTypeList->currentItem();
     if (curItem != NULL) {

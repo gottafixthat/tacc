@@ -1,40 +1,30 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** AddressEditor - An address editor.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: AddressEditor.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "AddressEditor.h"
-#include "BlargDB.h"
-#include "BString.h"
-
-#include <TAATools.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <QtGui/QLabel>
+
+#include <BlargDB.h>
+#include <BString.h>
+#include <TAATools.h>
 #include <ADB.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
 #include <TAAWidget.h>
+#include "AddressEditor.h"
 
 
 AddressEditor::AddressEditor
@@ -52,46 +42,46 @@ AddressEditor::AddressEditor
 
     // Create our widgets.
     typeLabel   = new QLabel(this, "TypeLabel");
-    typeLabel->setAlignment(AlignRight|AlignVCenter);
+    typeLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     typeLabel->setText("Customer:");
 
     typeData   = new QLabel(this, "TypeData");
-    typeData->setAlignment(AlignLeft|AlignVCenter);
+    typeData->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     typeData->setText("Customer/Vendor Name");
 
     
     HorizLine   *hline1 = new HorizLine(this);
    
     QLabel *tagLabel = new QLabel(this);
-    tagLabel->setAlignment(AlignRight|AlignVCenter);
+    tagLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     tagLabel->setText("Tag:");
 
     tagList = new QComboBox(true, this);
     tagList->setAutoCompletion(true);
     
     tagData = new QLabel(this);
-    tagData->setAlignment(AlignLeft|AlignVCenter);
+    tagData->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     tagData->setText("Address Tag");
 
     
     QLabel  *addressLabel1 = new QLabel(this);
-    addressLabel1->setAlignment(AlignRight|AlignVCenter);
+    addressLabel1->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     addressLabel1->setText("Address Line 1:");
 
     QLabel  *addressLabel2 = new QLabel(this);
-    addressLabel2->setAlignment(AlignRight|AlignVCenter);
+    addressLabel2->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     addressLabel2->setText("Address Line 2:");
 
     cszLabel = new QLabel(this);
-    cszLabel->setAlignment(AlignRight|AlignVCenter);
+    cszLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     cszLabel->setText("City, State, ZIP:");
 
     countryLabel = new QLabel(this);
-    countryLabel->setAlignment(AlignRight|AlignVCenter);
+    countryLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     countryLabel->setText("Country:");
 
     postalCodeLabel = new QLabel(this);
-    postalCodeLabel->setAlignment(AlignRight|AlignVCenter);
+    postalCodeLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     postalCodeLabel->setText("Postal Code:");
 
     address1 = new QLineEdit(this);
@@ -132,10 +122,10 @@ AddressEditor::AddressEditor
 
     
     // Now do the layout.  Its a box and a grid
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Then the grid
-    QGridLayout *gl = new QGridLayout(3, 5, 3);
+    Q3GridLayout *gl = new Q3GridLayout(3, 5, 3);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
 
@@ -168,7 +158,7 @@ AddressEditor::AddressEditor
     gl->addMultiCellWidget(address2,    curRow, curRow, curCol, totCols-1);
 
     // A layout for the City, state, zip.
-    QBoxLayout *cszl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *cszl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     cszl->addWidget(city, 4);
     cszl->addWidget(state, 1);
     cszl->addWidget(zip, 2);
@@ -189,7 +179,7 @@ AddressEditor::AddressEditor
     ml->addLayout(gl);
 
     // Add a button layout
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -382,4 +372,7 @@ void AddressEditor::cancelAddress()
 {
 	close();
 }
+
+
+// vim: expandtab
 

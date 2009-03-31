@@ -42,7 +42,7 @@ public:
     virtual void refreshReport();
 
 public slots:
-    virtual void    listItemSelected(QListViewItem *curItem);
+    virtual void    listItemSelected(Q3ListViewItem *curItem);
     
 };
 #endif // AllDomainsReport_included

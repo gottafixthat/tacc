@@ -19,8 +19,8 @@
 
 #include <qevent.h>
 #include <qwidget.h>
-#include <qwidgetstack.h>
-#include <qlistview.h>
+#include <q3widgetstack.h>
+#include <q3listview.h>
 #include <TAATools.h>
 #include <TAAWidget.h>
 
@@ -41,12 +41,12 @@ public:
     void    init();
 
 protected slots:
-    virtual void userSelected(QListViewItem*);
+    virtual void userSelected(Q3ListViewItem*);
     virtual void refreshList();
     virtual void userUpdated(long);
 
 protected:
-    QListView       *userList;
+    Q3ListView       *userList;
     UserEditor      *editArea;    
 
     long            myCurrentID;

@@ -28,11 +28,16 @@
 #include "TicketEditor.h"
 
 #include <qmessagebox.h>
-#include <qtextview.h>
+#include <q3textview.h>
 #include <qdatetm.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <QLabel>
 
 #include <TAA.h>
 #include <TAATools.h>
@@ -59,7 +64,7 @@ TicketHeader::TicketHeader
 
     dispTicketNo = new QLabel(this);
     dispTicketNo->setAlignment(AlignLeft|AlignVCenter);
-    dispTicketNo->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispTicketNo->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The staff member who owns the ticket.
     QLabel      *dispOwnerLabel  = new QLabel(this);
@@ -68,7 +73,7 @@ TicketHeader::TicketHeader
 
     dispOwner = new QLabel(this);
     dispOwner->setAlignment(AlignLeft|AlignVCenter);
-    dispOwner->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispOwner->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
     
     // The current status of this ticket
     QLabel      *dispStatusLabel  = new QLabel(this);
@@ -77,7 +82,7 @@ TicketHeader::TicketHeader
 
     dispStatus = new QLabel(this);
     dispStatus->setAlignment(AlignLeft|AlignVCenter);
-    dispStatus->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispStatus->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The date the ticket was opened
     QLabel      *dispOpenedLabel  = new QLabel(this);
@@ -86,7 +91,7 @@ TicketHeader::TicketHeader
 
     dispOpened = new QLabel(this);
     dispOpened->setAlignment(AlignLeft|AlignVCenter);
-    dispOpened->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispOpened->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The date the ticket was last modified
     QLabel      *dispModifiedLabel  = new QLabel(this);
@@ -95,7 +100,7 @@ TicketHeader::TicketHeader
 
     dispModified = new QLabel(this);
     dispModified->setAlignment(AlignLeft|AlignVCenter);
-    dispModified->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispModified->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The date the ticket was closed
     QLabel      *dispClosedLabel  = new QLabel(this);
@@ -104,7 +109,7 @@ TicketHeader::TicketHeader
 
     dispClosed = new QLabel(this);
     dispClosed->setAlignment(AlignLeft|AlignVCenter);
-    dispClosed->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispClosed->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The customer ID
     QLabel      *dispCustomerIDLabel  = new QLabel(this);
@@ -113,7 +118,7 @@ TicketHeader::TicketHeader
 
     dispCustomerID = new QLabel(this);
     dispCustomerID->setAlignment(AlignLeft|AlignVCenter);
-    dispCustomerID->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispCustomerID->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The contact name, generally the person that opened the ticket.
     QLabel      *dispNameLabel  = new QLabel(this);
@@ -122,7 +127,7 @@ TicketHeader::TicketHeader
 
     dispName = new QLabel(this);
     dispName->setAlignment(AlignLeft|AlignVCenter);
-    dispName->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispName->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // The department that this ticket is in
     QLabel      *dispTypeLabel  = new QLabel(this);
@@ -131,7 +136,7 @@ TicketHeader::TicketHeader
 
     dispType = new QLabel(this);
     dispType->setAlignment(AlignLeft|AlignVCenter);
-    dispType->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    dispType->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     // Summary
     QLabel      *summaryLabel  = new QLabel(this);
@@ -140,13 +145,13 @@ TicketHeader::TicketHeader
 
     summary = new QLabel(this);
     summary->setAlignment(AlignLeft|AlignVCenter);
-    summary->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    summary->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     
     // Now, do the layout for the widget.
     // Create the grid for the tabular information.  We'll do this
     // 6 columns wide.
-    QGridLayout *tl = new QGridLayout(this, 5, 6, 2, 1);
+    Q3GridLayout *tl = new Q3GridLayout(this, 5, 6, 2, 1);
     tl->setColStretch(0, 0);
     tl->setColStretch(1, 1);
     tl->setColStretch(2, 0);
@@ -296,7 +301,7 @@ TicketEditor::TicketEditor
     ticketLogLabel->setAlignment(AlignRight|AlignTop);
     ticketLogLabel->setText("History:");
 
-    ticketLog = new QTextView(this, "Ticket Log");
+    ticketLog = new Q3TextView(this, "Ticket Log");
 
     // Now, create the buttons for our actions.
     customerButton = new QPushButton(this, "Customer Button");
@@ -322,14 +327,14 @@ TicketEditor::TicketEditor
     // Now, do the layout for the widget.
     // We'll do a top to bottom box, and then put a grid in the middle of it
     // for the tabular information.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     ml->addWidget(header,0);
     ml->addWidget(hline1, 0);
 
     // Create the grid for the tabular information.  We'll do this
     // 6 columns wide.
-    QGridLayout *tl = new QGridLayout(5, 6, 2);
+    Q3GridLayout *tl = new Q3GridLayout(5, 6, 2);
     tl->setColStretch(0, 0);
     tl->setColStretch(1, 1);
     tl->setColStretch(2, 0);
@@ -356,7 +361,7 @@ TicketEditor::TicketEditor
 
 
     // Add in our action buttons.
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     abl->addStretch(1);
     abl->addWidget(customerButton, 0);
     abl->addWidget(annotateButton, 0);
@@ -640,8 +645,8 @@ TicketLogAnnotater::TicketLogAnnotater
     noteTextLabel->setAlignment(AlignRight|AlignTop);
     noteTextLabel->setText("C&omments:");
 
-    noteText = new QMultiLineEdit(this, "Note Text");
-    noteText->setWordWrap(QMultiLineEdit::WidgetWidth);
+    noteText = new Q3MultiLineEdit(this, "Note Text");
+    noteText->setWordWrap(Q3MultiLineEdit::WidgetWidth);
     noteTextLabel->setBuddy(noteText);
 
 
@@ -656,14 +661,14 @@ TicketLogAnnotater::TicketLogAnnotater
     // Now, do the layout for the widget.
     // We'll do a top to bottom box, and then put a grid in the middle of it
     // for the tabular information.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     ml->addWidget(header,   0);
     ml->addWidget(hline1,   0);
 
     // Create the grid for the tabular information.  We'll do this
     // 2 columns wide.
-    QGridLayout *tl = new QGridLayout(3, 2, 2);
+    Q3GridLayout *tl = new Q3GridLayout(3, 2, 2);
     tl->setColStretch(0, 0);
     tl->setColStretch(1, 1);
 
@@ -687,7 +692,7 @@ TicketLogAnnotater::TicketLogAnnotater
 
 
     // Add in our action buttons.
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     abl->addStretch(1);
     abl->addWidget(saveNoteButton, 0);
     abl->addWidget(cancelButton, 0);

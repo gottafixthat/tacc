@@ -1,30 +1,30 @@
 
-#include <qapplication.h>
-#include <qpainter.h>
+#include <QtGui/QApplication>
+#include <QtGui/QPainter>
 #include "RListViewItem.h"
 
-RListViewItem::RListViewItem(QListView *Parent, int oddColor) : QListViewItem(Parent)
+RListViewItem::RListViewItem(Q3ListView *Parent, int oddColor) : Q3ListViewItem(Parent)
 {
     initialize(oddColor);
 }
 
 
 RListViewItem::RListViewItem(
-    QListView *Parent)
-    : QListViewItem(Parent)
+    Q3ListView *Parent)
+    : Q3ListViewItem(Parent)
 {
     initialize(0);
 }
 
 RListViewItem::RListViewItem(
-    QListViewItem *Parent)
-    : QListViewItem(Parent)
+    Q3ListViewItem *Parent)
+    : Q3ListViewItem(Parent)
 {
     initialize(0);
 }
 
 RListViewItem::RListViewItem(
-    QListView *Parent, int oddColor,
+    Q3ListView *Parent, int oddColor,
     const char *s1,
     const char *s2,
     const char *s3,
@@ -33,13 +33,13 @@ RListViewItem::RListViewItem(
     const char *s6,
     const char *s7,
     const char *s8)
-    : QListViewItem(Parent, s1, s2, s3, s4, s5, s6, s7, s8)
+    : Q3ListViewItem(Parent, s1, s2, s3, s4, s5, s6, s7, s8)
 {
     initialize(oddColor);
 }
 
 RListViewItem::RListViewItem(
-    QListViewItem *Parent,
+    Q3ListViewItem *Parent,
     const char *s1,
     const char *s2,
     const char *s3,
@@ -48,7 +48,7 @@ RListViewItem::RListViewItem(
     const char *s6,
     const char *s7,
     const char *s8)
-    : QListViewItem(Parent, s1, s2, s3, s4, s5, s6, s7, s8)
+    : Q3ListViewItem(Parent, s1, s2, s3, s4, s5, s6, s7, s8)
 {
     initialize(0);
 }
@@ -68,7 +68,7 @@ void RListViewItem::paintCell(
     if( ! p)
 	return;
 
-    QListViewItem::paintCell(p, ColorGroup, col, width, align);
+    Q3ListViewItem::paintCell(p, ColorGroup, col, width, align);
 }
 
 void
@@ -92,7 +92,7 @@ RListViewItem::paintFocus(
  	else
  	    p->setPen(cg.text());
 
-	p->drawWinFocusRect( r );
+	//p->drawWinFocusRect( r );
     /*
     }
     */

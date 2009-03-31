@@ -38,7 +38,7 @@ public:
     virtual void refreshReport();
 
 public slots:
-    virtual void    listItemSelected(QListViewItem *curItem);
+    virtual void    listItemSelected(Q3ListViewItem *curItem);
     
 };
 
@@ -67,7 +67,7 @@ protected slots:
     virtual void        loadFilters(const QString);
 
 protected:
-    QListBox            *columnList;
+    Q3ListBox            *columnList;
 };
 
 /**
@@ -89,7 +89,7 @@ public:
     void            setIntAccountNo(int intAccountNo);
 
 public slots:
-    virtual void    listItemSelected(QListViewItem *curItem);
+    virtual void    listItemSelected(Q3ListViewItem *curItem);
     virtual void    editFilters();
 
 protected:

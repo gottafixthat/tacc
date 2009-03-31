@@ -15,9 +15,9 @@
 #ifndef EMAILMESSAGE_H
 #define EMAILMESSAGE_H
 
-#include <qstring.h>
-#include <qptrlist.h>
-#include <qcstring.h>
+#include <QtCore/QString>
+#include <Qt3Support/q3ptrlist.h>
+#include <Qt3Support/q3cstring.h>
 
 struct emailAttachmentRecord {
     QString     filename;
@@ -52,7 +52,7 @@ protected:
     QString                         myTo;
     QString                         mySubject;
     QString                         myBody;
-    QPtrList<emailAttachmentRecord>    attachmentList;
+    Q3PtrList<emailAttachmentRecord>    attachmentList;
 };
 
 #endif

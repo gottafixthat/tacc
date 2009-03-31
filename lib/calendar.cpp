@@ -23,13 +23,19 @@
 #include <string.h>
 #include <time.h>
 
-#include <qevent.h>
-#include <qscrbar.h>
-#include <qtimer.h>
-#include <qdatetm.h>
-#include <qpainter.h>
-#include <qdrawutil.h>
-#include <qstyle.h>
+#include <QtCore/qglobal.h>
+#include <QtCore/QEvent>
+#include <QtGui/QScrollBar>
+#include <QtCore/QTimer>
+#include <QtCore/QDateTime>
+#include <QtGui/QPainter>
+#include <QtGui/qdrawutil.h>
+#include <QtGui/QStyle>
+#include <Qt3Support/Q3PointArray>
+#include <QtGui/QPaintEvent>
+#include <QtGui/QResizeEvent>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QStyleOption>
 
 #include "calendar.h"
 
@@ -64,11 +70,9 @@ Calendar::Calendar(QWidget* p, DateInput* di)
   setFixedWidth(CALENDAR_WIDTH);
 
   timer=new QTimer(this);
-  CHECK_PTR(timer);
+  //CHECK_PTR(timer);
   connect(timer,SIGNAL(timeout()),SLOT(timerEvent()));
 
-  tip=new CalendarTip(this,this);
-  CHECK_PTR(tip);
 }
 
 void Calendar::show()
@@ -164,9 +168,9 @@ void Calendar::paintEvent(QPaintEvent*)
   paint.begin(this);
   QColorGroup g=colorGroup();
   paint.setPen(g.text());
-  paint.fillRect(0,0,width(),height(),white);
-  paint.fillRect(0,0,width(),TITLE_HEIGHT,yellow);
-  paint.setPen(black);
+  paint.fillRect(0,0,width(),height(),Qt::white);
+  paint.fillRect(0,0,width(),TITLE_HEIGHT,Qt::yellow);
+  paint.setPen(Qt::black);
   paint.drawLine(0,0,width()-1,0);
   paint.drawLine(0,0,0,height()-1);
   paint.drawLine(width()-1,0,width()-1,height()-1);
@@ -177,13 +181,13 @@ void Calendar::paintEvent(QPaintEvent*)
   paint.setFont(font);
   char txt[30];
   sprintf(txt,"%s, %i",months[curmonth],curyear+1900);
-  paint.drawText(0,0,width(),TITLE_HEIGHT,AlignCenter,txt,strlen(txt));
+  paint.drawText(0,0,width(),TITLE_HEIGHT,Qt::AlignCenter,txt,strlen(txt));
   QFont font1("Helvetica",FONT_SIZE);
   paint.setFont(font1);
   int w=width()/7;
   static const char* dow[]={"Su","M","Tu","W","Th","F","Sa"};
   for (int j=0;j<7;j++) {
-    paint.drawText(j*w+2,TITLE_HEIGHT,w,ROW_HEIGHT,AlignCenter,dow[j],
+    paint.drawText(j*w+2,TITLE_HEIGHT,w,ROW_HEIGHT,Qt::AlignCenter,dow[j],
       strlen(dow[j]));
   }
   for (int i=1;i<=numdaysinmonth;i++) {
@@ -191,24 +195,24 @@ void Calendar::paintEvent(QPaintEvent*)
     sprintf(txt,"%i",i);
     if (daycolor[i-1] == (char)Color1) {
       paint.fillRect(((i+startdow-1)%7)*w+4,((i+startdow-1)/7)*ROW_HEIGHT+
-        TITLE_HEIGHT+ROW_HEIGHT+1,BLOCK_SIZE,BLOCK_SIZE,gray);
+        TITLE_HEIGHT+ROW_HEIGHT+1,BLOCK_SIZE,BLOCK_SIZE,Qt::gray);
     }
     if (daycolor[i-1] == (char)Color2) {
       paint.fillRect(((i+startdow-1)%7)*w+4,((i+startdow-1)/7)*ROW_HEIGHT+
-        TITLE_HEIGHT+ROW_HEIGHT+1,BLOCK_SIZE,BLOCK_SIZE,red);
+        TITLE_HEIGHT+ROW_HEIGHT+1,BLOCK_SIZE,BLOCK_SIZE,Qt::red);
     }
     if (i==curday) {
       paint.drawRect(((i+startdow-1)%7)*w+3,((i+startdow-1)/7)*ROW_HEIGHT+
         TITLE_HEIGHT+ROW_HEIGHT,ROW_HEIGHT,ROW_HEIGHT);
     }
     paint.drawText(((i+startdow-1)%7)*w+3, ((i+startdow-1)/7)*ROW_HEIGHT+
-      TITLE_HEIGHT+ROW_HEIGHT,ROW_HEIGHT,ROW_HEIGHT,AlignCenter,txt,
+      TITLE_HEIGHT+ROW_HEIGHT,ROW_HEIGHT,ROW_HEIGHT,Qt::AlignCenter,txt,
       strlen(txt));
   }
-  QPointArray points(3);
+  Q3PointArray points(3);
   points.setPoints(3,10,TITLE_HEIGHT/2,20,TITLE_HEIGHT-(TITLE_HEIGHT-10)/2,
     20,(TITLE_HEIGHT-10)/2);
-  paint.setBrush(black);
+  paint.setBrush(Qt::black);
   paint.drawPolygon(points,TRUE);
   points.setPoints(3,width()-10,TITLE_HEIGHT/2,width()-20,TITLE_HEIGHT-
     (TITLE_HEIGHT-10)/2,width()-20,(TITLE_HEIGHT-10)/2);
@@ -281,9 +285,9 @@ void Calendar::mouseMoveEvent(QMouseEvent* qme)
   paint.begin(this);
   if (row!=calrow || col!=calcol) {
     if (curday == calrow*7+calcol+1-startdow) {
-      paint.setPen(black);
+      paint.setPen(Qt::black);
     } else {
-      paint.setPen(white);
+      paint.setPen(Qt::white);
     }
     paint.drawRect(calcol*(width()/7)+3,calrow*ROW_HEIGHT+TITLE_HEIGHT+
       ROW_HEIGHT,ROW_HEIGHT,ROW_HEIGHT);
@@ -344,40 +348,6 @@ void Calendar::getDayLabel(int m, int d, int y, char* t)
   emit(dayLabel(m,d,y,t));
 }
 
-// CalendarTip
-
-CalendarTip::CalendarTip(QWidget* p, Calendar* c)
-:QToolTip(p)
-{
-  cal=c;
-}
-
-CalendarTip::~CalendarTip()
-{
-}
-
-void CalendarTip::maybeTip(const QPoint& p)
-{
-  int row=int(p.y()>TITLE_HEIGHT+ROW_HEIGHT?(p.y()-(TITLE_HEIGHT+ROW_HEIGHT))/
-    ROW_HEIGHT:-1);
-  int col=int(p.x()/(cal->width()/7));
-  int curday;
-
-  if (!((row==0 && col<cal->startdow) || (row>cal->numrows) || (col>6) ||
-    (row==cal->numrows && col>cal->stopdow)) && col>=0 && row>=0) {
-    curday=row*7+col+1-cal->startdow;
-    QRect rect(p.x()-5,p.y()-5,10,10);
-    char tiptext[100],text[100];
-    cal->getDayLabel(cal->curmonth,curday,cal->curyear+1900,text);
-    if (strcmp(text,""))
-      sprintf(tiptext,"%s %i, %i\n%s",months[cal->curmonth],curday,
-        cal->curyear+1900,text);
-    else
-      sprintf(tiptext,"%s %i, %i",months[cal->curmonth],curday,
-        cal->curyear+1900);
-    tip(rect,tiptext);
-  } 
-}
 
 // DateValidator
 
@@ -400,13 +370,13 @@ QValidator::State DateValidator::validate(QString& str, int&) const
   // Must have exactly two slashes
   char* firstslash=strchr(str,'/');
   if (firstslash==NULL) 
-    return Valid;
+    return QValidator::Intermediate;
   else {
     tempmon=atoi(str);
   }
   char* secondslash=strchr(firstslash+1,'/');
   if (secondslash==NULL)
-    return Valid;
+    return QValidator::Intermediate;
   else {
     tempday=atoi(firstslash+1);
     tempyear=atoi(secondslash+1);
@@ -416,7 +386,7 @@ QValidator::State DateValidator::validate(QString& str, int&) const
   if (tempmon>12 || tempday>31 || tempyear>2100)
     return Invalid;
   if (tempmon<1 || tempday<1 || tempyear<1970)
-    return Valid;
+    return QValidator::Intermediate;
 
   return Acceptable;
 }
@@ -448,12 +418,12 @@ DateInput::DateInput(QWidget* p, const char* txt)
 :QWidget(p)
 {
   text=new QLineEdit(this);
-  CHECK_PTR(text);
+  //CHECK_PTR(text);
   //text->setValidator(new DateValidator(this));
   connect(text,SIGNAL(returnPressed()),SLOT(slotNewText()));
 
   cal=new Calendar(p,this);
-  CHECK_PTR(cal);
+  //CHECK_PTR(cal);
   cal->hide();
   connect(cal,SIGNAL(classifyRequest(int,int,char*)),
     SLOT(slotClassifyRequest(int,int,char*)));
@@ -467,12 +437,12 @@ DateInput::DateInput(QWidget* p, const QDate sdate)
 :QWidget(p)
 {
   text=new QLineEdit(this);
-  CHECK_PTR(text);
+  //CHECK_PTR(text);
   //text->setValidator(new DateValidator(this));
   connect(text,SIGNAL(returnPressed()),SLOT(slotNewText()));
 
   cal=new Calendar(p,this);
-  CHECK_PTR(cal);
+  //CHECK_PTR(cal);
   cal->hide();
   connect(cal,SIGNAL(classifyRequest(int,int,char*)),
     SLOT(slotClassifyRequest(int,int,char*)));
@@ -511,7 +481,6 @@ const char* DateInput::getDate(void)
 
 const QDate DateInput::getQDate()
 {
-    int     tmpPos = 0;
     char    *tmpStr = new char[1024];
     char    *part;
     int     Y = 1900, M = 1, D = 1;
@@ -556,7 +525,10 @@ void DateInput::paintEvent(QPaintEvent*)
   paint.begin(this);
   qDrawShadePanel(&paint,0,0,width(),height(),colorGroup(),FALSE,1,NULL);
   QRect r(width() - 19, 5, height() - 12, height() - 12);
-  style().drawPrimitive(QStyle::PE_ArrowDown, &paint, r, colorGroup(), FALSE);
+  QStyleOption option;
+  option.initFrom(this);
+  // FIXME
+  //style()->drawPrimitive(QStyle::SP_ArrowDown, option, &paint, r, colorGroup(), FALSE);
   qDrawShadeLine(&paint,width()-18,height()-7,width()-7,height()-7,
     colorGroup(),FALSE,1,1);
   paint.end();

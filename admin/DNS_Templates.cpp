@@ -32,6 +32,9 @@
 #include <qmessagebox.h>
 #include <qregexp.h>
 #include <qapplication.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 #include <ADB.h>
 #include <Cfg.h>
 
@@ -43,13 +46,13 @@ DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
 {
     setCaption("DNS Template Editor");
     // Create our widgets.
-    templateList = new QListView(this, "templateList");
+    templateList = new Q3ListView(this, "templateList");
     templateList->addColumn("Template Name");
     templateList->addColumn("Act");
     templateList->setColumnAlignment(1, AlignCenter);
     templateList->setAllColumnsShowFocus(true);
-    connect(templateList, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(templateSelected(QListViewItem *)));
-    connect(templateList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(templateSelected(QListViewItem *)));
+    connect(templateList, SIGNAL(selectionChanged(Q3ListViewItem *)), this, SLOT(templateSelected(Q3ListViewItem *)));
+    connect(templateList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(templateSelected(Q3ListViewItem *)));
 
     // Our edit widgets.
     QLabel  *templateNameLabel = new QLabel(this, "templateNameLabel");
@@ -108,7 +111,7 @@ DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
     connect(saveSOAButton, SIGNAL(clicked()), this, SLOT(saveSOA()));
 
     // Create our resource record edit area.
-    rrList = new QListView(this, "rrList");
+    rrList = new Q3ListView(this, "rrList");
     rrList->addColumn("Host");
     rrList->addColumn("Type");
     rrList->addColumn("Pri");
@@ -171,14 +174,14 @@ DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
 
     HorizLine   *hline1 = new HorizLine(this, "hline1");
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Widgets and grids
-    QBoxLayout *wl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *wl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     wl->addWidget(templateList, 0);
 
     // Most of our edit widgets will go into a grid layout
-    QGridLayout *gl = new QGridLayout(4, 4);
+    Q3GridLayout *gl = new Q3GridLayout(4, 4);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     gl->setColStretch(2, 0);
@@ -207,7 +210,7 @@ DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
     gl->setRowStretch(curRow++, 0);
 
     // Create an edit layout to hold our edit grid and RR edit area.
-    QBoxLayout *el = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *el = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     el->addLayout(gl, 0);
     // We need another layout to hold the save SOA button.
     /*
@@ -219,10 +222,10 @@ DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
 
     el->addWidget(hline1, 0);
     // Add another two layouts for our rr list and the delete button.
-    QBoxLayout *rrbl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *rrbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     rrbl->addWidget(rrList, 1);
     // And another layout for the delete RR button.
-    QBoxLayout *drrbl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *drrbl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     drrbl->addStretch(1);
     drrbl->addWidget(delRRButton, 0);
     rrbl->addLayout(drrbl, 0);
@@ -230,7 +233,7 @@ DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
     el->addLayout(rrbl, 1);
 
     // The rr edit stuff goes into a box layout as well.
-    QBoxLayout *rrel = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *rrel = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     rrel->addWidget(hostNameLabel, 0);
     rrel->addWidget(hostName, 1);
     rrel->addWidget(typeList, 0);
@@ -248,7 +251,7 @@ DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
     ml->addLayout(wl, 1);
 
     // Buttons
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addWidget(newButton, 0);
     bl->addWidget(deleteButton, 0);
     bl->addStretch(1);
@@ -282,7 +285,7 @@ void DNS_Templates::refreshList()
         while (db.getrow()) {
             strcpy(actStr, "N");
             if (atoi(db.curRow["Active"])) strcpy(actStr, "Y");
-            (void) new QListViewItem(templateList,
+            (void) new Q3ListViewItem(templateList,
                                      db.curRow["TemplateName"],
                                      actStr,
                                      db.curRow["TemplateID"]);
@@ -297,7 +300,7 @@ void DNS_Templates::refreshList()
 **                    entry from the list.
 */
 
-void DNS_Templates::templateSelected(QListViewItem *curItem)
+void DNS_Templates::templateSelected(Q3ListViewItem *curItem)
 {
     curItem = templateList->currentItem();
     if (curItem == NULL) {
@@ -346,7 +349,7 @@ void DNS_Templates::templateSelected(QListViewItem *curItem)
         while (db.getrow()) {
             strcpy(myPri, "");
             if (!strcasecmp("mx", db.curRow["RRType"])) strcpy(myPri, db.curRow["Aux"]);
-            (void) new QListViewItem(rrList,
+            (void) new Q3ListViewItem(rrList,
                                      db.curRow["Name"],
                                      db.curRow["RRType"],
                                      myPri,
@@ -421,7 +424,7 @@ void DNS_Templates::newTemplate()
 {
     ADBTable    soaDB("DNS_Templates");
     ADBTable    rrDB("DNS_Templates_RR");
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
 
     soaDB.setValue("TemplateName",      "New Template");
     soaDB.setValue("Refresh",           28000);
@@ -454,7 +457,7 @@ void DNS_Templates::newTemplate()
     rrDB.ins();
 
     // Now, add it into our list
-    curItem = new QListViewItem(templateList, 
+    curItem = new Q3ListViewItem(templateList, 
             soaDB.getStr("TemplateName"),
             "N",
             soaDB.getStr("TemplateID"));
@@ -543,8 +546,8 @@ void DNS_Templates::saveSOA()
     soaDB.upd();
 
     // Now, find it in the list to update it.
-    QListViewItemIterator it(templateList);
-    QListViewItem   *curItem;
+    Q3ListViewItemIterator it(templateList);
+    Q3ListViewItem   *curItem;
     for (; it.current(); it++) {
         curItem = it.current();
         if (atol(curItem->key(TID_COLUMN, 0)) == curTemplateID) {
@@ -650,7 +653,7 @@ void DNS_Templates::addRR()
         rrDB.ins();
 
         if (!strcasecmp("mx", rrDB.curRow["RRType"])) strcpy(myPri, rrDB.curRow["Aux"]);
-        (void) new QListViewItem(rrList,
+        (void) new Q3ListViewItem(rrList,
                                  rrDB.curRow["Name"],
                                  rrDB.curRow["RRType"],
                                  myPri,

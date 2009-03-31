@@ -39,6 +39,9 @@
 #include <qmessagebox.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include "LoginTypeFlagAdd.h"
 #include <ADB.h>
@@ -54,10 +57,10 @@ ELT_Flags::ELT_Flags
     flagListLabel->setText("Flags:");
     flagListLabel->setAlignment(AlignRight|AlignTop);
 
-    flagList = new QListView(this, "flagList");
+    flagList = new Q3ListView(this, "flagList");
     flagList->addColumn("Name");
     flagList->addColumn("Value");
-    connect(flagList, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(itemSelected(QListViewItem *)));
+    connect(flagList, SIGNAL(selectionChanged(Q3ListViewItem *)), this, SLOT(itemSelected(Q3ListViewItem *)));
 
     QLabel *flagValueLabel = new QLabel(this, "flagValueLabel");
     flagValueLabel->setText("Value:");
@@ -80,9 +83,9 @@ ELT_Flags::ELT_Flags
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeFlag()));
 
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout(2, 3);
+    Q3GridLayout *gl = new Q3GridLayout(2, 3);
     gl->setColStretch(0, false);
     gl->setColStretch(1, true);
     gl->setColStretch(2, false);
@@ -100,7 +103,7 @@ ELT_Flags::ELT_Flags
     ml->addLayout(gl, 0);
 
     // Our button layout.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(removeButton, 0);
@@ -136,7 +139,7 @@ void ELT_Flags::setLoginTypeID(long newLoginTypeID)
         if (DB.rowCount) {
             // Enable/disable buttons and stuff here...
             while (DB.getrow()) { 
-                (void) new QListViewItem(flagList, DB.curRow["Tag"], DB.curRow["Value"], DB.curRow["InternalID"]);
+                (void) new Q3ListViewItem(flagList, DB.curRow["Tag"], DB.curRow["Value"], DB.curRow["InternalID"]);
             }
         } 
     }
@@ -149,7 +152,7 @@ void ELT_Flags::setLoginTypeID(long newLoginTypeID)
 **                list.
 */
 
-void ELT_Flags::itemSelected(QListViewItem *curItem)
+void ELT_Flags::itemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         flagValue->setText(curItem->key(1, 0));
@@ -216,7 +219,7 @@ void ELT_Flags::setValue()
 
 void ELT_Flags::removeFlag()
 {
-    QListViewItem   *curItem = flagList->currentItem();
+    Q3ListViewItem   *curItem = flagList->currentItem();
     if (curItem == NULL) return;
     
     char    *tmpStr = new char[4096];

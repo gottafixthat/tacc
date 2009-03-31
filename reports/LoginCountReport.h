@@ -27,6 +27,9 @@
 #define LoginCountReport_included
 
 #include "Report.h"
+//Added by qt3to4:
+#include <QCloseEvent>
+#include <QEvent>
 
 class LoginCountReport : public Report
 {
@@ -45,7 +48,7 @@ public:
     virtual void refreshReport();
 
 protected slots:
-    virtual void listItemSelected(QListViewItem *curItem);
+    virtual void listItemSelected(Q3ListViewItem *curItem);
     virtual void QCloseEvent(QEvent *)              { delete this; }
 
 };

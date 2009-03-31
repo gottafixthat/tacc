@@ -13,6 +13,9 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include <ADB.h>
 #include <Cfg.h>
@@ -90,10 +93,10 @@ AccountingSettings::AccountingSettings(QWidget *parent, const char *name) : TAAW
     collectionsAccountLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     // Our main layout is a box.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
     // Now create a grid layout to hold the input boxes
-    QGridLayout *gl = new QGridLayout(3, 2);
+    Q3GridLayout *gl = new Q3GridLayout(3, 2);
     int curRow = 0;
     gl->addWidget(acctsRecvAccountLabel,        curRow, 0);
     gl->addWidget(acctsRecvAccount,             curRow, 1);

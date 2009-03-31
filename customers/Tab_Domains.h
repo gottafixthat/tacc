@@ -37,7 +37,7 @@
 #define Tab_Domains_included
 
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <TAAWidget.h>
 
@@ -81,7 +81,7 @@ protected:
     QPushButton *trafficButton;
     QPushButton *aliasButton;
     QPushButton *dnsButton;
-    QListView   *list;
+    Q3ListView   *list;
     
 private:
 	long myCustID;

@@ -13,7 +13,11 @@
 
 #include <qmessagebox.h>
 #include <qlayout.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <ADB.h>
 
@@ -25,13 +29,13 @@ TemplateEditor::TemplateEditor(QWidget* parent, const char* name) :
 	setCaption( "Edit Email Templates" );
     
     // Create our widgets
-    templateList = new QListView(this, "templateList");
+    templateList = new Q3ListView(this, "templateList");
     templateList->addColumn("Template Name");
     templateList->setAllColumnsShowFocus(true);
-    connect(templateList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(templateSelected(QListViewItem *)));
+    connect(templateList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(templateSelected(Q3ListViewItem *)));
 
     QLabel *templateNameLabel = new QLabel(this, "templateNameLabel");
-    templateNameLabel->setAlignment(AlignVCenter|AlignRight);
+    templateNameLabel->setAlignment(Qt::AlignVCenter|Qt::AlignRight);
     templateNameLabel->setText("Template Name:");
 
     templateName = new QLineEdit(this, "templateName");
@@ -39,7 +43,7 @@ TemplateEditor::TemplateEditor(QWidget* parent, const char* name) :
     connect(templateName, SIGNAL(textChanged(const QString &)), this, SLOT(textItemChanged(const QString &)));
 
     QLabel *subjectLabel = new QLabel(this, "subjectLabel");
-    subjectLabel->setAlignment(AlignVCenter|AlignRight);
+    subjectLabel->setAlignment(Qt::AlignVCenter|Qt::AlignRight);
     subjectLabel->setText("Default Subject:");
 
     subject = new QLineEdit(this, "subject");
@@ -47,12 +51,12 @@ TemplateEditor::TemplateEditor(QWidget* parent, const char* name) :
     connect(subject, SIGNAL(textChanged(const QString &)), this, SLOT(textItemChanged(const QString &)));
 
     QLabel *editorLabel = new QLabel(this, "editorLabel");
-    editorLabel->setAlignment(AlignTop|AlignRight);
+    editorLabel->setAlignment(Qt::AlignTop|Qt::AlignRight);
     editorLabel->setText("Message Body:");
 
-    editor = new QTextEdit(this, "editor");
+    editor = new Q3TextEdit(this, "editor");
     editor->setTextFormat(Qt::PlainText);
-    editor->setWordWrap(QTextEdit::NoWrap);
+    editor->setWordWrap(Q3TextEdit::NoWrap);
     connect(editor, SIGNAL(textChanged()), this, SLOT(textItemChanged()));
 
     // Our action buttons
@@ -73,12 +77,12 @@ TemplateEditor::TemplateEditor(QWidget* parent, const char* name) :
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
     
     // Our layout.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QBoxLayout *wl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *wl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     wl->addWidget(templateList, 0);
 
-    QGridLayout *gl = new QGridLayout(3,2);
+    Q3GridLayout *gl = new Q3GridLayout(3,2);
     int curRow = 0;
     gl->addWidget(templateNameLabel,        curRow, 0);
     gl->addWidget(templateName,             curRow, 1);
@@ -101,7 +105,7 @@ TemplateEditor::TemplateEditor(QWidget* parent, const char* name) :
 
     ml->addLayout(wl, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addWidget(newButton, 0);
     bl->addWidget(deleteButton, 0);
     bl->addStretch(1);
@@ -148,7 +152,7 @@ void TemplateEditor::loadTemplates()
     templateList->clear();    
     DB.query("select TemplateID, Name, DefaultSubject, TextPart from EmailTemplates");
     if (DB.rowCount) while (DB.getrow()) {
-        (void) new QListViewItem(templateList, DB.curRow["Name"], DB.curRow["TemplateID"]);
+        (void) new Q3ListViewItem(templateList, DB.curRow["Name"], DB.curRow["TemplateID"]);
     }
 }
 
@@ -158,7 +162,7 @@ void TemplateEditor::loadTemplates()
 **                    information when a login type is selected.
 */
 
-void TemplateEditor::templateSelected(QListViewItem *curItem)
+void TemplateEditor::templateSelected(Q3ListViewItem *curItem)
 {
     if (!curItem) return;
 
@@ -194,7 +198,7 @@ void TemplateEditor::templateSelected(QListViewItem *curItem)
 
 void TemplateEditor::newTemplate()
 {
-    QListViewItem   *newItem;
+    Q3ListViewItem   *newItem;
     ADBTable    ETDB;
     ETDB.setTableName("EmailTemplates");
     
@@ -205,7 +209,7 @@ void TemplateEditor::newTemplate()
     ETDB.setValue("HTMLPart",       "");
     ETDB.ins();
     
-    newItem = new QListViewItem(templateList, ETDB.getStr("Name"), ETDB.getStr("TemplateID"));
+    newItem = new Q3ListViewItem(templateList, ETDB.getStr("Name"), ETDB.getStr("TemplateID"));
     templateList->setSelected(newItem, TRUE);
     templateList->setCurrentItem(newItem);
     
@@ -216,7 +220,7 @@ void TemplateEditor::newTemplate()
 */
 void TemplateEditor::saveTemplate()
 {
-    QListViewItem   *newItem;
+    Q3ListViewItem   *newItem;
     ADBTable    ETDB;
     ETDB.setTableName("EmailTemplates");
     
@@ -231,7 +235,7 @@ void TemplateEditor::saveTemplate()
     saveButton->setEnabled(false);
 
     // Find this ID in the list and change the name.
-    QListViewItem *tmpItem;
+    Q3ListViewItem *tmpItem;
     for (tmpItem = templateList->firstChild(); tmpItem; tmpItem = tmpItem->itemBelow()) {
         if (tmpItem->key(1,0).toInt() == myTemplateID) {
             tmpItem->setText(0, templateName->text());

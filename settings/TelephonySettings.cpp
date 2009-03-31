@@ -13,6 +13,8 @@
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 #include <TAATools.h>
 #include "Cfg.h"
 #include "TelephonySettings.h"
@@ -34,7 +36,7 @@ TelephonySettings::TelephonySettings(QWidget *parent, const char *name) : TAAWid
     }
     QToolTip::add(asteriskManager, "Enabling this will show the asterisk call manager at the bottom of the main window.");
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 1, 1);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 1, 1);
 
     ml->addWidget(asteriskManager,0);
     ml->addStretch(1);

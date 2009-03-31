@@ -35,6 +35,9 @@
 #include <qapplication.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 
 PKG_Pricing::PKG_Pricing
@@ -44,7 +47,7 @@ PKG_Pricing::PKG_Pricing
 ) : TAAWidget( parent, name )
 {
     // Setup our widgets.
-    pricingList = new QListView(this, "pricingList");
+    pricingList = new Q3ListView(this, "pricingList");
     int curCol = 0;
     pricingList->addColumn("Rate Plan");
     pricingList->setColumnAlignment(curCol++, AlignLeft);
@@ -54,7 +57,7 @@ PKG_Pricing::PKG_Pricing
     pricingList->setColumnAlignment(curCol++, AlignLeft);
     pricingList->addColumn("Price");
     pricingList->setColumnAlignment(curCol++, AlignRight);
-    connect(pricingList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(listItemSelected(QListViewItem *)));
+    connect(pricingList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(listItemSelected(Q3ListViewItem *)));
 
     QLabel  *setupItemListLabel = new QLabel(this, "setupItemListLabel");
     setupItemListLabel->setText("Setup Item:");
@@ -77,10 +80,10 @@ PKG_Pricing::PKG_Pricing
 
 
     // Create our layout
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(pricingList, 1);
 
-    QGridLayout *gl = new QGridLayout(2, 2);
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     gl->setRowStretch(0, 0);
@@ -92,7 +95,7 @@ PKG_Pricing::PKG_Pricing
 
     ml->addLayout(gl, 0);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
 
@@ -180,7 +183,7 @@ void PKG_Pricing::setPackageID(long newPackageID)
                 }
             
                 // Okay, we're here.
-                (void) new QListViewItem(pricingList, 
+                (void) new Q3ListViewItem(pricingList, 
                   RPDB.curRow["PlanTag"], 
                   BCDB.curRow["CycleID"], 
                   theSetupItem, 
@@ -208,7 +211,7 @@ void PKG_Pricing::setPackageID(long newPackageID)
 **                    called.
 */
 
-void PKG_Pricing::listItemSelected(QListViewItem *curItem)
+void PKG_Pricing::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         QString tmpQSt1;
@@ -251,7 +254,7 @@ void PKG_Pricing::listItemSelected(QListViewItem *curItem)
 
 void PKG_Pricing::checkForSave()
 {
-    QListViewItem   *curItem = pricingList->currentItem();
+    Q3ListViewItem   *curItem = pricingList->currentItem();
     if (curItem != NULL) { 
         // Very simple checks here...
         int     needSave = 0;
@@ -272,7 +275,7 @@ void PKG_Pricing::checkForSave()
 
 void PKG_Pricing::save()
 {
-    QListViewItem   *curItem = pricingList->currentItem();
+    Q3ListViewItem   *curItem = pricingList->currentItem();
     if (curItem != NULL) {
         ADBTable    PDDB;
         PDDB.setTableName("PackagesData");

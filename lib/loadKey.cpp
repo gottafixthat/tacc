@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <qdatetm.h>
+#include <QtCore/QDateTime>
 #include <bdes.h>
 
 #define TACT_KEYFILE "/usr/local/lib/tact.key"

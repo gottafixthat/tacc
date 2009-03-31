@@ -1,14 +1,13 @@
-/** AgentStatus - Monitors the status of the agents (extensions).
-  ***************************************************************************
-  * Written by R. Marc Lewis, 
-  *   (C)opyright 1998-2006, R. Marc Lewis and Blarg! Oline Services, Inc.
-  *   All Rights Reserved.
-  *
-  *  Unpublished work.  No portion of this file may be reproduced in whole
-  *  or in part by any means, electronic or otherwise, without the express
-  *  written consent of Blarg! Online Services and R. Marc Lewis.
-  ***************************************************************************
-  */
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef AgentStatus_included
@@ -19,14 +18,16 @@
 #define AGENT_STATUS_ONBREAK 2
 
 #include <sys/time.h>
-#include <qwidget.h>
-#include <qlabel.h>
+
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QToolButton>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3ptrlist.h>
+#include <Qt3Support/q3popupmenu.h>
+
 #include <TAAWidget.h>
-#include <qlistview.h>
-#include <qptrlist.h>
-#include <qpushbutton.h>
-#include <qtoolbutton.h>
-#include <qpopupmenu.h>
 #include "AsteriskManager.h"
 
 struct statusInfoStruct {
@@ -112,9 +113,9 @@ protected:
     QPtrList<QLabel>    lastcall;
     QPtrList<statusInfoStruct>  statusinfo;
     */
-    QPtrList<AgentInfo> agentList;
+    Q3PtrList<AgentInfo> agentList;
     QPushButton         *setStatusButton;
-    QPopupMenu          *setStatusMenu;              
+    Q3PopupMenu          *setStatusMenu;              
     int                 myPosition;
 
 protected slots:
@@ -125,3 +126,6 @@ protected slots:
 };
 
 #endif // AgentStatus_included
+
+// vim: expandtab
+

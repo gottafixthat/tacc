@@ -31,7 +31,7 @@ public:
     void    setCityState(const char *newCity, const char *newState);
 
 public slots:
-    virtual void listItemSelected(QListViewItem *curItem);
+    virtual void listItemSelected(Q3ListViewItem *curItem);
 
 private:
     char    myCity[512];

@@ -26,15 +26,18 @@
 #include <unistd.h>
 #include <pwd.h>
 
-#include <qapp.h>
-#include <qdatetm.h>
-#include <qmessagebox.h>
-#include <qwidget.h>
-#include <qregexp.h>
-#include <qfile.h>
-#include <qtextstream.h>
-#include <qlistview.h>
-#include <qheader.h>
+#include <QtGui/QApplication>
+#include <QtCore/QDateTime>
+#include <QtGui/QMessageBox>
+#include <QtGui/QWidget>
+#include <QtCore/QRegExp>
+#include <QtCore/QFile>
+#include <Qt3Support/q3textstream.h>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3header.h>
+#include <Qt3Support/Q3StrList>
+#include <QtSql/QSqlQuery>
+#include <QtCore/QVariant>
 
 #include <ADB.h>
 #include <Cfg.h>
@@ -183,7 +186,7 @@ int schemaVersion()
 {
     QSqlDbPool  dbp;
 
-    QSqlQuery   q(dbp.qsqldb());
+    QSqlQuery   q(dbp.sqldb());
 
     if (!q.exec("select SchemaVersion from SchemaVersion")) {
         // If we can't query it, return false.
@@ -576,7 +579,7 @@ void emailAdmins(const char *subj, const char *body)
     //char    mname[1024];
     //char    tmpstr2[1024];
 
-    QStrList    admins;         // The list of admins to mail.
+    Q3StrList    admins;         // The list of admins to mail.
     
     admins.setAutoDelete(TRUE);
     
@@ -648,7 +651,7 @@ const QString makeTmpFileName(const char *tpl)
  *
  * It returns the number of rows exported.
  */
-uint QListViewToCSV(QListView *qlist, const char *fName, bool forceQuotes)
+uint QListViewToCSV(Q3ListView *qlist, const char *fName, bool forceQuotes)
 {
     uint    retVal = 0;
     int     numCols;
@@ -660,8 +663,8 @@ uint QListViewToCSV(QListView *qlist, const char *fName, bool forceQuotes)
 
     // Open the output file
     QFile   ofile(fName);
-    if (ofile.open(IO_WriteOnly)) {
-        QTextStream ostr(&ofile);
+    if (ofile.open(QIODevice::WriteOnly)) {
+        Q3TextStream ostr(&ofile);
         // Output the header line
         for(int i = 0; i < numCols; i++) {
             if (i) ostr << ",";
@@ -679,7 +682,7 @@ uint QListViewToCSV(QListView *qlist, const char *fName, bool forceQuotes)
         ostr << endl;
 
         // Now walk through the rest of the list and output the data.
-        QListViewItem *curItem = qlist->firstChild();
+        Q3ListViewItem *curItem = qlist->firstChild();
         while(curItem != NULL) {
             for(int i = 0; i < numCols; i++) {
                 if (i) ostr << ",";

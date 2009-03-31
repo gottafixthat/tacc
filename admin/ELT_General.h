@@ -37,7 +37,7 @@
 #include <qlineedit.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 
 class ELT_General : public TAAWidget
 {
@@ -72,7 +72,7 @@ protected slots:
     void            loadBillableLists();
    
 protected:
-    QMultiLineEdit  *description;
+    Q3MultiLineEdit  *description;
     QCheckBox       *isActive;
     QSpinBox        *diskSpace;
     QSpinBox        *dialupChannels;

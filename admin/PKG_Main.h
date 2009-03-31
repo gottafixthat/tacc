@@ -26,8 +26,8 @@
 #define PKG_Main_included
 
 #include <qwidget.h>
-#include <qwidgetstack.h>
-#include <qlistview.h>
+#include <q3widgetstack.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qtabbar.h>
 #include <TAAWidget.h>
@@ -54,12 +54,12 @@ public:
 
 protected:
     QPushButton     *deleteButton;
-    QListView       *packageList;
+    Q3ListView       *packageList;
     QTabBar         *theTabBar;
-    QWidgetStack    *qws;
+    Q3WidgetStack    *qws;
 
 protected slots:
-    virtual void    packageSelected(QListViewItem *curItem);
+    virtual void    packageSelected(Q3ListViewItem *curItem);
     virtual void    newPackage();
     virtual void    deletePackage();
     void            updatePackage();

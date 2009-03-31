@@ -13,6 +13,10 @@
 */
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <QLabel>
+#include <Q3Frame>
 #include "SettingsManager.h"
 
 /*
@@ -23,13 +27,13 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
     setCaption("Settings Manager");
 
     sectionCount = 0;
-    sectionList = new QListBox(this, "sectionList");
+    sectionList = new Q3ListBox(this, "sectionList");
     connect(sectionList, SIGNAL(selected(int)), this, SLOT(changeSection(int)));
     connect(sectionList, SIGNAL(highlighted(int)), this, SLOT(changeSection(int)));
 
     header = new QLabel(this, "header");
     header->setText("Settings");
-    header->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    header->setFrameStyle(Q3Frame::Panel | Q3Frame::Sunken);
     header->setAlignment(AlignVCenter | AlignLeft);
     header->setPaletteBackgroundColor(Qt::blue);
     header->setPaletteForegroundColor(Qt::white);
@@ -39,7 +43,7 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
     header->setFont(tmpFont);
 
 
-    sections = new QWidgetStack(this, "sections");
+    sections = new Q3WidgetStack(this, "sections");
 
     general = new GeneralSettings(this, "General");
     sectionList->insertItem("General");
@@ -78,14 +82,14 @@ SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(
     cancelButton->setText("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelChanges()));
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::LeftToRight, 0, 0);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::LeftToRight, 0, 0);
     ml->addWidget(sectionList, 0);
 
-    QBoxLayout *sl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    Q3BoxLayout *sl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0);
     sl->addWidget(header, 0);
     sl->addWidget(sections, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

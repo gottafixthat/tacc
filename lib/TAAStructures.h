@@ -14,11 +14,11 @@
 #ifndef TAASTRUCTURES_H
 #define TAASTRUCTURES_H
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qdatetime.h>
-#include <qlist.h>
-#include <qmap.h>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
+#include <QtCore/QDateTime>
+#include <QtCore/QList>
+#include <QtCore/QMap>
 
 // Credit card statuses
 #define TAACC_UNPROCESSED 0
