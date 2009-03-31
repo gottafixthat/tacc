@@ -25,15 +25,18 @@
 
 #include <qmenubar.h>
 #include <qstatusbar.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qmessagebox.h>
-#include <qtoolbar.h>
+#include <q3toolbar.h>
 #include <qtoolbutton.h>
 #include <qpixmap.h>
 #include <qstring.h>
 #include <qdatetime.h>
-#include <qaccel.h>
-#include <qframe.h>
+#include <q3accel.h>
+#include <q3frame.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <Q3BoxLayout>
 
 #include "tacc.h"
 #include "Customers.h"
@@ -210,7 +213,7 @@ int main( int argc, char ** argv )
 **                This should be the TAA MainWin().
 */
 
-CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(parent, name)
+CustomerCare::CustomerCare(QWidget *parent, const char *name) : Q3MainWindow(parent, name)
 {
     setMainWin(this);
     setCaption("Total Accountability - Customer Care");
@@ -219,7 +222,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     ccStack = new CustomerCareStack(am, this);
     setCentralWidget(ccStack);
 
-    QAccel  *ac = new QAccel(this);
+    Q3Accel  *ac = new Q3Accel(this);
     ac->connectItem(ac->insertItem(CTRL+Key_T), this, SLOT(takeCall()));
     ac->connectItem(ac->insertItem(CTRL+Key_1), ccStack, SLOT(raiseTab1()));
     ac->connectItem(ac->insertItem(CTRL+Key_2), ccStack, SLOT(raiseTab2()));
@@ -230,14 +233,14 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     AllReports  *reports = new AllReports(this);
 
     // Setup our menu
-    QPopupMenu *fileMenu = new QPopupMenu(this);
+    Q3PopupMenu *fileMenu = new Q3PopupMenu(this);
     menuBar()->insertItem("&File", fileMenu);
     if (isAdmin()) {
-        QPopupMenu *dbmenu = new QPopupMenu(this);
+        Q3PopupMenu *dbmenu = new Q3PopupMenu(this);
         dbmenu->insertItem("Database Integrity Check", this, SLOT(checkDBIntegrity()));
         dbmenu->insertItem("Update Allowed Mailbox Counts", this, SLOT(updateAllMaxMailboxes()));
         fileMenu->insertItem("Database Functions", dbmenu);
-        QPopupMenu *printMenu = new QPopupMenu(this);
+        Q3PopupMenu *printMenu = new Q3PopupMenu(this);
         printMenu->insertItem("Statements", this, SLOT(printStatements()));
         fileMenu->insertItem("&Print", printMenu);
         fileMenu->insertItem("Send Targeted Email", this, SLOT(sendTargetedEmail()));
@@ -250,7 +253,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     fileMenu->insertItem("&Quit", this, SLOT(quitSelected()));
 
     // View menu
-    viewMenu = new QPopupMenu(this);
+    viewMenu = new Q3PopupMenu(this);
     showQueueMenuItem = viewMenu->insertItem("Call Queue", this, SLOT(toggleCallQueue()));
     showAgentsMenuItem = viewMenu->insertItem("Agent Status", this, SLOT(toggleAgentStatus()));
     menuBar()->insertItem("&View", viewMenu);
@@ -267,7 +270,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
         
     
     // Creat the VoIP Menu
-    QPopupMenu *voipMenu = new QPopupMenu(this);
+    Q3PopupMenu *voipMenu = new Q3PopupMenu(this);
     if (isAdmin()) voipMenu->insertItem("&Add DID's", this, SLOT(voipAddDIDs()));
     if (isAdmin()) voipMenu->insertItem("&Origination Providers", this, SLOT(voipOriginationProviderList()));
     if (isAdmin()) voipMenu->insertItem("Manage &Rate Centers", this, SLOT(manageRateCenters()));
@@ -279,11 +282,11 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
 
     if (isManager()) {
         // Create the domains sub-menu
-        QPopupMenu  *domainMenu = new QPopupMenu(this);
+        Q3PopupMenu  *domainMenu = new Q3PopupMenu(this);
         domainMenu->insertItem("&Domain Types", this, SLOT(domaintypelist()));
         domainMenu->insertItem("DNS &Templates", this, SLOT(dnstemplates()));
 
-        QPopupMenu  *adminMenu = new QPopupMenu(this);
+        Q3PopupMenu  *adminMenu = new Q3PopupMenu(this);
         if (isAdmin()) adminMenu->insertItem("Settings", this, SLOT(settings()));
         if (isAdmin()) adminMenu->insertItem("&Domains", domainMenu);
         if (isAdmin()) adminMenu->insertItem("Staff Editor", this, SLOT(staffEditor()));
@@ -299,7 +302,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
         menuBar()->insertItem("Adm&in", adminMenu);
         // "Other Lists"
         if (isAdmin()) {
-            QPopupMenu *otherMenu = new QPopupMenu(this);
+            Q3PopupMenu *otherMenu = new Q3PopupMenu(this);
             otherMenu->insertItem("Accounts", this, SLOT(accountlist()));
             otherMenu->insertItem("Billable Items", this, SLOT(billableitemslist()));
             otherMenu->insertItem("Billing Cycles", this, SLOT(billingCycleList()));
@@ -319,7 +322,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
 
     }
 
-    QPopupMenu  *helpMenu = new QPopupMenu(this);
+    Q3PopupMenu  *helpMenu = new Q3PopupMenu(this);
     helpMenu->insertItem("&About", this, SLOT(about()));
     menuBar()->insertSeparator();
     menuBar()->insertItem("&Help", helpMenu);
@@ -358,7 +361,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : QMainWindow(pare
     //this->setGeometry(1,1,555,300);
     this->resize(555,300);
     
-    progressMeter = new QProgressBar(statusBar(), "Progress Meter");
+    progressMeter = new Q3ProgressBar(statusBar(), "Progress Meter");
     progressMeter->setMinimumWidth(75);
     progressMeter->setMaximumWidth(75);
     progressMeter->setIndicatorFollowsStyle(false);
@@ -642,18 +645,18 @@ CustomerCareStack::CustomerCareStack(AsteriskManager *astmgr, QWidget *parent, c
     QLabel *hline1 = new QLabel(this);
     hline1->setMinimumSize(0,3);
     hline1->setMaximumSize(32767,3);
-    hline1->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    hline1->setFrameStyle(Q3Frame::HLine|Q3Frame::Sunken);
     hline1->setLineWidth(1);
     
     QLabel *hline2 = new QLabel(this);
     hline2->setMinimumSize(0,3);
     hline2->setMaximumSize(32767,3);
-    hline2->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    hline2->setFrameStyle(Q3Frame::HLine|Q3Frame::Sunken);
     hline2->setLineWidth(1);
 
     connect(tabs, SIGNAL(selected(int)), this, SLOT(tabClicked(int)));
 
-    qws = new QWidgetStack(this, "WidgetStack");
+    qws = new Q3WidgetStack(this, "WidgetStack");
     int curLevel = 0;
 
     custs = new Customers(qws, "Customers");
@@ -691,8 +694,8 @@ CustomerCareStack::CustomerCareStack(AsteriskManager *astmgr, QWidget *parent, c
     }
     */
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::LeftToRight, 0, 0);
-    QBoxLayout *mcl = new QBoxLayout(QBoxLayout::TopToBottom, 0, 0);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::LeftToRight, 0, 0);
+    Q3BoxLayout *mcl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0, 0);
     mcl->addWidget(tabs, 0);
     mcl->addWidget(hline1, 0);
     mcl->addWidget(qws, 1);

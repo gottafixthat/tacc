@@ -28,11 +28,15 @@
 #include "CustChargeEdit.h"
 #include <qtooltip.h>
 #include <qcursor.h>
-#include <qapp.h>
-#include <qlistview.h>
+#include <qapplication.h>
+#include <q3listview.h>
 #include <qprinter.h>
 #include <qprintdialog.h>
 #include <qpainter.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 #include "RListViewItem.h"
 #include <ADB.h>
 #include <qlayout.h>
@@ -80,7 +84,7 @@ CustRegister::CustRegister
     customerStatus = new QLabel(this);
     customerStatus->setAlignment(AlignLeft);
     
-    list = new QListView(this);
+    list = new Q3ListView(this);
     list->addColumn( "Date" );
     list->addColumn( "Login ID" );
     list->addColumn( "Item ID" );
@@ -120,10 +124,10 @@ CustRegister::CustRegister
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
     // Now, create our layouts
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // The text label layouts
-    QGridLayout *tl = new QGridLayout(2, 4, 3);
+    Q3GridLayout *tl = new Q3GridLayout(2, 4, 3);
     tl->setColStretch(0, 0);
     tl->setColStretch(1, 1);
     tl->setColStretch(2, 0);
@@ -144,7 +148,7 @@ CustRegister::CustRegister
     ml->addWidget(list, 1);
 
     // Now, our button area
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(printButton, 0);
     bl->addWidget(voidChargeButton, 0);
@@ -332,7 +336,7 @@ void CustRegister::delCustCharge()
 	// Make sure that the item selected is okay to delete.
     if (QMessageBox::warning(this, "Delete Transaction", "Are you sure you wish to delete\nthe currently selected transaction?", "&Yes", "&No", 0, 1) == 0) {
 	    QApplication::setOverrideCursor(waitCursor);
-	    QListViewItem   *tmpItem;
+	    Q3ListViewItem   *tmpItem;
 	    tmpItem = list->currentItem();
 	    ARDB.get(atol(tmpItem->key(7, TRUE)));
 	    ARDB.del(atol(tmpItem->key(7, TRUE)));

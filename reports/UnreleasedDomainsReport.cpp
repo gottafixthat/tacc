@@ -7,9 +7,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -52,7 +52,7 @@ void UnreleasedDomainsReport::refreshReport()
     ADB     DB;
     DB.query("select Domains.CustomerID, Domains.LoginID, DomainTypes.DomainType, Domains.DomainName from Domains, DomainTypes where Domains.Active <> 0 and Domains.Released = '' and DomainTypes.InternalID = Domains.DomainType");
     if (DB.rowCount) while (DB.getrow()) {
-        (void) new QListViewItem(repBody, DB.curRow["CustomerID"], DB.curRow["LoginID"], DB.curRow["DomainType"], DB.curRow["DomainName"]);
+        (void) new Q3ListViewItem(repBody, DB.curRow["CustomerID"], DB.curRow["LoginID"], DB.curRow["DomainType"], DB.curRow["DomainName"]);
     }
     
 }
@@ -63,7 +63,7 @@ void UnreleasedDomainsReport::refreshReport()
 **                    is double clicked.
 */
 
-void UnreleasedDomainsReport::listItemSelected(QListViewItem *curItem)
+void UnreleasedDomainsReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         emit(openCustomer(atol(curItem->key(0,0))));

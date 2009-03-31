@@ -31,8 +31,13 @@
 #include "BlargDB.h"
 #include "BString.h"
 #include "qstring.h"
+//Added by qt3to4:
+#include <QLabel>
+#include <Q3GridLayout>
+#include <Q3PopupMenu>
+#include <Q3BoxLayout>
 #include "LoginEdit.h"
-#include <qmsgbox.h>
+#include <qmessagebox.h>
 #include "BrassClient.h"
 #include "AcctsRecv.h"
 #include "ChangePassword.h"
@@ -42,9 +47,9 @@
 #include <Cfg.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include <qdatetm.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qmenubar.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
@@ -66,7 +71,7 @@ Tab_Logins::Tab_Logins
 
 
     // Create all of our widgets.
-    list = new QListView(this, "LoginList");
+    list = new Q3ListView(this, "LoginList");
 	list->addColumn("Login ID");
 	list->addColumn("Login Type");
 	list->addColumn("Contact Name");
@@ -114,7 +119,7 @@ Tab_Logins::Tab_Logins
     diskSpaceButton->setEnabled(false);
     
     adminMenuArea = new QLabel(this, "Admin Menu Area");
-    adminMenu = new QPopupMenu;
+    adminMenu = new Q3PopupMenu;
     adminMenu->insertItem("&Set Primary Login", this, SLOT(setPrimaryLogin()));
     adminMenu->insertItem("&Transfer Login", this, SLOT(transferLogin()));
     if (isAdmin()) adminMenu->insertItem("&Wipe Login", this, SLOT(wipeLogin()));
@@ -131,10 +136,10 @@ Tab_Logins::Tab_Logins
     connect(hideWiped, SIGNAL(toggled(bool)), this, SLOT(hideWipedChanged(bool)));
 
     // Create our layouts.  A top to bottom box, with a grid in it.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(list, 1);
 
-    QGridLayout *bl = new QGridLayout(2, 6);
+    Q3GridLayout *bl = new Q3GridLayout(2, 6);
     bl->addWidget(newButton,            0, 0);
     bl->addWidget(openCloseButton,      0, 1);
     bl->addWidget(passwdButton,         0, 2);
@@ -223,7 +228,7 @@ void Tab_Logins::refreshLoginList(long)
         showIt = true;
         if (hideWiped->isChecked() && !strncmp("W", DB.curRow["LoginID"], 1)) showIt = false;
         if (showIt) {
-            (void) new QListViewItem(list,
+            (void) new Q3ListViewItem(list,
               DB.curRow["LoginID"],         // Login ID
               DB.curRow["LoginType"],       // Login Type
               DB.curRow["ContactName"],     // Contact Name
@@ -327,7 +332,7 @@ void Tab_Logins::createNewLogin(void)
 void Tab_Logins::editLogin(void)
 {
 	LoginsDB	    LDB;
-	QListViewItem   *curItem;
+	Q3ListViewItem   *curItem;
 	
 	curItem = list->currentItem();
 	
@@ -364,7 +369,7 @@ void Tab_Logins::unlockLogin(void)
 	char		tmpLogin[256];
     char        subj[4096];
     char        body[4096];
-	QListViewItem   *curItem;
+	Q3ListViewItem   *curItem;
 
     curItem = list->currentItem();
 
@@ -658,7 +663,7 @@ void Tab_Logins::updateARForLock(const char * LoginID)
 
 void Tab_Logins::wipeLogin()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     curItem = list->currentItem();
     if (!curItem) return;
 
@@ -843,7 +848,7 @@ void Tab_Logins::updateDBForWipe(const char * LoginID)
 
 void Tab_Logins::modemUsageReport()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     ModemUsageReport *report;
     
     curItem = list->currentItem();
@@ -861,7 +866,7 @@ void Tab_Logins::modemUsageReport()
 
 void Tab_Logins::bandwidthUsageReport()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     BandwidthUsageReport *report;
     
     curItem = list->currentItem();
@@ -880,7 +885,7 @@ void Tab_Logins::bandwidthUsageReport()
 
 void Tab_Logins::changePassword()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
 	LoginsDB	    LDB;
 	
 	curItem = list->currentItem();
@@ -904,7 +909,7 @@ void Tab_Logins::changePassword()
 
 void Tab_Logins::setPrimaryLogin()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     curItem = list->currentItem();
     if (curItem != NULL) {
@@ -942,7 +947,7 @@ void Tab_Logins::setPrimaryLogin()
 
 void Tab_Logins::transferLogin()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     curItem = list->currentItem();
     if (curItem != NULL) {
@@ -962,7 +967,7 @@ void Tab_Logins::transferLogin()
 
 void Tab_Logins::loginFlagsClicked()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     curItem = list->currentItem();
     if (curItem != NULL) {
@@ -1024,7 +1029,7 @@ CustomLoginFlagEditor::CustomLoginFlagEditor
     colHeaders += "Flag";
     colHeaders += "Value";
     // Create all of our widgets.
-    flagTable = new QTable(0, 2, this, "flagTable");
+    flagTable = new Q3Table(0, 2, this, "flagTable");
     flagTable->setColumnLabels(colHeaders);
 
     QPushButton *saveButton = new QPushButton(this, "saveButton");
@@ -1034,7 +1039,7 @@ CustomLoginFlagEditor::CustomLoginFlagEditor
     cancelButton->setText("&Cancel");
 
     // Label layout
-    QGridLayout *gl = new QGridLayout();
+    Q3GridLayout *gl = new Q3GridLayout();
     int curRow = 0;
     gl->addWidget(custIDLabel,              curRow, 0);
     gl->addWidget(custIDValue,              curRow, 1);
@@ -1046,11 +1051,11 @@ CustomLoginFlagEditor::CustomLoginFlagEditor
     gl->setColStretch(1, 1);
 
     // Create the layout
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addLayout(gl, 0);
     ml->addWidget(flagTable, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -1082,7 +1087,7 @@ void CustomLoginFlagEditor::fillTable()
 {
     ADB     db;
     long    loginType;
-    QDict<QString> flagDict;
+    Q3Dict<QString> flagDict;
 
     // Get the login type.
     db.query("select LoginType from Logins where LoginID = '%s'", myLoginID);
@@ -1106,7 +1111,7 @@ void CustomLoginFlagEditor::fillTable()
     }
 
     // Now put the stuff from our flagDict into the grid
-    QDictIterator<QString> it(flagDict);
+    Q3DictIterator<QString> it(flagDict);
     for( ; it.current(); ++it ) {
         flagTable->insertRows(flagTable->numRows(), 1);
         flagTable->setText(flagTable->numRows()-1, 0, it.currentKey());

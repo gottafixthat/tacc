@@ -40,7 +40,7 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qcheckbox.h>
 #include <qlineedit.h>
 #include <TAAWidget.h>
@@ -71,7 +71,7 @@ public slots:
     virtual void    generateStatement();
     virtual void    runSubscriptions();
 	void            refreshBillingInfo(int);
-	void            viewStatement(QListViewItem *curItem);
+	void            viewStatement(Q3ListViewItem *curItem);
 
     void            cancelPendingCharge();
     void            removeAutoPaymentCard();
@@ -102,7 +102,7 @@ protected:
     QLabel      *lastDueDate;
     QLabel      *autoPayment;
     QLabel      *pendingCharge;
-    QListView   *stList;
+    Q3ListView   *stList;
     QLabel      *currentBalance;
     QLabel      *mailboxTally;
     

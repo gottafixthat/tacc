@@ -13,6 +13,8 @@
 
 #include <qapplication.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 #include <ADB.h>
 
@@ -30,17 +32,17 @@ TE_LoginTypes::TE_LoginTypes(QWidget* parent, const char* name) :
 
     primaryOnlyCheckbox = new QCheckBox("Send to Primary Logins only", this, "primaryOnlyChckebox");
 
-    loginTypeList = new QListView(this, "loginTypeList");
+    loginTypeList = new Q3ListView(this, "loginTypeList");
     loginTypeList->addColumn("Type");
     loginTypeList->addColumn("Description");
     loginTypeList->addColumn("Inactive");
-    loginTypeList->setColumnAlignment(2, AlignRight);
+    loginTypeList->setColumnAlignment(2, Qt::AlignRight);
     loginTypeList->addColumn("Active");
-    loginTypeList->setColumnAlignment(3, AlignRight);
+    loginTypeList->setColumnAlignment(3, Qt::AlignRight);
 
 
     // Create the layout.  A simple box layout will do.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 1, 1);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 1, 1);
     ml->addWidget(allLoginsButton, 0);
     ml->addWidget(includeInactive, 0);
     ml->addWidget(primaryOnlyCheckbox, 0);
@@ -66,7 +68,7 @@ TE_LoginTypes::~TE_LoginTypes()
 
 void TE_LoginTypes::loadLoginTypes()
 {
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     
     ADB     DB;
     ADB     DB2;
@@ -81,7 +83,7 @@ void TE_LoginTypes::loadLoginTypes()
         DB2.query("select InternalID from Logins where LoginType = %ld and Active = 1", atol(DB.curRow["InternalID"]));
         sprintf(aCount, "%ld", DB2.rowCount);
         
-        (void) new QListViewItem(loginTypeList,
+        (void) new Q3ListViewItem(loginTypeList,
           DB.curRow["LoginType"],
           DB.curRow["Description"],
           iCount,
@@ -116,7 +118,7 @@ void TE_LoginTypes::allLoginsClicked()
 int TE_LoginTypes::isIncluded(long LoginType, int Active)
 {
     int             RetVal = 0;
-    QListViewItem   *curItem = NULL;
+    Q3ListViewItem   *curItem = NULL;
     
     if (allLoginsButton->isChecked()) {
         if (!Active) {

@@ -14,7 +14,7 @@
 #ifndef PaymentTerms_included
 #define PaymentTerms_included
 
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qmenubar.h>
 
 #include <TAAWidget.h>
@@ -36,7 +36,7 @@ public slots:
     virtual void refreshList(int);
 
 protected:
-    QListView       *termsList;
+    Q3ListView       *termsList;
     QMenuBar        *menu;
 
 protected slots:
@@ -44,7 +44,7 @@ protected slots:
     virtual void editPaymentTerms();
     virtual void editPaymentTermsL(int msg = 0);
     virtual void deletePaymentTerms();
-    virtual void editTerms(QListViewItem *);
+    virtual void editTerms(Q3ListViewItem *);
 
 private:
     int     intIDCol;

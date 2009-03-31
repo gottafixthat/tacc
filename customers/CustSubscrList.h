@@ -63,7 +63,7 @@ protected:
     QPushButton *editButton;
     QPushButton *deleteButton;
     QCheckBox   *hideInactiveButton;
-    QListView   *list;
+    Q3ListView   *list;
 
 private:
 	long	myCustID;

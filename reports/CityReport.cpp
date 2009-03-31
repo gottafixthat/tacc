@@ -7,9 +7,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -61,7 +61,7 @@ void CityReport::refreshReport()
     repBody->setSorting(2, FALSE);     // Sort by count, highest first.
     
     // We'll use a QDict for speed...
-    QDict<int>     dict(521, FALSE);   // 521 is a prime number...
+    Q3Dict<int>     dict(521, FALSE);   // 521 is a prime number...
 
     char    *query  = new char[65536];
     char    *tmpSt  = new char[65536];
@@ -132,7 +132,7 @@ void CityReport::refreshReport()
         if (tmpInt != NULL) {
             if (*tmpInt > 0) {
                 sprintf(tmpSt2, "%8d", *tmpInt);
-                (void) new QListViewItem(repBody, DB.curRow[0], DB.curRow[1], tmpSt2);
+                (void) new Q3ListViewItem(repBody, DB.curRow[0], DB.curRow[1], tmpSt2);
             }
         }
     }
@@ -150,7 +150,7 @@ void CityReport::refreshReport()
 **                    is double clicked.
 */
 
-void CityReport::listItemSelected(QListViewItem *curItem)
+void CityReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         char    tmpCity[512];

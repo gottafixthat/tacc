@@ -31,12 +31,15 @@
 #include <qtimer.h>
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
 #include <qmultilinedit.h>
 #include <qlcdnumber.h>
 #include <qlineedit.h>
+//Added by qt3to4:
+#include <QEvent>
+#include <QCloseEvent>
 
 class LogCall : public TAAWidget
 {
@@ -70,9 +73,9 @@ protected:
     QLabel          *typeLabel;
     QComboBox       *callType;
     QLabel          *reasonLabel;
-    QListView       *reasonList;
+    Q3ListView       *reasonList;
     QLabel          *solutionLabel;
-    QMultiLineEdit  *solutionNotes;
+    Q3MultiLineEdit  *solutionNotes;
     QPushButton     *appendButton;
     QPushButton     *clockButton;
     QPushButton     *viewLogButton;
@@ -85,9 +88,9 @@ private:
 
     virtual     void QCloseEvent(QEvent *)          { delete this; }
 
-    QListView   *supportList;
-    QListView   *accountingList;
-    QListView   *salesList;
+    Q3ListView   *supportList;
+    Q3ListView   *accountingList;
+    Q3ListView   *salesList;
 
     QDateTime   callStart;
     QDateTime   callEnd;

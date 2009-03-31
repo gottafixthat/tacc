@@ -13,6 +13,10 @@
 #include <stdlib.h>
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -120,10 +124,10 @@ DomainChecklist::DomainChecklist(QWidget* parent, const char* name, long DomainI
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
     // And now for the layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 5);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 5);
 
     // Our info grid.
-    QGridLayout *igrid = new QGridLayout(3, 4, 3);
+    Q3GridLayout *igrid = new Q3GridLayout(3, 4, 3);
     int curRow = 0;
     igrid->addWidget(customerIDLabel,   curRow, 0);
     igrid->addWidget(customerID,        curRow, 1);
@@ -149,7 +153,7 @@ DomainChecklist::DomainChecklist(QWidget* parent, const char* name, long DomainI
     ml->addLayout(igrid, 0);
     ml->addWidget(new HorizLine(this), 0);
 
-    QGridLayout *gl = new QGridLayout(12, 3, 3);
+    Q3GridLayout *gl = new Q3GridLayout(12, 3, 3);
 
     curRow = 0;
     gl->addMultiCellWidget(hostmasterSubmit,    curRow, curRow, 0, 1);
@@ -219,7 +223,7 @@ DomainChecklist::DomainChecklist(QWidget* parent, const char* name, long DomainI
     ml->addStretch(1);
     ml->addWidget(new HorizLine(this), 0);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(updateButton, 0);
     bl->addWidget(saveButton, 0);

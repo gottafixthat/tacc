@@ -9,7 +9,7 @@
 
 // Qt Includes
 #include <qlist.h>
-#include <qintdict.h>
+#include <q3intdict.h>
 #include <qdatetm.h>
 
 // Blarg includes
@@ -153,9 +153,9 @@ QDateTime                EndTime;
 
 
 QList<RemoteCustomer>    RCustList;
-QIntDict<RemoteCustomer> RCustListDict;
+Q3IntDict<RemoteCustomer> RCustListDict;
 QList<RemoteCustomer>    LCustList;
-QIntDict<RemoteCustomer> LCustListDict;
+Q3IntDict<RemoteCustomer> LCustListDict;
 QList<RemoteLogin>       RLoginList;
 QList<RemoteLogin>       LLoginList;
 QList<RemoteLoginType>   RLoginTypeList;
@@ -165,9 +165,9 @@ QList<RemoteDomain>      LDomainList;
 QList<AutoPayments>      AutoPayList;
 QList<PendingPayments>   PendingList;
 QList<RemoteRegister>    LocalRegList;
-QIntDict<RemoteRegister> LocalRegListDict;
+Q3IntDict<RemoteRegister> LocalRegListDict;
 QList<RemoteRegister>    RemoteRegList;
-QIntDict<RemoteRegister> RemoteRegListDict;
+Q3IntDict<RemoteRegister> RemoteRegListDict;
 
 
 // Function prototypes

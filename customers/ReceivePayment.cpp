@@ -27,9 +27,13 @@
 #include <BlargDB.h>
 #include <Cfg.h>
 #include <qtooltip.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 #include <AcctsRecv.h>
 #include <qdatetm.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include "ReceivePayment.h"
 #include <qmessagebox.h>
 #include <qlayout.h>
@@ -41,7 +45,7 @@ ReceivePayment::ReceivePayment
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name, WType_Dialog )
+) : TAAWidget( parent, name, Qt::WType_Dialog )
 {
     myCustID = CustID;
     if (!myCustID) return;
@@ -111,7 +115,7 @@ ReceivePayment::ReceivePayment
     amount->setMaxLength(20);
     connect(amount, SIGNAL(returnPressed()), this, SLOT(savePayment()));
     
-    chargeList = new QListView(this, "Charge List");
+    chargeList = new Q3ListView(this, "Charge List");
     chargeList->setRootIsDecorated(false);
     chargeList->setAllColumnsShowFocus(true);
     chargeList->setMultiSelection(false);
@@ -135,9 +139,9 @@ ReceivePayment::ReceivePayment
 
     // Create our layout.  Somewhat complex.  We have the main layout, which
     // is a box, then a grid, then the list, then another box.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout(5, 4, 2);
+    Q3GridLayout *gl = new Q3GridLayout(5, 4, 2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     gl->setColStretch(2, 0);
@@ -174,7 +178,7 @@ ReceivePayment::ReceivePayment
     ml->addLayout(gl, 0);
     ml->addWidget(chargeList, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -273,7 +277,7 @@ void ReceivePayment::fillUncleared(void)
         runningTotal += (atof(DB.curRow["Amount"]) - atof(DB.curRow["ClearedAmount"]));
         sprintf(total, "%10.2f", runningTotal);
         
-        (void) new QListViewItem(chargeList, 
+        (void) new Q3ListViewItem(chargeList, 
           DB.curRow["TransDate"],               // Trans Date
           DB.curRow["LoginID"],                 // Login ID
           DB.curRow["Memo"],                    // Description

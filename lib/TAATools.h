@@ -14,11 +14,12 @@
 #ifndef TAATools_included
 #define TAATools_included
 
-#include <qwidget.h>
-#include <qstrlist.h>
-#include <qlistview.h>
-#include <qdatetm.h>
 #include <time.h>
+
+#include <QtGui/QWidget>
+#include <Qt3Support/q3strlist.h>
+#include <Qt3Support/q3listview.h>
+#include <QtCore/QDateTime>
 
 #define SCHEMA_VERSION_REQUIRED 12
 
@@ -72,7 +73,7 @@ void        showAbout();
 void        emailAdmins(const char *subj, const char *body);
 
 const QString makeTmpFileName(const char *);
-uint        QListViewToCSV(QListView *qlist, const char *fName, bool forceQuotes = false);
+uint        QListViewToCSV(Q3ListView *qlist, const char *fName, bool forceQuotes = false);
 
 void        setDebugLevel(int newLevel);
 void        debug(int level, const char *format, ... );

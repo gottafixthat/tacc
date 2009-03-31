@@ -36,6 +36,9 @@
 #include <qapplication.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 
 BI_Prices::BI_Prices
 (
@@ -44,7 +47,7 @@ BI_Prices::BI_Prices
 ) : TAAWidget( parent, name )
 {
     // Create our widgets.
-    pricingList = new QListView(this, "pricingList");
+    pricingList = new Q3ListView(this, "pricingList");
     pricingList->addColumn("Rate Plan");
     pricingList->addColumn("Billling Cycle");
     pricingList->addColumn("Pri. Price");
@@ -54,7 +57,7 @@ BI_Prices::BI_Prices
     pricingList->setColumnAlignment(2, AlignRight);
     pricingList->setColumnAlignment(3, AlignRight);
     pricingList->setColumnAlignment(5, AlignRight);
-    connect(pricingList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(listItemSelected(QListViewItem *)));
+    connect(pricingList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(listItemSelected(Q3ListViewItem *)));
 
     QLabel *primaryPriceLabel = new QLabel(this, "primaryPriceLabel");
     primaryPriceLabel->setText("Primary Price:");
@@ -92,7 +95,7 @@ BI_Prices::BI_Prices
     additionalDescriptionLabel->setText("Additional Description:");
     additionalDescriptionLabel->setAlignment(AlignRight|AlignTop);
     
-    additionalDescription = new QMultiLineEdit(this, "additionalDescription");
+    additionalDescription = new Q3MultiLineEdit(this, "additionalDescription");
     connect(additionalDescription, SIGNAL(textChanged()), this, SLOT(descriptionChanged()));
 
     saveButton = new QPushButton(this, "saveButton");
@@ -100,11 +103,11 @@ BI_Prices::BI_Prices
     connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 
     // Create our layout....
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(pricingList, 1);
 
     // Most of the rest of the widgets will go into the grid.
-    QGridLayout *gl = new QGridLayout(3, 4);
+    Q3GridLayout *gl = new Q3GridLayout(3, 4);
     int curRow = 0;
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
@@ -131,7 +134,7 @@ BI_Prices::BI_Prices
     ml->addLayout(gl, 1);
 
     // Our box layout for our list of button
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
 
@@ -182,7 +185,7 @@ void BI_Prices::setItemNumber(long newItemNumber)
             unitsList->insertItem(DB.curRow["Units"]);
         }
         
-        QListViewItem *curItem;
+        Q3ListViewItem *curItem;
         DB.query("select RatePlans.InternalID, RatePlans.PlanTag, BillingCycles.InternalID, BillingCycles.CycleID from RatePlans, BillingCycles order by RatePlans.PlanTag, BillingCycles.CycleID");
         if (DB.rowCount) while (DB.getrow()) {
             BDDB.query("select Price, SecondaryPrice, Units, TrialPeriod, InternalID from BillablesData where ItemNumber = %ld and RatePlanID = %ld and CycleID = %ld", myItemNumber, atol(DB.curRow[0]), atol(DB.curRow[2]));
@@ -202,7 +205,7 @@ void BI_Prices::setItemNumber(long newItemNumber)
             }
                 
             // Okay, we're here.
-            curItem = new QListViewItem(pricingList, 
+            curItem = new Q3ListViewItem(pricingList, 
               DB.curRow["PlanTag"], 
               DB.curRow["CycleID"], 
               thePrice, 
@@ -231,7 +234,7 @@ void BI_Prices::setItemNumber(long newItemNumber)
 **                     the editable spaces.
 */
 
-void BI_Prices::listItemSelected(QListViewItem *curItem)
+void BI_Prices::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem == NULL) return;
     QApplication::setOverrideCursor(waitCursor);
@@ -280,7 +283,7 @@ void BI_Prices::checkForSave()
 {
     // First, check to see if we even have an item selected.  If we don't,
     // then set the save button to disabled and return.
-    QListViewItem   *curItem = pricingList->currentItem();
+    Q3ListViewItem   *curItem = pricingList->currentItem();
     if (curItem == NULL) {
         saveButton->setEnabled(FALSE);
         return;
@@ -322,7 +325,7 @@ void BI_Prices::checkForSave()
 
 void BI_Prices::save()
 {
-    QListViewItem   *curItem = pricingList->currentItem();
+    Q3ListViewItem   *curItem = pricingList->currentItem();
     if (curItem != NULL) {
         char        tmpStr[1024];
         ADBTable    BDDB;

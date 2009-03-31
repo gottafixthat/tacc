@@ -25,11 +25,12 @@
 **
 */
 
+#include <QtCore/QString>
+
 #include <TAATools.h>
 #include <ADB.h>
 #include <Cfg.h>
 #include <BrassClient.h>
-#include <qstring.h>
 
 // Utility functions
 

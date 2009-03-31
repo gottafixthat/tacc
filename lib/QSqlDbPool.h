@@ -17,7 +17,8 @@
 #ifndef QSQLDBPOOL_H
 #define QSQLDBPOOL_H
 
-#include <qsqldatabase.h>
+#include <QtCore/QObject>
+#include <QtSql/QSqlDatabase>
 
 struct sql_Connection_Info {
     int             inUse;
@@ -54,6 +55,7 @@ public:
     static  void       setDefaultOpts(const char *newOpts);
 
     QSqlDatabase    *qsqldb();
+    QSqlDatabase    sqldb();
 
     int              activeConnectionCount();
 

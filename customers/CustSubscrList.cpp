@@ -16,7 +16,9 @@
 #include "BString.h"
 #include "SubscriptionEdit.h"
 #include "SelectionList.h"
-#include <qapp.h>
+#include <qapplication.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 #include <stdio.h>
 #include <stdlib.h>
 #include <qstring.h>
@@ -37,7 +39,7 @@ CustSubscrList::CustSubscrList
 	setFocusPolicy(StrongFocus);
 
     // Create our widgets and our layout.
-    list = new QListView(this);
+    list = new Q3ListView(this);
     list->addColumn("LoginID");
     list->addColumn("Item ID");
     list->addColumn("Qty");         list->setColumnAlignment(2, AlignRight);
@@ -75,11 +77,11 @@ CustSubscrList::CustSubscrList
 
     // Now, create the layout.  Standard box layout, top to bottom, with
     // a left to right layout for our buttons.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     ml->addWidget(list, 1);
 
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     abl->addWidget(addPackageButton, 0);
     abl->addWidget(newButton, 0);
     abl->addWidget(editButton, 0);
@@ -134,7 +136,7 @@ void CustSubscrList::refreshCustomer(long custID)
     char            tmpPrice[32];
     int             showIt = 0;
     
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
 
     char            tmpItemID[1024];
 
@@ -175,7 +177,7 @@ void CustSubscrList::refreshCustomer(long custID)
 	        
 	        sprintf(tmpItemID, "%s Package", (const char *) PDB.getStr("PackageTag"));
 	        
-	        curItem = new QListViewItem(list,
+	        curItem = new Q3ListViewItem(list,
 	          SDB.getStr("LoginID"),
 	          tmpItemID,
 	          SDB.getStr("Quantity"),
@@ -198,7 +200,7 @@ void CustSubscrList::refreshCustomer(long custID)
 	            if (SDB.getInt("Active")) strcpy(tmpActive, "Y");
 	            else strcpy(tmpActive, "N");
 	            
-	            QListViewItem *tmpItem = new QListViewItem(curItem,
+	            Q3ListViewItem *tmpItem = new Q3ListViewItem(curItem,
 	              SDB.getStr("LoginID"),
 	              BDB.getStr("ItemID"),
 	              SDB.getStr("Quantity"),
@@ -254,7 +256,7 @@ void CustSubscrList::refreshCustomer(long custID)
 	        if (SDB.getInt("Active")) strcpy(tmpActive, "Y");
 	        else strcpy(tmpActive, "N");
 	    
-	        QListViewItem *tmpItem = new QListViewItem(list,
+	        Q3ListViewItem *tmpItem = new Q3ListViewItem(list,
 	          SDB.getStr("LoginID"),
 	          BDB.getStr("ItemID"),
 	          SDB.getStr("Quantity"),
@@ -296,7 +298,7 @@ void CustSubscrList::newSubscription()
  
 void CustSubscrList::editSubscription()
 {
-    QListViewItem   *tmpItem;
+    Q3ListViewItem   *tmpItem;
     tmpItem         = list->currentItem();
 
     if (tmpItem != NULL) {
@@ -314,7 +316,7 @@ void CustSubscrList::editSubscription()
 
 void CustSubscrList::deleteSubscription()
 {
-    QListViewItem	*CurItem;
+    Q3ListViewItem	*CurItem;
     char	        tmpstr[256];
     ADB	            DB;
     
@@ -348,7 +350,7 @@ void CustSubscrList::addPackageItem()
     ADB             DB;
     QDate           todaysDate;
     QDate           packageDate;
-    QListViewItem   *selItem;
+    Q3ListViewItem   *selItem;
 
     sList = new PackageSelector(this);
     

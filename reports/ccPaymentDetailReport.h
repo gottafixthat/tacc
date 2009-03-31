@@ -16,7 +16,7 @@
 
 #include "Report.h"
 #include <qcheckbox.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 
 // Our "Filter" widget
 class ccPaymentDetailOptions : public TAAWidget
@@ -42,8 +42,8 @@ protected slots:
 protected:
     QCheckBox       *allCardTypes;
     QCheckBox       *allDispTypes;
-    QListBox        *cardTypeList;
-    QListBox        *dispList;
+    Q3ListBox        *cardTypeList;
+    Q3ListBox        *dispList;
 
 };
 
@@ -64,7 +64,7 @@ public:
     virtual void refreshReport();
 
 public slots:
-    virtual void    listItemSelected(QListViewItem *curItem);
+    virtual void    listItemSelected(Q3ListViewItem *curItem);
     virtual void    editFilters();
 
 private:

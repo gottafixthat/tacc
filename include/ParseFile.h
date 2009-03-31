@@ -9,9 +9,9 @@
 #ifndef PARSEFILE_H
 #define PARSEFILE_H
 
-#include <qlist.h>
-#include <qstrlist.h>
-#include <qstring.h>
+#include <QtCore/QList>
+#include <Qt3Support/q3strlist.h>
+#include <QtCore/QString>
 
 // The base of all of the elements, the Single Element.  All other lists
 // and variables are designed around this data type.  It consists of a name
@@ -37,12 +37,12 @@ void    parseEmail(const char *tmplName, long CustomerID, const char *LoginID,
 // The Element List, which contains a single "row" of data for a list.
 // Each item in an EList contains another list with SElements in it.
 struct EList {
-    QList<SElement> columns;
+    QList<SElement *> columns;
 };
 
 struct LList {
     char            *Name;
-    QList<EList>    rows;
+    QList<EList *>  rows;
 };
 
 class VParser
@@ -69,19 +69,19 @@ protected:
     SElement    *findColumn(const char *name, EList *row);
     LList       *findList(const char *listName);
     void        doParsing(void);
-    void        parseBlock(QString block, QList<SElement> *data);
+    void        parseBlock(QString block, QList<SElement *> *data);
     void        showParsedFile(void);
     
 
 private:
-    QList<SElement>     elements;
-    QList<LList>        lists;
+    QList<SElement *>   elements;
+    QList<LList *>      lists;
     
     LList               *currentList;
     EList               *currentListRow;
     
-    QStrList            fcontents;
-    QStrList            pcontents;
+    Q3StrList            fcontents;
+    Q3StrList            pcontents;
     
     int                 bufferOutput;
 };

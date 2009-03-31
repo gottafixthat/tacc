@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
 
 #include <ADB.h>
@@ -105,7 +105,7 @@ void RatePlanDetailReport::refreshReport()
 	            sprintf(tmpBalance, "%8.2f", atof(DB.curRow["CurrentBalance"]));
 
                 // Finally, add the row to the list.
-                (void) new QListViewItem(repBody, 
+                (void) new Q3ListViewItem(repBody, 
                   DB.curRow["CustomerID"],
                   DB.curRow["FullName"],
                   DB.curRow["PrimaryLogin"],
@@ -116,10 +116,10 @@ void RatePlanDetailReport::refreshReport()
                 );	            
 	            
 	        } else {
-	            (void) new QListViewItem(repBody, "No matching customers found");
+	            (void) new Q3ListViewItem(repBody, "No matching customers found");
 	        }
 	    } else {
-	        (void) new QListViewItem(repBody, "No matching rate plan found!!!");
+	        (void) new Q3ListViewItem(repBody, "No matching rate plan found!!!");
 	    }
 	    
 	    
@@ -134,7 +134,7 @@ void RatePlanDetailReport::refreshReport()
 **                    is double clicked.
 */
 
-void RatePlanDetailReport::listItemSelected(QListViewItem *curItem)
+void RatePlanDetailReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         long    CustID = atol(curItem->key(0,0));

@@ -42,11 +42,11 @@
 #define SUBSCRLINK_LOGINDCHAN   4
 
 #include <mysql/mysql.h>
-#include <qstring.h>
-#include <qstrlist.h>
-#include <qstringlist.h>
-#include <qdatetm.h>
-#include <qpainter.h>
+#include <QtCore/QString>
+#include <Qt3Support/q3strlist.h>
+#include <QtCore/QStringList>
+#include <QtCore/QDateTime>
+#include <QtGui/QPainter>
 #include "ADB.h"
 
 class BlargDB

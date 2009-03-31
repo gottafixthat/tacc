@@ -13,10 +13,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <qlayout.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qregexp.h>
 #include <qdatetime.h>
 #include <qtimer.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3PopupMenu>
 
 #include "ColorListViewItem.h"
 
@@ -35,7 +38,7 @@ QueueMonitor::QueueMonitor
     setCaption( "Queue Monitor" );
 
     // Create the widgets
-    callq = new QListView(this, "Queue");
+    callq = new Q3ListView(this, "Queue");
     callq->setAllColumnsShowFocus(true);
     callq->setMinimumHeight(75);
     callq->addColumn("Channel");
@@ -47,19 +50,19 @@ QueueMonitor::QueueMonitor
     callq->addColumn("Agent");
     callq->addColumn("Time");
     callq->setMinimumHeight(100);
-    connect(callq, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(callDoubleClicked(QListViewItem *)));
+    connect(callq, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(callDoubleClicked(Q3ListViewItem *)));
 
     callq->setColumnAlignment((QMColumnNames)Position, AlignRight);
 
     // Attach a context menu to the queue list.
-    menu = new QPopupMenu(callq);
+    menu = new Q3PopupMenu(callq);
     connect(menu, SIGNAL(activated(int)), this, SLOT(menuItemSelected(int)));
         
-    connect(callq, SIGNAL( contextMenuRequested( QListViewItem *, const QPoint& , int ) ),
-                        this, SLOT( callPopupMenu( QListViewItem *, const QPoint &, int ) ) );
+    connect(callq, SIGNAL( contextMenuRequested( Q3ListViewItem *, const QPoint& , int ) ),
+                        this, SLOT( callPopupMenu( Q3ListViewItem *, const QPoint &, int ) ) );
 
     // The main layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 0);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 0, 0);
     ml->addWidget(callq, 1);
 
     // Create a timer to update the "time" column.
@@ -140,7 +143,7 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
         }
         removeChannel(chan);
         debug(2, "QueueMonitor::asteriskEvent('%s') - Adding channel for queue '%s', channel '%s', position '%s', member '%s', agent '%s'\n", event.msgVal, callqueue, chan, pos, member, agent);
-        QListViewItem *newItem = new ColorListViewItem(callq, queued_rgb, chan, state, cid, callqueue, pos, member, agent, "0:00");
+        Q3ListViewItem *newItem = new ColorListViewItem(callq, queued_rgb, chan, state, cid, callqueue, pos, member, agent, "0:00");
         sprintf(tmpStr, "%ld", QDateTime::currentDateTime().toTime_t());
         newItem->setText((QMColumnNames)TimerHidden, tmpStr);
     } else if (!strcasecmp(event.msgVal, "leave")) {
@@ -180,7 +183,7 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
 
         removeChannel(chan);
         debug(2, "QueueMonitor::asteriskEvent('%s') - Adding channel for queue '%s', channel '%s', position '%s', member '%s', agent '%s'\n", event.msgVal, callqueue, chan, pos, member, agent);
-        QListViewItem *newItem = new ColorListViewItem(callq, connect_rgb, chan, state, cid, callqueue, pos, member, agent, "0:00");
+        Q3ListViewItem *newItem = new ColorListViewItem(callq, connect_rgb, chan, state, cid, callqueue, pos, member, agent, "0:00");
         sprintf(tmpStr, "%ld", QDateTime::currentDateTime().toTime_t());
         newItem->setText((QMColumnNames)TimerHidden, tmpStr);
     } else if (!strcasecmp(event.msgVal, "AgentComplete")) {
@@ -217,7 +220,7 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
             else if (!strcasecmp(event.data[i].key, "member")) strcpy(member, event.data[i].val);
         }
         // Now walk through the list and remove the one we're looking at.
-        QListViewItem           *curItem = findChannel(chan);
+        Q3ListViewItem           *curItem = findChannel(chan);
         if (curItem) {
             setColumnText(chan, CallerID, cid);
             setColumnText(chan, Channel, chan1);
@@ -253,7 +256,7 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
             if (!strcasecmp(event.data[i].key, "Oldname")) strcpy(oldname, event.data[i].val);
             else if (!strcasecmp(event.data[i].key, "Newname")) strcpy(newname, event.data[i].val);
         }
-        QListViewItem   *tmpItem = findChannel(oldname);
+        Q3ListViewItem   *tmpItem = findChannel(oldname);
         if (tmpItem) setColumnText(oldname, Channel, newname);
     } else {
         debug(2, "QueueMonitor::asteriskEvent('%s') Ignoring Event:\n", event.msgVal);
@@ -272,11 +275,11 @@ void QueueMonitor::asteriskEvent(const astEventRecord event)
 /** findChannel - Given a channel name, this returns a pointer to
   * its entry in the list, or NULL if its not found.
   */
-QListViewItem *QueueMonitor::findChannel(const char *chan)
+Q3ListViewItem *QueueMonitor::findChannel(const char *chan)
 {
-    QListViewItemIterator   it(callq);
-    QListViewItem           *curItem;
-    QListViewItem           *retVal = NULL;
+    Q3ListViewItemIterator   it(callq);
+    Q3ListViewItem           *curItem;
+    Q3ListViewItem           *retVal = NULL;
     for (; it.current(); ++it) {
         curItem = it.current();
         if (!strcasecmp(curItem->key((QMColumnNames) Channel, 0), chan)) {
@@ -292,7 +295,7 @@ QListViewItem *QueueMonitor::findChannel(const char *chan)
   */
 void QueueMonitor::removeChannel(const char *chan)
 {
-    QListViewItem           *curItem;
+    Q3ListViewItem           *curItem;
     curItem = findChannel(chan);
     while (curItem) {
         debug(2, "QueueMonitor::removeChannel() - Removing Channel:%s State:%s CID: %s Queue:%s Position:%s Location:%s Agent:%s\n",
@@ -307,7 +310,7 @@ void QueueMonitor::removeChannel(const char *chan)
   */
 void QueueMonitor::setColumnText(const char *chan, QMColumnNames col, const char *newText)
 {
-    QListViewItem           *curItem;
+    Q3ListViewItem           *curItem;
     curItem = findChannel(chan);
     if (curItem) curItem->setText(col, newText);
 }
@@ -316,7 +319,7 @@ void QueueMonitor::setColumnText(const char *chan, QMColumnNames col, const char
   * on a list item.  This adjusts the menu items based on the
   * item passed in then pops up so the user can select an action.
   */
-void QueueMonitor::callPopupMenu( QListViewItem* item, const QPoint & point, int )
+void QueueMonitor::callPopupMenu( Q3ListViewItem* item, const QPoint & point, int )
 {
     int i;
     if(!item ) return;
@@ -335,8 +338,8 @@ void QueueMonitor::callPopupMenu( QListViewItem* item, const QPoint & point, int
 
     // Load the list of people we can transfer to.
     db.query("select * from Staff where Active > 0 and Extension <> '' order by LoginID");
-    QPopupMenu *xferTargets = new QPopupMenu(menu);
-    QPopupMenu *vmTargets = new QPopupMenu(menu);
+    Q3PopupMenu *xferTargets = new Q3PopupMenu(menu);
+    Q3PopupMenu *vmTargets = new Q3PopupMenu(menu);
     if (db.rowCount) while (db.getrow()) {
         i = xferTargets->insertItem(db.curRow["LoginID"], atoi(db.curRow["Extension"]));
         xferTargets->connectItem(i, this, SLOT(menuItemSelected(int)));
@@ -371,7 +374,7 @@ void QueueMonitor::callPopupMenu( QListViewItem* item, const QPoint & point, int
   * list, this gets called.  We extract the phone number and emit it in
   * a signal which will later be connected to the customer window.
   */
-void QueueMonitor::callDoubleClicked(QListViewItem *item)
+void QueueMonitor::callDoubleClicked(Q3ListViewItem *item)
 {
     if (!item) return;
     //fprintf(stderr, "Emitting phoneNumberSelected(%s)...\n", (const char *)item->key(2,0));
@@ -387,7 +390,7 @@ void QueueMonitor::menuItemSelected(int menuID)
     // First, check for a transfer.
     if (menuID >= 100 && menuID <= 199) {
         // Its a transfer and the extension is the menu ID
-        QListViewItem *curItem = callq->currentItem();
+        Q3ListViewItem *curItem = callq->currentItem();
         if (curItem) {
             char    extStr[2048];
             sprintf(extStr, "%d", menuID);
@@ -396,7 +399,7 @@ void QueueMonitor::menuItemSelected(int menuID)
     }
     if (menuID >= 1100 && menuID <= 1199) {
         // Its a transfer and the extension is the menu ID
-        QListViewItem *curItem = callq->currentItem();
+        Q3ListViewItem *curItem = callq->currentItem();
         if (curItem) {
             char    extStr[2048];
             sprintf(extStr, "*%d", menuID-1000);
@@ -411,8 +414,8 @@ void QueueMonitor::menuItemSelected(int menuID)
 void QueueMonitor::refreshTimers()
 {
     if (!callq->childCount()) return;
-    QListViewItemIterator   it(callq);
-    QListViewItem           *curItem;
+    Q3ListViewItemIterator   it(callq);
+    Q3ListViewItem           *curItem;
     QDateTime               tmpTime = QDateTime::currentDateTime();
     QDateTime               startTime;
     char                    tmpSt[1024];

@@ -25,13 +25,16 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qcombobox.h>
 #include <qcheckbox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
+//Added by qt3to4:
+#include <QEvent>
+#include <QCloseEvent>
 #include <calendar.h>
-#include <qtextview.h>
-#include <qpopupmenu.h>
+#include <q3textview.h>
+#include <q3popupmenu.h>
 #include <qsqldatabase.h>
 
 class LoginFlagList : public TAAWidget
@@ -56,10 +59,10 @@ protected slots:
     virtual void editClicked();
     virtual void deleteClicked();
     virtual void closeClicked();
-    virtual void itemDoubleClicked(QListViewItem *);
+    virtual void itemDoubleClicked(Q3ListViewItem *);
 
 protected:
-    QListView       *flagList;
+    Q3ListView       *flagList;
     QPushButton     *addButton;
     QPushButton     *editButton;
     QPushButton     *deleteButton;
@@ -98,7 +101,7 @@ protected slots:
 protected:
     long            loginFlagID;
     QLineEdit       *loginFlag;
-    QMultiLineEdit  *description;
+    Q3MultiLineEdit  *description;
     QCheckBox       *isBool;
     QLineEdit       *defaultValue;
     QPushButton     *saveButton;
@@ -133,13 +136,13 @@ public:
 protected slots:
     virtual void addClicked();
     virtual void rmClicked();
-    virtual void availableDoubleClicked(QListViewItem *);
-    virtual void assignedDoubleClicked(QListViewItem *);
+    virtual void availableDoubleClicked(Q3ListViewItem *);
+    virtual void assignedDoubleClicked(Q3ListViewItem *);
 
 protected:
     long            idColumn;
-    QListView       *available;
-    QListView       *assigned;
+    Q3ListView       *available;
+    Q3ListView       *assigned;
     QPushButton     *addButton;
     QPushButton     *rmButton;
 };

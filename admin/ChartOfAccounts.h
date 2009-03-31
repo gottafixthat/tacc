@@ -14,7 +14,7 @@
 #ifndef CHARTOFACCOUNTS_H
 #define CHARTOFACCOUNTS_H
 
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qmenubar.h>
 
 #include <TAAWidget.h>
@@ -49,12 +49,12 @@ private slots:
 
 protected:
     QMenuBar    *menu;
-    QListView   *list;
+    Q3ListView   *list;
 
     GLAccountTypeList   glAcctTypes;
 
 private:
-    int addToList(int ParentID, QListViewItem *parent);
+    int addToList(int ParentID, Q3ListViewItem *parent);
     int intAcctNoCol;
     // int *acctNoIndex;
     // int indexPtr;

@@ -6,7 +6,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qstrlist.h>
+
+#include <Qt3Support/q3strlist.h>
+
 #include <Cfg.h>
 #include <ADB.h>
 #include <TAATools.h>
@@ -162,7 +164,6 @@ int AcctsRecv::setGLAccount(int intAcctNo)
 }
 
 /**
-/*
 ** GetTrans     - Loads the specified transaction and its splits into memory.
 **                Note:  It doesn't care if it has already loaded another
 **                       transaction.  It will happily stomp all over itself.
@@ -182,7 +183,6 @@ int AcctsRecv::GetTrans(long IntID)
 
 long AcctsRecv::SaveTrans(void)
 {
-	char		tmpstr[1024];
 	ADB		    DB;
 	BillablesDB	BDB;
 	// CustomersDB CDB;
@@ -296,15 +296,15 @@ void applyCredits(long CustomerID)
     CDB.setValue("CurrentBalance", tmpFloat);
     CDB.upd();
 
-    QList<AREntry> Charges;
-    QList<AREntry> Credits;
+    QList<AREntry *> Charges;
+    QList<AREntry *> Credits;
     
     AREntry *curEntry;
     
     float   RunningTotal = 0.00;
     
-    Charges.setAutoDelete(TRUE);
-    Credits.setAutoDelete(TRUE);
+    //Charges.setAutoDelete(TRUE);
+    //Credits.setAutoDelete(TRUE);
     
     // Now, fill the lists...
     // First, do the queries.  If there are no credits and no charges,

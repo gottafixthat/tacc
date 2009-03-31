@@ -33,6 +33,9 @@
 #include <qdatetm.h>
 #include <qlayout.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 #include <ADB.h>
 #include <TAATools.h>
 
@@ -81,8 +84,8 @@ NoteEdit::NoteEdit
     noteTextLabel->setAlignment(AlignRight|AlignTop);
     noteTextLabel->setText("Note:");
 
-    noteText    = new QMultiLineEdit(this, "Note Text");
-    noteText->setWordWrap(QMultiLineEdit::WidgetWidth);
+    noteText    = new Q3MultiLineEdit(this, "Note Text");
+    noteText->setWordWrap(Q3MultiLineEdit::WidgetWidth);
     
     QPushButton *saveButton = new QPushButton(this, "Save Button");
     saveButton->setText("&Save");
@@ -95,10 +98,10 @@ NoteEdit::NoteEdit
     // Now, create our layout.  A top-to-bottom box will hold the main
     // layout, then a grid to hold our note stuff, then another box
     // to hold our buttons.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Now create the grid that will hold the labels, lists and note text
-    QGridLayout *gl = new QGridLayout(3, 4);
+    Q3GridLayout *gl = new Q3GridLayout(3, 4);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     gl->setColStretch(2, 0);
@@ -122,7 +125,7 @@ NoteEdit::NoteEdit
 
     ml->addLayout(gl, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -181,7 +184,7 @@ NoteEdit::NoteEdit
 	    strcat(title, CDB.getStr("FullName"));
 	}
 
-    noteText->setWordWrap(QMultiLineEdit::WidgetWidth);
+    noteText->setWordWrap(Q3MultiLineEdit::WidgetWidth);
 
 	if (!myInternalID) {
 		time_t	ti = time(NULL);
@@ -217,7 +220,7 @@ NoteEdit::NoteEdit
 
 	noteText->setFocus();
     #if QT_VERSION >= 210
-    noteText->setWordWrap(QMultiLineEdit::WidgetWidth);
+    noteText->setWordWrap(Q3MultiLineEdit::WidgetWidth);
     #endif
 	
 	setCaption(title);

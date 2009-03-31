@@ -38,6 +38,9 @@
 #include <qmessagebox.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include "LoginTypeBillablesAdd.h"
 #include <ADB.h>
@@ -53,11 +56,11 @@ ELT_Billables::ELT_Billables
     billableListLabel->setText("Billables:");
     billableListLabel->setAlignment(AlignRight|AlignTop);
 
-    billableList = new QListView(this, "billableList");
+    billableList = new Q3ListView(this, "billableList");
     billableList->addColumn("Name");
     billableList->addColumn("Description");
     billableList->setAllColumnsShowFocus(TRUE);
-    connect(billableList, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(itemSelected(QListViewItem *)));
+    connect(billableList, SIGNAL(selectionChanged(Q3ListViewItem *)), this, SLOT(itemSelected(Q3ListViewItem *)));
 
     addButton = new QPushButton(this, "addButton");
     addButton->setText("&Add");
@@ -68,9 +71,9 @@ ELT_Billables::ELT_Billables
     connect(removeButton, SIGNAL(clicked()), this, SLOT(removeBillable()));
 
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout(1, 2);
+    Q3GridLayout *gl = new Q3GridLayout(1, 2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     gl->setRowStretch(0, 1);
@@ -80,7 +83,7 @@ ELT_Billables::ELT_Billables
     ml->addLayout(gl, 1);
 
     // Our buttons.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(removeButton, 0);
@@ -115,7 +118,7 @@ void ELT_Billables::setLoginTypeID(long newLoginTypeID)
             // Enable/disable buttons and stuff here...
             while (DB.getrow()) { 
                 BDB.get(atol(DB.curRow["ItemNumber"]));
-                (void) new QListViewItem(billableList, BDB.getStr("ItemID"), BDB.getStr("Description"), DB.curRow["InternalID"]);
+                (void) new Q3ListViewItem(billableList, BDB.getStr("ItemID"), BDB.getStr("Description"), DB.curRow["InternalID"]);
             }
         } 
     }
@@ -128,7 +131,7 @@ void ELT_Billables::setLoginTypeID(long newLoginTypeID)
 **                list.
 */
 
-void ELT_Billables::itemSelected(QListViewItem *curItem)
+void ELT_Billables::itemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         removeButton->setEnabled(TRUE);
@@ -149,7 +152,7 @@ void ELT_Billables::itemSelected(QListViewItem *curItem)
 
 void ELT_Billables::removeBillable()
 {
-    QListViewItem   *curItem = billableList->currentItem();
+    Q3ListViewItem   *curItem = billableList->currentItem();
     if (curItem == NULL) return;
     
     char    *tmpStr = new char[4096];

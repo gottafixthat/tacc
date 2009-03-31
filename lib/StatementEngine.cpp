@@ -15,9 +15,10 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <qstringlist.h>
-#include <qprogressdialog.h>
-#include <qfile.h>
+#include <QtCore/QStringList>
+#include <Qt3Support/q3progressdialog.h>
+#include <QtCore/QFile>
+#include <Qt3Support/Q3StrList>
 #include <TAATools.h>
 #include <BString.h>
 #include <BlargDB.h>
@@ -77,7 +78,7 @@ void StatementEngine::runStatements(void)
     totItems    = DB.rowCount;
     
     if (totItems) {
-        QProgressDialog progress("Creating Statements...", "Abort", totItems, 0, "Creating Statements...");
+        Q3ProgressDialog progress("Creating Statements...", "Abort", totItems, 0, "Creating Statements...");
         progress.setCancelButtonText("Abort");
         while (DB.getrow()) {
             progress.setProgress(curItem++);
@@ -140,7 +141,7 @@ int StatementEngine::doStatement(uint CustID)
 	int				DaysLeft;		// The remaining days in this cycle.
 	int             prevDaysLeft;
 	int				NeedsStatement = 0;
-	QStrList		addrlist;
+	Q3StrList		addrlist;
 	
 	QDate           tmpDate;
 	
@@ -939,7 +940,7 @@ void StatementEngine::emailLatexStatement(uint StNo)
     pdfFileName = QString("/tmp/statement-%1.pdf") . arg(StNo);
     mimeFileName = QString("statement-%1.pdf") . arg(StNo);
     QFile   pdf(pdfFileName);
-    if (pdf.open(IO_WriteOnly)) {
+    if (pdf.open(QIODevice::WriteOnly)) {
         QDataStream fstream(&pdf);
         fstream.writeRawBytes(pdfOutput, pdfOutput.size());
         pdf.close();
@@ -953,13 +954,13 @@ void StatementEngine::emailLatexStatement(uint StNo)
     msg.setSubject(subject);
 
     // Add the text body
-    msg.setBody(tpl->text());
+    msg.setBody(tpl->text().c_str());
 
     // Add the PDF attachment
     msg.addAttachment(pdfFileName.ascii(), "application/pdf", mimeFileName.ascii());
 
         // Now walk through the list of addresses and send one to each of them.
-    for (uint a = 0; a < emailAddrs.count(); a++) {
+    for (int a = 0; a < emailAddrs.count(); a++) {
         QString     toAddress = emailAddrs[a];
         debug(1,"Sending statement to %s...\n", toAddress.ascii());
         msg.setTo(toAddress);
@@ -1031,7 +1032,7 @@ void StatementEngine::generateLatexStatement(uint statementNo, int printIt)
 
     sprintf(tmpFName, "%s.pdf", fName.ascii());
     QFile   file(tmpFName);
-    if (file.open(IO_ReadOnly|IO_Raw)) {
+    if (file.open(QIODevice::ReadOnly|QIODevice::Unbuffered)) {
         pdfOutput = file.readAll();
         file.close();
     }
@@ -1039,7 +1040,7 @@ void StatementEngine::generateLatexStatement(uint statementNo, int printIt)
 
     sprintf(tmpFName, "%s.ps", fName.ascii());
     file.setName(tmpFName);
-    if (file.open(IO_ReadOnly|IO_Raw)) {
+    if (file.open(QIODevice::ReadOnly|QIODevice::Unbuffered)) {
         psOutput = file.readAll();
         file.close();
     }
@@ -1113,7 +1114,7 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     QString blockPrefix;
     QString blockName;
 
-    for (uint i = 0; i < blocks.count(); i++) {
+    for (int i = 0; i < blocks.count(); i++) {
         // Base our query on what block we're doing.
         curBlock = blocks[i];
         if (curBlock == "credits") {
@@ -1131,16 +1132,16 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
         DB.query("select InternalID from StatementsData where StatementNo = %ld %s order by InternalID", statementNo, qExtra.ascii());
         while(DB.getrow()) {
             SDDB.get(atol(DB.curRow[0]));
-            tpl->assign("Description",      latexEscapeString(SDDB.getStr("Description")));
+            tpl->assign("Description",      latexEscapeString(SDDB.getStr("Description")).ascii());
             tmpDate = QDate::fromString(SDDB.getStr("TransDate"), Qt::ISODate);
-            tpl->assign("TransDate",        tmpDate.toString(cfgVal("LatexDateFormat")));
+            tpl->assign("TransDate",        tmpDate.toString(cfgVal("LatexDateFormat")).ascii());
             startDate = QDate::fromString(SDDB.getStr("StartDate"), Qt::ISODate);
-            tpl->assign("StartDate",        startDate.toString(cfgVal("LatexDateFormat")));
+            tpl->assign("StartDate",        startDate.toString(cfgVal("LatexDateFormat")).ascii());
             endDate = QDate::fromString(SDDB.getStr("EndDate"), Qt::ISODate);
-            tpl->assign("EndDate",          endDate.toString(cfgVal("LatexDateFormat")));
+            tpl->assign("EndDate",          endDate.toString(cfgVal("LatexDateFormat")).ascii());
             int hasDateRange = 1;
             if (startDate == endDate) hasDateRange = 0;
-            tpl->assign("LoginID",          latexEscapeString(SDDB.getStr("LoginID")));
+            tpl->assign("LoginID",          latexEscapeString(SDDB.getStr("LoginID")).ascii());
             tpl->assign("Amount",           SDDB.getStr("Amount"));
             balance += SDDB.getFloat("Amount");
             if (SDDB.getFloat("Quantity") == 1.00 && atoi(cfgVal("StatementQtyOneBlank"))) {
@@ -1170,7 +1171,7 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     if (DB.rowCount) {
         DB.getrow();
         QDate   prevBalDate = QDate::fromString(DB.curRow["StatementDate"], Qt::ISODate);
-        tpl->assign("PreviousBalanceDate", prevBalDate.toString(cfgVal("LatexDateFormat")));
+        tpl->assign("PreviousBalanceDate", prevBalDate.toString(cfgVal("LatexDateFormat")).ascii());
     } else {
         tpl->assign("PreviousBalanceDate", "N/A");
     }
@@ -1198,17 +1199,17 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     QString balFwdStat = "0";
     QString balStat = "0";
     balFwd = balFwd.sprintf("%.2f", (float) STDB.getFloat("PrevBalance") + STDB.getFloat("Credits"));
-    tpl->assign("StatementDate",    stDate.toString(cfgVal("LatexDateFormat")));
+    tpl->assign("StatementDate",    stDate.toString(cfgVal("LatexDateFormat")).ascii());
     tpl->assign("StatementNumber",  stStr);
     tpl->assign("CustomerID",       cidStr);
     tpl->assign("RegNum",           CDB.getStr("RegNum"));
-    tpl->assign("CustomerName",     latexEscapeString(STDB.getStr("CustName")));
-    tpl->assign("CustomerAddr1",    latexEscapeString(STDB.getStr("CustAddr1")));
-    tpl->assign("CustomerAddr2",    latexEscapeString(STDB.getStr("CustAddr2")));
-    tpl->assign("CustomerAddr3",    latexEscapeString(STDB.getStr("CustAddr3")));
-    tpl->assign("CustomerAddr4",    latexEscapeString(STDB.getStr("CustAddr4")));
-    tpl->assign("Terms",            latexEscapeString(termsStr));
-    tpl->assign("DueDate",          tmpDate.toString(cfgVal("LatexDateFormat")));
+    tpl->assign("CustomerName",     latexEscapeString(STDB.getStr("CustName")).ascii());
+    tpl->assign("CustomerAddr1",    latexEscapeString(STDB.getStr("CustAddr1")).ascii());
+    tpl->assign("CustomerAddr2",    latexEscapeString(STDB.getStr("CustAddr2")).ascii());
+    tpl->assign("CustomerAddr3",    latexEscapeString(STDB.getStr("CustAddr3")).ascii());
+    tpl->assign("CustomerAddr4",    latexEscapeString(STDB.getStr("CustAddr4")).ascii());
+    tpl->assign("Terms",            latexEscapeString(termsStr).ascii());
+    tpl->assign("DueDate",          tmpDate.toString(cfgVal("LatexDateFormat")).ascii());
     tpl->assign("PreviousBalance",  STDB.getStr("PrevBalance"));
     tpl->assign("Credits",          STDB.getStr("Credits"));
     tpl->assign("BalanceForward",   balFwd.ascii());
@@ -1229,8 +1230,8 @@ wtpl *StatementEngine::parseStatementTemplate(uint statementNo, const char *file
     if (STDB.getFloat("NewCharges") < 0.00) balStat = "1";
     if (STDB.getFloat("NewCharges") > 0.00) balStat = "2";
     tpl->assign("BalanceStatus",    balStat.ascii());
-    tpl->assign("HeaderMsg",        latexEscapeString(STDB.getStr("HeaderMsg")));
-    tpl->assign("FooterMsg",        latexEscapeString(STDB.getStr("FooterMsg")));
+    tpl->assign("HeaderMsg",        latexEscapeString(STDB.getStr("HeaderMsg")).ascii());
+    tpl->assign("FooterMsg",        latexEscapeString(STDB.getStr("FooterMsg")).ascii());
 
     tpl->parse("statement");
 

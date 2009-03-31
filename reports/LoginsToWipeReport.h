@@ -30,7 +30,7 @@ public:
     virtual void refreshCustomer(long);
 
 public slots:
-    virtual void    listItemSelected(QListViewItem *curItem);
+    virtual void    listItemSelected(Q3ListViewItem *curItem);
 
 };
 #endif // LoginsToWipeReport_included

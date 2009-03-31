@@ -12,11 +12,12 @@ MOC	= /usr/local/bin/moc
 
 ####### Files
 
-SUBDIRS =	
+SUBDIRS =	libdes
 
 SOURCES =	bdes.c
 
-OBJECTS =	$(SOURCES:.c=.o) libdes/*.o
+OBJECTS =	$(SOURCES:.c=.o)
+EXTRAOBJS =	libdes/*.o
 
 # TARGET	=	qtacct
 
@@ -32,12 +33,13 @@ OBJECTS =	$(SOURCES:.c=.o) libdes/*.o
 
 all: bdes-lib
 
-bdes-lib: $(OBJECTS)
-	ar r libbdes.a libdes/libdes.a $(OBJECTS)
+bdes-lib: $(SUBDIRS) $(OBJECTS)
+	ar r libbdes.a libdes/libdes.a $(OBJECTS) $(EXTRAOBJS)
 	ranlib libbdes.a
 	# mv libblarg.a lib
 
 $(SUBDIRS): FORCE
+	echo Entering directory $@
 	cd $@; $(MAKE)
 
 $(TARGET): $(OBJECTS)

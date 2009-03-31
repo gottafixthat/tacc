@@ -20,11 +20,13 @@
 
 #include <qprinter.h>
 #include <qstring.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qregexp.h>
 #include <qapplication.h>
 #include <qlayout.h>
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 #include <FParse.h>
 
@@ -55,7 +57,7 @@ Tab_VoIP::Tab_VoIP
 
     // Create our widgets.
 
-    list = new QListView(this, "VoIP List");
+    list = new Q3ListView(this, "VoIP List");
     list->addColumn("DID");
     list->addColumn("Login");
     list->addColumn("Service");
@@ -73,7 +75,7 @@ Tab_VoIP::Tab_VoIP
     connect(addButton, SIGNAL(clicked()), this, SLOT(addVoIPService()));
 
     // Create the main layout to hold them all.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     ml->addWidget(list, 0);
 
@@ -81,7 +83,7 @@ Tab_VoIP::Tab_VoIP
     ml->addWidget(hline1, 0);
 
     // Now, create a box to hold our action buttons.
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     abl->addStretch(1);
     abl->addWidget(addButton, 0);
 
@@ -128,7 +130,7 @@ void Tab_VoIP::refreshVoIPList(int)
                     strcpy(provMethod, "Unknown");
                     break;
             }
-            QListViewItem *curItem = new QListViewItem(list, DB.curRow["DID"], DB.curRow["LoginID"], "", provMethod, DB.curRow["City"], DB.curRow["State"], DB.curRow["Country"]);
+            Q3ListViewItem *curItem = new Q3ListViewItem(list, DB.curRow["DID"], DB.curRow["LoginID"], "", provMethod, DB.curRow["City"], DB.curRow["State"], DB.curRow["Country"]);
 
         }
     }

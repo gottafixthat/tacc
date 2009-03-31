@@ -15,8 +15,10 @@
 #ifndef TE_MAIN_H
 #define TE_MAIN_H
 
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
 #include <qtabbar.h>
+//Added by qt3to4:
+#include <QCloseEvent>
 
 #include <TAAWidget.h>
 
@@ -52,7 +54,7 @@ protected:
     TE_LoginTypes   *tlogins;
     TE_Cities       *tcities;
     QTabBar         *theTabBar;
-    QWidgetStack    *qws;
+    Q3WidgetStack    *qws;
 
 };
 

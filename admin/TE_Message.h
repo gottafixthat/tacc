@@ -13,7 +13,9 @@
 #define TE_MESSAGE_H
 
 #include <qlineedit.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
+//Added by qt3to4:
+#include <QCloseEvent>
 
 #include <TAAWidget.h>
 
@@ -43,7 +45,7 @@ protected slots:
 protected:
     QLineEdit       *fromLine;
     QLineEdit       *msgSubject;
-    QMultiLineEdit  *msgText;
+    Q3MultiLineEdit  *msgText;
 
 };
 #endif // TE_Message_included

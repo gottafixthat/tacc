@@ -30,8 +30,10 @@
 #include "BString.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 #include <ADB.h>
 
 LoginTypeBillablesAdd::LoginTypeBillablesAdd
@@ -44,8 +46,8 @@ LoginTypeBillablesAdd::LoginTypeBillablesAdd
 	setCaption( "Add Billable Item" );
 
     // Create our widgets
-    itemList = new QListBox(this, "itemList");
-    connect(itemList, SIGNAL(doubleClicked(QListBoxItem *)), this, SLOT(listDoubleClicked(QListBoxItem *)));
+    itemList = new Q3ListBox(this, "itemList");
+    connect(itemList, SIGNAL(doubleClicked(Q3ListBoxItem *)), this, SLOT(listDoubleClicked(Q3ListBoxItem *)));
     //itemList->addColumn("Name");
     //itemList->addColumn("Description");
 
@@ -58,10 +60,10 @@ LoginTypeBillablesAdd::LoginTypeBillablesAdd
     connect(cancelButton, SIGNAL(pressed()), this, SLOT(cancelBillableItem()));
 
     // Setup our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(itemList, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -71,7 +73,7 @@ LoginTypeBillablesAdd::LoginTypeBillablesAdd
 	ADB	    DB;
 	char	tmpstr[1024];
 	
-	QStrList tmplist;
+	Q3StrList tmplist;
 
 	billableIDX = NULL;
 
@@ -125,7 +127,7 @@ void LoginTypeBillablesAdd::addBillableItem()
 	done(Accepted);
 }
 
-void LoginTypeBillablesAdd::listDoubleClicked(QListBoxItem *)
+void LoginTypeBillablesAdd::listDoubleClicked(Q3ListBoxItem *)
 {
     addBillableItem();
 }

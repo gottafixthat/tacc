@@ -20,11 +20,15 @@
 
 #include <ADB.h>
 
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QLayout>
+#include <QtCore/QTimer>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+//Added by qt3to4:
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <QtGui/QLabel>
 
 #include <TAA.h>
 #include "DIDManager.h"
@@ -36,7 +40,7 @@ DIDManager::DIDManager
 	const char* name
 ) : TAAWidget( parent, name )
 {
-    setCaption( "DID Manager" );
+    setWindowTitle( "DID Manager" );
 
 }
 
@@ -112,7 +116,7 @@ DIDManagerAdd::DIDManagerAdd
 
     QLabel *npaLabel = new QLabel(this, "npaLabel");
     npaLabel->setText("NPA/NXX:");
-    npaLabel->setAlignment(AlignRight|AlignVCenter);
+    npaLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     npa = new QLineEdit(this, "npa");
     npa->setInputMask("999");
@@ -121,7 +125,7 @@ DIDManagerAdd::DIDManagerAdd
 
     QLabel *nxxLabel = new QLabel(this, "nxxLabel");
     nxxLabel->setText("/");
-    nxxLabel->setAlignment(AlignRight|AlignVCenter);
+    nxxLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     nxx = new QLineEdit(this, "nxx");
     nxx->setMaxLength(3);
@@ -155,7 +159,7 @@ DIDManagerAdd::DIDManagerAdd
     QLabel *reserveDateLabel = new QLabel(this, "reserveDateLabel");
     reserveDateLabel->setText("Reserve Date:");
 
-    reserveDate = new QDateEdit(this);
+    reserveDate = new Q3DateEdit(this);
     reserveDate->setDate(QDate::currentDate().addDays(90));
     reserveDate->setEnabled(false);
     connect(reserved, SIGNAL(activated(int)), this, SLOT(reserveTypeChanged(int)));
@@ -171,15 +175,15 @@ DIDManagerAdd::DIDManagerAdd
     connect(doneButton, SIGNAL(clicked()), this, SLOT(doneClicked()));
 
     // Setup our layout now.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QBoxLayout  *npanxxb = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *npanxxb = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     npanxxb->addWidget(npa, 0);
     npanxxb->addWidget(nxxLabel, 0);
     npanxxb->addWidget(nxx, 0);
     npanxxb->addStretch(1);
 
-    QGridLayout *gl = new QGridLayout(3, 5);
+    Q3GridLayout *gl = new Q3GridLayout(3, 5);
     int rowNum = 0;
     gl->addWidget(vendorListLabel,      rowNum, 0);
     gl->addWidget(vendorList,           rowNum, 1);
@@ -215,7 +219,7 @@ DIDManagerAdd::DIDManagerAdd
     ml->addLayout(gl, 1);
 
     // Add the button layout.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addWidget(messageArea, 0);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);

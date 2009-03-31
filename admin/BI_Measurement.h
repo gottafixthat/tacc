@@ -28,11 +28,11 @@
 #include <qwidget.h>
 #include <qlabel.h>
 #include <qcheckbox.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 #include <TAAWidget.h>
 #include <ADB.h>
 
@@ -52,19 +52,19 @@ public:
     void    setItemNumber(long newItemNumber);
 
 protected:
-    QListView       *measureList;
+    Q3ListView       *measureList;
     QCheckBox       *isMeasured;
     QComboBox       *measuredFrom;
     QLineEdit       *additionalPrice;
     QLineEdit       *baseQty;
     QCheckBox       *isIncremental;
     QLineEdit       *minIncrement;
-    QMultiLineEdit  *additionalDescription;
+    Q3MultiLineEdit  *additionalDescription;
     QPushButton     *saveButton;
 
 protected slots:
     void            checkForSave();
-    virtual void    listItemSelected(QListViewItem *curItem);
+    virtual void    listItemSelected(Q3ListViewItem *curItem);
     virtual void    measuredChanged()                       { checkForSave(); }
     virtual void    measuredFromChanged(int)                { checkForSave(); }
     virtual void    priceChanged(const QString &)           { checkForSave(); }

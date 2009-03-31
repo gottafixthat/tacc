@@ -33,13 +33,17 @@
 #include <qregexp.h>
 #include <qmessagebox.h>
 #include <qapplication.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 
 DomainAliases::DomainAliases(QWidget *parent, const char *name)
    : TAAWidget(parent, name)
 {
     setCaption("Email Alias List");
     // Create the widgets we'll need
-    aliasList = new QListView(this, "Alias List");
+    aliasList = new Q3ListView(this, "Alias List");
     aliasList->addColumn("Address");
     aliasList->addColumn("Domain");
     aliasList->addColumn("Mailbox");
@@ -84,11 +88,11 @@ DomainAliases::DomainAliases(QWidget *parent, const char *name)
     HorizLine *hline1 = new HorizLine(this);
 
     // Our layout now.  Very simple top down box.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(aliasList, 1);
 
     // Add in our "add" line.
-    QBoxLayout *addl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *addl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     addl->addWidget(address, 1);
     addl->addWidget(atLabel, 0);
     addl->addWidget(domainList, 0);
@@ -99,7 +103,7 @@ DomainAliases::DomainAliases(QWidget *parent, const char *name)
     ml->addLayout(addl, 0);
     ml->addWidget(hline1, 0);
 
-    QGridLayout *bl = new QGridLayout(1, 4);
+    Q3GridLayout *bl = new Q3GridLayout(1, 4);
     int curCol = 0;
     bl->addWidget(refreshButton,    0, curCol++);
     bl->addWidget(autoButton,       0, curCol++);
@@ -109,7 +113,7 @@ DomainAliases::DomainAliases(QWidget *parent, const char *name)
     bl->setRowStretch(0, 0);
 
     // Now, the "button bar layout" to keep things spaced nicely.
-    QBoxLayout  *bbl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout  *bbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     bbl->addStretch(1);
     bbl->addLayout(bl, 0);
     ml->addLayout(bbl);
@@ -169,7 +173,7 @@ void DomainAliases::setCustomerID(long custID)
             // how to handle the domain and not give "mail loops back to
             // myself" errors.
             if (strcmp(mailDB.curRow["Mailbox"], mailDB.curRow["Address"])) {
-                (void) new QListViewItem(aliasList,
+                (void) new Q3ListViewItem(aliasList,
                                          AddrPart,
                                          DomainPart,
                                          mbstr,
@@ -287,7 +291,7 @@ void DomainAliases::addAlias()
 
     if (address->text().length()) strcpy(tmpAddr, (const char *) address->text());
     else strcpy(tmpAddr, "[Any Address]");
-    (void) new QListViewItem(aliasList,
+    (void) new Q3ListViewItem(aliasList,
                              tmpAddr,
                              domainList->currentText(),
                              loginList->currentText(),
@@ -329,7 +333,7 @@ void DomainAliases::addAlias()
 
 void DomainAliases::delAlias()
 {
-    QListViewItem   *curItem = aliasList->currentItem();
+    Q3ListViewItem   *curItem = aliasList->currentItem();
     if (!curItem) return;
 
     // Prompt the user and make sure they want to delete the selected

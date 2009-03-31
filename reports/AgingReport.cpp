@@ -13,9 +13,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 #include <qdatetime.h>
 
 #include <BlargDB.h>
@@ -36,15 +36,15 @@ AgingReport::AgingReport(QWidget* parent, const char* name) :
 	setCaption( "Aging Report" );
 	setTitle("Aging Report");
 	
-	repBody->setColumnText(0, "Cust ID");       repBody->setColumnAlignment(0, AlignLeft);
-	repBody->addColumn("Full Name");            repBody->setColumnAlignment(1, AlignLeft);
-	repBody->addColumn("Contact");              repBody->setColumnAlignment(2, AlignLeft);
-	repBody->addColumn("Current");              repBody->setColumnAlignment(3, AlignRight);
-	repBody->addColumn("0-30");                 repBody->setColumnAlignment(4, AlignRight);
-	repBody->addColumn("31-60");                repBody->setColumnAlignment(5, AlignRight);
-	repBody->addColumn("60-90");                repBody->setColumnAlignment(6, AlignRight);
-	repBody->addColumn("90+");                  repBody->setColumnAlignment(7, AlignRight);
-	repBody->addColumn("Total");                repBody->setColumnAlignment(8, AlignRight);
+	repBody->setColumnText(0, "Cust ID");       repBody->setColumnAlignment(0, Qt::AlignLeft);
+	repBody->addColumn("Full Name");            repBody->setColumnAlignment(1, Qt::AlignLeft);
+	repBody->addColumn("Contact");              repBody->setColumnAlignment(2, Qt::AlignLeft);
+	repBody->addColumn("Current");              repBody->setColumnAlignment(3, Qt::AlignRight);
+	repBody->addColumn("0-30");                 repBody->setColumnAlignment(4, Qt::AlignRight);
+	repBody->addColumn("31-60");                repBody->setColumnAlignment(5, Qt::AlignRight);
+	repBody->addColumn("60-90");                repBody->setColumnAlignment(6, Qt::AlignRight);
+	repBody->addColumn("90+");                  repBody->setColumnAlignment(7, Qt::AlignRight);
+	repBody->addColumn("Total");                repBody->setColumnAlignment(8, Qt::AlignRight);
 	
     custIDCol = 0;
 
@@ -70,7 +70,7 @@ AgingReport::~AgingReport()
  */
 void AgingReport::refreshReport()
 {
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     emit(setStatus("Generating aging report..."));
     repBody->clear();
     ADB     DB;
@@ -147,7 +147,7 @@ void AgingReport::refreshReport()
             overdueSt30 = overdueSt30.sprintf("%.2f", overdue30);
             overdueSt60 = overdueSt60.sprintf("%.2f", overdue60);
             overdueSt90 = overdueSt90.sprintf("%.2f", overdue90);
-            QListViewItem *curItem = new QListViewItem(repBody,
+            Q3ListViewItem *curItem = new Q3ListViewItem(repBody,
                     DB.curRow["CustomerID"],
                     DB.curRow["FullName"],
                     DB.curRow["ContactName"],
@@ -168,7 +168,7 @@ void AgingReport::refreshReport()
     overdueSt60 = overdueSt60.sprintf("%.2f", totoverdue60);
     overdueSt90 = overdueSt90.sprintf("%.2f", totoverdue90);
     baltotalSt  = baltotalSt.sprintf("%.2f", baltotal);
-    QListViewItem *curItem = new QListViewItem(repBody,
+    Q3ListViewItem *curItem = new Q3ListViewItem(repBody,
             "Total",
             "",
             "",
@@ -189,7 +189,7 @@ void AgingReport::refreshReport()
  * Called when the user double clicks an entry in the report.
  * Opens the customer window.
  */
-void AgingReport::listItemSelected(QListViewItem *curItem)
+void AgingReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         if (curItem->key(custIDCol,0).toInt()) {

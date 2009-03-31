@@ -14,6 +14,8 @@
 #include "AllReports.h"
 
 #include <TAATools.h>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 AllReports::AllReports
 (
@@ -24,11 +26,11 @@ AllReports::AllReports
     hide();
 
     // Our main report menu
-    reportMenu = new QPopupMenu(this, "Reports Menu");
+    reportMenu = new Q3PopupMenu(this, "Reports Menu");
 
     // Manager reports, billing and stuff.
     if (isManager()) {
-        QPopupMenu  *billingReports = new QPopupMenu(this);
+        Q3PopupMenu  *billingReports = new Q3PopupMenu(this);
         billingReports->insertItem("Credit Card Payments by Type", this, SLOT(showCcPaymentsByTypeReport()));
         billingReports->insertItem("Check Payments", this, SLOT(showCheckPaymentsReport()));
         billingReports->insertItem("Aging Report", this, SLOT(showAgingReport()));
@@ -38,7 +40,7 @@ AllReports::AllReports
     }
     
     // DNS/Domain reports
-    QPopupMenu  *domainMenu = new QPopupMenu(this);
+    Q3PopupMenu  *domainMenu = new Q3PopupMenu(this);
     if (isManager()) {
         domainMenu->insertItem("&Active Domains", this, SLOT(showActiveDomainsReport()));
         domainMenu->insertItem("A&ll Domains", this, SLOT(showAllDomainsReport()));
@@ -49,7 +51,7 @@ AllReports::AllReports
     reportMenu->insertItem("&Domains", domainMenu);
 
     if (isAdmin()) {
-        QPopupMenu *salesMenu = new QPopupMenu(this);
+        Q3PopupMenu *salesMenu = new Q3PopupMenu(this);
         salesMenu->insertItem("By Service", this, SLOT(showSalesByServiceReport()));
 
         reportMenu->insertItem("Call Lo&gs", this, SLOT(showCallLogReport()));
@@ -74,7 +76,7 @@ AllReports::~AllReports()
 ** menu - Returns the menu we have created.
 */
 
-QPopupMenu *AllReports::menu()
+Q3PopupMenu *AllReports::menu()
 {
     return  reportMenu;
 }

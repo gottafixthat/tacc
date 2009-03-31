@@ -22,7 +22,7 @@
 #include <qcolor.h>
 #include <qstring.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qradiobutton.h>
 
 #include <TAAWidget.h>
@@ -44,7 +44,7 @@ protected:
     float   totSelected;
     
     int             myAccountTypes;
-    QListView       *list;
+    Q3ListView       *list;
     QLabel          *accountsOverdue;
     QLabel          *accountsSelected;
     QLabel          *selectedOverdue;
@@ -58,7 +58,7 @@ protected slots:
     virtual void cancelOverdue();
     virtual void selectNone();
     virtual void selectAll();
-    virtual void editCustomer(QListViewItem *curItem);
+    virtual void editCustomer(Q3ListViewItem *curItem);
     virtual void updateTotals();
     virtual void sendToCollections(void);
     

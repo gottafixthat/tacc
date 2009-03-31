@@ -25,13 +25,13 @@
 #include <qdatetm.h>
 #include <calendar.h>
 #include <qpainter.h>
-#include <qlistview.h>
-#include <qtextview.h>
-#include <qtextedit.h>
+#include <q3listview.h>
+#include <q3textview.h>
+#include <q3textedit.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 #include <qcheckbox.h>
 
 #include "Ticket.h"
@@ -55,7 +55,7 @@ protected:
     QLabel          *customerName;
     QComboBox       *ticketType;
     QLineEdit       *ticketSummary;
-    QTextEdit       *ticketNotes;
+    Q3TextEdit       *ticketNotes;
 
     QPushButton     *customerButton;
     QPushButton     *saveTicketButton;

@@ -25,8 +25,8 @@
 #include <qdatetm.h>
 #include <calendar.h>
 #include <qpainter.h>
-#include <qlistview.h>
-#include <qtextview.h>
+#include <q3listview.h>
+#include <q3textview.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -47,10 +47,10 @@ public slots:
     void        refreshTicketList();
 
 protected:
-    QListView   *ticketList;
+    Q3ListView   *ticketList;
 
 protected slots:
-    void        ticketSelected(QListViewItem *);
+    void        ticketSelected(Q3ListViewItem *);
 
 private:
     long        myCustomerID;

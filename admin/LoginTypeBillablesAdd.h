@@ -28,7 +28,7 @@
 
 #include <qdialog.h>
 #include <qpushbutton.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 
 class LoginTypeBillablesAdd : public QDialog
 {
@@ -46,7 +46,7 @@ public:
     virtual ~LoginTypeBillablesAdd();
 
 protected:
-    QListBox        *itemList;
+    Q3ListBox        *itemList;
     QPushButton     *addButton;
     QPushButton     *cancelButton;
 
@@ -56,7 +56,7 @@ private:
 	int				*billableIDX;
 	
 protected slots:
-    void            listDoubleClicked(QListBoxItem *);
+    void            listDoubleClicked(Q3ListBoxItem *);
     virtual void    cancelBillableItem();
 	virtual void	addBillableItem();
 };

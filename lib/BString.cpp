@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <mysql/mysql.h>
-#include <qstring.h>
-#include <qstrlist.h>
-#include <qregexp.h>
-#include <qdatetm.h>
+#include <QtCore/QString>
+#include <Qt3Support/q3strlist.h>
+#include <QtCore/QRegExp>
+#include <QtCore/QDateTime>
 #include <time.h>
 #include <ctype.h>
 #include <sys/timeb.h>
@@ -32,7 +32,7 @@
  
 const char * getField(char delim, int fieldNo, char * string)
 {
-	QStrList	qstrptr;
+	Q3StrList	qstrptr;
 	char		retStr[1024];
 	
 	splitString(string, delim, qstrptr, 0);
@@ -202,7 +202,7 @@ void QDateTimetomyTimeStamp(char *myTimeStamp, QDateTime theDate)
 **                    returned.
 */
 
-void splitString(const char *src, char delim, QStrList &dst, int Fold)
+void splitString(const char *src, char delim, Q3StrList &dst, int Fold)
 {
 	char tmpstr[1024];
 	int  tmpstrpos = 0;
@@ -242,7 +242,7 @@ void splitString(const char *src, char delim, QStrList &dst, int Fold)
 **             dst   - char * - The destination string
 */
 
-void joinString(QStrList *src, char *delim, char *dst)
+void joinString(Q3StrList *src, char *delim, char *dst)
 {
 	QString	tmpqstr;
 

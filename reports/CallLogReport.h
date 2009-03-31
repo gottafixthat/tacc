@@ -25,6 +25,9 @@
 
 #include "Report.h"
 #include <qcombobox.h>
+//Added by qt3to4:
+#include <QCloseEvent>
+#include <QEvent>
 
 class CallLogReport : public Report
 {
@@ -48,7 +51,7 @@ protected:
 
 protected slots:
     virtual void filterActivated(int);
-    virtual void listItemSelected(QListViewItem *curItem);
+    virtual void listItemSelected(Q3ListViewItem *curItem);
     virtual void QCloseEvent(QEvent *)              { delete this; }
 
 };

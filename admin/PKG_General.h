@@ -34,7 +34,7 @@
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 #include <qspinbox.h>
 #include <qcombobox.h>
 #include <TAAWidget.h>
@@ -57,7 +57,7 @@ public:
 
 protected:
     QLineEdit       *itemName;
-    QMultiLineEdit  *description;
+    Q3MultiLineEdit  *description;
     QCheckBox       *isActive;
     QCheckBox       *showIncluded;
     QCheckBox       *isPrivate;

@@ -14,7 +14,7 @@
 #define TACCUPGRADE_H
 
 #include <qstring.h>
-#include <qptrlist.h>
+#include <q3ptrlist.h>
 
 
 int main( int argc, char ** argv );

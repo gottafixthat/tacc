@@ -1,55 +1,20 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DNSUtils - SQL based DNS Utility functions.  These are all functions
-**            that don't have widgets associated with them.  Functions
-**            such as creating a DNS entry from a template, creating a
-**            "blank" entry, etc.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DNSUtils.cpp,v $
-** Revision 1.8  2004/03/25 00:56:28  marc
-** Brown bag bug with the regex replacement of the domain.
-**
-** Revision 1.7  2004/03/15 22:30:47  marc
-** Updated QString replace calls with regexps
-**
-** Revision 1.6  2004/01/04 20:00:30  marc
-** Added the Active column to the ZoneInfo table
-**
-** Revision 1.5  2004/01/03 18:11:26  marc
-** *** empty log message ***
-**
-** Revision 1.4  2004/01/03 00:10:05  marc
-** More minor changes to the qstring::replace
-**
-** Revision 1.3  2004/01/03 00:00:22  marc
-** Minor tweaks to the domain name parsing.
-**
-** Revision 1.2  2004/01/02 23:56:14  marc
-** Domain Template Editor and SQL based DNS is (for the most part) fully functional and ready to use.
-**
-** Revision 1.1  2004/01/02 14:59:01  marc
-** DNSTemplatePicker complete, added DNSUtils
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
+
+#include <QtCore/QString>
+#include <QtCore/QRegExp>
 
 #include <TAATools.h>
 #include <ADB.h>
 #include <Cfg.h>
-#include <qstring.h>
-#include <qregexp.h>
 
 // Utility functions
 
@@ -193,4 +158,6 @@ int setupDNSFromTemplate(int templateID, const char *domain, long customerID, co
 
 
 
+
+// vim: expandtab
 

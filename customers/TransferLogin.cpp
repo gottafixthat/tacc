@@ -15,6 +15,9 @@
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -34,7 +37,7 @@ TransferLogin::TransferLogin(QWidget* parent, const char* name) :
     QLabel *effectiveDateLabel = new QLabel("Effective Date:", this);
     effectiveDateLabel->setAlignment(AlignRight|AlignVCenter);
 
-    effectiveDate = new QDateEdit(QDate::currentDate(), this, "effectiveDate");
+    effectiveDate = new Q3DateEdit(QDate::currentDate(), this, "effectiveDate");
 
     QPushButton *transferButton = new QPushButton("&Transfer", this, "transferButton");
     connect(transferButton, SIGNAL(clicked()), this, SLOT(doTransfer()));
@@ -43,11 +46,11 @@ TransferLogin::TransferLogin(QWidget* parent, const char* name) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelTransfer()));
 
     // Now the layout.  Made much simpler by using the CustomerSearch widget.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     ml->addWidget(messageLabel, 0);
     ml->addWidget(custSearch, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addSpacing(10);
     bl->addWidget(effectiveDateLabel, 0);
     bl->addWidget(effectiveDate, 0);

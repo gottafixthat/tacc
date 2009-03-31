@@ -14,6 +14,9 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -26,14 +29,14 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
 	setCaption( "Edit Payment Terms" );
 
     QLabel  *descLabel = new QLabel(this, "descLabel");
-    descLabel->setAlignment(AlignRight|AlignVCenter);
+    descLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     descLabel->setText("Description:");
 
     desc = new QLineEdit(this, "desc");
     desc->setMaxLength(60);
 
     QLabel *dueDaysPrefix = new QLabel(this, "dueDaysPrefix");
-    dueDaysPrefix->setAlignment(AlignRight|AlignVCenter);
+    dueDaysPrefix->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     dueDaysPrefix->setText("Net due in");
 
     dueDays = new QLineEdit(this, "dueDays");
@@ -43,11 +46,11 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
     dueDays->setMaximumWidth(3 * charWidth);
 
     QLabel *dueDaysSuffix = new QLabel(this, "dueDaysSuffix");
-    dueDaysSuffix->setAlignment(AlignLeft|AlignVCenter);
+    dueDaysSuffix->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     dueDaysSuffix->setText("days.");
 
     QLabel *graceDaysPrefix = new QLabel(this, "graceDaysPrefix");
-    graceDaysPrefix->setAlignment(AlignRight|AlignVCenter);
+    graceDaysPrefix->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     graceDaysPrefix->setText("Grace period of");
 
     graceDays = new QLineEdit(this, "graceDays");
@@ -55,11 +58,11 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
     graceDays->setMaximumWidth(3 * charWidth);
 
     QLabel *graceDaysSuffix = new QLabel(this, "graceDaysSuffix");
-    graceDaysSuffix->setAlignment(AlignLeft|AlignVCenter);
+    graceDaysSuffix->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     graceDaysSuffix->setText("days.");
 
     QLabel *financePctPrefix = new QLabel(this, "financePctPrefix");
-    financePctPrefix->setAlignment(AlignRight|AlignVCenter);
+    financePctPrefix->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     financePctPrefix->setText("Charge finance charge of");
     
     financePct = new QLineEdit(this, "financePct");
@@ -67,7 +70,7 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
     financePct->setMaximumWidth(5 * charWidth);
     
     QLabel *financePctSuffix = new QLabel(this, "financePctSuffix");
-    financePctSuffix->setAlignment(AlignLeft|AlignVCenter);
+    financePctSuffix->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     financePctSuffix->setText("percent, starting");
 
     financeDays = new QLineEdit(this, "financeDays");
@@ -75,11 +78,11 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
     financeDays->setMaximumWidth(3 * charWidth);
     
     QLabel *financeDaysSuffix = new QLabel(this, "financeDaysSuffix");
-    financeDaysSuffix->setAlignment(AlignLeft|AlignVCenter);
+    financeDaysSuffix->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     financeDaysSuffix->setText("days after grace period.");
 
     QLabel *discountPctPrefix = new QLabel(this, "discountPctPrefix");
-    discountPctPrefix->setAlignment(AlignRight|AlignVCenter);
+    discountPctPrefix->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     discountPctPrefix->setText("Auto apply discount of");
 
     discountPct = new QLineEdit(this, "discountPct");
@@ -87,7 +90,7 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
     discountPct->setMaximumWidth(5 * charWidth);
     
     QLabel *discountPctSuffix = new QLabel(this, "discountPctSuffix");
-    discountPctSuffix->setAlignment(AlignLeft|AlignVCenter);
+    discountPctSuffix->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     discountPctSuffix->setText("percent if paid within");
 
     discountDays = new QLineEdit(this, "discountPct");
@@ -95,7 +98,7 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
     discountDays->setMaximumWidth(3 * charWidth);
 
     QLabel *discountDaysSuffix = new QLabel(this, "discountDaysSuffix");
-    discountDaysSuffix->setAlignment(AlignLeft|AlignVCenter);
+    discountDaysSuffix->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
     discountDaysSuffix->setText("days before due date.");
 
     QPushButton *saveButton = new QPushButton(this, "saveButton");
@@ -107,9 +110,9 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelPaymentTerms()));
 
     // Create our layout
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
-    QGridLayout *gl = new QGridLayout(5, 5);
+    Q3GridLayout *gl = new Q3GridLayout(5, 5);
     int curRow = 0;
     gl->addWidget(descLabel,            curRow, 0);
     gl->addMultiCellWidget(desc,        curRow, curRow, 1, 4);
@@ -151,7 +154,7 @@ PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int Intern
     ml->addLayout(gl, 0);
     ml->addStretch(1);
 
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

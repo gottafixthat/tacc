@@ -34,7 +34,9 @@
 #include <ADB.h>
 #include <qmessagebox.h>
 #include <qlayout.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 
 BI_Main::BI_Main
@@ -46,14 +48,14 @@ BI_Main::BI_Main
 	setCaption( "Edit Billables" );
 
     // Create our widgets.
-    billableList = new QListView(this, "billableList");
+    billableList = new Q3ListView(this, "billableList");
     billableList->addColumn("Billables");
     billableList->addColumn("Act");
     billableList->addColumn("Pri");
     billableList->setColumnAlignment(1, AlignCenter);
     billableList->setColumnAlignment(2, AlignRight);
     billableList->setAllColumnsShowFocus(TRUE);
-    connect(billableList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(billableSelected(QListViewItem *)));
+    connect(billableList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(billableSelected(Q3ListViewItem *)));
 
     newButton = new QPushButton(this, "newButton");
     newButton->setText("&New");
@@ -71,10 +73,10 @@ BI_Main::BI_Main
     theTabBar->addTab(new QTab("&Pricing"));
     theTabBar->addTab(new QTab("&Measurement"));
 
-    QButtonGroup *bGroup = new QButtonGroup(this, "bGroup");
+    Q3ButtonGroup *bGroup = new Q3ButtonGroup(this, "bGroup");
     bGroup->setFocusPolicy(QWidget::NoFocus);
 
-    qws = new QWidgetStack(bGroup, "WidgetStack");
+    qws = new Q3WidgetStack(bGroup, "WidgetStack");
     qws->setFocusPolicy(QWidget::NoFocus);
     connect(theTabBar, SIGNAL(selected(int)), qws, SLOT(raiseWidget(int)));
 
@@ -95,24 +97,24 @@ BI_Main::BI_Main
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
 
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QBoxLayout *wl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *wl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     wl->addWidget(billableList, 0);
 
     // The right side layout
-    QBoxLayout *rsl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    Q3BoxLayout *rsl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0);
     rsl->addWidget(theTabBar, 0);
 
     // The button group to keep things looking pretty
-    QBoxLayout *bgl = new QBoxLayout(bGroup, QBoxLayout::TopToBottom, 2);
+    Q3BoxLayout *bgl = new Q3BoxLayout(bGroup, Q3BoxLayout::TopToBottom, 2);
     bgl->addWidget(qws, 1);
     rsl->addWidget(bGroup, 1);
     wl->addLayout(rsl, 1);
     ml->addLayout(wl, 1);
 
     // Our buttons
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addWidget(newButton, 0);
     bl->addWidget(deleteButton, 0);
     bl->addStretch(1);
@@ -153,7 +155,7 @@ void BI_Main::loadBillables()
 
         sprintf(priorityStr, "%5d", atoi(DB.curRow["Priority"]));
 
-        (void) new QListViewItem(billableList, 
+        (void) new Q3ListViewItem(billableList, 
           DB.curRow["ItemID"], 
           activeStr, 
           priorityStr,
@@ -167,7 +169,7 @@ void BI_Main::loadBillables()
 **                    fills the various tabs with the information from it.
 */
 
-void BI_Main::billableSelected(QListViewItem *curItem)
+void BI_Main::billableSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         tgeneral->setItemNumber(atol(curItem->key(3,0)));
@@ -184,7 +186,7 @@ void BI_Main::billableSelected(QListViewItem *curItem)
 
 void BI_Main::newBillable()
 {
-    QListViewItem   *newItem;
+    Q3ListViewItem   *newItem;
     ADBTable        BIDB;
     BIDB.setTableName("Billables");
 
@@ -200,7 +202,7 @@ void BI_Main::newBillable()
 
     BIDB.ins();
 
-    newItem = new QListViewItem(billableList,
+    newItem = new Q3ListViewItem(billableList,
       BIDB.getStr("ItemID"),
       "N",
       "    0",
@@ -225,7 +227,7 @@ void BI_Main::deleteBillable()
 	char	tmpstr[1024];
 	int		itemNo = 0;
 	int		count = 0;
-	QListViewItem   *curItem = NULL;
+	Q3ListViewItem   *curItem = NULL;
 	
 	curItem = billableList->currentItem();
 	if (curItem != NULL) itemNo = atoi(curItem->key(3,0));
@@ -268,7 +270,7 @@ void BI_Main::deleteBillable()
 
 void BI_Main::updateBillable()
 {
-    QListViewItem   *curItem    = billableList->currentItem();
+    Q3ListViewItem   *curItem    = billableList->currentItem();
     if (curItem == NULL) return;
     
     ADBTable    BIDB;

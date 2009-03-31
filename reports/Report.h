@@ -29,11 +29,11 @@
 #include <TAAWidget.h>
 
 #include <qdatetm.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
 //#include <calendar.h>
 #include <qpainter.h>
-#include <qlistview.h>
-#include <qtextview.h>
+#include <q3listview.h>
+#include <q3textview.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -42,6 +42,9 @@
 #include <qcheckbox.h>
 #include <qstring.h>
 #include <qdialog.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <QCloseEvent>
 
 #include "calendar.h"
 
@@ -118,7 +121,7 @@ public slots:
     virtual void userButtonClickedInt();
 
     virtual void editFilters()          {};
-    virtual void listItemSelected(QListViewItem *)      {};
+    virtual void listItemSelected(Q3ListViewItem *)      {};
 #ifdef USEQWT
 //    virtual void plotGraph(QwtPlot *plot);
 #endif
@@ -132,7 +135,7 @@ protected slots:
 
 protected:
     QLabel      *reportTitle;
-    QListView   *repBody;
+    Q3ListView   *repBody;
     QLabel      *startDateLabel;
     QLabel      *endDateLabel;
     QPushButton *generateButton;
@@ -144,13 +147,13 @@ protected:
     QPushButton *filterButton;
     QComboBox   *dateList;
     QPushButton *userButton;
-    QDateEdit   *startDateCal;
-    QDateEdit   *endDateCal;
-    QTextView   *userText;
+    Q3DateEdit   *startDateCal;
+    Q3DateEdit   *endDateCal;
+    Q3TextView   *userText;
 
     // The layouts so that they can be added to by things that inherit from us
-    QBoxLayout      *dl;    // Date Layout (the date bar)
-    QBoxLayout      *bl;    // Button Layout (the button bar)
+    Q3BoxLayout      *dl;    // Date Layout (the date bar)
+    Q3BoxLayout      *bl;    // Button Layout (the button bar)
 
 private:
     // DateInput       *startDateCal;
@@ -198,8 +201,8 @@ protected:
     QPushButton     *updateButton;
     QPushButton     *closeButton;
 
-    QBoxLayout      *ml;
-    QBoxLayout      *bl;
+    Q3BoxLayout      *ml;
+    Q3BoxLayout      *bl;
 
     int             myAllowSave;
     QString         myReportName;

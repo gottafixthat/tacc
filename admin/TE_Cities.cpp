@@ -12,6 +12,8 @@
 
 #include <qapplication.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 #include <BlargDB.h>
 
@@ -23,14 +25,14 @@ TE_Cities::TE_Cities(QWidget* parent, const char* name) :
     allCitiesButton = new QCheckBox("Send to customers in all cities", this, "allCitiesButton");
     connect(allCitiesButton, SIGNAL(clicked()), this, SLOT(allCitiesClicked()));
 
-    cityList = new QListView(this, "cityList");
+    cityList = new Q3ListView(this, "cityList");
     cityList->addColumn("City");
     cityList->addColumn("State");
     cityList->setAllColumnsShowFocus(TRUE);
     cityList->setMultiSelection(TRUE);
     
     // Basic layout, box top to bottom.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(allCitiesButton, 0);
     ml->addWidget(cityList, 1);
 
@@ -54,13 +56,13 @@ TE_Cities::~TE_Cities()
 
 void TE_Cities::loadCities()
 {
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     
     ADB     DB;
     
     DB.query("select distinct City, State from Addresses where RefFrom = %d", REF_CUSTOMER);
     if (DB.rowCount) while (DB.getrow()) {
-        (void) new QListViewItem(cityList, DB.curRow["City"], DB.curRow["State"]);
+        (void) new Q3ListViewItem(cityList, DB.curRow["City"], DB.curRow["State"]);
     }
     
     QApplication::restoreOverrideCursor();
@@ -96,7 +98,7 @@ int TE_Cities::allCities()
 int TE_Cities::isIncluded(const char *City)
 {
     int             RetVal = 0;
-    QListViewItem   *curItem = NULL;
+    Q3ListViewItem   *curItem = NULL;
 
     if (allCitiesButton->isChecked()) {
         RetVal = 1;

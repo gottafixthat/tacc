@@ -15,8 +15,8 @@
 #define TEMPLATEEDITOR_H
 
 #include <qpushbutton.h>
-#include <qlistview.h>
-#include <qtextedit.h>
+#include <q3listview.h>
+#include <q3textedit.h>
 #include <qlineedit.h>
 #include <TAAWidget.h>
 
@@ -34,13 +34,13 @@ public:
 protected:
     QPushButton     *deleteButton;
     QPushButton     *saveButton;
-    QListView       *templateList;
+    Q3ListView       *templateList;
     QLineEdit       *templateName;
     QLineEdit       *subject;
-    QTextEdit       *editor;
+    Q3TextEdit       *editor;
 
 protected slots:
-    virtual void    templateSelected(QListViewItem *curItem);
+    virtual void    templateSelected(Q3ListViewItem *curItem);
     virtual void    newTemplate();
     virtual void    saveTemplate();
     virtual void    deleteTemplate();

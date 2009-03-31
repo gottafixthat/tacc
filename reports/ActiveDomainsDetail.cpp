@@ -7,9 +7,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -60,7 +60,7 @@ void ActiveDomainsDetail::refreshReport()
     while (DB.getrow()) {
         if (atoi(DB.curRow["Active"])) strcpy(tmpStr, "Yes");
         else strcpy(tmpStr, "No");
-        (void) new QListViewItem(repBody, DB.curRow["DomainName"], DB.curRow["CustomerID"], DB.curRow["LoginID"], tmpStr);
+        (void) new Q3ListViewItem(repBody, DB.curRow["DomainName"], DB.curRow["CustomerID"], DB.curRow["LoginID"], tmpStr);
     }
     emit(setStatus(""));
 }
@@ -92,7 +92,7 @@ void ActiveDomainsDetail::setDomainType(int newDomainType)
 **                    is double clicked.
 */
 
-void ActiveDomainsDetail::listItemSelected(QListViewItem *curItem)
+void ActiveDomainsDetail::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         emit(openCustomer(atol(curItem->key(myCustIDColumn,0))));

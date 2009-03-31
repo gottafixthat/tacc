@@ -15,8 +15,11 @@
 #include <qdatetime.h>
 #include <qapplication.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
-#include <qbuttongroup.h>
+#include <q3groupbox.h>
+#include <q3buttongroup.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -34,60 +37,60 @@ OverdueAccounts::OverdueAccounts(QWidget* parent, const char* name, int AccountT
 	setCaption( "Overdue Account Processing (Active Accounts)" );
 	
     // Create the widgets.
-    list = new QListView(this, "list");
+    list = new Q3ListView(this, "list");
     list->addColumn("Cust ID");
     list->addColumn("Customer Name");
     list->addColumn("Primary Login");
     list->addColumn("Balance");
-    list->setColumnAlignment(3, AlignRight);
+    list->setColumnAlignment(3, Qt::AlignRight);
     list->addColumn("Overdue");
-    list->setColumnAlignment(4, AlignRight);
+    list->setColumnAlignment(4, Qt::AlignRight);
     list->addColumn("Oldest");
-    list->setColumnAlignment(5, AlignRight);
+    list->setColumnAlignment(5, Qt::AlignRight);
     list->addColumn("Grace");
-    list->setColumnAlignment(6, AlignRight);
+    list->setColumnAlignment(6, Qt::AlignRight);
 	list->setAllColumnsShowFocus(TRUE);
 	list->setMultiSelection(TRUE);
-    connect(list, SIGNAL(doubleClicked(QListViewItem *)), SLOT(editCustomer(QListViewItem *)));
-    connect(list, SIGNAL(returnPressed(QListViewItem *)), SLOT(editCustomer(QListViewItem *)));
+    connect(list, SIGNAL(doubleClicked(Q3ListViewItem *)), SLOT(editCustomer(Q3ListViewItem *)));
+    connect(list, SIGNAL(returnPressed(Q3ListViewItem *)), SLOT(editCustomer(Q3ListViewItem *)));
     connect(list, SIGNAL(selectionChanged()), SLOT(updateTotals()));
 
-    QGroupBox *grpBox = new QGroupBox(2, Horizontal, "Summary Information", this, "grpBox");
+    Q3GroupBox *grpBox = new Q3GroupBox(2, Qt::Horizontal, "Summary Information", this, "grpBox");
 
     QLabel *accountsOverdueLabel = new QLabel(grpBox, "accountsOverdueLabel");
-    accountsOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    accountsOverdueLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountsOverdueLabel->setText("Accounts Overdue:");
 
     accountsOverdue = new QLabel(grpBox, "accountsOverdue");
-    accountsOverdue->setAlignment(AlignRight|AlignVCenter);
+    accountsOverdue->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountsOverdue->setText("");
 	
     QLabel *accountsSelectedLabel = new QLabel(grpBox, "accountsSelectedLabel");
-    accountsSelectedLabel->setAlignment(AlignRight|AlignVCenter);
+    accountsSelectedLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountsSelectedLabel->setText("Accounts Selected:");
 
     accountsSelected = new QLabel(grpBox, "accountsSelected");
-    accountsSelected->setAlignment(AlignRight|AlignVCenter);
+    accountsSelected->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountsSelected->setText("");
 	
     QLabel *selectedOverdueLabel = new QLabel(grpBox, "selectedOverdueLabel");
-    selectedOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    selectedOverdueLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     selectedOverdueLabel->setText("Total from selected:");
 
     selectedOverdue = new QLabel(grpBox, "selectedOverdue");
-    selectedOverdue->setAlignment(AlignRight|AlignVCenter);
+    selectedOverdue->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     selectedOverdue->setText("");
 
     QLabel *amountOverdueLabel = new QLabel(grpBox, "amountOverdueLabel");
-    amountOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    amountOverdueLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     amountOverdueLabel->setText("Total Amount Overdue:");
 
     amountOverdue = new QLabel(grpBox, "amountOverdue");
-    amountOverdue->setAlignment(AlignRight|AlignVCenter);
+    amountOverdue->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     amountOverdue->setText("");
 
     // Now the button group.
-    QButtonGroup *butGrp = new QButtonGroup(1, Horizontal, "Action", this, "butGrp");
+    Q3ButtonGroup *butGrp = new Q3ButtonGroup(1, Qt::Horizontal, "Action", this, "butGrp");
     butGrp->setExclusive(true);
     noAction = new QRadioButton("Non&e", butGrp, "noAction");
     sendReminder = new QRadioButton("&Send Reminder", butGrp, "sendReminder");
@@ -111,16 +114,16 @@ OverdueAccounts::OverdueAccounts(QWidget* parent, const char* name, int AccountT
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelOverdue()));
 
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     ml->addWidget(list, 1);
 
     // A left to right layout for the two group boxes and the buttons.
-    QBoxLayout *sl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *sl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     sl->addWidget(grpBox, 0);
     sl->addWidget(butGrp, 0);
     sl->addStretch(1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     bl->addStretch(1);
     bl->addWidget(selectNoneButton, 0);
     bl->addWidget(selectAllButton, 0);
@@ -180,7 +183,7 @@ void OverdueAccounts::fillList(void)
     
     char        oldestDue[64];
     
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
 
     theDate = QDate::currentDate();
     QDatetomyDate(today, theDate);
@@ -214,7 +217,7 @@ void OverdueAccounts::fillList(void)
         
         // Only add them if the oldest date > 0 days.
         if (atoi(oldestDue)) {
-            (void) new QListViewItem(list, 
+            (void) new Q3ListViewItem(list, 
                                      DB.curRow["CustomerID"], 
                                      DB.curRow["FullName"], 
                                      DB.curRow["PrimaryLogin"], 
@@ -250,7 +253,7 @@ void OverdueAccounts::cancelOverdue()
 
 void OverdueAccounts::selectNone()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     list->hide();
     curItem = list->firstChild();
@@ -269,7 +272,7 @@ void OverdueAccounts::selectNone()
 
 void OverdueAccounts::selectAll()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     list->hide();
     curItem = list->firstChild();
@@ -288,7 +291,7 @@ void OverdueAccounts::selectAll()
 **                the customer record.
 */
 
-void OverdueAccounts::editCustomer(QListViewItem *curItem)
+void OverdueAccounts::editCustomer(Q3ListViewItem *curItem)
 {
     long CustID = atol(curItem->key(0, 1));
     EditCustomer *custEdit;
@@ -307,7 +310,7 @@ void OverdueAccounts::updateTotals()
     float   amtSelected = 0.0;
     char    tmpStr[512];
     
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     curItem = list->firstChild();
     while (curItem != NULL) {
@@ -418,13 +421,13 @@ void OverdueAccounts::sendReminders(void)
     QDatetomyDate(today, theDate);
 
     strcpy(tmpDomain, "");
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     long            curCount = 0;
 
     emit(setStatus("Sending reminders..."));
     
     
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
 
     curItem = list->firstChild();
     while (curItem != NULL) {
@@ -549,12 +552,12 @@ void OverdueAccounts::lockAccounts(void)
     theDate = QDate::currentDate();
     QDatetomyDate(today, theDate);
 
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     long            curCount = 0;
 
     emit(setStatus("Disabling logins..."));
     
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     // Create our Brass connection.
     BC  = new BrassClient();
     if (!BC->Connect()) {
@@ -600,7 +603,7 @@ void OverdueAccounts::lockAccounts(void)
                         QApplication::restoreOverrideCursor();
                         sprintf(tmpstr, "Unable to lock the account.\n\n%s", BC->ResponseStr(NULL));
                         QMessageBox::critical(this, "BRASS Error", tmpstr);
-                        QApplication::setOverrideCursor(waitCursor);
+                        QApplication::setOverrideCursor(Qt::waitCursor);
                     } else {
                         // Set the Active Flag on the login.
                         LDB.setValue("Active", (int) 0);

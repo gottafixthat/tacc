@@ -18,6 +18,8 @@
 #include <stdlib.h>
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 #include <ADB.h>
 
 #include <TAATools.h>
@@ -35,20 +37,20 @@ UserPrivs::UserPrivs
     setCaption("User Administration");
 
     // Create our widgets
-    userList = new QListView(this);
+    userList = new Q3ListView(this);
     userList->addColumn("User Name");
     userList->addColumn("Access");
     userList->setGeometry(5,5,150,250);
     userList->setMinimumSize(150,0);
     userList->setMaximumSize(150,32767);
     userList->setAllColumnsShowFocus(true);
-    connect(userList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(userSelected(QListViewItem *)));
-    connect(userList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(userSelected(QListViewItem *)));
+    connect(userList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(userSelected(Q3ListViewItem *)));
+    connect(userList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(userSelected(Q3ListViewItem *)));
 
     editArea = new UserEditor(this);
 
     // Create our layout.
-    QBoxLayout *mainLayout = new QBoxLayout(this, QBoxLayout::LeftToRight, 2, 2);
+    Q3BoxLayout *mainLayout = new Q3BoxLayout(this, Q3BoxLayout::LeftToRight, 2, 2);
     mainLayout->addWidget(userList, 0);
     mainLayout->addWidget(editArea, 1);
 
@@ -70,7 +72,7 @@ UserPrivs::~UserPrivs()
 **                list.  It pulls up their information from the database.
 */
 
-void UserPrivs::userSelected(QListViewItem* curItem)
+void UserPrivs::userSelected(Q3ListViewItem* curItem)
 {
     if (curItem) {
         // Get load the current user into the editor form.
@@ -91,7 +93,7 @@ void UserPrivs::refreshList()
     ADB             DB;
     char            levelStr[1024];
     AccessLevels    level;
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     bool            foundSel = false;
 
     userList->clear();
@@ -117,7 +119,7 @@ void UserPrivs::refreshList()
                     break;
             }
 
-            curItem = new QListViewItem(userList, DB.curRow["LoginID"], levelStr, DB.curRow["InternalID"]);
+            curItem = new Q3ListViewItem(userList, DB.curRow["LoginID"], levelStr, DB.curRow["InternalID"]);
 
             // Is this the user we previously had hilighted?  If so,
             // hilight it now.

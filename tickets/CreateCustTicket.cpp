@@ -24,11 +24,15 @@
 #include "CreateCustTicket.h"
 
 #include <qmessagebox.h>
-#include <qtextview.h>
+#include <q3textview.h>
 #include <qdatetm.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qlayout.h>
 #include <qcheckbox.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <TAA.h>
 #include <TAATools.h>
@@ -95,8 +99,8 @@ CreateCustTicket::CreateCustTicket
     ticketNotesLabel->setAlignment(AlignRight|AlignTop);
     ticketNotesLabel->setText("Notes/Detail:");
 
-    ticketNotes = new QTextEdit(this, "TicketNotes");
-    ticketNotes->setWordWrap(QTextEdit::WidgetWidth);
+    ticketNotes = new Q3TextEdit(this, "TicketNotes");
+    ticketNotes->setWordWrap(Q3TextEdit::WidgetWidth);
 
     // Now, create the buttons for our actions.
     customerButton = new QPushButton(this, "Customer Button");
@@ -114,10 +118,10 @@ CreateCustTicket::CreateCustTicket
     // Now, do the layout for the widget.
     // We'll do a top to bottom box, and then put a grid in the middle of it
     // for the tabular information.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Create a grid layout for the items the user can manipulate
-    QGridLayout *tl = new QGridLayout(3, 2, 2);
+    Q3GridLayout *tl = new Q3GridLayout(3, 2, 2);
     tl->setColStretch(0, 0);
     tl->setColStretch(1, 1);
 
@@ -158,7 +162,7 @@ CreateCustTicket::CreateCustTicket
     ml->addWidget(hline1, 0);
 
     // Add in our action buttons.
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     abl->addStretch(1);
     abl->addWidget(customerButton, 0);
     abl->addWidget(saveTicketButton, 0);

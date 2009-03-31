@@ -27,9 +27,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -102,7 +102,7 @@ void DNS_UnmanagedReport::refreshReport()
             if (atoi(DB.curRow["Active"])) strcpy(isActive, "Yes");
             else strcpy(isActive, "No");
 
-            (void) new QListViewItem(repBody, domainName, DB.curRow["LoginID"], domainType, DB.curRow["CustomerID"], isActive);
+            (void) new Q3ListViewItem(repBody, domainName, DB.curRow["LoginID"], domainType, DB.curRow["CustomerID"], isActive);
         }
     }
     
@@ -114,7 +114,7 @@ void DNS_UnmanagedReport::refreshReport()
 **                    is double clicked.
 */
 
-void DNS_UnmanagedReport::listItemSelected(QListViewItem *curItem)
+void DNS_UnmanagedReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         emit(openCustomer(atol(curItem->key(3,0))));

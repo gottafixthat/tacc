@@ -21,17 +21,20 @@
 
 #include "TAATools.h"
 #include "TAAWidget.h"
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlistview.h>
-#include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+//Added by qt3to4:
+#include <QtCore/QEvent>
+#include <QtGui/QCloseEvent>
 #include <calendar.h>
-#include <qtextview.h>
-#include <qpopupmenu.h>
-#include <qsqldatabase.h>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3popupmenu.h>
+#include <QtSql/QSqlDatabase>
 
 class ServerGroups : public TAAWidget
 {
@@ -55,10 +58,10 @@ protected slots:
     virtual void editClicked();
     virtual void deleteClicked();
     virtual void closeClicked();
-    virtual void itemDoubleClicked(QListViewItem *);
+    virtual void itemDoubleClicked(Q3ListViewItem *);
 
 protected:
-    QListView       *sgList;
+    Q3ListView       *sgList;
     QPushButton     *addButton;
     QPushButton     *editButton;
     QPushButton     *deleteButton;
@@ -98,7 +101,7 @@ protected:
     long            serverGroupID;
     QLineEdit       *serverGroup;
     QComboBox       *serverType;
-    QMultiLineEdit  *description;
+    Q3MultiLineEdit  *description;
     QLineEdit       *databaseHost;
     QLineEdit       *databaseName;
     QLineEdit       *databaseUser;
@@ -136,13 +139,13 @@ public:
 protected slots:
     virtual void addClicked();
     virtual void rmClicked();
-    virtual void availableDoubleClicked(QListViewItem *);
-    virtual void assignedDoubleClicked(QListViewItem *);
+    virtual void availableDoubleClicked(Q3ListViewItem *);
+    virtual void assignedDoubleClicked(Q3ListViewItem *);
 
 protected:
     long            idColumn;
-    QListView       *available;
-    QListView       *assigned;
+    Q3ListView       *available;
+    Q3ListView       *assigned;
     QPushButton     *addButton;
     QPushButton     *rmButton;
 };

@@ -27,9 +27,13 @@
 #include "BlargDB.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qlayout.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 #include <time.h>
 #include <sys/timeb.h>
 #include <ADB.h>
@@ -149,8 +153,8 @@ SubscriptionEdit::SubscriptionEdit
     descriptionLabel->setText("Description:");
     descriptionLabel->setAlignment(AlignRight|AlignTop);
 
-    description = new QMultiLineEdit(this, "Description");
-    description->setWordWrap(QMultiLineEdit::WidgetWidth);
+    description = new Q3MultiLineEdit(this, "Description");
+    description->setWordWrap(Q3MultiLineEdit::WidgetWidth);
 
     // Finally, our action buttons.
     QPushButton *saveButton = new QPushButton(this, "Save");
@@ -162,9 +166,9 @@ SubscriptionEdit::SubscriptionEdit
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelSubscription()));
 
     // Now, do our layout.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     
-    QGridLayout *gl = new QGridLayout(8, 4);
+    Q3GridLayout *gl = new Q3GridLayout(8, 4);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     gl->setColStretch(2, 0);
@@ -215,7 +219,7 @@ SubscriptionEdit::SubscriptionEdit
 
     ml->addLayout(gl);
 
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     abl->addStretch(1);
     abl->addWidget(saveButton, 0);
     abl->addWidget(cancelButton, 0);
@@ -282,9 +286,9 @@ SubscriptionEdit::SubscriptionEdit
     itemIndex  = NULL;
     myItemPrice = NULL;
     myItemChildPrice = NULL;
-    loginIndex = new QStrList(TRUE);
-    myItemDescr = new QStrList(TRUE);
-    myItemID    = new QStrList(TRUE);
+    loginIndex = new Q3StrList(TRUE);
+    myItemDescr = new Q3StrList(TRUE);
+    myItemID    = new Q3StrList(TRUE);
     
     // Fill in our combo box with the Subscription Item types.
     strcpy(tmpstr, custRec.getStr("BillingCycle"));

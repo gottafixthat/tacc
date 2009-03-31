@@ -1,28 +1,17 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** SelectionList - A simple class that provides a selection list for the
-**                 user to pick something.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2002, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: SelectionList.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include <qlayout.h>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <QtGui/QLabel>
 #include "SelectionList.h"
 
 SelectionList::SelectionList
@@ -35,14 +24,14 @@ SelectionList::SelectionList
 
     titleLabel = new QLabel(this, "Title Label");
     titleLabel->setText("Please select an option.");
-    titleLabel->setAlignment(AlignTop|AlignHCenter);
+    titleLabel->setAlignment(Qt::AlignTop|Qt::AlignHCenter);
 
-    list = new QListView(this, "Selection List");
+    list = new Q3ListView(this, "Selection List");
     list->setAllColumnsShowFocus(true);
 
     extraLabel = new QLabel(this, "Extra Label");
     extraLabel->setText("");
-    extraLabel->setAlignment(AlignRight|AlignVCenter);
+    extraLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     extraList = new QComboBox(false, this, "Extra List");
 
@@ -58,11 +47,11 @@ SelectionList::SelectionList
     // Create the layout for this box.  _Very_ simple.  Top down box
     // with a button box at the bottom.
     
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(titleLabel, 0);
     ml->addWidget(list, 1);
     
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addWidget(extraLabel, 0);
     bl->addWidget(extraList, 1);
     bl->addSpacing(10);
@@ -111,16 +100,16 @@ void SelectionList::addColumn(const char *colName)
 ** addItem - Adds an item to the list.
 */
 
-QListViewItem SelectionList::addItem(const char * i1, const char *i2, const char *i3, const char *i4, const char *i5, const char *i6, const char *i7, const char *i8)
+Q3ListViewItem SelectionList::addItem(const char * i1, const char *i2, const char *i3, const char *i4, const char *i5, const char *i6, const char *i7, const char *i8)
 {
-    return new QListViewItem(list, i1, i2, i3, i4, i5, i6, i7, i8);
+    return new Q3ListViewItem(list, i1, i2, i3, i4, i5, i6, i7, i8);
 }
 
 /*
 ** getSelection - Shows the list and gets the selection from the user.
 */
 
-QListViewItem *SelectionList::getSelection()
+Q3ListViewItem *SelectionList::getSelection()
 {
     exec();
     if (result() == Accepted) {
@@ -138,9 +127,12 @@ QListViewItem *SelectionList::getSelection()
 }
 
 
-void SelectionList::itemSelected(QListViewItem*)
+void SelectionList::itemSelected(Q3ListViewItem*)
 {
 }
 void SelectionList::acceptPressed()
 {
 }
+
+// vim: expandtab
+

@@ -10,7 +10,7 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qlayout.h>
 
 #include <CityFilters.h>
@@ -20,7 +20,7 @@ CityFilters::CityFilters(QWidget* parent, const char* name) :
 {
 	setCaption( "Customer City Report Filters" );
 
-    QButtonGroup    *bgroup = new QButtonGroup(1, Qt::Horizontal, "Active Customer Selection", this, "bgroup");
+    Q3ButtonGroup    *bgroup = new Q3ButtonGroup(1, Qt::Horizontal, "Active Customer Selection", this, "bgroup");
 
     activeOnlyButton = new QRadioButton(bgroup, "activeOnlyButton");
     activeOnlyButton->setText("Active Only");

@@ -14,8 +14,12 @@
 #include <stdlib.h>
 
 #include <qapplication.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <BlargDB.h>
 #include <StatementEngine.h>
@@ -33,112 +37,112 @@ StatementView::StatementView(QWidget* parent, const char* name) :
     // We'll put Billed To, Date Info and Charge Info into three group boxes.
     // We'll then shove those group boxes into a box layout from left to right.
     
-    QGroupBox   *billGrp = new QGroupBox(1, Horizontal, "Billed To", this, "billGrp");
+    Q3GroupBox   *billGrp = new Q3GroupBox(1, Qt::Horizontal, "Billed To", this, "billGrp");
     custName = new QLabel(billGrp, "custName");
-    custName->setAlignment(AlignLeft|AlignVCenter);
+    custName->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
     custAddr1 = new QLabel(billGrp, "custAddr1");
-    custAddr1->setAlignment(AlignLeft|AlignVCenter);
+    custAddr1->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
     custAddr2 = new QLabel(billGrp, "custAddr2");
-    custAddr2->setAlignment(AlignLeft|AlignVCenter);
+    custAddr2->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	
     custAddr3 = new QLabel(billGrp, "custAddr3");
-    custAddr3->setAlignment(AlignLeft|AlignVCenter);
+    custAddr3->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	
     custAddr4 = new QLabel(billGrp, "custAddr4");
-    custAddr4->setAlignment(AlignLeft|AlignVCenter);
+    custAddr4->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	
-    QGroupBox *dateGrp = new QGroupBox(2, Horizontal, "Date Information", this, "dateGrp");
+    Q3GroupBox *dateGrp = new Q3GroupBox(2, Qt::Horizontal, "Date Information", this, "dateGrp");
 
     QLabel *statementNoLabel = new QLabel("Statement No:", dateGrp, "statementNoLabel");
-    statementNoLabel->setAlignment(AlignRight|AlignVCenter);
+    statementNoLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     statementNo = new QLabel(dateGrp, "statementNoLabel");
-    statementNo->setAlignment(AlignLeft|AlignVCenter);
+    statementNo->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
     QLabel *statementDateLabel = new QLabel("Statement Date:", dateGrp, "statementDateLabel");
-    statementDateLabel->setAlignment(AlignRight|AlignVCenter);
+    statementDateLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     statementDate = new QLabel(dateGrp, "statementDateLabel");
-    statementDate->setAlignment(AlignLeft|AlignVCenter);
+    statementDate->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	
     QLabel *chargesThroughLabel = new QLabel("Charges Through:", dateGrp, "chargesThroughLabel");
-    chargesThroughLabel->setAlignment(AlignRight|AlignVCenter);
+    chargesThroughLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     chargesThrough = new QLabel(dateGrp, "chargesThroughLabel");
-    chargesThrough->setAlignment(AlignLeft|AlignVCenter);
+    chargesThrough->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	
     QLabel *dueDateLabel = new QLabel("Due Date:", dateGrp, "dueDateLabel");
-    dueDateLabel->setAlignment(AlignRight|AlignVCenter);
+    dueDateLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     dueDate = new QLabel(dateGrp, "dueDateLabel");
-    dueDate->setAlignment(AlignLeft|AlignVCenter);
+    dueDate->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	
     QLabel *termsLabel = new QLabel("Terms:", dateGrp, "termsLabel");
-    termsLabel->setAlignment(AlignRight|AlignVCenter);
+    termsLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     terms = new QLabel(dateGrp, "termsLabel");
-    terms->setAlignment(AlignLeft|AlignVCenter);
+    terms->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 	
-    QGroupBox *chargeGrp = new QGroupBox(2, Horizontal, "Charge Information", this, "chargeGrp");
+    Q3GroupBox *chargeGrp = new Q3GroupBox(2, Qt::Horizontal, "Charge Information", this, "chargeGrp");
     
     QLabel *prevBalanceLabel = new QLabel("Previous Balance:", chargeGrp, "prevBalanceLabel");
-    prevBalanceLabel->setAlignment(AlignRight|AlignVCenter);
+    prevBalanceLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     prevBalance = new QLabel(chargeGrp, "prevBalanceLabel");
-    prevBalance->setAlignment(AlignRight|AlignVCenter);
+    prevBalance->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 	
     QLabel *creditsLabel = new QLabel("Credits:", chargeGrp, "creditsLabel");
-    creditsLabel->setAlignment(AlignRight|AlignVCenter);
+    creditsLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     credits = new QLabel(chargeGrp, "creditsLabel");
-    credits->setAlignment(AlignRight|AlignVCenter);
+    credits->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 	
     QLabel *newChargesLabel = new QLabel("New Charges:", chargeGrp, "newChargesLabel");
-    newChargesLabel->setAlignment(AlignRight|AlignVCenter);
+    newChargesLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     newCharges = new QLabel(chargeGrp, "newChargesLabel");
-    newCharges->setAlignment(AlignRight|AlignVCenter);
+    newCharges->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     QLabel *financeChargeLabel = new QLabel("Finance Charge:", chargeGrp, "financeChargeLabel");
-    financeChargeLabel->setAlignment(AlignRight|AlignVCenter);
+    financeChargeLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     financeCharge = new QLabel(chargeGrp, "financeChargeLabel");
-    financeCharge->setAlignment(AlignRight|AlignVCenter);
+    financeCharge->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     QLabel *totalDueLabel = new QLabel("Total Due:", chargeGrp, "totalDueLabel");
-    totalDueLabel->setAlignment(AlignRight|AlignVCenter);
+    totalDueLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     totalDue = new QLabel(chargeGrp, "totalDueLabel");
-    totalDue->setAlignment(AlignRight|AlignVCenter);
+    totalDue->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
-    itemList = new QListView(this, "itemList");
+    itemList = new Q3ListView(this, "itemList");
 	itemList->addColumn("Int ID");
 	itemList->addColumn("Trans Date");
 	itemList->addColumn("Login ID");
 	itemList->addColumn("Start Date");
 	itemList->addColumn("End Date");
 	itemList->addColumn("Quantity");
-    itemList->setColumnAlignment(5, AlignRight);
+    itemList->setColumnAlignment(5, Qt::AlignRight);
 	itemList->addColumn("Price");
-    itemList->setColumnAlignment(6, AlignRight);
+    itemList->setColumnAlignment(6, Qt::AlignRight);
 	itemList->addColumn("Amount");
-    itemList->setColumnAlignment(7, AlignRight);
+    itemList->setColumnAlignment(7, Qt::AlignRight);
 	itemList->addColumn("Description");
 	itemList->setAllColumnsShowFocus(TRUE);
 
     QLabel *emailedToLabel = new QLabel("Emailed to:", this, "emailedToLabel");
-    emailedToLabel->setAlignment(AlignRight|AlignVCenter);
+    emailedToLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     emailedTo = new QLabel(this, "emailedTo");
-    emailedToLabel->setAlignment(AlignLeft|AlignVCenter);
+    emailedToLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
     QLabel *printedOnLabel = new QLabel("Printed on:", this, "printedOnLabel");
-    printedOnLabel->setAlignment(AlignRight|AlignVCenter);
+    printedOnLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
 
     printedOn = new QLabel(this, "printedOn");
-    printedOnLabel->setAlignment(AlignLeft|AlignVCenter);
+    printedOnLabel->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
     emailButton = new QPushButton("&Email", this, "emailButton");
     connect(emailButton, SIGNAL(clicked()), this, SLOT(reEmailStatement()));
@@ -150,9 +154,9 @@ StatementView::StatementView(QWidget* parent, const char* name) :
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeView()));
 
     // Now, create the layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
-    QBoxLayout *grpl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *grpl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     grpl->addWidget(billGrp, 1);
     grpl->addWidget(dateGrp, 1);
     grpl->addWidget(chargeGrp, 1);
@@ -160,7 +164,7 @@ StatementView::StatementView(QWidget* parent, const char* name) :
     ml->addLayout(grpl, 0);
     ml->addWidget(itemList, 1);
 
-    QGridLayout *gl = new QGridLayout(2, 2);
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
     int curRow = 0;
     gl->addWidget(emailedToLabel,   curRow, 0);
     gl->addWidget(emailedTo,        curRow, 1);
@@ -173,7 +177,7 @@ StatementView::StatementView(QWidget* parent, const char* name) :
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 0);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addSpacing(20);
     bl->addLayout(gl, 0);
     bl->addStretch(1);
@@ -205,13 +209,13 @@ void StatementView::loadStatement(long stNo)
     if (!stNo) {
         close();
     } else {
-        QApplication::setOverrideCursor(waitCursor);
+        QApplication::setOverrideCursor(Qt::waitCursor);
         emit(setStatus("Loading statement..."));
         StatementsDB        STDB;
         StatementsDataDB    STDDB;
         ADB                 DB;
         char                tmpStr[1024];
-        QListViewItem       *curItem;
+        Q3ListViewItem       *curItem;
         
         STDB.get(stNo);
         custName->setText(STDB.getStr("CustName"));
@@ -247,7 +251,7 @@ void StatementView::loadStatement(long stNo)
         while (DB.getrow()) {
             STDDB.get(atol(DB.curRow["InternalID"]));
             
-            curItem = new QListViewItem(itemList,
+            curItem = new Q3ListViewItem(itemList,
               STDDB.getStr("InternalID"),
               STDDB.getStr("TransDate"),
               STDDB.getStr("LoginID"),
@@ -289,7 +293,7 @@ void StatementView::closeView()
 
 void StatementView::reEmailStatement()
 {
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     StatementEngine stEng;
     stEng.emailStatement(myStNo, 1, 1);
     QApplication::restoreOverrideCursor();
@@ -301,7 +305,7 @@ void StatementView::reEmailStatement()
 
 void StatementView::rePrintStatement()
 {
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     StatementEngine stEng;
     stEng.printStatement(myStNo, 1, 1);
     QApplication::restoreOverrideCursor();

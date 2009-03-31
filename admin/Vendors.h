@@ -26,7 +26,7 @@
 #define VENDORS_H
 
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qmenubar.h>
 
 #include <TAAWidget.h>
@@ -55,7 +55,7 @@ private slots:
     
 protected:
     QMenuBar    *menu;
-    QListView   *list;
+    Q3ListView   *list;
 
 };
 #endif // Vendors_included

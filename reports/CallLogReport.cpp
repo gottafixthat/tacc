@@ -23,7 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
 
 #include <Report.h>
@@ -194,7 +194,7 @@ void CallLogReport::refreshReport()
                 text.append("...");
             }
 
-            (void) new QListViewItem(repBody, 
+            (void) new Q3ListViewItem(repBody, 
                                      DB.curRow["NoteDate"],
                                      DB.curRow["AddedBy"],
                                      DB.curRow["NoteType"],
@@ -217,7 +217,7 @@ void CallLogReport::refreshReport()
 **                     clicked on login type.
 */
 
-void CallLogReport::listItemSelected(QListViewItem *curItem)
+void CallLogReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem) {
         if (atoi(curItem->key(3,0))) {

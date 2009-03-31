@@ -35,6 +35,9 @@
 #include <stdlib.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -48,9 +51,9 @@ DomainTypeEdit::DomainTypeEdit
 {
 	setCaption( "Edit Domain Types" );
     // Create our widgets
-    domainTypeList = new QListView(this, "domainTypeList");
+    domainTypeList = new Q3ListView(this, "domainTypeList");
     domainTypeList->addColumn("Domain Type");
-    connect(domainTypeList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(itemSelected(QListViewItem *)));
+    connect(domainTypeList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(itemSelected(Q3ListViewItem *)));
 
     newButton = new QPushButton(this, "newButton");
     newButton->setText("&New");
@@ -71,7 +74,7 @@ DomainTypeEdit::DomainTypeEdit
     billablesListLabel->setText("Billables:");
     billablesListLabel->setAlignment(AlignRight|AlignTop);
 
-    billablesList = new QListBox(this, "billablesList");
+    billablesList = new Q3ListBox(this, "billablesList");
     
     addButton = new QPushButton(this, "addButton");
     addButton->setText("&Add");
@@ -98,13 +101,13 @@ DomainTypeEdit::DomainTypeEdit
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveDomainType()));
 
     // Okay, create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::LeftToRight, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::LeftToRight, 3, 3);
 
     // The layout for our list of domain types
-    QBoxLayout *dtl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *dtl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     dtl->addWidget(domainTypeList, 1);
     // And another for the buttons for the domain type list.
-    QBoxLayout *dtabl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *dtabl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     dtabl->addStretch(1);
     dtabl->addWidget(newButton, 0);
     dtabl->addWidget(delButton, 0);
@@ -115,9 +118,9 @@ DomainTypeEdit::DomainTypeEdit
     // Add the domain type list and its buttons to the main layout
     ml->addLayout(dtl, 0);
 
-    QBoxLayout *owl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *owl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     // Now, create a grid to hold the other widgets.
-    QGridLayout *gl = new QGridLayout(5, 2);
+    Q3GridLayout *gl = new Q3GridLayout(5, 2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     int curRow = 0;
@@ -128,10 +131,10 @@ DomainTypeEdit::DomainTypeEdit
 
     // The billable list row is harder.  We are going to include it in
     // a layout of its own, and include its buttons with it.
-    QBoxLayout *bil = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *bil = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     bil->addWidget(billablesList, 1);
     // And add another layout for its buttons.
-    QBoxLayout *bibl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bibl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bibl->addStretch(1);
     bibl->addWidget(addButton, 0);
     bibl->addWidget(removeButton, 0);
@@ -154,7 +157,7 @@ DomainTypeEdit::DomainTypeEdit
     owl->addLayout(gl, 1);
 
     // Add a layout for our save button
-    QBoxLayout *sbl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *sbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     sbl->addStretch(1);
     sbl->addWidget(saveButton, 0);
     owl->addLayout(sbl, 0);
@@ -189,7 +192,7 @@ void DomainTypeEdit::refreshList(void)
 	DB.query("select DomainType, InternalID from DomainTypes order by DomainType");
 	domainTypeList->clear();
 	while (DB.getrow()) {
-        (void) new QListViewItem(domainTypeList, 
+        (void) new Q3ListViewItem(domainTypeList, 
                                  DB.curRow["DomainType"],
                                  DB.curRow["InternalID"]);
 	}
@@ -202,7 +205,7 @@ void DomainTypeEdit::refreshList(void)
 **                  flagTypeList.
 */
 
-void DomainTypeEdit::itemSelected(QListViewItem *curItem)
+void DomainTypeEdit::itemSelected(Q3ListViewItem *curItem)
 {
 	ADB	    DB;
     ADB	    DB2;
@@ -256,7 +259,7 @@ void DomainTypeEdit::itemSelected(QListViewItem *curItem)
  */
 void DomainTypeEdit::refreshBillablesList(int domTypeID)
 {
-    QListViewItem   *curItem = domainTypeList->currentItem();
+    Q3ListViewItem   *curItem = domainTypeList->currentItem();
     if (curItem) {
         if (curItem->key(1,0).toInt() == domTypeID) {
             ADB DB;
@@ -279,7 +282,7 @@ void DomainTypeEdit::refreshBillablesList(int domTypeID)
 void DomainTypeEdit::addBillable()
 {
     DomainTypeBillablesAdd *dtba;
-    QListViewItem           *curItem;
+    Q3ListViewItem           *curItem;
 
     curItem = domainTypeList->currentItem();
     if (curItem == NULL) return;
@@ -298,7 +301,7 @@ void DomainTypeEdit::removeBillable()
 	ADB		    DB;
 	int			tmpID;
 	int			tmpNum;
-    QListViewItem           *curItem;
+    Q3ListViewItem           *curItem;
 
     curItem = domainTypeList->currentItem();
     if (curItem == NULL) return;
@@ -319,7 +322,7 @@ void DomainTypeEdit::removeBillable()
 
 void DomainTypeEdit::saveDomainType()
 {
-    QListViewItem   *curItem = domainTypeList->currentItem();
+    Q3ListViewItem   *curItem = domainTypeList->currentItem();
     if (curItem == NULL) return;
 
     ADBTable    dtDB("DomainTypes");

@@ -12,6 +12,7 @@ CC	= gcc
 MOC	= $(QTDIR)/bin/moc
 
 # CFLAGS += -DDBDEBUG
+CFLAGS += -DQT3_SUPPORT
 
 ifdef USEDES
 	CFLAGS	+= -DUSEDES -I/usr/local/include

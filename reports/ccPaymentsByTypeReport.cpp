@@ -35,12 +35,12 @@ ccPaymentsByTypeReport::ccPaymentsByTypeReport
 	setCaption("Credit Card Transactions By Type");
 	setTitle("Credit Card Transactions By Type");
 	
-	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, AlignLeft);
-	repBody->addColumn("Visa/MC");      repBody->setColumnAlignment(1, AlignRight);
-	repBody->addColumn("AmEx");         repBody->setColumnAlignment(2, AlignRight);
-	repBody->addColumn("Discover");     repBody->setColumnAlignment(3, AlignRight);
-	repBody->addColumn("Other");        repBody->setColumnAlignment(4, AlignRight);
-	repBody->addColumn("Total");        repBody->setColumnAlignment(5, AlignRight);
+	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, Qt::AlignLeft);
+	repBody->addColumn("Visa/MC");      repBody->setColumnAlignment(1, Qt::AlignRight);
+	repBody->addColumn("AmEx");         repBody->setColumnAlignment(2, Qt::AlignRight);
+	repBody->addColumn("Discover");     repBody->setColumnAlignment(3, Qt::AlignRight);
+	repBody->addColumn("Other");        repBody->setColumnAlignment(4, Qt::AlignRight);
+	repBody->addColumn("Total");        repBody->setColumnAlignment(5, Qt::AlignRight);
 	
     //setStartDate(QDate(2007,6,1));
     //setEndDate(QDate(2007,6,30));
@@ -85,7 +85,7 @@ void ccPaymentsByTypeReport::refreshReport()
 
     repBody->clear();
     curDate = startDate();
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     while(curDate < endDate().addDays(1)) {
         emit(setProgressRT(pmCur, pmTot));
         pmCur++;
@@ -133,7 +133,7 @@ void ccPaymentsByTypeReport::refreshReport()
         txtOther = txtOther.sprintf("%.2f", otherTot);
         txtTotal = txtTotal.sprintf("%.2f", dateTot);
         txtVisa = txtVisa.rightJustify(10, ' ');
-        (void) new QListViewItem(repBody, strDate, txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
+        (void) new Q3ListViewItem(repBody, strDate, txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
         curDate = curDate.addDays(1);
     }
     // One last one to make our bar go away...
@@ -145,7 +145,7 @@ void ccPaymentsByTypeReport::refreshReport()
     txtDisc = txtDisc.sprintf("%.2f", discGT);
     txtOther = txtOther.sprintf("%.2f", otherGT);
     txtTotal = txtTotal.sprintf("%.2f", grandTot);
-    (void) new QListViewItem(repBody, "Total", txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
+    (void) new Q3ListViewItem(repBody, "Total", txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
     QApplication::restoreOverrideCursor();
 }
 
@@ -157,7 +157,7 @@ void ccPaymentsByTypeReport::refreshReport()
  * in the report, opening a ccPaymentDetails report for the specified
  * day.
  */
-void ccPaymentsByTypeReport::listItemSelected(QListViewItem *curItem)
+void ccPaymentsByTypeReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         // Only run the report if its not the total line

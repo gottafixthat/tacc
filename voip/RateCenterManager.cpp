@@ -25,11 +25,14 @@
 
 #include <ADB.h>
 
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QLayout>
+#include <QtCore/QTimer>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <QtGui/QLabel>
 #include <Cfg.h>
 
 #include <TAA.h>
@@ -44,14 +47,14 @@ RateCenterManager::RateCenterManager
 {
     setCaption( "Rate Center Manager" );
 
-    rcList = new QListView(this, "Rate Center Manager");
+    rcList = new Q3ListView(this, "Rate Center Manager");
     rcList->setAllColumnsShowFocus(true);
     rcList->setRootIsDecorated(true);
     rcList->addColumn("Country/State/City");
     rcList->addColumn("Active");
     rcList->addColumn("Avail");
     rcList->addColumn("Total");
-    connect(rcList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+    connect(rcList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(itemDoubleClicked(Q3ListViewItem *)));
 
     activeColumn    = 1;
     availColumn     = 2;
@@ -80,11 +83,11 @@ RateCenterManager::RateCenterManager
     closeButton->setText("&Close");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(rcList, 1);
 
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(editButton, 0);
@@ -116,11 +119,11 @@ void RateCenterManager::refreshRateCenters()
     long    avail;
     long    active;
     long    total;
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
 
     long    curID = -1;
     // Get the ID of the currently hilighted item.
-    QListViewItem   *tmpCur;
+    Q3ListViewItem   *tmpCur;
     tmpCur = rcList->currentItem();
     if (tmpCur) {
         if (strlen(tmpCur->key(idColumn,0))) {
@@ -135,11 +138,11 @@ void RateCenterManager::refreshRateCenters()
     if (myDB.rowCount) {
         // Walk through the list of countries and get the states
         while(myDB.getrow()) {
-            QListViewItem   *countryItem = new QListViewItem(rcList, myDB.curRow["Country"], "", "", "", "0");
+            Q3ListViewItem   *countryItem = new Q3ListViewItem(rcList, myDB.curRow["Country"], "", "", "", "0");
             myDB2.query("select distinct(State) from DID_Rate_Centers where Country = '%s' order by State", myDB.curRow["Country"]);
             // No need to check if they exist since a state can't exist without a country.
             while (myDB2.getrow()) {
-                QListViewItem   *stateItem = new QListViewItem(countryItem, myDB2.curRow["State"], "", "", "", "0");
+                Q3ListViewItem   *stateItem = new Q3ListViewItem(countryItem, myDB2.curRow["State"], "", "", "", "0");
                 myDB3.query("select City, RateCenterID from DID_Rate_Centers where Country = '%s' and State = '%s' order by City", myDB.curRow["Country"], myDB2.curRow["State"]);
                 while (myDB3.getrow()) {
                     myDB4.query("select count(DID) from DID_Inventory where RateCenterID = %s", myDB3.curRow["RateCenterID"]);
@@ -155,7 +158,7 @@ void RateCenterManager::refreshRateCenters()
                     sprintf(activeStr, "%ld", active);
                     sprintf(totalStr, "%ld", total);
 
-                    QListViewItem *curItem = new QListViewItem(stateItem, myDB3.curRow["City"], activeStr, availStr, totalStr, myDB3.curRow["RateCenterID"]);
+                    Q3ListViewItem *curItem = new Q3ListViewItem(stateItem, myDB3.curRow["City"], activeStr, availStr, totalStr, myDB3.curRow["RateCenterID"]);
                     if (atol(myDB3.curRow["RateCenterID"]) == curID) {
                         countryItem->setOpen(true);
                         stateItem->setOpen(true);
@@ -233,7 +236,7 @@ void RateCenterManager::addClicked()
 
 void RateCenterManager::editClicked()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     curItem = rcList->currentItem();
     if (curItem) {
         long    tmpID;
@@ -270,7 +273,7 @@ void RateCenterManager::closeClicked()
 /**
   * itemDoubleClicked - Gets called when the user double clicks a rate center.
   */
-void RateCenterManager::itemDoubleClicked(QListViewItem *curItem)
+void RateCenterManager::itemDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) editClicked();
 }
@@ -333,9 +336,9 @@ RateCenterEditor::RateCenterEditor
     cancelButton->setText("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout();
+    Q3GridLayout *gl = new Q3GridLayout(3, 3);
     int curRow = 0;
     gl->addWidget(countryListLabel,          curRow, 0);
     gl->addWidget(countryList,               curRow, 1);
@@ -350,7 +353,7 @@ RateCenterEditor::RateCenterEditor
     ml->addLayout(gl, 0);
     ml->addStretch(1);
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

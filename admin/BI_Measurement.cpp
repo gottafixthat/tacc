@@ -31,6 +31,10 @@
 #include <stdlib.h>
 
 #include <qapplication.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -43,7 +47,7 @@ BI_Measurement::BI_Measurement
 ) : TAAWidget( parent, name )
 {
     // Create all our widgets.
-    measureList = new QListView(this, "measureList");
+    measureList = new Q3ListView(this, "measureList");
     measureList->addColumn("Rate Plan");
     measureList->addColumn("Billing Cycle");
     measureList->addColumn("Measurement");
@@ -53,7 +57,7 @@ BI_Measurement::BI_Measurement
     measureList->setColumnAlignment(3, AlignRight);
     measureList->setColumnAlignment(4, AlignRight);
     measureList->setColumnAlignment(5, AlignRight);
-    connect(measureList, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(listItemSelected(QListViewItem *)));
+    connect(measureList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(listItemSelected(Q3ListViewItem *)));
 
     isMeasured = new QCheckBox(this, "isMeasured");
     isMeasured->setText("Measured");
@@ -96,7 +100,7 @@ BI_Measurement::BI_Measurement
     additionalDescriptionLabel->setText("Additional Description:");
     additionalDescriptionLabel->setAlignment(AlignRight|AlignTop);
 
-    additionalDescription = new QMultiLineEdit(this, "additionalDescription");
+    additionalDescription = new Q3MultiLineEdit(this, "additionalDescription");
     connect(additionalDescription, SIGNAL(textChanged()), this, SLOT(additionalDescriptionChanged()));
 
     saveButton = new QPushButton(this, "saveButton");
@@ -104,11 +108,11 @@ BI_Measurement::BI_Measurement
     connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 
     // All done creating widgets, create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(measureList, 1);
 
     // Create a grid which will hold most of the other widgets.
-    QGridLayout *gl = new QGridLayout(4, 4);
+    Q3GridLayout *gl = new Q3GridLayout(4, 4);
     int curRow = 0;
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
@@ -139,7 +143,7 @@ BI_Measurement::BI_Measurement
     ml->addLayout(gl, 1);
 
     // Create the layout for our row of button.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
 
@@ -191,7 +195,7 @@ void BI_Measurement::setItemNumber(long newItemNumber)
         ADBTable    BDB;
         ADB         DB;
         BDB.setTableName("Billables");
-        QListViewItem   *curItem;
+        Q3ListViewItem   *curItem;
         
         int         myIsMeasured;
         char        theMeasurement[1024];
@@ -233,7 +237,7 @@ void BI_Measurement::setItemNumber(long newItemNumber)
                 strcpy(theIncrement, "N/A");
                 strcpy(theIntID, "0");
             }
-            curItem = new QListViewItem(measureList,
+            curItem = new Q3ListViewItem(measureList,
               RPBCDB.curRow["PlanTag"],         // RatePlans PlanTag
               RPBCDB.curRow["CycleID"],         // Billing Cycles CycleID
               theMeasurement,
@@ -257,7 +261,7 @@ void BI_Measurement::setItemNumber(long newItemNumber)
 **                    the selected item's details.
 */
 
-void BI_Measurement::listItemSelected(QListViewItem *curItem)
+void BI_Measurement::listItemSelected(Q3ListViewItem *curItem)
 {
     // If the item is NULL, disable all of the edit widgets and clear
     // them.
@@ -344,7 +348,7 @@ void BI_Measurement::checkForSave()
 {
     // First, make sure that there is an item selected, if we don't have
     // one selected, set the save button to disabled and return.
-    QListViewItem   *curItem = measureList->currentItem();
+    Q3ListViewItem   *curItem = measureList->currentItem();
     if (curItem == NULL) {
         saveButton->setEnabled(false);
         return;
@@ -394,7 +398,7 @@ void BI_Measurement::checkForSave()
 
 void BI_Measurement::save()
 {
-    QListViewItem   *curItem = measureList->currentItem();
+    Q3ListViewItem   *curItem = measureList->currentItem();
     if (curItem != NULL) {
         char        tmpStr[1024];
         ADBTable    BDDB;

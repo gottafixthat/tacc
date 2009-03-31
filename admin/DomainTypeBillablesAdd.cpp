@@ -11,9 +11,11 @@
 
 #include <stdlib.h>
 
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -27,7 +29,7 @@ DomainTypeBillablesAdd::DomainTypeBillablesAdd(QWidget* parent, const char* name
 	setCaption( "Add Billable Item" );
 
     // Create our widgets.
-    itemList = new QListView(this, "itemList");
+    itemList = new Q3ListView(this, "itemList");
     itemList->addColumn("Billable");
     itemList->addColumn("Description");
     itemNumCol = 2;
@@ -40,10 +42,10 @@ DomainTypeBillablesAdd::DomainTypeBillablesAdd(QWidget* parent, const char* name
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelBillableItemAdd()));
 
     // Our layout.  Fairly straightforward, one box top to bottom, one for the buttons
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     ml->addWidget(itemList, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -52,7 +54,7 @@ DomainTypeBillablesAdd::DomainTypeBillablesAdd(QWidget* parent, const char* name
 	ADB	DB;
 	char	tmpstr[1024];
 	
-	QStrList tmplist;
+	Q3StrList tmplist;
 
 	if (!DomainTypeID) return;
 	
@@ -73,7 +75,7 @@ DomainTypeBillablesAdd::DomainTypeBillablesAdd(QWidget* parent, const char* name
 	// Fill the itemList with billable Items.
 	itemList->clear();
 	while (DB.getrow()) {
-        (void) new QListViewItem(itemList, DB.curRow["ItemID"], DB.curRow["Description"], DB.curRow["ItemNumber"]);
+        (void) new Q3ListViewItem(itemList, DB.curRow["ItemID"], DB.curRow["Description"], DB.curRow["ItemNumber"]);
 	}
 	
 	//addButton->setDefault(TRUE);
@@ -91,7 +93,7 @@ DomainTypeBillablesAdd::~DomainTypeBillablesAdd()
 
 void DomainTypeBillablesAdd::addBillableItem()
 {
-    QListViewItem   *curItem = itemList->currentItem();
+    Q3ListViewItem   *curItem = itemList->currentItem();
     if (curItem) {
         ADBTable    DTDB("DomainTypeBillables");
         DTDB.setValue("DomainTypeID",   myDomainTypeID);

@@ -41,6 +41,10 @@
 #include "BlargDB.h"
 #include <qstring.h>
 #include <qmenubar.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 #include <stdlib.h>
 #include <stdio.h>
 #include <CCEntry.h>
@@ -219,7 +223,7 @@ Tab_BillingInfo::Tab_BillingInfo
     currentBalance->setText("");
     currentBalance->setAlignment(AlignLeft|AlignVCenter);
 
-    stList = new QListView(this);
+    stList = new Q3ListView(this);
     stList->addColumn("Number");
     stList->addColumn("Date");
     stList->addColumn("Due Date");
@@ -228,17 +232,17 @@ Tab_BillingInfo::Tab_BillingInfo
     stList->setAllColumnsShowFocus(TRUE);
     stList->setItemMargin( 2 );
     stList->setSorting(0, false);   // Reverse order sort on statement number
-    connect(stList, SIGNAL(doubleClicked( QListViewItem *)), SLOT(viewStatement(QListViewItem *)));
+    connect(stList, SIGNAL(doubleClicked( Q3ListViewItem *)), SLOT(viewStatement(Q3ListViewItem *)));
 
     // Create our layout.  The main widget will be in a box, then two grids
     // will be displayed, the first containing the basic billing information,
     // the second grid displaying the account dates, then a another box
     // will be created containing a grid holding the last statement information
     // and on the right will be the list of statements.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // The first grid.  This holds the billing information.
-    QGridLayout *bigrid = new QGridLayout(3, 4, 3);
+    Q3GridLayout *bigrid = new Q3GridLayout(3, 4, 3);
     bigrid->setColStretch(0, 0);
     bigrid->setColStretch(1, 1);
     bigrid->setColStretch(2, 0);
@@ -277,7 +281,7 @@ Tab_BillingInfo::Tab_BillingInfo
     ml->addWidget(new HorizLine(this), 0);
 
     // The second grid.  This holds various dates and other info
-    QGridLayout *dtgrid = new QGridLayout(2, 6, 3);
+    Q3GridLayout *dtgrid = new Q3GridLayout(2, 6, 3);
     dtgrid->setColStretch(0, 0);
     dtgrid->setColStretch(1, 1);
     dtgrid->setColStretch(2, 0);
@@ -317,9 +321,9 @@ Tab_BillingInfo::Tab_BillingInfo
     // Now we create another box, left to right, to hold the statement
     // info.  We'll put a grid in that box for the "highlights" and then
     // leave the statement list by itself.
-    QBoxLayout *stbl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
-    QBoxLayout *stgbox = new QBoxLayout(QBoxLayout::TopToBottom, 3);
-    QGridLayout *stgrid = new QGridLayout(4, 2, 3);
+    Q3BoxLayout *stbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
+    Q3BoxLayout *stgbox = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
+    Q3GridLayout *stgrid = new Q3GridLayout(4, 2, 3);
     stgrid->setColStretch(0, 0);
     stgrid->setColStretch(1, 1);
     
@@ -681,7 +685,7 @@ void Tab_BillingInfo::fillStatementList(void)
 
     stList->clear();
     while (DB.getrow()) {
-        (void) new QListViewItem(stList,
+        (void) new Q3ListViewItem(stList,
           DB.curRow["StatementNo"],
           DB.curRow["StatementDate"],
           DB.curRow["DueDate"],
@@ -695,7 +699,7 @@ void Tab_BillingInfo::fillStatementList(void)
 ** viewStatement - Displays a statement on the screen.
 */
 
-void Tab_BillingInfo::viewStatement(QListViewItem *curItem)
+void Tab_BillingInfo::viewStatement(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         StatementView   *SV;

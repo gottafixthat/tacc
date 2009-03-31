@@ -20,12 +20,12 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
-#include <qtextview.h>
-#include <qstrlist.h>
+#include <q3textview.h>
+#include <q3strlist.h>
 #include <qpainter.h>
 #include <BlargDB.h>
 #include <TAAWidget.h>
@@ -46,7 +46,7 @@ public:
     virtual ~Tab_VoIP();
 
 protected:
-    QListView   *list;
+    Q3ListView   *list;
     QPushButton *addButton;
 
 public slots:

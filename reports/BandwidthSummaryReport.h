@@ -12,7 +12,7 @@
 
 #include "Report.h"
 
-#include <qintdict.h>
+#include <q3intdict.h>
 #include <ADB.h>
 
 class BandwidthSummaryReport : public Report
@@ -31,7 +31,7 @@ public:
     
     virtual void refreshReport();
 
-    virtual void listItemSelected(QListViewItem *curItem);
+    virtual void listItemSelected(Q3ListViewItem *curItem);
     
 };
 #endif // BandwidthSummaryReport_included

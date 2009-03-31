@@ -13,7 +13,9 @@
 #define TE_LOGINTYPES_H
 
 #include <qcheckbox.h>
-#include <qlistview.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <QCloseEvent>
 
 #include <TAAWidget.h>
 
@@ -45,7 +47,7 @@ protected:
     QCheckBox   *allLoginsButton;
     QCheckBox   *includeInactive;
     QCheckBox   *primaryOnlyCheckbox;
-    QListView   *loginTypeList;
+    Q3ListView   *loginTypeList;
 
 };
 

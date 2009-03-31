@@ -26,14 +26,16 @@
 #include "BlargDB.h"
 #include "VendorEdit.h"
 #include <qprogbar.h>
-#include <qkeycode.h>
+#include <qnamespace.h>
 #include <qstring.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include <qpainter.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qmenubar.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ADB.h>
@@ -61,17 +63,17 @@ Vendors::Vendors
     deleteButton->setText("&Delete");
     deleteButton->setEnabled(false);
 
-    list = new QListView(this, "Vendor List");
+    list = new Q3ListView(this, "Vendor List");
     list->addColumn("Name");
     list->addColumn("Vendor ID");
     list->addColumn("Balance");
     list->setColumnAlignment(2, AlignRight);
     list->setAllColumnsShowFocus(true);
 
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 0, 3);
     ml->addWidget(menu, 0);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     bl->addWidget(newButton, 0);
     bl->addWidget(editButton, 0);
     bl->addWidget(deleteButton, 0);
@@ -81,7 +83,7 @@ Vendors::Vendors
     ml->addWidget(list, 1);
     
     // Set up the menu...
-    QPopupMenu * options = new QPopupMenu();
+    Q3PopupMenu * options = new Q3PopupMenu();
     options->insertItem("New", this, SLOT(newVendor()), CTRL+Key_N);
     options->insertItem("Edit", this, SLOT(editVendor()), CTRL+Key_E);
     int delitem = options->insertItem("Delete", this, SLOT(deleteVendor()), CTRL+Key_D);
@@ -125,7 +127,7 @@ void Vendors::refreshList(int)
     rowcnt = DB.rowCount;
     
     while(DB.getrow()) {
-        (void) new QListViewItem(list,
+        (void) new Q3ListViewItem(list,
                                  DB.curRow["CompanyName"],
                                  DB.curRow["Balance"],
                                  DB.curRow["VendorID"]
@@ -157,7 +159,7 @@ void Vendors::newVendor()
 
 void Vendors::editVendor()
 {
-    QListViewItem   *curItem = list->currentItem();
+    Q3ListViewItem   *curItem = list->currentItem();
 	if (curItem) {
 	    VendorEdit *vendEdit;
     	vendEdit = new VendorEdit(0, "", atoi(curItem->key(2,0)));

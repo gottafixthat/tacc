@@ -1,34 +1,18 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** GenLedger  - An interface to the General Ledger.  Manages both the
-**              transaction and the individual split lines.
-**
-** 2000-10-11 - This GL logic is horribly broken and will be replaced RSN.
-**              It does work how I understood a GL to work three years ago
-**              however...
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: GenLedger.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qstrlist.h>
+
+#include <Qt3Support/q3strlist.h>
 
 #include <GenLedger.h>
 #include <ADB.h>
@@ -339,7 +323,7 @@ GenLedger::GenLedger(void)
 	
 	// We need to make sure that if we get rid of a list item, that its memory
 	// also gets cleaned up.
-	Splits.setAutoDelete(TRUE);
+	//Splits.setAutoDelete(TRUE);
 	
 }
 
@@ -360,7 +344,7 @@ int GenLedger::GetTrans(long TransNo)
 {
 	int			Ret = 0;
 	GLDB		*tmpGLDB;
-	QStrList	splitList(TRUE);
+	Q3StrList	splitList(TRUE);
 	QString		tmpQStr;
 	ADB         DB;
 	
@@ -409,7 +393,7 @@ long GenLedger::SaveTrans(void)
 {
 	char		query[1024];
 	int			updating = 0;
-	QStrList	tmpList(TRUE);
+	Q3StrList	tmpList(TRUE);
 	QString		tmpQStr;
 	int			tmpAcctNo;
 	float		tmpAmount;
@@ -459,7 +443,7 @@ long GenLedger::SaveTrans(void)
 		}
 
 		// Go through them each, one by one adjust the account balance
-		for (tmpQStr = tmpList.first(); tmpQStr != 0; tmpQStr = tmpList.next()) {
+		for (tmpQStr = tmpList.first(); !tmpQStr.isNull(); tmpQStr = tmpList.next()) {
 			// tmpQStr = tmpList.at(i);
 			DB.dbcmd("%s", (const char *) tmpQStr);
 		}
@@ -471,7 +455,8 @@ long GenLedger::SaveTrans(void)
 	// Now, insert the individual split lines into the database.
 	tmpCur = CurSplitNo;
 	
-	for (CurrentSplit = Splits.first(); CurrentSplit != 0; CurrentSplit = Splits.next()) {
+	for (int i = 0; i < Splits.count(); i++) {
+        CurrentSplit = Splits.at(i);
 		CurrentSplit->TransID.setNum(TransID);
 		CurrentSplit->insTrans();
 	}
@@ -542,8 +527,8 @@ int GenLedger::DelSplit(int SplitNo)
 {
 	int Ret = 0;
     if (SplitCount) {
-		Splits.remove(SplitNo);
-		CurrentSplit = Splits.current();
+		Splits.removeAt(SplitNo);
+		CurrentSplit = Splits.at(SplitNo);
 		SplitCount--;
 		Ret = 1;
 		if (CurSplitNo > Splits.count()) {
@@ -555,4 +540,7 @@ int GenLedger::DelSplit(int SplitNo)
 
 
 
+
+
+// vim: expandtab
 

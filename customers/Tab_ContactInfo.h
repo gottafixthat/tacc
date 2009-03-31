@@ -28,11 +28,11 @@
 
 #include <qwidget.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qlayout.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <TAAWidget.h>
 
 
@@ -62,7 +62,7 @@ signals:
 protected slots:
 	virtual void addNewAddress();
 	virtual void editCurrentAddress();
-	virtual void editCurrentAddressItem(QListViewItem *);
+	virtual void editCurrentAddressItem(Q3ListViewItem *);
 	virtual void deleteCurrentAddress();
     virtual void DeactiveAddress();
     virtual void loadCustInfo();
@@ -86,8 +86,8 @@ protected:
     QPushButton *addContactButton;
     QPushButton *editContactButton;
     QPushButton *deleteContactButton;
-    QListView   *addressList;
-    QListView   *contactList;
+    Q3ListView   *addressList;
+    Q3ListView   *contactList;
     
 private:
 	long		myCustID;

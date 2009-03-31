@@ -27,7 +27,7 @@
 
 #include <TAAWidget.h>
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qcombobox.h>
@@ -43,7 +43,7 @@ public:
     void setCustomerID(long);
 
 protected:
-    QListView   *aliasList;
+    Q3ListView   *aliasList;
     QLineEdit   *address;
     QComboBox   *domainList;
     QComboBox   *loginList;

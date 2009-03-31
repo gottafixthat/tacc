@@ -14,8 +14,8 @@
 #define CUSTOMERCONTACTSDB_H
 
 #include <TAAStructures.h>
-#include <qsqlcursor.h>
-#include <qlist.h>
+#include <Qt3Support/q3sqlcursor.h>
+#include <QtCore/QList>
 
 
 class CustomerContactsDB

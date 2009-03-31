@@ -12,12 +12,15 @@
 #include <stdlib.h>
 
 #include <qmessagebox.h>
-#include <qprogressbar.h>
+#include <q3progressbar.h>
 #include <qdatetm.h>
 #include <qapplication.h>
-#include <qgroupbox.h>
-#include <qbuttongroup.h>
+#include <q3groupbox.h>
+#include <q3buttongroup.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <AcctsRecv.h>
 #include <BlargDB.h>
@@ -36,58 +39,58 @@ WipedAccounts::WipedAccounts(QWidget* parent, const char* name) :
 	setCaption( "Overdue Account Processing (Inactive Accounts)" );
 
     // Create our widgets
-    list = new QListView(this, "list");
+    list = new Q3ListView(this, "list");
     list->addColumn("Cust ID");
     list->addColumn("Customer Name");
     list->addColumn("Primary Login");
     list->addColumn("Balance");
-    list->setColumnAlignment(3, AlignRight);
+    list->setColumnAlignment(3, Qt::AlignRight);
     list->addColumn("Overdue");
-    list->setColumnAlignment(4, AlignRight);
+    list->setColumnAlignment(4, Qt::AlignRight);
     list->addColumn("Newest");
-    list->setColumnAlignment(5, AlignRight);
+    list->setColumnAlignment(5, Qt::AlignRight);
 	list->setAllColumnsShowFocus(TRUE);
 	list->setMultiSelection(TRUE);
-    connect(list, SIGNAL(doubleClicked(QListViewItem *)), SLOT(editCustomer(QListViewItem *)));
-    connect(list, SIGNAL(returnPressed(QListViewItem *)), SLOT(editCustomer(QListViewItem *)));
+    connect(list, SIGNAL(doubleClicked(Q3ListViewItem *)), SLOT(editCustomer(Q3ListViewItem *)));
+    connect(list, SIGNAL(returnPressed(Q3ListViewItem *)), SLOT(editCustomer(Q3ListViewItem *)));
     connect(list, SIGNAL(selectionChanged()), SLOT(updateTotals()));
 
-    QGroupBox   *grpBox = new QGroupBox(2, Horizontal, "Summary Information", this, "grpBox");
+    Q3GroupBox   *grpBox = new Q3GroupBox(2, Qt::Horizontal, "Summary Information", this, "grpBox");
 
     QLabel *accountsOverdueLabel = new QLabel(grpBox, "accountsOverdueLabel");
-    accountsOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    accountsOverdueLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountsOverdueLabel->setText("Accounts Overdue:");
 
     accountsOverdue = new QLabel(grpBox, "accountsOverdue");
-    accountsOverdue->setAlignment(AlignRight|AlignVCenter);
+    accountsOverdue->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountsOverdue->setText("");
 	
     QLabel *accountsSelectedLabel = new QLabel(grpBox, "accountsSelectedLabel");
-    accountsSelectedLabel->setAlignment(AlignRight|AlignVCenter);
+    accountsSelectedLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountsSelectedLabel->setText("Accounts Selected:");
 
     accountsSelected = new QLabel(grpBox, "accountsSelected");
-    accountsSelected->setAlignment(AlignRight|AlignVCenter);
+    accountsSelected->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountsSelected->setText("");
 	
     QLabel *selectedOverdueLabel = new QLabel(grpBox, "selectedOverdueLabel");
-    selectedOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    selectedOverdueLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     selectedOverdueLabel->setText("Total from selected:");
 
     selectedOverdue = new QLabel(grpBox, "selectedOverdue");
-    selectedOverdue->setAlignment(AlignRight|AlignVCenter);
+    selectedOverdue->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     selectedOverdue->setText("");
 
     QLabel *amountOverdueLabel = new QLabel(grpBox, "amountOverdueLabel");
-    amountOverdueLabel->setAlignment(AlignRight|AlignVCenter);
+    amountOverdueLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     amountOverdueLabel->setText("Total Amount Overdue:");
 
     amountOverdue = new QLabel(grpBox, "amountOverdue");
-    amountOverdue->setAlignment(AlignRight|AlignVCenter);
+    amountOverdue->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     amountOverdue->setText("");
 
     // Now the button group.
-    QButtonGroup *butGrp = new QButtonGroup(1, Horizontal, "Action", this, "butGrp");
+    Q3ButtonGroup *butGrp = new Q3ButtonGroup(1, Qt::Horizontal, "Action", this, "butGrp");
     butGrp->setExclusive(true);
     noAction = new QRadioButton("Non&e", butGrp, "noAction");
     sendFinal = new QRadioButton("&Send Final Notice", butGrp, "sendFinal");
@@ -111,16 +114,16 @@ WipedAccounts::WipedAccounts(QWidget* parent, const char* name) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelOverdue()));
 
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     ml->addWidget(list, 1);
 
     // A left to right layout for the two group boxes and the buttons.
-    QBoxLayout *sl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *sl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     sl->addWidget(grpBox, 0);
     sl->addWidget(butGrp, 0);
     sl->addStretch(1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     bl->addStretch(1);
     bl->addWidget(selectNoneButton, 0);
     bl->addWidget(selectAllButton, 0);
@@ -183,7 +186,7 @@ void WipedAccounts::fillList(void)
     char        oldestDue[64];
     char        newestDue[64];
     
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
 
     theDate = QDate::currentDate();
     QDatetomyDate(today, theDate);
@@ -239,7 +242,7 @@ void WipedAccounts::fillList(void)
 	            
 	            // Only add them if the oldest date > 0 days.
                 if (atoi(oldestDue)) {
-    	            (void) new QListViewItem(list, DB.curRow["CustomerID"], DB.curRow["FullName"], DB.curRow["PrimaryLogin"], DB.curRow["CurrentBalance"], tmpBal, newestDue, oldestDue, noteAge);
+    	            (void) new Q3ListViewItem(list, DB.curRow["CustomerID"], DB.curRow["FullName"], DB.curRow["PrimaryLogin"], DB.curRow["CurrentBalance"], tmpBal, newestDue, oldestDue, noteAge);
     	        }
 	        }
         }
@@ -271,7 +274,7 @@ void WipedAccounts::cancelOverdue()
 
 void WipedAccounts::selectNone()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     list->hide();
     curItem = list->firstChild();
@@ -290,7 +293,7 @@ void WipedAccounts::selectNone()
 
 void WipedAccounts::selectAll()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     list->hide();
     curItem = list->firstChild();
@@ -309,7 +312,7 @@ void WipedAccounts::selectAll()
 **                the customer record.
 */
 
-void WipedAccounts::editCustomer(QListViewItem *curItem)
+void WipedAccounts::editCustomer(Q3ListViewItem *curItem)
 {
     long CustID = atol(curItem->key(0, 1));
     EditCustomer *custEdit;
@@ -328,7 +331,7 @@ void WipedAccounts::updateTotals()
     float   amtSelected = 0.0;
     char    tmpStr[512];
     
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     
     curItem = list->firstChild();
     while (curItem != NULL) {
@@ -428,13 +431,13 @@ void WipedAccounts::sendToCollections(void)
     theDate = QDate::currentDate();
     QDatetomyDate(today, theDate);
 
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     long            curCount = 0;
 
     emit(setStatus("Sending to collections..."));
     
     
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
 
     // Scan through the list...
     curItem = list->firstChild();

@@ -12,7 +12,7 @@
 
 #include "Report.h"
 
-#include <qintdict.h>
+#include <q3intdict.h>
 
 class ModemUsageReport : public Report
 {
@@ -37,6 +37,6 @@ private:
 
     void    loadDict();
 
-    QIntDict<char> strxlt;
+    Q3IntDict<char> strxlt;
 };
 #endif // ModemUsageReport_included

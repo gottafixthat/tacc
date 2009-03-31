@@ -28,13 +28,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapp.h>
+#include <qapplication.h>
 #include <qvbuttongroup.h>
 #include <qlayout.h>
 #include <qwidget.h>
 #include <qradiobutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qlabel.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3Frame>
 
 #include <TAAWidget.h>
 #include <TAATools.h>
@@ -50,8 +53,8 @@ CallTypeSelector::CallTypeSelector
 ) : TAAWidget( parent, name )
 {
 
-    QButtonGroup   *bGroup = new QButtonGroup(5, Qt::Horizontal, this, "ButtonGroup");
-    bGroup->setFrameStyle(QFrame::NoFrame);
+    Q3ButtonGroup   *bGroup = new Q3ButtonGroup(5, Qt::Horizontal, this, "ButtonGroup");
+    bGroup->setFrameStyle(Q3Frame::NoFrame);
     // bGroup->setTitle("Call Type");
 
     typeSupport     = new QRadioButton(bGroup, "Support");
@@ -70,14 +73,14 @@ CallTypeSelector::CallTypeSelector
     QLabel *hline1 = new QLabel(this);
     hline1->setMinimumSize(0, 3);
     hline1->setMaximumSize(32767, 3);
-    hline1->setFrameStyle(QFrame::HLine|QFrame::Sunken);
+    hline1->setFrameStyle(Q3Frame::HLine|Q3Frame::Sunken);
     hline1->setLineWidth(1);
 
     custSearch      = new CustomerSearch(this, "CustomerSearch");
     connect(custSearch, SIGNAL(customerSelected(long)), mainWin(), SLOT(openCustomerMW(long)));
     connect(custSearch, SIGNAL(customerHighlighted(long)), this, SLOT(delayedRefresh(long)));
 
-    contactList     = new QListView(this, "ContactList");
+    contactList     = new Q3ListView(this, "ContactList");
     contactList->addColumn("Name");
     contactList->addColumn("Access");
     contactList->addColumn("Type");
@@ -89,13 +92,13 @@ CallTypeSelector::CallTypeSelector
 
     // Create our layout now.  This one is a bit more complicated,
     // but it will look nice.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 2, 2);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 2, 2);
 
     ml->addWidget(bGroup, 0);
     ml->addWidget(hline1, 0);
     ml->addWidget(custSearch, 1);
 
-    QBoxLayout  *ll = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *ll = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     ll->addWidget(contactList, 1);
     ll->addWidget(ticketList,  1);
 
@@ -155,7 +158,7 @@ void CallTypeSelector::refresh()
     DB.query("select * from Contacts where CustomerID = %ld", refreshCustID);
     if (DB.rowCount) {
         while (DB.getrow()) {
-            (void) new QListViewItem(contactList, DB.curRow["Name"], DB.curRow["Access"], DB.curRow["Tag"]);
+            (void) new Q3ListViewItem(contactList, DB.curRow["Name"], DB.curRow["Access"], DB.curRow["Tag"]);
         }
     }
 

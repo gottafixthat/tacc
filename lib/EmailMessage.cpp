@@ -19,7 +19,9 @@
 #include <sstream>
 #include <string>
 
-#include <qfile.h>
+#include <QtCore/QFile>
+//Added by qt3to4:
+#include <Qt3Support/Q3TextStream>
 
 using namespace std;
 using namespace mimetic;
@@ -177,7 +179,7 @@ void EmailMessage::addAttachment(const QByteArray buf, const QString fName, cons
     QString tmpFile;
     tmpFile = makeTmpFileName("/tmp/msgAttachment-XXXXXX");
     QFile   oFile(tmpFile);
-    if (oFile.open(IO_WriteOnly)) {
+    if (oFile.open(QIODevice::WriteOnly)) {
         QDataStream oStrm(&oFile);
         oStrm << buf;
         oFile.close();
@@ -267,8 +269,8 @@ int EmailMessage::send()
     s = oStr.str();
 
     QFile   oFile(msgFile);
-    if (oFile.open(IO_WriteOnly)) {
-        QTextStream ofStr(&oFile);
+    if (oFile.open(QIODevice::WriteOnly)) {
+        Q3TextStream ofStr(&oFile);
         ofStr << s.c_str();
         oFile.close();
     }

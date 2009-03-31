@@ -1,21 +1,17 @@
-/** AsteriskManager.h - Provides a class library that will signal events
-  * from the Asterisk Manager interface.
-  *
-  * This file doesn't have any GUI widgets in it at all, it only connects
-  * to the Asterisk Manager and emits signals based on incoming events.
-  ************************************************************************
-  * Written by R. Marc Lewis, 
-  *   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-  *   All Rights Reserved.
-  *
-  *  Unpublished work.  No portion of this file may be reproduced in whole
-  *  or in part by any means, electronic or otherwise, without the express
-  *  written consent of Blarg! Online Services and R. Marc Lewis.
-  */
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include "AsteriskManager.h"
-#include <qtimer.h>
-#include <qdatetime.h>
+#include <QtCore/QTimer>
+#include <QtCore/QDateTime>
 #include "TAATools.h"
 #include "Cfg.h"
 
@@ -31,7 +27,7 @@ AsteriskManager::AsteriskManager(QObject * parent, const char * name)
     event.msgVal[0]     = '\0';
     curResponseID       = 0;
     
-    mySocket = new QSocket(this, "Asterisk Socket Connection");
+    mySocket = new Q3Socket(this, "Asterisk Socket Connection");
     connect(mySocket, SIGNAL(connected()),        this, SLOT(authenticate()));
     connect(mySocket, SIGNAL(readyRead()),        this, SLOT(checkManager()));
     connect(mySocket, SIGNAL(connectionClosed()), this, SLOT(disconnected()));
@@ -83,7 +79,7 @@ void AsteriskManager::socketError(int err)
   */
 void AsteriskManager::checkConnection()
 {
-    if (mySocket->state() != QSocket::Connected) {
+    if (mySocket->state() != Q3Socket::Connected) {
         debug(5, "AsteriskManager::checkConnection() - Not connected.  Will attempt to reconnect...\n");
         // Abort everything and close the connection.
         mySocket->clearPendingData();
@@ -303,4 +299,7 @@ void AsteriskManager::transferCall(const char *chan, const char *exten, const ch
     //fprintf(stderr, "***** Begin AsteriskManager Command %s *****\n%s\n***** End AsteriskManager Command %s *****\n", (const char *) tmpTime.toString(), (const char *) xferStr, (const char *) tmpTime.toString());
     mySocket->writeBlock(xferStr, strlen(xferStr));
 }
+
+
+// vim: expandtab
 

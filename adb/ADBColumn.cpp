@@ -57,7 +57,7 @@
 #endif
 
 #ifdef ADBQT
-#include <qstring.h>
+#include <QtCore/QString>
 #endif
 
 
@@ -651,9 +651,9 @@ const QDate ADBColumn::toQDate(int useBackup)
     else tmpQStr = intData;
 
     retVal.setYMD(
-      atoi((const char *) tmpQStr.mid(0,4)),
-      atoi((const char *) tmpQStr.mid(5,2)),
-      atoi((const char *) tmpQStr.mid(8,2))
+      tmpQStr.mid(0,4).toInt(),
+      tmpQStr.mid(5,2).toInt(),
+      tmpQStr.mid(8,2).toInt()
     );
     
     return (const QDate) retVal;
@@ -675,9 +675,9 @@ const QTime ADBColumn::toQTime(int useBackup)
     else tmpQStr = intData;
 
     retVal.setHMS(
-      atoi((const char *) tmpQStr.mid(0,2)),
-      atoi((const char *) tmpQStr.mid(3,2)),
-      atoi((const char *) tmpQStr.mid(6,2))
+      tmpQStr.mid(0,2).toInt(),
+      tmpQStr.mid(3,2).toInt(),
+      tmpQStr.mid(6,2).toInt()
     );
     
     return (const QTime) retVal;
@@ -704,26 +704,26 @@ const QDateTime ADBColumn::toQDateTime(int useBackup)
     if (tmpQStr.length() == 14) {
         // Its a time stamp in the form YYYYMMDDHHMMSS
         tmpDate.setYMD(
-          atoi((const char *) tmpQStr.mid(0,4)),
-          atoi((const char *) tmpQStr.mid(4,2)),
-          atoi((const char *) tmpQStr.mid(6,2))
+          tmpQStr.mid(0,4).toInt(),
+          tmpQStr.mid(4,2).toInt(),
+          tmpQStr.mid(6,2).toInt()
         );
         tmpTime.setHMS(
-          atoi((const char *) tmpQStr.mid( 8,2)),
-          atoi((const char *) tmpQStr.mid(10,2)),
-          atoi((const char *) tmpQStr.mid(12,2))
+          tmpQStr.mid( 8,2).toInt(),
+          tmpQStr.mid(10,2).toInt(),
+          tmpQStr.mid(12,2).toInt()
         );
     } else {
         // Its a datetime in the form YYYY-MM-DD HH:MM:SS
         tmpDate.setYMD(
-          atoi((const char *) tmpQStr.mid(0,4)),
-          atoi((const char *) tmpQStr.mid(5,2)),
-          atoi((const char *) tmpQStr.mid(8,2))
+          tmpQStr.mid(0,4).toInt(),
+          tmpQStr.mid(5,2).toInt(),
+          tmpQStr.mid(8,2).toInt()
         );
         tmpTime.setHMS(
-          atoi((const char *) tmpQStr.mid(11,2)),
-          atoi((const char *) tmpQStr.mid(14,2)),
-          atoi((const char *) tmpQStr.mid(17,2))
+          tmpQStr.mid(11,2).toInt(),
+          tmpQStr.mid(14,2).toInt(),
+          tmpQStr.mid(17,2).toInt()
         );
     }
     retVal.setDate(tmpDate);

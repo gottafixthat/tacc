@@ -30,10 +30,10 @@
 #ifndef DNSTemplatePicker_Included
 #define DNSTemplatePicker_Included
 
-#include <qwidget.h>
-#include <qdialog.h>
-#include <qlistview.h>
-#include <qpushbutton.h>
+#include <QtGui/QWidget>
+#include <QtGui/QDialog>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QPushButton>
 
 class DNSTemplatePicker : public QDialog
 {
@@ -46,14 +46,14 @@ public:
     long        getTemplateID();
 
 protected:
-    QListView   *templateList;
+    Q3ListView   *templateList;
     QPushButton *selectButton;
     QPushButton *cancelButton;
 
 protected slots:
     void        refreshList();
-    void        itemSelected(QListViewItem *);
-    void        itemDoubleClicked(QListViewItem *);
+    void        itemSelected(Q3ListViewItem *);
+    void        itemDoubleClicked(Q3ListViewItem *);
 
 };
 

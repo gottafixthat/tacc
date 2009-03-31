@@ -13,11 +13,14 @@
 #ifndef OVERDUEACCOUNTS_H
 #define OVERDUEACCOUNTS_H
 
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qdialog.h>
 #include <qlabel.h>
 #include <qradiobutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
+//Added by qt3to4:
+#include <QEvent>
+#include <QCloseEvent>
 
 #include <TAAWidget.h>
 
@@ -47,7 +50,7 @@ protected slots:
     virtual void cancelOverdue();
     virtual void selectNone();
     virtual void selectAll();
-    virtual void editCustomer(QListViewItem *curItem);
+    virtual void editCustomer(Q3ListViewItem *curItem);
     virtual void updateTotals();
     virtual void QCloseEvent(QEvent *)              { delete this; }
     
@@ -59,7 +62,7 @@ protected:
     QLabel          *accountsSelected;
     QLabel          *amountOverdue;
     QLabel          *selectedOverdue;
-    QListView       *list;
+    Q3ListView       *list;
 };
 
 #endif

@@ -6,10 +6,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
-#include <qstrlist.h>
+#include <q3dict.h>
+#include <q3strlist.h>
 
 #include <ADB.h>
 #include <BString.h>
@@ -158,7 +158,7 @@ void ModemUsageReport::refreshReport()
             sprintf(foutK,  "%ld", outK);
             sprintf(ftotK,  "%ld", totK);
 
-            (void) new QListViewItem(repBody, 
+            (void) new Q3ListViewItem(repBody, 
               fStart,
               fStop,
               fSess,
@@ -170,7 +170,7 @@ void ModemUsageReport::refreshReport()
             );
         }
     } else {
-        (void) new QListViewItem(repBody, "No data for specified period");
+        (void) new Q3ListViewItem(repBody, "No data for specified period");
     }
     
     // Update our title, include total number of connections and total

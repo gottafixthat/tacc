@@ -22,13 +22,16 @@
 */
 
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3PopupMenu>
 
 #include "PaymentTerms.h"
 #include "PaymentTermsEdit.h"
 #include "BlargDB.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <qkeycode.h>
+#include <qnamespace.h>
 #include <qmessagebox.h>
 #include <ADB.h>
 
@@ -40,10 +43,10 @@ PaymentTerms::PaymentTerms(QWidget* parent, const char* name) :
 
     menu = new QMenuBar(this, "menu");
 
-    termsList = new QListView(this, "termsList");
+    termsList = new Q3ListView(this, "termsList");
     termsList->addColumn("Terms");
     intIDCol = 1;
-    connect(termsList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(editTerms(QListViewItem *)));
+    connect(termsList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(editTerms(Q3ListViewItem *)));
 
     QPushButton *newButton = new QPushButton(this, "newButton");
     newButton->setText("&New");
@@ -62,10 +65,10 @@ PaymentTerms::PaymentTerms(QWidget* parent, const char* name) :
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
     
     // Setup the layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     ml->addWidget(menu, 0);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addWidget(newButton, 0);
     bl->addWidget(editButton, 0);
     bl->addWidget(deleteButton, 0);
@@ -77,7 +80,7 @@ PaymentTerms::PaymentTerms(QWidget* parent, const char* name) :
 
     // Set up the menu...
     
-    QPopupMenu * options = new QPopupMenu(this);
+    Q3PopupMenu * options = new Q3PopupMenu(this);
     CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newPaymentTerms()), CTRL+Key_N);
     options->insertItem("Edit", this, SLOT(editPaymentTerms()), CTRL+Key_E);
@@ -116,7 +119,7 @@ void PaymentTerms::refreshList(int)
     termsList->clear();
     DB.query("select * from PaymentTerms order by TermsDesc");
     if (DB.rowCount) while(DB.getrow()) {
-        (void) new QListViewItem(termsList, DB.curRow["TermsDesc"], DB.curRow["InternalID"]);
+        (void) new Q3ListViewItem(termsList, DB.curRow["TermsDesc"], DB.curRow["InternalID"]);
     }
 }
 
@@ -139,7 +142,7 @@ void PaymentTerms::newPaymentTerms()
 
 void PaymentTerms::editPaymentTerms()
 {
-    QListViewItem   *curItem = termsList->currentItem();
+    Q3ListViewItem   *curItem = termsList->currentItem();
     editTerms(curItem);
 }
 
@@ -149,7 +152,7 @@ void PaymentTerms::editPaymentTerms()
  * Gets called when the user double clicks on a list item.
  * It brings up the payment terms editor.
  */
-void PaymentTerms::editTerms(QListViewItem *curItem)
+void PaymentTerms::editTerms(Q3ListViewItem *curItem)
 {
     if (curItem) {
         int     tmpID = curItem->key(intIDCol, 0).toInt();
@@ -176,7 +179,7 @@ void PaymentTerms::editPaymentTermsL(int msg)
 
 void PaymentTerms::deletePaymentTerms()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     char   tmpstr[256];
     ADB    DB;
     

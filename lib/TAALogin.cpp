@@ -20,11 +20,14 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <stdlib.h>
-
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qapplication.h>
 #include <mysql/mysql.h>
+
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QApplication>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3Frame>
 #include "version.h"
 #include "buildnum.h"
 
@@ -52,19 +55,19 @@ TAALogin::TAALogin(QWidget *parent, const char *name) : QDialog(parent, name, tr
     
     setCaption("TAA Login");
 
-    titleText = new QTextView(this, "Title Area");
+    titleText = new Q3TextView(this, "Title Area");
     titleText->setMinimumSize(250, 20);
     //titleText->setMaximumSize(300, 80);
     titleText->setText(aboutText);
-    titleText->setTextFormat(RichText);
-    titleText->setFocusPolicy(NoFocus);
+    titleText->setTextFormat(Qt::RichText);
+    titleText->setFocusPolicy(Qt::NoFocus);
 
     
     // Create our user name label and input box.
     QLabel  *userNameLabel = new QLabel(this, "User Name Label");
     userNameLabel->setMinimumSize(80, 20);
     userNameLabel->setMaximumSize(80, 20);
-    userNameLabel->setAlignment(AlignRight|AlignVCenter);
+    userNameLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     userNameLabel->setText("User Name:");
 
     userName = new QLineEdit(this, "User Name");
@@ -78,7 +81,7 @@ TAALogin::TAALogin(QWidget *parent, const char *name) : QDialog(parent, name, tr
     QLabel  *passwordLabel = new QLabel(this, "Password Label");
     passwordLabel->setMinimumSize(80, 20);
     passwordLabel->setMaximumSize(80, 20);
-    passwordLabel->setAlignment(AlignRight|AlignVCenter);
+    passwordLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     passwordLabel->setText("Password:");
     
     password = new QLineEdit(this, "Password");
@@ -105,27 +108,27 @@ TAALogin::TAALogin(QWidget *parent, const char *name) : QDialog(parent, name, tr
 
     // Create the status bar.
     status  = new QLabel(this, "Status Bar");
-    status->setFrameStyle(QFrame::WinPanel|QFrame::Sunken);
+    status->setFrameStyle(Q3Frame::WinPanel|Q3Frame::Sunken);
     status->setText("Please Login.");
     
 
     // Now, create our main layout for the entire widget.
-    QBoxLayout  *mainLayout = new QBoxLayout(this, QBoxLayout::TopToBottom, 0, 5, NULL);
+    Q3BoxLayout  *mainLayout = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 0, 5, NULL);
     
     // Add the title
     mainLayout->addWidget(titleText, 1, 0);
 
     // Add the user input area.
     int     curRow = 0;
-    QGridLayout *userInputGrid = new QGridLayout(userRows, 2, 5, "User Input Grid");
-    userInputGrid->addWidget(userNameLabel, curRow,0,AlignRight);
-    userInputGrid->addWidget(userName,      curRow,1,AlignLeft);
+    Q3GridLayout *userInputGrid = new Q3GridLayout(userRows, 2, 5, "User Input Grid");
+    userInputGrid->addWidget(userNameLabel, curRow,0,Qt::AlignRight);
+    userInputGrid->addWidget(userName,      curRow,1,Qt::AlignLeft);
     curRow++;
-    userInputGrid->addWidget(passwordLabel, curRow,0,AlignRight);
-    userInputGrid->addWidget(password,      curRow,1,AlignLeft);
+    userInputGrid->addWidget(passwordLabel, curRow,0,Qt::AlignRight);
+    userInputGrid->addWidget(password,      curRow,1,Qt::AlignLeft);
     curRow++;
-    userInputGrid->addWidget(loginButton,   curRow,0,AlignRight);
-    userInputGrid->addWidget(cancelButton,  curRow,1,AlignLeft);
+    userInputGrid->addWidget(loginButton,   curRow,0,Qt::AlignRight);
+    userInputGrid->addWidget(cancelButton,  curRow,1,Qt::AlignLeft);
 
     mainLayout->addLayout(userInputGrid,0);
 

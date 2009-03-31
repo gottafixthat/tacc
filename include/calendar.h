@@ -23,15 +23,17 @@
 #ifndef __CALENDAR_H
 #define __CALENDAR_H
 
-#include <qlineedit.h>
-#include <qlistbox.h>
-#include <qtooltip.h>
-#include <qvalidator.h>
-#include <qwidget.h>
-#include <qdatetm.h>
+#include <QtGui/QLineEdit>
+#include <Qt3Support/q3listbox.h>
+#include <QtGui/QToolTip>
+#include <QtGui/QValidator>
+#include <QtGui/QWidget>
+#include <QtCore/QDateTime>
+#include <QtGui/QResizeEvent>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QPaintEvent>
 
 class Calendar;
-class CalendarTip;
 class DateInput;
 class QMouseEvent;
 class QPaintEvent;
@@ -69,22 +71,11 @@ private:
   char daycolor[31];
   QTimer* timer;
   DateInput* dateinput;
-  CalendarTip* tip;
 
   QDate myQDate;
 
-  friend class CalendarTip;
 };
 
-class CalendarTip : public QToolTip {
-public:
-  CalendarTip(QWidget*,Calendar*);
-  virtual ~CalendarTip();
-protected:
-  void maybeTip(const QPoint&);
-private:
-  Calendar* cal;
-};
 
 class DateValidator : public QValidator {
 public:

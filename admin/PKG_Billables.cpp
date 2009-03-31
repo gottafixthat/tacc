@@ -37,6 +37,9 @@
 #include <qmessagebox.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 
 PKG_Billables::PKG_Billables
 (
@@ -45,7 +48,7 @@ PKG_Billables::PKG_Billables
 ) : TAAWidget( parent, name )
 {
     // Okay, create our widgets.
-    billableList = new QListView(this, "billableList");
+    billableList = new Q3ListView(this, "billableList");
     int curCol = 0;
     billableList->addColumn("Item ID");
     billableList->setColumnAlignment(curCol++, AlignLeft);
@@ -55,7 +58,7 @@ PKG_Billables::PKG_Billables
     billableList->setColumnAlignment(curCol++, AlignRight);
     billableList->addColumn("Grp");
     billableList->setColumnAlignment(curCol++, AlignRight);
-    connect(billableList, SIGNAL(selectionChanged(QListViewItem *)), this, SLOT(billableSelected(QListViewItem *)));
+    connect(billableList, SIGNAL(selectionChanged(Q3ListViewItem *)), this, SLOT(billableSelected(Q3ListViewItem *)));
 
     QLabel *itemListLabel = new QLabel(this, "itemListLabel");
     itemListLabel->setText("Item:");
@@ -101,10 +104,10 @@ PKG_Billables::PKG_Billables
     connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 
     // Setup our layout.  Pretty straightforward
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(billableList, 1);
 
-    QGridLayout *gl = new QGridLayout(4,2);
+    Q3GridLayout *gl = new Q3GridLayout(4,2);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 0);
     int curRow = 0;
@@ -123,7 +126,7 @@ PKG_Billables::PKG_Billables
 
     ml->addLayout(gl, 0);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(removeButton, 0);
     bl->addWidget(addButton, 0);
@@ -180,7 +183,7 @@ void PKG_Billables::setPackageID(long newPackageID)
         DB.query("select ItemNumber, Description, Quantity, LoginGroup, InternalID from PackageContents where PackageID = %ld", myPackageID);
         if (DB.rowCount) while (DB.getrow()) {
             BDB.get(atol(DB.curRow["ItemNumber"]));
-            (void) new QListViewItem(billableList,
+            (void) new Q3ListViewItem(billableList,
               BDB.getStr("ItemID"),
               DB.curRow["Description"],
               DB.curRow["Quantity"],
@@ -204,7 +207,7 @@ void PKG_Billables::setPackageID(long newPackageID)
 **                    billable item.
 */
 
-void PKG_Billables::billableSelected(QListViewItem *curItem)
+void PKG_Billables::billableSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         // Okay, we have a billable.  Set its values in our list.
@@ -285,7 +288,7 @@ void PKG_Billables::checkForSave()
 
 void PKG_Billables::save()
 {
-    QListViewItem   *curItem = billableList->currentItem();
+    Q3ListViewItem   *curItem = billableList->currentItem();
     if (myPackageID && curItem != NULL) {
         // Save the current item back into the database.
         // We have an internal ID so this will make things easier.
@@ -325,7 +328,7 @@ void PKG_Billables::addBillable()
     // the current entry.
 
     if (myPackageID) {
-        QListViewItem   *curItem;
+        Q3ListViewItem   *curItem;
         ADBTable        PCDB;
         
         // Create and insert an empty record.
@@ -339,7 +342,7 @@ void PKG_Billables::addBillable()
         PCDB.ins();
         
         // Okay, now insert this new one into our list.
-        curItem = new QListViewItem(billableList,
+        curItem = new Q3ListViewItem(billableList,
           itemList->text(0),
           "",
           "1.00",
@@ -359,7 +362,7 @@ void PKG_Billables::addBillable()
 
 void PKG_Billables::removeBillable()
 {
-    QListViewItem   *curItem = billableList->currentItem();
+    Q3ListViewItem   *curItem = billableList->currentItem();
     if (myPackageID && curItem != NULL) {
         ADB     DB;
         

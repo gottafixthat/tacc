@@ -1,51 +1,26 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DNSManager - A tool that allows a TAA user to manage DNS entries for a
-**              customer or a template.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2003, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DNSManager.cpp,v $
-** Revision 1.6  2004/03/15 22:33:50  marc
-** Fixed a bad escape sequence in a regex
-**
-** Revision 1.5  2004/01/12 22:57:54  marc
-** Updated updateSOA to also remove the TemplateID from the ZoneInfo
-**
-** Revision 1.4  2004/01/04 20:01:02  marc
-** Added a bit more the the DNS Templates/Managed DNS tools/widgets
-**
-** Revision 1.3  2004/01/02 23:56:14  marc
-** Domain Template Editor and SQL based DNS is (for the most part) fully functional and ready to use.
-**
-** Revision 1.2  2004/01/02 14:59:01  marc
-** DNSTemplatePicker complete, added DNSUtils
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <DNSManager.h>
 #include <TAATools.h>
 #include <TAAWidget.h>
 #include <ADB.h>
 #include <Cfg.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qmessagebox.h>
-#include <qregexp.h>
+#include <QtGui/QLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QMessageBox>
+#include <QtCore/QRegExp>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <QtGui/QLabel>
 
 
 // TAA DNS Manager class/widget
@@ -58,24 +33,24 @@ DNSManager::DNSManager(QWidget *parent, const char *name)
     currentZone = 0;
 
     QLabel *domainNameLabel = new QLabel(this);
-    domainNameLabel->setAlignment(AlignRight);
+    domainNameLabel->setAlignment(Qt::AlignRight);
     domainNameLabel->setText("Domain Name:");
     domainName = new QLabel(this);
     domainName->setText("domainname.com");
     
     QLabel *domainTypeLabel = new QLabel(this);
-    domainTypeLabel->setAlignment(AlignRight);
+    domainTypeLabel->setAlignment(Qt::AlignRight);
     domainTypeLabel->setText("Domain Type:");
     domainType = new QLabel(this);
     //domainType->setText("std/soho/etc");
     
     QLabel *lastModifiedLabel = new QLabel(this);
-    lastModifiedLabel->setAlignment(AlignRight);
+    lastModifiedLabel->setAlignment(Qt::AlignRight);
     lastModifiedLabel->setText("Last Updated:");
     lastModified = new QLabel(this);
     lastModified->setText("11/28/2003 02:14p");
     
-    recordList = new QListView(this);
+    recordList = new Q3ListView(this);
     recordList->addColumn("Host");
     recordList->addColumn("Type");
     recordList->addColumn("Pri");
@@ -86,14 +61,14 @@ DNSManager::DNSManager(QWidget *parent, const char *name)
 
     // New entry options
     hostBoxLabel = new QLabel(this);
-    hostBoxLabel->setAlignment(AlignRight|AlignVCenter);
+    hostBoxLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     hostBoxLabel->setText("Host:");
 
     hostBox = new QLineEdit(this);
     hostBox->setMaxLength(64);
 
     typeListLabel = new QLabel(this);
-    typeListLabel->setAlignment(AlignRight|AlignVCenter);
+    typeListLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     typeListLabel->setText("Type:");
 
     typeList = new QComboBox(this);
@@ -104,7 +79,7 @@ DNSManager::DNSManager(QWidget *parent, const char *name)
     typeList->insertItem("PTR");
 
     priSpinnerLabel = new QLabel(this);
-    priSpinnerLabel->setAlignment(AlignRight|AlignVCenter);
+    priSpinnerLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     priSpinnerLabel->setText("Priority:");
 
     priSpinner = new QSpinBox(this);
@@ -113,7 +88,7 @@ DNSManager::DNSManager(QWidget *parent, const char *name)
     priSpinner->setValue(10);
 
     addressBoxLabel = new QLabel(this);
-    addressBoxLabel->setAlignment(AlignRight|AlignVCenter);
+    addressBoxLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     addressBoxLabel->setText("IP/FQHN:");
 
     addressBox = new QLineEdit(this);
@@ -143,9 +118,9 @@ DNSManager::DNSManager(QWidget *parent, const char *name)
 
 
     // Create our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *ll = new QGridLayout(2,6,2);
+    Q3GridLayout *ll = new Q3GridLayout(2,6,2);
     ll->addWidget(domainNameLabel,          0, 0);
     ll->addWidget(domainName,               0, 1);
     ll->addWidget(domainTypeLabel,          1, 0);
@@ -157,7 +132,7 @@ DNSManager::DNSManager(QWidget *parent, const char *name)
 
     ml->addWidget(recordList, 1);
 
-    QBoxLayout *actl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *actl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     actl->addWidget(hostBoxLabel,   0);
     actl->addWidget(hostBox,        1);
     actl->addWidget(typeListLabel,  0);
@@ -171,7 +146,7 @@ DNSManager::DNSManager(QWidget *parent, const char *name)
     ml->addLayout(actl, 0);
 
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     //bl->addWidget(save, 0);
     bl->addWidget(delZoneButton,0);
@@ -251,7 +226,7 @@ int DNSManager::setDomainName(const char *domain)
         if (!strcasecmp("mx", dnsDB.curRow["type"])) {
             strcpy(priority, dnsDB.curRow["aux"]);
         }
-        (void) new QListViewItem(recordList,
+        (void) new Q3ListViewItem(recordList,
                                  dnsDB.curRow["name"],
                                  recType,
                                  priority,
@@ -397,7 +372,7 @@ int DNSManager::addRR()
         dnsDB.ins();
 
         if (!strcasecmp("mx", dnsDB.curRow["type"])) strcpy(myPri, dnsDB.curRow["aux"]);
-        (void) new QListViewItem(recordList,
+        (void) new Q3ListViewItem(recordList,
                                  dnsDB.curRow["name"],
                                  dnsDB.curRow["type"],
                                  myPri,
@@ -473,3 +448,6 @@ int DNSManager::delZone()
 
     return 0;
 }
+
+// vim: expandtab
+

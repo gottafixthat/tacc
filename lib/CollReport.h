@@ -17,8 +17,8 @@
 #ifndef COLLREPORT_H
 #define COLLREPORT_H
 
-#include <qprinter.h>
-#include <qpainter.h>
+#include <QtGui/QPrinter>
+#include <QtGui/QPainter>
 #include <BlargDB.h>
 
 class CollReport

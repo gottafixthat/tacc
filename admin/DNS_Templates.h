@@ -26,7 +26,7 @@
 
 #include <TAAWidget.h>
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qspinbox.h>
@@ -41,7 +41,7 @@ public:
     virtual ~DNS_Templates();
 
 protected:
-    QListView       *templateList;
+    Q3ListView       *templateList;
     // SOA Edit Fields
     QLineEdit       *templateName;
     QSpinBox        *refreshSpin;
@@ -54,7 +54,7 @@ protected:
     QCheckBox       *allowCustEdit;
     QPushButton     *saveSOAButton;
     // RR Edit Fields
-    QListView       *rrList;
+    Q3ListView       *rrList;
     QLineEdit       *hostName;
     QComboBox       *typeList;
     QSpinBox        *priSpin;
@@ -72,7 +72,7 @@ protected:
 
 protected slots:
     void            refreshList();
-    void            templateSelected(QListViewItem *);
+    void            templateSelected(Q3ListViewItem *);
     void            newTemplate();
     void            delTemplate();
     void            saveSOA();

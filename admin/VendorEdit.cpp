@@ -12,7 +12,10 @@
 
 #include <qlabel.h>
 #include <qlayout.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include <ADB.h>
 #include <BlargDB.h>
@@ -25,21 +28,21 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
 	myVendorID = vID;
 	
     QLabel *companyNameLabel = new QLabel(this);
-    companyNameLabel->setAlignment(AlignRight|AlignVCenter);
+    companyNameLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     companyNameLabel->setText("Company name:");
 
     companyName = new QLineEdit(this, "companyName");
     companyName->setMaxLength(60);
 
     QLabel *contactNameLabel = new QLabel(this);
-    contactNameLabel->setAlignment(AlignRight|AlignVCenter);
+    contactNameLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     contactNameLabel->setText("Contact name:");
 
     contactName = new QLineEdit(this, "contactName");
     contactName->setMaxLength(60);
 
     QLabel *vendorIDLabel = new QLabel(this);
-    vendorIDLabel->setAlignment(AlignRight|AlignVCenter);
+    vendorIDLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     vendorIDLabel->setText("Vendor ID:");
 
     vendorID = new QLineEdit(this, "vendorID");
@@ -50,7 +53,7 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     isActive->setText("Active");
 
     QLabel *altContactLabel = new QLabel(this);
-    altContactLabel->setAlignment(AlignRight|AlignVCenter);
+    altContactLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     altContactLabel->setText("Alt Contact:");
 
     altContact = new QLineEdit(this, "altContact");
@@ -73,27 +76,27 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     // I may change all this up later and create a customer-like contact
     // and address section, but for now, one address and one phone for
     // vendors.
-    QGroupBox   *addrGB = new QGroupBox(1, Horizontal, "Company Address", this, "addrGB");
+    Q3GroupBox   *addrGB = new Q3GroupBox(1, Qt::Horizontal, "Company Address", this, "addrGB");
 
     // Now the widget for the address group box.
     TAAWidget   *addrWidget = new TAAWidget(addrGB, "addrWidget");
 
     QLabel *address1Label = new QLabel(addrWidget);
-    address1Label->setAlignment(AlignRight|AlignVCenter);
+    address1Label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     address1Label->setText("Address Line 1:");
     
     address1 = new QLineEdit(addrWidget, "address1");
     address1->setMaxLength(60);
 
     QLabel *address2Label = new QLabel(addrWidget);
-    address2Label->setAlignment(AlignRight|AlignVCenter);
+    address2Label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     address2Label->setText("Address Line 2:");
     
     address2 = new QLineEdit(addrWidget, "address2");
     address2->setMaxLength(60);
 
     QLabel *cityStateZIPLabel = new QLabel(addrWidget);
-    cityStateZIPLabel->setAlignment(AlignRight|AlignVCenter);
+    cityStateZIPLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     cityStateZIPLabel->setText("City, State, ZIP:");
 
     city = new QLineEdit(addrWidget, "city");
@@ -106,8 +109,8 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     zip->setMaxLength(10);
 
     // Now create the layouts needed for these widgets.
-    QGridLayout *addressLayout = new QGridLayout(addrWidget, 3, 2, 2);
-    QBoxLayout  *cityStateZIPLayout = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3GridLayout *addressLayout = new Q3GridLayout(addrWidget, 3, 2, 2);
+    Q3BoxLayout  *cityStateZIPLayout = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     cityStateZIPLayout->addWidget(city, 1);
     cityStateZIPLayout->addWidget(state, 0);
     cityStateZIPLayout->addWidget(zip, 0);
@@ -129,34 +132,34 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     addressLayout->setColStretch(1, 1);
     
     // Phone numbers...
-    QGroupBox   *phoneGB = new QGroupBox(1, Horizontal, "Phone Numbers", this, "phoneGB");
+    Q3GroupBox   *phoneGB = new Q3GroupBox(1, Qt::Horizontal, "Phone Numbers", this, "phoneGB");
 
     // Now the widget for the address group box.
     TAAWidget   *phoneWidget = new TAAWidget(phoneGB, "phoneWidget");
 
     QLabel *phoneLabel = new QLabel(phoneWidget);
-    phoneLabel->setAlignment(AlignRight|AlignVCenter);
+    phoneLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     phoneLabel->setText("Primary Phone:");
 
     phone = new QLineEdit(phoneWidget, "phone");
     phone->setMaxLength(16);
 
     QLabel *altPhoneLabel = new QLabel(phoneWidget);
-    altPhoneLabel->setAlignment(AlignRight|AlignVCenter);
+    altPhoneLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     altPhoneLabel->setText("Alternate Phone:");
 
     altPhone = new QLineEdit(phoneWidget, "altPhone");
     altPhone->setMaxLength(16);
 
     QLabel *faxLabel = new QLabel(phoneWidget);
-    faxLabel->setAlignment(AlignRight|AlignVCenter);
+    faxLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     faxLabel->setText("Fax:");
 
     fax = new QLineEdit(phoneWidget, "fax");
     fax->setMaxLength(16);
 
     // Now create the layouts needed for the phone widgets.
-    QGridLayout *phoneLayout = new QGridLayout(phoneWidget, 3, 2);
+    Q3GridLayout *phoneLayout = new Q3GridLayout(phoneWidget, 3, 2);
     curRow = 0;
     phoneLayout->addWidget(phoneLabel,      curRow, 0);
     phoneLayout->addWidget(phone,           curRow, 1);
@@ -175,39 +178,39 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     phoneLayout->setColStretch(1, 1);
 
     // Account Information
-    QGroupBox   *acctGB = new QGroupBox(1, Horizontal, "Account Information", this, "acctGB");
+    Q3GroupBox   *acctGB = new Q3GroupBox(1, Qt::Horizontal, "Account Information", this, "acctGB");
 
     // Now the widget for the address group box.
     TAAWidget   *acctWidget = new TAAWidget(acctGB, "acctWidget");
 
     QLabel *checkNameLabel = new QLabel(acctWidget);
-    checkNameLabel->setAlignment(AlignRight|AlignVCenter);
+    checkNameLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     checkNameLabel->setText("Print check as:");
 
     checkName = new QLineEdit(acctWidget, "checkName");
     checkName->setMaxLength(60);
 
     QLabel *accountNoLabel = new QLabel(acctWidget);
-    accountNoLabel->setAlignment(AlignRight|AlignVCenter);
+    accountNoLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     accountNoLabel->setText("Acct. Number:");
 
     accountNo = new QLineEdit(acctWidget, "accountNo");
     accountNo->setMaxLength(60);
 
     QLabel *vendorTypeLabel = new QLabel(acctWidget);
-    vendorTypeLabel->setAlignment(AlignRight|AlignVCenter);
+    vendorTypeLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     vendorTypeLabel->setText("Vendor Type:");
 
     vendorType = new QComboBox(false, acctWidget, "vendorType");
 
     QLabel *termsLabel = new QLabel(acctWidget);
-    termsLabel->setAlignment(AlignRight|AlignVCenter);
+    termsLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     termsLabel->setText("Terms:");
 
     terms = new QComboBox(false, acctWidget, "terms");
 
     QLabel *taxIDLabel = new QLabel(acctWidget);
-    taxIDLabel->setAlignment(AlignRight|AlignVCenter);
+    taxIDLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     taxIDLabel->setText("Tax ID:");
 
     taxID = new QLineEdit(acctWidget, "taxID");
@@ -217,20 +220,20 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     use1099->setText("Needs 1099");
 
     QLabel *creditLimitLabel = new QLabel(acctWidget);
-    creditLimitLabel->setAlignment(AlignRight|AlignVCenter);
+    creditLimitLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     creditLimitLabel->setText("Credit Limit:");
 
     creditLimit = new QLineEdit(acctWidget, "creditLimit");
     creditLimit->setMaxLength(16);
 
     QLabel *balanceLabel = new QLabel(acctWidget);
-    balanceLabel->setAlignment(AlignRight|AlignVCenter);
+    balanceLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
     balanceLabel->setText("Balance:");
 
     balance = new QLabel(acctWidget, "balance");
 
     // Now create the layouts needed for the account info widgets.
-    QGridLayout *acctLayout = new QGridLayout(acctWidget, 3, 3);
+    Q3GridLayout *acctLayout = new Q3GridLayout(acctWidget, 3, 3);
     curRow = 0;
     acctLayout->addWidget(checkNameLabel,          curRow, 0);
     acctLayout->addMultiCellWidget(checkName,      curRow, curRow, 1, 2);
@@ -280,17 +283,17 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelVendor()));
 
     // Our main layout
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
     // Vendor ID and Active share a grid cell.
     // So they need a layout.
-    QBoxLayout *idactLayout = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *idactLayout = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     idactLayout->addWidget(vendorID, 1);
     idactLayout->addSpacing(20);
     idactLayout->addWidget(isActive, 0);
 
     // Top grid - company, vendor id, etc.
-    QGridLayout *gl = new QGridLayout(4, 4, 3);
+    Q3GridLayout *gl = new Q3GridLayout(4, 4, 3);
     curRow = 0;
     gl->addWidget(companyNameLabel,     curRow, 0);
     gl->addWidget(companyName,          curRow, 1);
@@ -320,7 +323,7 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     ml->addStretch(1);
 
     // Finally, our button layout.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

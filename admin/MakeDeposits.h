@@ -18,9 +18,9 @@
 
 #include <qdialog.h>
 #include <qlabel.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qcombobox.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
 #include <TAAWidget.h>
 
 class MakeDeposits : public TAAWidget
@@ -43,8 +43,8 @@ protected:
     QLabel      *selectedItemCount;
     QLabel      *undepositedAmount;
     QLabel      *amountSelected;
-    QListView   *paymentList;
-    QDateEdit   *transDate;
+    Q3ListView   *paymentList;
+    Q3DateEdit   *transDate;
     QComboBox   *targetAccountList;
     float       selTotal;
 
@@ -52,7 +52,7 @@ protected slots:
     virtual void cancelSelected()                       { close();     }
     virtual void processSelections();
     virtual void itemSelected();
-    virtual void itemDoubleClicked(QListViewItem *);
+    virtual void itemDoubleClicked(Q3ListViewItem *);
     virtual void selectNone();
     virtual void selectAll();
     virtual void printSelected();

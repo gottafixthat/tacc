@@ -12,8 +12,8 @@
 
 #include "BlargDB.h"
 #include "GenLedger.h"
-#include <qlist.h>
-#include <qstring.h>
+#include <QtCore/QList>
+#include <QtCore/QString>
 
 #define TRANSTYPE_CUSTCHARGE 1
 

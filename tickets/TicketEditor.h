@@ -29,12 +29,12 @@
 #include <qdatetm.h>
 #include <calendar.h>
 #include <qpainter.h>
-#include <qlistview.h>
-#include <qtextview.h>
+#include <q3listview.h>
+#include <q3textview.h>
 #include <qcombobox.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 #include <qcheckbox.h>
 
 #include "Ticket.h"
@@ -91,7 +91,7 @@ protected:
     TicketHeader    *header;
     QComboBox       *logLevel;
     QCheckBox       *reverseLog;
-    QTextView       *ticketLog;
+    Q3TextView       *ticketLog;
 
     QPushButton     *customerButton;
     QPushButton     *annotateButton;
@@ -130,7 +130,7 @@ public:
 protected:
     TicketHeader    *header;
     QComboBox       *newStatus;
-    QMultiLineEdit  *noteText;
+    Q3MultiLineEdit  *noteText;
     QCheckBox       *isUrgent;
 
     QPushButton     *saveNoteButton;

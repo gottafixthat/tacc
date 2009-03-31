@@ -14,7 +14,7 @@
 
 #include <qlineedit.h>
 #include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 
 #include <TAAWidget.h>
 
@@ -53,7 +53,7 @@ protected:
     QComboBox       *statementType;
     QComboBox       *package;
     QComboBox       *referredBy;
-    QMultiLineEdit  *initialNotes;
+    Q3MultiLineEdit  *initialNotes;
 
 };
 #endif // NewCustomer_included

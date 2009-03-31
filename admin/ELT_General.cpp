@@ -48,6 +48,9 @@
 #include <qapplication.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 #include <ADB.h>
 
 
@@ -82,7 +85,7 @@ ELT_General::ELT_General
     descriptionLabel->setText("Description:");
     descriptionLabel->setAlignment(AlignRight|AlignTop);
 
-    description = new QMultiLineEdit(this, "description");
+    description = new Q3MultiLineEdit(this, "description");
     connect(description, SIGNAL(textChanged()), this, SLOT(descriptionChanged()));
 
     QLabel  *diskSpaceLabel = new QLabel(this, "diskSpaceLabel");
@@ -144,10 +147,10 @@ ELT_General::ELT_General
     connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 
     // Setup our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // The main elements will go best in a grid.
-    QGridLayout *gl = new QGridLayout(4, 4);
+    Q3GridLayout *gl = new Q3GridLayout(4, 4);
     gl->setColStretch(0, false);
     gl->setColStretch(1, true);
     gl->setColStretch(2, false);
@@ -182,7 +185,7 @@ ELT_General::ELT_General
     ml->addLayout(gl, 1);
 
     // buttons
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(isActive, 0);
     bl->addStretch(1);

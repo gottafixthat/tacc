@@ -36,7 +36,10 @@
 #include "Tab_Domains.h"
 #include "BlargDB.h"
 #include <qstring.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 #include <stdlib.h>
 #include <stdio.h>
 #include <qapplication.h>
@@ -61,7 +64,7 @@ Tab_Domains::Tab_Domains
 ) : TAAWidget( parent, name )
 {
     // Create the Widgets.
-    list    = new QListView(this, "DomainList");
+    list    = new Q3ListView(this, "DomainList");
     list->addColumn("Login ID");
     list->addColumn("Type");
     list->addColumn("Name");
@@ -118,11 +121,11 @@ Tab_Domains::Tab_Domains
 
     // Do our layout.  Its a simple top-down box layout for most of it,
     // then a button group layout for the action buttons.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(list, 1);
 
     // Add the button layout now.
-    QGridLayout *bl = new QGridLayout(2, 5);
+    Q3GridLayout *bl = new Q3GridLayout(2, 5);
     bl->addWidget(newButton,        0, 0);
     bl->addWidget(checklistButton,  0, 1);
     bl->addWidget(vhostButton,      0, 2);
@@ -167,7 +170,7 @@ void Tab_Domains::refreshDomainList(int domainID)
     char    doingEmail[1024];
     char    hasVHost[1024];
     char    doingDNS[1024];
-    QListViewItem *curItem;
+    Q3ListViewItem *curItem;
 
     // And clear the list.
     list->clear();
@@ -206,7 +209,7 @@ void Tab_Domains::refreshDomainList(int domainID)
             else strcpy(doingDNS, "No");
             
             //fprintf(stderr, "Inserting into the list...\n", DB.curRow["InternalID"]);
-            curItem = new QListViewItem(list,
+            curItem = new Q3ListViewItem(list,
                 DB.curRow["LoginID"],       // Login ID
                 DB.curRow["DomainType"],    // Domain Type
                 DB.curRow["DomainName"],    // Domain Name
@@ -340,7 +343,7 @@ void Tab_Domains::emailSelected()
     if (list->currentItem() == NULL) return;
 
     // Get the domain name
-    QListViewItem *curItem = list->currentItem();
+    Q3ListViewItem *curItem = list->currentItem();
 
     // Now, find out if we are doing email for this domain.
     ADB     mailDB(cfgVal("MailSQLDB"), cfgVal("MailSQLUser"), cfgVal("MailSQLPass"), cfgVal("MailSQLHost"));
@@ -427,7 +430,7 @@ void Tab_Domains::dnsSelected()
     if (list->currentItem() == NULL) return;
 
     // Get the domain name
-    QListViewItem *curItem = list->currentItem();
+    Q3ListViewItem *curItem = list->currentItem();
 
     // Check to see if the domain exists in the DNS database
     char domainName[1024];
@@ -470,7 +473,7 @@ void Tab_Domains::createDNSFromTemplate()
     if (list->currentItem() == NULL) return;
 
     // Get the domain name
-    QListViewItem *curItem = list->currentItem();
+    Q3ListViewItem *curItem = list->currentItem();
 
     DNSTemplatePicker   *dtp;
     dtp = new DNSTemplatePicker(this);
@@ -490,7 +493,7 @@ void Tab_Domains::vhostSelected()
     if (list->currentItem() == NULL) return;
 
     // Get the domain name
-    QListViewItem *curItem = list->currentItem();
+    Q3ListViewItem *curItem = list->currentItem();
 
     // Check to see if the domain exists in the DNS database
     char domainName[1024];

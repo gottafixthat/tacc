@@ -8,9 +8,11 @@
 #include <TAATools.h>
 #include <qapplication.h>
 #include <QSqlDbPool.h>
-#include <qsqlcursor.h>
+#include <q3sqlcursor.h>
 #include <qsqlrecord.h>
 #include <qlist.h>
+//Added by qt3to4:
+#include <QSqlQuery>
 #include <ADB.h>
 #include <Cfg.h>
 
@@ -234,7 +236,7 @@ void upgradeDatabase()
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
 
         // Import the current phone numbers into the new Contacts table.
-        QSqlCursor  contacts("CustomerContacts", true, dbp2.qsqldb());
+        Q3SqlCursor  contacts("CustomerContacts", true, dbp2.qsqldb());
         QSqlRecord  *buf;
         sql = "select RefID, Tag, International, PhoneNumber, Active, LastModifiedBy, LastModified from PhoneNumbers where RefFrom = 0";
         if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());

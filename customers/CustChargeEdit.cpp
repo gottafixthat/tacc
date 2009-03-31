@@ -30,6 +30,10 @@
 #include <time.h>
 #include <sys/timeb.h>
 #include <qdatetm.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QLabel>
 #include <ADB.h>
 #include <qlayout.h>
 
@@ -70,7 +74,7 @@ CustChargeEdit::CustChargeEdit
     QLabel *chargeDateLabel = new QLabel(this, "chargeDateLabel");
     chargeDateLabel->setText("Charge Date:");
     chargeDateLabel->setAlignment(AlignRight|AlignVCenter);
-    chargeDate = new QDateEdit(QDate::currentDate(), this);
+    chargeDate = new Q3DateEdit(QDate::currentDate(), this);
 
     QLabel *itemListLabel = new QLabel(this, "itemListLabel");
     itemListLabel->setText("Item:");
@@ -81,12 +85,12 @@ CustChargeEdit::CustChargeEdit
     QLabel *startDateLabel = new QLabel(this, "startDateLabel");
     startDateLabel->setText("Start Date:");
     startDateLabel->setAlignment(AlignRight|AlignVCenter);
-    startDate = new QDateEdit(QDate::currentDate(), this);
+    startDate = new Q3DateEdit(QDate::currentDate(), this);
     connect(startDate, SIGNAL(valueChanged(const QDate &)), this, SLOT(periodChanged(const QDate &)));
     QLabel *stopDateLabel = new QLabel(this, "stopDateLabel");
     stopDateLabel->setText("End Date:");
     stopDateLabel->setAlignment(AlignRight|AlignVCenter);
-    stopDate   = new QDateEdit(QDate::currentDate(), this);
+    stopDate   = new Q3DateEdit(QDate::currentDate(), this);
     connect(stopDate, SIGNAL(valueChanged(const QDate &)), this, SLOT(periodChanged(const QDate &)));
 
     QLabel *quantityLabel = new QLabel(this, "quantityLabel");
@@ -112,7 +116,7 @@ CustChargeEdit::CustChargeEdit
     QLabel *memoLabel = new QLabel(this, "memoLabel");
     memoLabel->setText("Memo:");
     memoLabel->setAlignment(AlignRight|AlignTop);
-    memo     = new QMultiLineEdit(this, "Memo");
+    memo     = new Q3MultiLineEdit(this, "Memo");
 
     QLabel *totalChargeLabel = new QLabel(this, "totalChargeLabel");
     totalChargeLabel->setText("Total Charge:");
@@ -137,11 +141,11 @@ CustChargeEdit::CustChargeEdit
 	
     // Create the layout now.
     // The main layout first, a box layout from top to bottom.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
 
     // A grid to hold all of our input fields.
-    QGridLayout *gl = new QGridLayout(7, 4);
+    Q3GridLayout *gl = new Q3GridLayout(7, 4);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     gl->setColStretch(2, 0);
@@ -198,7 +202,7 @@ CustChargeEdit::CustChargeEdit
 
     ml->addLayout(gl, 1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

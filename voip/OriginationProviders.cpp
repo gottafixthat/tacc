@@ -20,11 +20,14 @@
 
 #include <ADB.h>
 
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QLayout>
+#include <QtCore/QTimer>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <QtGui/QLabel>
 #include <Cfg.h>
 
 #include <TAA.h>
@@ -39,7 +42,7 @@ OriginationProviders::OriginationProviders
 {
     setCaption( "Origination Providers" );
 
-    opList = new QListView(this, "Origination Providers");
+    opList = new Q3ListView(this, "Origination Providers");
     opList->setAllColumnsShowFocus(true);
     opList->setRootIsDecorated(true);
     opList->addColumn("Vendor/Tag");
@@ -47,7 +50,7 @@ OriginationProviders::OriginationProviders
     opList->addColumn("Avail");
     opList->addColumn("Total");
     opList->addColumn("Type");
-    connect(opList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+    connect(opList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(itemDoubleClicked(Q3ListViewItem *)));
 
     activeColumn    = 1;
     availColumn     = 2;
@@ -76,11 +79,11 @@ OriginationProviders::OriginationProviders
     closeButton->setText("&Close");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(opList, 1);
 
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(editButton, 0);
@@ -120,7 +123,7 @@ void OriginationProviders::refreshList()
             char    availStr[1024];
             char    totalStr[1024];
 
-            QListViewItem   *parentItem = new QListViewItem(opList, myDB.curRow["CompanyName"]);
+            Q3ListViewItem   *parentItem = new Q3ListViewItem(opList, myDB.curRow["CompanyName"]);
 
             // Now get the items for this vendor
             myDB2.query("select OriginationID, VendorID, Tag, DeliveryMethod from VoIP_Origination where VendorID = %ld", atoi(myDB.curRow["VendorID"]));
@@ -146,7 +149,7 @@ void OriginationProviders::refreshList()
                     if (!atoi(myDB2.curRow["DeliveryMethod"])) strcpy(typeStr, "IP");
                     else strcpy(typeStr, "PRI");
 
-                    QListViewItem   *curItem = new QListViewItem(parentItem, myDB2.curRow["Tag"], inUseStr, availStr, totalStr, typeStr, myDB2.curRow["OriginationID"]);
+                    Q3ListViewItem   *curItem = new Q3ListViewItem(parentItem, myDB2.curRow["Tag"], inUseStr, availStr, totalStr, typeStr, myDB2.curRow["OriginationID"]);
 
                 }
             }
@@ -190,7 +193,7 @@ void OriginationProviders::addClicked()
 
 void OriginationProviders::editClicked()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     curItem = opList->currentItem();
     if (curItem) {
         long    tmpID;
@@ -228,7 +231,7 @@ void OriginationProviders::closeClicked()
   * itemDoubleClicked - When the user double clicks on an origination provider
   * this opens the edit window.
   */
-void OriginationProviders::itemDoubleClicked(QListViewItem *curItem)
+void OriginationProviders::itemDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) editClicked();
 }
@@ -293,9 +296,9 @@ OriginationProviderEditor::OriginationProviderEditor
     cancelButton->setText("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout();
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
     int curRow = 0;
     gl->addWidget(vendorListLabel,          curRow, 0);
     gl->addWidget(vendorList,               curRow, 1);
@@ -313,7 +316,7 @@ OriginationProviderEditor::OriginationProviderEditor
     ml->addLayout(gl, 0);
     ml->addStretch(1);
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

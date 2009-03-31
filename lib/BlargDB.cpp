@@ -12,23 +12,24 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
-
-#include <mysql/mysql.h>
-#include <qapplication.h>
-#include <qstring.h>
-#include <qstrlist.h>
-#include <qregexp.h>
-#include <qdatetm.h>
-#include <qprinter.h>
-#include <qpainter.h>
-#include <qrect.h>
-#include "BlargDB.h"
 #include <time.h>
 #include <sys/timeb.h>
+
+#include <mysql/mysql.h>
+
+#include <QtGui/QApplication>
+#include <QtCore/QString>
+#include <Qt3Support/q3strlist.h>
+#include <QtCore/QRegExp>
+#include <QtCore/QDateTime>
+#include <QtGui/QPrinter>
+#include <QtGui/QPainter>
+#include <QtCore/QRect>
+#include "BlargDB.h"
 #include "AcctsRecv.h"
 
 #include <ADB.h>
-#include "BString.h"
+#include <BString.h>
 #include <TAATools.h>
 #include <Cfg.h>
 #include <CCValidate.h>
@@ -510,7 +511,6 @@ int AccountsDB::get(int intAcctNo)
 int AccountsDB::ins(void)
 {
     long        retVal = 0;
-    int         startingAcctNo = 0;
 	ADB	        DB;
     ADBTable    acctsDB("Accounts");
     
@@ -2265,8 +2265,7 @@ void SubscriptionsDB::packageScan(void)
 {
     // A simple structure for maintaining the list of linked package info.
     
-    QList<PackageItem> PItems;
-    PItems.setAutoDelete(TRUE);
+    QList<PackageItem *> PItems;
     PackageItem *curItem;
     
     BlargDB     DB;
@@ -2304,7 +2303,7 @@ void SubscriptionsDB::packageScan(void)
             // one of the included package items.
             int looping = 1;
             int doUpdate = 0;
-            unsigned int tmpCur  = 0;
+            int tmpCur  = 0;
             while (looping) {
                 doUpdate = 0;
                 if (!PItems.count()) looping = 0;
@@ -2331,7 +2330,7 @@ void SubscriptionsDB::packageScan(void)
                         if (doUpdate) {
 	                        // Update it in the database.
 	                        DB.dbcmd("update Subscriptions set ParentID = %ld where InternalID = %ld", curItem->InternalID, atol(DB2.curRow[0]));
-	                        PItems.remove(tmpCur);
+	                        PItems.removeAt(tmpCur);
 	                        looping = 0;
 	                        doUpdate = 0;
                         } else {
@@ -3434,7 +3433,7 @@ void StatementsDB::print(QPainter *inP)
         rect.setCoords(descriptionX1, yPos, descriptionX2, yPos + RowHeight-1);
         p->drawRect(rect);
         rect.setCoords(descriptionX1+2, yPos, descriptionX2, yPos + RowHeight);
-        p->drawText(rect, Qt::WordBreak|Qt::AlignLeft|Qt::AlignVCenter, SDDB.getStr("Description"));
+        p->drawText(rect, Qt::TextWordWrap|Qt::AlignLeft|Qt::AlignVCenter, SDDB.getStr("Description"));
         
         // The amount.
         rect.setCoords(amountX1, yPos, amountX2, yPos + RowHeight-1);

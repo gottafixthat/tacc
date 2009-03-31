@@ -19,18 +19,18 @@
 #ifndef DIDManager_included
 #define DIDManager_included
 
-#include "TAATools.h"
-#include "TAAWidget.h"
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlistview.h>
-#include <qcombobox.h>
-#include <qmultilineedit.h>
-#include <qdatetimeedit.h>
-#include <qtextview.h>
-#include <qpopupmenu.h>
+#include <TAATools.h>
+#include <TAAWidget.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+#include <Qt3Support/q3datetimeedit.h>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3popupmenu.h>
 
 class DIDManager : public TAAWidget
 {
@@ -111,7 +111,7 @@ protected:
     QComboBox       *stateList;
     QComboBox       *cityList;
     QComboBox       *reserved;
-    QDateEdit       *reserveDate;
+    Q3DateEdit       *reserveDate;
     QLabel          *messageArea;
 
     QPushButton     *addButton;

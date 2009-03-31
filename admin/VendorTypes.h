@@ -14,7 +14,7 @@
 #define VendorTypes_included
 
 #include <TAAWidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qmenubar.h>
 
 class VendorTypes : public TAAWidget
@@ -45,8 +45,8 @@ private slots:
     virtual void deleteVendorType();
 
 protected:
-    void        addToList(long, QListViewItem *);
-    QListView   *list;
+    void        addToList(long, Q3ListViewItem *);
+    Q3ListView   *list;
     QMenuBar    *menu;
 };
 #endif // VendorTypes_included

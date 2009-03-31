@@ -1,26 +1,16 @@
-/** AsteriskManager.h - Provides a class library that will signal events
-  * from the Asterisk Manager interface.
-  *
-  * This file doesn't have any GUI widgets in it at all, it only connects
-  * to the Asterisk Manager and emits signals based on incoming events.
-  ************************************************************************
-  * Written by R. Marc Lewis, 
-  *   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-  *   All Rights Reserved.
-  *
-  *  Unpublished work.  No portion of this file may be reproduced in whole
-  *  or in part by any means, electronic or otherwise, without the express
-  *  written consent of Blarg! Online Services and R. Marc Lewis.
-  */
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef ASTERISKMANAGER_H
 #define ASTERISKMANAGER_H
-
-// FIXME: These should all come out of a config file.
-//#define ASTERISKHOST "asterisk.corp.blarg.net"
-//#define ASTERISKPORT 1234
-//#define ASTERISKUSER "tacc"
-//#define ASTERISKPASS "VKF3i6iz"
 
 // FIXME: This should be in a config file
 #define ASTEXT_PARK "700"
@@ -30,10 +20,10 @@
 
 #define ASTCMD_QUEUESTATUS      1
 
-#include <qobject.h>
-#include <qstring.h>
-#include <qsocket.h>
-#include <qvaluevector.h>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <Qt3Support/q3socket.h>
+#include <Qt3Support/q3valuevector.h>
 
 // Define the key/value entries
 struct astKVPair {
@@ -49,7 +39,7 @@ struct astEventRecord {
     char                    msgVal[ASTMAXVALLENGTH];
     int                     responseID;
     int                     count;
-    QValueVector<astKVPair> data;
+    Q3ValueVector<astKVPair> data;
 };
 
 class AsteriskManager : public QObject
@@ -90,10 +80,13 @@ protected:
 
 private:
     int             curResponseID;
-    QSocket         *mySocket;
+    Q3Socket         *mySocket;
     QString         dataBuffer;
     astEventRecord  event;
 };
 
 #endif // ASTERISKMANAGER_H
+
+
+// vim: expandtab
 

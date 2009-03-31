@@ -7,11 +7,16 @@
 #include "Report.h"
 
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QCloseEvent>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <qdatetm.h>
-#include <qheader.h>
+#include <q3header.h>
 #include <qprinter.h>
 #include <qpainter.h>
 #include <qrect.h>
@@ -20,7 +25,7 @@
 #include <qfile.h>
 
 #include <calendar.h>
-#include <qprogressdialog.h>
+#include <q3progressdialog.h>
 #include <qapplication.h>
 #include <qlineedit.h>
 
@@ -43,13 +48,13 @@ Report::Report
     startDateLabel->setText("Start:");
     startDateLabel->setAlignment(AlignVCenter|AlignRight);
 
-    startDateCal = new QDateEdit(QDate::currentDate(), this, "StartDate");
+    startDateCal = new Q3DateEdit(QDate::currentDate(), this, "StartDate");
     
     endDateLabel = new QLabel(this);
     endDateLabel->setText("End:");
     endDateLabel->setAlignment(AlignVCenter|AlignRight);
     
-    endDateCal = new QDateEdit(QDate::currentDate(), this, "StartDate");
+    endDateCal = new Q3DateEdit(QDate::currentDate(), this, "StartDate");
 
     dateList = new QComboBox(false, this);
     dateList->insertItem("This Month");
@@ -73,11 +78,11 @@ Report::Report
     reportTitle->setText("reportTitle");
     reportTitle->setAlignment(AlignVCenter|AlignHCenter|ExpandTabs|WordBreak);
 
-    repBody = new QListView(this);
+    repBody = new Q3ListView(this);
     repBody->addColumn("First Column");
-    connect(repBody, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(listItemSelected(QListViewItem *)));
+    connect(repBody, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(listItemSelected(Q3ListViewItem *)));
 
-    userText = new QTextView(this);
+    userText = new Q3TextView(this);
     userText->setFocusPolicy(QWidget::NoFocus);
 
     // The action buttons...
@@ -111,10 +116,10 @@ Report::Report
 
 
     // Now, do the layout for the widget.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // A layout for the top row where our dates and such are
-    dl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    dl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     dl->addWidget(startDateLabel,   0);
     dl->addWidget(startDateCal,     1);
     dl->addWidget(endDateLabel,     0);
@@ -129,7 +134,7 @@ Report::Report
     ml->addWidget(userText,     0);
     
     // Add the button layout
-    bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(filterButton, 0);
     bl->addWidget(userButton,   0);
@@ -417,7 +422,7 @@ void Report::emailReport()
     }
 
     // Now, get the longest item for each of the keys.
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
         for (uint i = 0; i < numCols; i++) {
             if (curItem->key(i, 0).length() > colWidths[i]) {
@@ -764,9 +769,9 @@ EmailReportDialog::EmailReportDialog(QWidget *parent, const char *name) :
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
 
-    QGridLayout *gl = new QGridLayout(2,3);
+    Q3GridLayout *gl = new Q3GridLayout(2,3);
     int curRow = 0;
     gl->addWidget(emailAddressLabel,        curRow, 0);
     gl->addWidget(emailAddr,                curRow, 1);
@@ -783,7 +788,7 @@ EmailReportDialog::EmailReportDialog(QWidget *parent, const char *name) :
     ml->addLayout(gl, 0);
     ml->addStretch(1);
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(sendButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -869,15 +874,15 @@ ReportFilter::ReportFilter(QWidget *parent, const char *name) :
     // Now, create our layout.  This is a bit different than the normal
     // layout since classes that inherit us will want to put stuff
     // in the middle.
-    QBoxLayout *myML = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
-    ml = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *myML = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
+    ml = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     myML->addLayout(ml, 1);
 
     // Add a horizontal line before the button rows.
     myML->addWidget(new HorizLine(this), 0);
 
     // A grid layout for our load list.
-    QGridLayout *ll = new QGridLayout(1, 3);
+    Q3GridLayout *ll = new Q3GridLayout(1, 3);
     int curRow = 0;
     ll->addWidget(saveListLabel,        curRow, 0);
     ll->addWidget(saveList,             curRow, 1);
@@ -890,7 +895,7 @@ ReportFilter::ReportFilter(QWidget *parent, const char *name) :
     myML->addLayout(ll, 0);
 
     // Add our button layout.
-    bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(updateButton, 0);

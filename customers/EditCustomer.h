@@ -25,10 +25,12 @@
 #ifndef EditCustomer_included
 #define EditCustomer_included
 
-#include <qwidgetstack.h>
+#include <q3widgetstack.h>
 #include <qtabbar.h>
 #include <qpushbutton.h>
 #include <qmenubar.h>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 #include "Tab_ContactInfo.h"
 #include "Tab_BillingInfo.h"
@@ -81,7 +83,7 @@ protected slots:
 
 protected:
     QTabBar             *tabBar;
-    QWidgetStack        *qws;
+    Q3WidgetStack        *qws;
     QPushButton         *saveButton;
     QPushButton         *cancelButton;
     QMenuBar            *customerMenu;
@@ -98,7 +100,7 @@ private:
 //	Tab_Accounts        *accountsTab;
 	long				myCustID;
 
-    QPopupMenu          *stMenu;
+    Q3PopupMenu          *stMenu;
     int                 printedStatementID;
     int                 freePrintedStatementID;
     

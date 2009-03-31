@@ -32,8 +32,8 @@
 
 
 #include <qwidget.h>
-#include <qwidgetstack.h>
-#include <qlistview.h>
+#include <q3widgetstack.h>
+#include <q3listview.h>
 #include <qpushbutton.h>
 #include <qtabbar.h>
 
@@ -57,7 +57,7 @@ public:
     virtual ~EditLoginTypes();
 
 protected slots:
-    virtual void loginTypeSelected(QListViewItem *curItem);
+    virtual void loginTypeSelected(Q3ListViewItem *curItem);
     void    updateLoginType();
 
     virtual void newLoginType();
@@ -65,9 +65,9 @@ protected slots:
 
 protected:
     QPushButton     *deleteButton;
-    QListView       *loginTypeList;
+    Q3ListView       *loginTypeList;
     QTabBar         *theTabBar;
-    QWidgetStack    *qws;
+    Q3WidgetStack    *qws;
 
 private:
     ELT_General     *tgeneral;

@@ -17,6 +17,9 @@
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qstring.h>
+//Added by qt3to4:
+#include <QCloseEvent>
+#include <QEvent>
 
 #include <TAAWidget.h>
 

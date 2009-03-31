@@ -25,13 +25,13 @@
 #ifndef Tab_Logins_included
 #define Tab_Logins_included
 
-#include <qstrlist.h>
-#include <qpopupmenu.h>
+#include <q3strlist.h>
+#include <q3popupmenu.h>
 #include <qcheckbox.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-#include <qlistview.h>
-#include <qtable.h>
+#include <q3listview.h>
+#include <q3table.h>
 #include <TAAWidget.h>
 
 class Tab_Logins : public TAAWidget
@@ -76,16 +76,16 @@ protected:
     QCheckBox   *hideWiped;
     QPushButton *passwdButton;
     QLabel      *adminMenuArea;
-    QListView   *list;
+    Q3ListView   *list;
     QPushButton *bandwidthButton;
 	
 private:
 	void updateARForLock(const char * LoginID);
 
 	long myCustID;
-	QStrList *loginList;
+	Q3StrList *loginList;
 	
-	QPopupMenu  *adminMenu;
+	Q3PopupMenu  *adminMenu;
 };
 
 // Custom Flag Editor
@@ -115,7 +115,7 @@ public slots:
 protected:
     void    fillTable();
 
-    QTable  *flagTable;
+    Q3Table  *flagTable;
     char    myLoginID[64];
     long    myCustID;
 };

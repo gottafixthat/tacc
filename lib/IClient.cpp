@@ -12,7 +12,8 @@
 #endif
 
 #include "IClient.h"
-#include <qstring.h>
+#include <QtCore/QString>
+#include <Qt3Support/Q3StrList>
 
 #define RECV_BUFFER_SIZE  65536
 #define SEND_BUFFER_SIZE  65536
@@ -24,7 +25,7 @@ IClient::IClient()
     mNumRecvBufferChars = 0;
     mRecvBufferPos = 0;
     mStatusCode = 0;
-    bufferedData    = new QStrList(TRUE);
+    bufferedData    = new Q3StrList(TRUE);
 }
 
 

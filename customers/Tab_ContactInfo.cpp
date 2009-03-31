@@ -27,12 +27,15 @@
 
 
 #include <qclipboard.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
 #include "Tab_ContactInfo.h"
 #include "BlargDB.h"
 #include "AddressEditor.h"
 #include <TAAPixmaps.h>
 #include <stdio.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include <qpixmap.h>
 #include <qlayout.h>
 #include <qlabel.h>
@@ -118,7 +121,7 @@ Tab_ContactInfo::Tab_ContactInfo
     connect(copyButton, SIGNAL(clicked()), this, SLOT(copyContactInfoToClipboard()));
 
     // Now, the contact list.
-    contactList = new QListView(this, "contactList");
+    contactList = new Q3ListView(this, "contactList");
     contactList->addColumn("Tag");
     contactList->addColumn("Name");
     contactList->addColumn("Phone");
@@ -143,7 +146,7 @@ Tab_ContactInfo::Tab_ContactInfo
     // Now, do the contact list.
     
     // Do the address list.
-    addressList = new QListView(this, "Address List");
+    addressList = new Q3ListView(this, "Address List");
     addressList->addColumn("Street");
     addressList->addColumn("Apt");
     addressList->addColumn("City");
@@ -152,7 +155,7 @@ Tab_ContactInfo::Tab_ContactInfo
     addressList->addColumn("Active");
     addressList->addColumn("Tag");
     addressList->setAllColumnsShowFocus(true);
-    connect(addressList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(editCurrentAddressItem(QListViewItem *)));
+    connect(addressList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(editCurrentAddressItem(Q3ListViewItem *)));
 
     QPushButton *addAddrButton = new QPushButton(this, "AddAddressButton");
     addAddrButton->setText("Add");
@@ -170,10 +173,10 @@ Tab_ContactInfo::Tab_ContactInfo
 
     // Thats it, create the (rather complex) layout.  We'll need several
     // grids within our main box.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Create a grid layout for our name and contact names
-    QGridLayout *cngl = new QGridLayout(3,2);
+    Q3GridLayout *cngl = new Q3GridLayout(3,2);
     int curRow = 0;
     cngl->addWidget(nameLabel,          curRow, 0);
     cngl->addWidget(fullName,           curRow, 1);
@@ -190,7 +193,7 @@ Tab_ContactInfo::Tab_ContactInfo
     cngl->setColStretch(1,1);
 
     // Now one for our text/informational fields.
-    QGridLayout *igl = new QGridLayout(4,2);
+    Q3GridLayout *igl = new Q3GridLayout(4,2);
     curRow = 0;
     igl->addWidget(customerIDLabel,     curRow, 0);
     igl->addWidget(customerID,          curRow, 1);
@@ -211,12 +214,12 @@ Tab_ContactInfo::Tab_ContactInfo
     igl->setColStretch(1,1);
 
     // And now a left to right box layout to hold the two grids.
-    QBoxLayout  *hbl = new QBoxLayout(QBoxLayout::LeftToRight);
+    Q3BoxLayout  *hbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight);
     hbl->addLayout(cngl, 1);
     hbl->addLayout(igl,  1);
 
     // Our "special" layout for action buttons.
-    QBoxLayout *specl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    Q3BoxLayout *specl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0);
     specl->addWidget(copyButton, 0);
     specl->addStretch(1);
     hbl->addLayout(specl,0);
@@ -239,11 +242,11 @@ Tab_ContactInfo::Tab_ContactInfo
     //    | +-----------------------------+ +---------------+ |
     //    +---------------------------------------------------+
     
-    QBoxLayout *cpbl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *cpbl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     
     // Our contact list
     cpbl->addWidget(contactList, 1);
-    QBoxLayout *cabl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    Q3BoxLayout *cabl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0);
     cabl->addStretch(1);
     cabl->addWidget(addContactButton, 0);
     cabl->addWidget(editContactButton, 0);
@@ -253,9 +256,9 @@ Tab_ContactInfo::Tab_ContactInfo
 
     ml->addLayout(cpbl, 1);
     
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     abl->addWidget(addressList, 1);
-    QBoxLayout *babl = new QBoxLayout(QBoxLayout::TopToBottom, 0);
+    Q3BoxLayout *babl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 0);
     babl->addStretch(1);
     babl->addWidget(addAddrButton, 0);
     babl->addWidget(editAddrButton, 0);
@@ -302,7 +305,7 @@ void Tab_ContactInfo::loadCustInfo()
         QString tmpSt = QString::number(ctc->contactID);
         QString tmpFlags = "";
         if (ctc->sendStatements) tmpFlags += "Statements";
-        (void) new QListViewItem(contactList, ctc->tag, ctc->name, ctc->phoneNumber, ctc->emailAddress, ctc->access, tmpFlags, tmpSt);
+        (void) new Q3ListViewItem(contactList, ctc->tag, ctc->name, ctc->phoneNumber, ctc->emailAddress, ctc->access, tmpFlags, tmpSt);
     }
     debug(5, "Loaded %d contacts...\n", contacts.count());
 	cdb.get(myCustID);
@@ -349,7 +352,7 @@ bool Tab_ContactInfo::saveContactInfo(void)
 
 void Tab_ContactInfo::editCurrentAddress()
 {
-    QListViewItem *curItem = addressList->currentItem();
+    Q3ListViewItem *curItem = addressList->currentItem();
     if (curItem) {
         AddressEditor	*AE;
         AE = new(AddressEditor);
@@ -357,7 +360,7 @@ void Tab_ContactInfo::editCurrentAddress()
     }
 }
 
-void Tab_ContactInfo::editCurrentAddressItem(QListViewItem *curItem)
+void Tab_ContactInfo::editCurrentAddressItem(Q3ListViewItem *curItem)
 {
     if (curItem) {
         AddressEditor	*AE;
@@ -384,7 +387,7 @@ void Tab_ContactInfo::addNewAddress()
 
 void Tab_ContactInfo::deleteCurrentAddress()
 {
-    QListViewItem   *curItem = addressList->currentItem();
+    Q3ListViewItem   *curItem = addressList->currentItem();
     if (curItem) {
         ADB		    DB;
         
@@ -417,7 +420,7 @@ void Tab_ContactInfo::refreshAddrList(void)
         if (DB.curRow.col("Active")->toInt()) strcpy(tmpAct, "Yes");
         else strcpy(tmpAct, "No");
 
-        (void) new QListViewItem(addressList, 
+        (void) new Q3ListViewItem(addressList, 
                                  DB.curRow["Address1"],
                                  DB.curRow["Address2"],
                                  DB.curRow["City"],
@@ -450,7 +453,7 @@ void Tab_ContactInfo::addrRefreshSlot(int RefFrom, long RefID)
 
 void Tab_ContactInfo::editCurrentContact()
 {
-    QListViewItem   *curItem = contactList->currentItem();
+    Q3ListViewItem   *curItem = contactList->currentItem();
     if (curItem) {
         CustomerContactEditor *CE;
         CE = new CustomerContactEditor();
@@ -471,7 +474,7 @@ void Tab_ContactInfo::addNewContact()
 
 void Tab_ContactInfo::deleteCurrentContact()
 {
-    QListViewItem   *curItem = contactList->currentItem();
+    Q3ListViewItem   *curItem = contactList->currentItem();
     if (curItem) {
         CustomerContactsDB  CDB;
         

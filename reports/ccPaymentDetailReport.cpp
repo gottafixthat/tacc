@@ -14,6 +14,10 @@
 
 #include <ccPaymentDetailReport.h>
 #include <QSqlDbPool.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <QSqlQuery>
 #include <CCValidate.h>
 #include <mcve.h>
 #include <TAATools.h>
@@ -22,7 +26,7 @@
 #include <qlabel.h>
 #include <qcheckbox.h>
 #include <qlayout.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qpushbutton.h>
 
 
@@ -41,13 +45,13 @@ ccPaymentDetailReport::ccPaymentDetailReport
 	setCaption("Credit Card Transaction Detail Report");
 	setTitle("Credit Card Transaction Detail Report");
 	
-	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, AlignLeft);
-	repBody->addColumn("Amount");       repBody->setColumnAlignment(1, AlignRight);
-	repBody->addColumn("Cust ID");      repBody->setColumnAlignment(2, AlignLeft);
-	repBody->addColumn("Customer Name");repBody->setColumnAlignment(3, AlignLeft);
-	repBody->addColumn("Company");      repBody->setColumnAlignment(4, AlignLeft);
-	repBody->addColumn("CC Type");      repBody->setColumnAlignment(5, AlignLeft);
-	repBody->addColumn("Disposition");  repBody->setColumnAlignment(6, AlignLeft);
+	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, Qt::AlignLeft);
+	repBody->addColumn("Amount");       repBody->setColumnAlignment(1, Qt::AlignRight);
+	repBody->addColumn("Cust ID");      repBody->setColumnAlignment(2, Qt::AlignLeft);
+	repBody->addColumn("Customer Name");repBody->setColumnAlignment(3, Qt::AlignLeft);
+	repBody->addColumn("Company");      repBody->setColumnAlignment(4, Qt::AlignLeft);
+	repBody->addColumn("CC Type");      repBody->setColumnAlignment(5, Qt::AlignLeft);
+	repBody->addColumn("Disposition");  repBody->setColumnAlignment(6, Qt::AlignLeft);
 	
     allowDates(REP_ALLDATES);
     allowFilters(1);
@@ -87,7 +91,7 @@ void ccPaymentDetailReport::refreshReport()
     QString     extraq;
     double      total = 0.00;
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(Qt::waitCursor);
     repBody->clear();
 
     // Create our query.
@@ -199,7 +203,7 @@ void ccPaymentDetailReport::refreshReport()
             }
 
 
-            (void) new QListViewItem(repBody, 
+            (void) new Q3ListViewItem(repBody, 
                     q.value(transDateCol).toString(),
                     amount,
                     q.value(customerIDCol).toString(),
@@ -210,7 +214,7 @@ void ccPaymentDetailReport::refreshReport()
         }
         // Add the total line
         amount = amount.sprintf("%.2f", total);
-        (void) new QListViewItem(repBody, 
+        (void) new Q3ListViewItem(repBody, 
                 "Total",
                 amount);
     }
@@ -226,7 +230,7 @@ void ccPaymentDetailReport::refreshReport()
  * When an item is double clicked, this is called.  It drills down
  * in the report.
  */
-void ccPaymentDetailReport::listItemSelected(QListViewItem *curItem)
+void ccPaymentDetailReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         // Open the customer window
@@ -266,8 +270,8 @@ ccPaymentDetailOptions::ccPaymentDetailOptions(QWidget *parent, const char *name
     allCardTypes->setChecked(true);
     connect(allCardTypes, SIGNAL(stateChanged(int)), this, SLOT(allCardTypesChanged(int)));
 
-    cardTypeList = new QListBox(this, "cardTypeList");
-    cardTypeList->setSelectionMode(QListBox::Multi);
+    cardTypeList = new Q3ListBox(this, "cardTypeList");
+    cardTypeList->setSelectionMode(Q3ListBox::Multi);
     cardTypeList->insertItem("Mastercard");
     cardTypeList->insertItem("Visa");
     cardTypeList->insertItem("American Express");
@@ -282,8 +286,8 @@ ccPaymentDetailOptions::ccPaymentDetailOptions(QWidget *parent, const char *name
     allDispTypes->setChecked(true);
     connect(allDispTypes, SIGNAL(stateChanged(int)), this, SLOT(allDispTypesChanged(int)));
 
-    dispList = new QListBox(this, "dispList");
-    dispList->setSelectionMode(QListBox::Multi);
+    dispList = new Q3ListBox(this, "dispList");
+    dispList->setSelectionMode(Q3ListBox::Multi);
     dispList->insertItem("Failure");
     dispList->insertItem("Success");
     dispList->insertItem("Auth");
@@ -303,10 +307,10 @@ ccPaymentDetailOptions::ccPaymentDetailOptions(QWidget *parent, const char *name
     closeButton->setText("&Close");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     
     // Grid for the main widgets
-    QGridLayout *gl = new QGridLayout(2, 4);
+    Q3GridLayout *gl = new Q3GridLayout(2, 4);
     int curRow = 0;
     gl->addWidget(cardTypeLabel,        curRow, 0);
     gl->addWidget(allCardTypes,         curRow, 1);
@@ -328,7 +332,7 @@ ccPaymentDetailOptions::ccPaymentDetailOptions(QWidget *parent, const char *name
 
     ml->addLayout(gl, 1);
     // Our buttons
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(updateButton, 0);
     bl->addWidget(closeButton, 0);

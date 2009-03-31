@@ -17,6 +17,9 @@
 #include <qlabel.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -60,11 +63,11 @@ ExtendGraceDate::ExtendGraceDate(QWidget* parent, const char* name, long Custome
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelGrace()));
 
     // Our layout.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     ml->addWidget(titleLabel, 0);
     ml->addSpacing(5);
     
-    QGridLayout *gl = new QGridLayout(2, 3);
+    Q3GridLayout *gl = new Q3GridLayout(2, 3);
     int curRow = 0;
     gl->addWidget(extendDaysLabel,  curRow, 0);
     gl->addWidget(extendDays,       curRow, 1);
@@ -86,7 +89,7 @@ ExtendGraceDate::ExtendGraceDate(QWidget* parent, const char* name, long Custome
     ml->addLayout(gl, 0);
     ml->addStretch(1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

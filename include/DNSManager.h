@@ -29,16 +29,17 @@
 #ifndef DNSManager_included
 #define DNSManager_included
 
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QComboBox>
+#include <QtGui/QSpinBox>
+#include <QtGui/QPushButton>
+
 #include <TAATools.h>
 #include <TAAWidget.h>
 #include <ADB.h>
 #include <DNSUtils.h>
-#include <qlistview.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qcombobox.h>
-#include <qspinbox.h>
-#include <qpushbutton.h>
 
 
 // TAA DNS Manager class/widget
@@ -73,7 +74,7 @@ protected:
     QLabel      *addressBoxLabel;
     QLineEdit   *addressBox;
     QPushButton *addButton;
-    QListView   *recordList;    // Host record list.
+    Q3ListView   *recordList;    // Host record list.
 };
 
 #endif // DNSManager_included

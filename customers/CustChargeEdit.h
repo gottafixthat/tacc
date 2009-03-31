@@ -14,7 +14,7 @@
 #include <qmultilinedit.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
 #include "GenLedger.h"
 #include <TAAWidget.h>
 
@@ -53,10 +53,10 @@ protected:
     QLineEdit   *units;
     QLabel      *totalCharge;
     QCheckBox   *taxable;
-    QMultiLineEdit *memo;
-    QDateEdit   *chargeDate;
-    QDateEdit   *startDate;
-    QDateEdit   *stopDate;
+    Q3MultiLineEdit *memo;
+    Q3DateEdit   *chargeDate;
+    Q3DateEdit   *startDate;
+    Q3DateEdit   *stopDate;
     QPushButton *saveButton;
     QPushButton *cancelButton;
 

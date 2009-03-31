@@ -21,10 +21,15 @@
 
 #include <qprinter.h>
 #include <qstring.h>
-#include <qstrlist.h>
+#include <q3strlist.h>
 #include <qregexp.h>
 #include <qapplication.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <QLabel>
+#include <Q3GridLayout>
+#include <Q3Frame>
+#include <Q3BoxLayout>
 
 #include <FParse.h>
 
@@ -66,7 +71,7 @@ Tab_Notes::Tab_Notes
     openTicketCount->setAlignment(AlignVCenter|AlignRight);
     openTicketCount->setTextFormat(Qt::RichText);
     
-    list = new QListView(this, "Note List");
+    list = new Q3ListView(this, "Note List");
     //list->addColumn("Ticket");
     list->addColumn("Date");
     list->addColumn("User");
@@ -77,9 +82,9 @@ Tab_Notes::Tab_Notes
     list->setRootIsDecorated(true);
 	list->setSorting(0, false);
     list->setFixedHeight(100);
-    list->setHScrollBarMode(QScrollView::AlwaysOff);
-    connect(list, SIGNAL(currentChanged(QListViewItem *)), this, SLOT(showNoteDetail(QListViewItem *)));
-    connect(list, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(noteDoubleClicked(QListViewItem *)));
+    list->setHScrollBarMode(Q3ScrollView::AlwaysOff);
+    connect(list, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(showNoteDetail(Q3ListViewItem *)));
+    connect(list, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(noteDoubleClicked(Q3ListViewItem *)));
 
     // Add some "markers" or information labels
     QLabel  *addedByLabel  = new QLabel(this);
@@ -88,7 +93,7 @@ Tab_Notes::Tab_Notes
 
     addedBy = new QLabel(this);
     addedBy->setAlignment(AlignVCenter|AlignLeft);
-    addedBy->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    addedBy->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     QLabel  *noteTypeLabel  = new QLabel(this);
     noteTypeLabel->setAlignment(AlignVCenter|AlignRight);
@@ -96,7 +101,7 @@ Tab_Notes::Tab_Notes
 
     noteType = new QLabel(this);
     noteType->setAlignment(AlignVCenter|AlignLeft);
-    noteType->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    noteType->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     QLabel  *subjectLabel  = new QLabel(this);
     subjectLabel->setAlignment(AlignVCenter|AlignRight);
@@ -104,7 +109,7 @@ Tab_Notes::Tab_Notes
 
     subject = new QLabel(this);
     subject->setAlignment(AlignVCenter|AlignLeft);
-    subject->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    subject->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
     subject->setMinimumWidth(180);
 
     QLabel  *noteDateLabel  = new QLabel(this);
@@ -113,7 +118,7 @@ Tab_Notes::Tab_Notes
 
     noteDate = new QLabel(this);
     noteDate->setAlignment(AlignVCenter|AlignLeft);
-    noteDate->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    noteDate->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
     QLabel  *loginIDLabel  = new QLabel(this);
     loginIDLabel->setAlignment(AlignVCenter|AlignRight);
@@ -121,7 +126,7 @@ Tab_Notes::Tab_Notes
 
     loginID = new QLabel(this);
     loginID->setAlignment(AlignVCenter|AlignLeft);
-    loginID->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    loginID->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
     
     callDurationLabel  = new QLabel(this);
     callDurationLabel->setAlignment(AlignVCenter|AlignRight);
@@ -129,13 +134,13 @@ Tab_Notes::Tab_Notes
 
     callDuration = new QLabel(this);
     callDuration->setAlignment(AlignVCenter|AlignLeft);
-    callDuration->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    callDuration->setFrameStyle(Q3Frame::Panel|Q3Frame::Sunken);
 
 
     QLabel *spacerLabel = new QLabel(this);
 
     
-    noteText = new QTextView(this);
+    noteText = new Q3TextView(this);
 
     /*
     QLabel *hline1 = new QLabel(this);
@@ -197,9 +202,9 @@ Tab_Notes::Tab_Notes
     */
 
     // Create the main layout to hold them all.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QBoxLayout *sal = new QBoxLayout(QBoxLayout::LeftToRight, 4);
+    Q3BoxLayout *sal = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 4);
     sal->addWidget(searchLabel, 0);
     sal->addWidget(searchText,  1);
     sal->addWidget(openTicketCount,  1);
@@ -209,7 +214,7 @@ Tab_Notes::Tab_Notes
     ml->addWidget(list, 0);
     // ml->addWidget(hline1, 0);
     // Create a grid for the Note Detail information
-    QGridLayout *ndl = new QGridLayout(5, 1, 1);
+    Q3GridLayout *ndl = new Q3GridLayout(5, 1, 1);
     int curRow = -1;
     int curCol = 0;
     ndl->setColStretch(0,0);
@@ -256,7 +261,7 @@ Tab_Notes::Tab_Notes
     ndl->setRowStretch(curRow,1);
     ndl->addWidget(spacerLabel,     curRow, curCol++);
 
-    QBoxLayout *cndl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *cndl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     cndl->addLayout(ndl, 0);
     cndl->addWidget(noteText, 1);
 
@@ -265,7 +270,7 @@ Tab_Notes::Tab_Notes
     ml->addWidget(hline1, 0);
 
     // Now, create a box to hold our action buttons.
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 0);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 0);
     abl->addWidget(newButton, 0);
     abl->addWidget(ticketButton, 0);
     abl->addWidget(printButton, 0);
@@ -302,8 +307,8 @@ void Tab_Notes::refreshNotesList(int)
     char	        tmpAcctStr[128];
     char            tmpDateStamp[128] = "";
     char            ticketNo[256] = "";
-    QListViewItem   *curItem;
-    QListViewItem   *parent = NULL;
+    Q3ListViewItem   *curItem;
+    Q3ListViewItem   *parent = NULL;
     long            selNoteID = 0;
     char            searchStr[4096];
     char            escStr[4096];
@@ -341,7 +346,7 @@ void Tab_Notes::refreshNotesList(int)
         parent = NULL;
         if (atol(DB.curRow["ParentNoteID"])) {
             // We have a parent, find it in the list.
-            QListViewItemIterator   tmpIt(list);
+            Q3ListViewItemIterator   tmpIt(list);
             for (; tmpIt.current(); ++tmpIt) {
                 if (atol(tmpIt.current()->key(NOTEIDCOL, 0)) == atol(DB.curRow["ParentNoteID"])) {
                     parent = tmpIt.current();
@@ -359,7 +364,7 @@ void Tab_Notes::refreshNotesList(int)
         
         if (parent) {
             // This note has a parent ID
-            curItem = new QListViewItem(parent,
+            curItem = new Q3ListViewItem(parent,
                 //ticketNo,
                 tmpDateStamp,
                 DB.curRow["LoginID"],
@@ -372,7 +377,7 @@ void Tab_Notes::refreshNotesList(int)
             );
         } else {
             // Standalone, or root level entry
-            curItem = new QListViewItem(list,
+            curItem = new Q3ListViewItem(list,
                 //ticketNo,
                 tmpDateStamp,
                 DB.curRow["LoginID"],
@@ -396,7 +401,7 @@ void Tab_Notes::refreshNotesList(int)
         sprintf(loginStr, "[T%ld]", tmpTick->ticketNo());
 
         if (tmpTick->status() != Ticket::Closed) openCount++;
-        curItem = new QListViewItem(list,
+        curItem = new Q3ListViewItem(list,
             //ticketNo,
             tmpTick->openedStr(),
             loginStr,
@@ -424,10 +429,10 @@ void Tab_Notes::refreshNotesList(int)
     // else, select the first one.
     bool foundIt = false;
     if (selNoteID) {
-        QListViewItemIterator   tmpIt(list);
+        Q3ListViewItemIterator   tmpIt(list);
         for (; tmpIt.current(); ++tmpIt) {
             if (atol(tmpIt.current()->key(NOTEIDCOL, 0)) == selNoteID) {
-                QListViewItem   *tmpCur = tmpIt.current();
+                Q3ListViewItem   *tmpCur = tmpIt.current();
                 list->setCurrentItem(tmpCur);
                 list->ensureItemVisible(tmpCur);
                 list->setSelected(tmpCur, true);
@@ -440,7 +445,7 @@ void Tab_Notes::refreshNotesList(int)
     // If we were unable to find the one we were looking for, show the
     // first entry in the list.
     if (!foundIt) {
-        QListViewItem *tmpCur = list->firstChild();
+        Q3ListViewItem *tmpCur = list->firstChild();
         if (tmpCur) {
             list->setCurrentItem(tmpCur);
             list->ensureItemVisible(tmpCur);
@@ -465,7 +470,7 @@ void Tab_Notes::startSearch()
 **
 */
 
-void Tab_Notes::showNoteDetail(QListViewItem *newItem)
+void Tab_Notes::showNoteDetail(Q3ListViewItem *newItem)
 {
     QApplication::setOverrideCursor(waitCursor);
 
@@ -540,7 +545,7 @@ void Tab_Notes::showNoteDetail(QListViewItem *newItem)
             tmpText.append(fparse.parseFileToMem("customers/NoteDetail.bhtml"));
 
             // Now, get any child entries and process them as well.
-            QListViewItem *myChild = newItem->firstChild();
+            Q3ListViewItem *myChild = newItem->firstChild();
             if (myChild) while (myChild) {
                 tmpText.append("<HR>\n");
                 detail.get(atol(myChild->key(NOTEIDCOL, 0)));
@@ -936,7 +941,7 @@ void Tab_Notes::refreshCustomer(long custID)
 void Tab_Notes::ticketButtonPressed()
 {
     if (list->currentItem()) {
-        QListViewItem *curItem = list->currentItem();
+        Q3ListViewItem *curItem = list->currentItem();
         if (atoi(curItem->key(NOTETYPECOL, 0)) == 1) {
             emit(openTicket(atol(curItem->key(NOTEIDCOL, 0))));
         }
@@ -953,7 +958,7 @@ void Tab_Notes::ticketButtonPressed()
 void Tab_Notes::refreshTicket(long ticketNo)
 {
     if (list->currentItem()) {
-        QListViewItem *curItem = list->currentItem();
+        Q3ListViewItem *curItem = list->currentItem();
         if (atoi(curItem->key(NOTETYPECOL, 0)) == 1) {
             if (ticketNo == atol(curItem->key(NOTEIDCOL, 0))) {
                 showNoteDetail(curItem);
@@ -968,7 +973,7 @@ void Tab_Notes::refreshTicket(long ticketNo)
 **                     we do nothing.
 */
 
-void Tab_Notes::noteDoubleClicked(QListViewItem *curItem)
+void Tab_Notes::noteDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) {
         if (atoi(curItem->key(NOTETYPECOL, 0)) == 1) {

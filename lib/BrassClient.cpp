@@ -26,8 +26,6 @@
 **
 */
 
-#include "BrassClient.h"
-#include <Cfg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <netdb.h>
@@ -38,11 +36,15 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/time.h>
-#include <qstring.h>
 #include <crypt.h>
 
-#include "BlargDB.h"
+#include <QtCore/QString>
+
+#include <BlargDB.h>
 #include <ADB.h>
+#include <Cfg.h>
+
+#include "BrassClient.h"
 
 #ifdef USEDES
 #include "bdes.h"

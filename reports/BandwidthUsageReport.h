@@ -12,7 +12,7 @@
 
 #include "Report.h"
 
-#include <qintdict.h>
+#include <q3intdict.h>
 #include <ADB.h>
 
 class BandwidthUsageReport : public Report

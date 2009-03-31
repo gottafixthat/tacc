@@ -16,7 +16,7 @@
 #define RatePlans_included
 
 #include <qwidget.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qmenubar.h>
 #include "TAAWidget.h"
 
@@ -42,14 +42,14 @@ private slots:
     virtual void newRatePlan();
     virtual void editRatePlan();
     virtual void deleteRatePlan();
-    void         editRatePlan(QListViewItem *);
+    void         editRatePlan(Q3ListViewItem *);
     
 private:
     int		    internalIDColumn;
 
 protected:
     QMenuBar    *menu;
-    QListView   *list;
+    Q3ListView   *list;
 
 };
 #endif // RatePlans_included

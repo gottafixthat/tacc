@@ -27,16 +27,19 @@
 
 #include "TAATools.h"
 #include "TAAWidget.h"
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlistview.h>
-#include <qcombobox.h>
-#include <qmultilineedit.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+#include <Qt3Support/Q3Frame>
+#include <QtCore/QEvent>
+#include <QtGui/QCloseEvent>
 #include <calendar.h>
-#include <qtextview.h>
-#include <qpopupmenu.h>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3popupmenu.h>
 
 class ProcessVoiceMail : public TAAWidget
 {
@@ -50,12 +53,12 @@ public:
 
     virtual ~ProcessVoiceMail();
 
-    QPopupMenu      *menu();
+    Q3PopupMenu      *menu();
     int             count();
 
 public slots:
     virtual void    refreshList();
-    virtual void    listItemChanged(QListViewItem *);
+    virtual void    listItemChanged(Q3ListViewItem *);
     virtual void    logVM();
 
 protected slots:
@@ -64,21 +67,21 @@ protected slots:
     virtual void saveClicked();
 
 protected:
-    QListView       *vmList;
+    Q3ListView       *vmList;
     QLabel          *msgDate;
     QLabel          *msgTime;
-    QFrame          *msgTimeArea;
+    Q3Frame          *msgTimeArea;
     QLabel          *loggedBy;
     QLabel          *loggedAt;
-    QTextView       *message;
+    Q3TextView       *message;
     QPushButton     *saveButton;
-    QMultiLineEdit  *followUp;
+    Q3MultiLineEdit  *followUp;
     QComboBox       *disposition;
     QLineEdit       *loginID;
     QLabel          *customerID;
     QLabel          *customerName;
     QCheckBox       *processed;
-    QPopupMenu      *vmMenu;
+    Q3PopupMenu      *vmMenu;
     long            myCustID;
     int             myVMCount;
 };

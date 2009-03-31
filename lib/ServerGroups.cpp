@@ -20,11 +20,14 @@
 
 #include <ADB.h>
 
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QLayout>
+#include <QtCore/QTimer>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <QtGui/QLabel>
 #include <Cfg.h>
 
 #include <TAA.h>
@@ -35,11 +38,11 @@ ServerGroups::ServerGroups
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget( parent, name)
 {
     setCaption( "Server Groups" );
 
-    sgList = new QListView(this, "Server Groups");
+    sgList = new Q3ListView(this, "Server Groups");
     sgList->setAllColumnsShowFocus(true);
     sgList->setRootIsDecorated(false);
     sgList->addColumn("Server Group");
@@ -48,8 +51,8 @@ ServerGroups::ServerGroups
 
     idColumn        = 3;
 
-    connect(sgList, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
-    connect(sgList, SIGNAL(returnPressed(QListViewItem *)), this, SLOT(itemDoubleClicked(QListViewItem *)));
+    connect(sgList, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(itemDoubleClicked(Q3ListViewItem *)));
+    connect(sgList, SIGNAL(returnPressed(Q3ListViewItem *)), this, SLOT(itemDoubleClicked(Q3ListViewItem *)));
 
 
     addButton = new QPushButton(this, "Add Button");
@@ -69,11 +72,11 @@ ServerGroups::ServerGroups
     closeButton->setText("&Close");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(closeClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(sgList, 1);
 
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(addButton, 0);
     bl->addWidget(editButton, 0);
@@ -106,7 +109,7 @@ void ServerGroups::refreshList()
         // Walk through the list of server groups and populate it
         tmpType = (ServerTypes) atoi(myDB.curRow["ServerType"]);
         if (tmpType > (ServerTypes) MAX_SERVER_TYPES) tmpType = Unknown;
-        new QListViewItem(sgList, myDB.curRow["ServerGroup"], server_types[tmpType].description, myDB.curRow["Description"], myDB.curRow["ServerGroupID"]);
+        new Q3ListViewItem(sgList, myDB.curRow["ServerGroup"], server_types[tmpType].description, myDB.curRow["Description"], myDB.curRow["ServerGroupID"]);
     }
 
     QApplication::restoreOverrideCursor();
@@ -138,7 +141,7 @@ void ServerGroups::addClicked()
 
 void ServerGroups::editClicked()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     curItem = sgList->currentItem();
     if (curItem) {
         long    tmpID;
@@ -159,7 +162,7 @@ void ServerGroups::editClicked()
   * itemDoubleClicked - Connected to the server group list, gets called when the user
   * double clicks on an item.
   */
-void ServerGroups::itemDoubleClicked(QListViewItem *selItem)
+void ServerGroups::itemDoubleClicked(Q3ListViewItem *selItem)
 {
     if (selItem) {
         long    tmpID;
@@ -232,7 +235,7 @@ ServerGroupEditor::ServerGroupEditor
     descriptionLabel->setText("Description:");
     descriptionLabel->setAlignment(Qt::AlignRight|Qt::AlignTop);
 
-    description = new QMultiLineEdit(this, "description");
+    description = new Q3MultiLineEdit(this, "description");
 
     QLabel *databaseHostLabel = new QLabel(this, "databaseHostLabel");
     databaseHostLabel->setText("Database Host:");
@@ -274,9 +277,9 @@ ServerGroupEditor::ServerGroupEditor
     cancelButton->setText("&Cancel");
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QGridLayout *gl = new QGridLayout();
+    Q3GridLayout *gl = new Q3GridLayout(2, 3);
     int curRow = 0;
     gl->addWidget(serverGroupLabel,         curRow, 0);
     gl->addWidget(serverGroup,              curRow, 1);
@@ -306,7 +309,7 @@ ServerGroupEditor::ServerGroupEditor
     ml->addLayout(gl, 0);
     ml->addStretch(1);
     
-    QBoxLayout  *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout  *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -456,13 +459,13 @@ ServerGroupSelector::ServerGroupSelector
     ADB     DB;
 
     // Server groups.
-    available = new QListView(this, "serverGroupsAvailable");
+    available = new Q3ListView(this, "serverGroupsAvailable");
     available->addColumn("Available Server Groups");
     idColumn = 1;
-    connect(available, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(availableDoubleClicked(QListViewItem *)));
+    connect(available, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(availableDoubleClicked(Q3ListViewItem *)));
     DB.query("select ServerGroupID, ServerGroup from ServerGroups");
     if (DB.rowCount) while (DB.getrow()) {
-        new QListViewItem(available, DB.curRow["ServerGroup"], DB.curRow["ServerGroupID"]);
+        new Q3ListViewItem(available, DB.curRow["ServerGroup"], DB.curRow["ServerGroupID"]);
     }
 
     addButton = new QPushButton(this, "addButton");
@@ -473,15 +476,15 @@ ServerGroupSelector::ServerGroupSelector
     rmButton->setText("&Remove");
     connect(rmButton, SIGNAL(clicked()), this, SLOT(rmClicked()));
 
-    assigned = new QListView(this, "assigned");
+    assigned = new Q3ListView(this, "assigned");
     assigned->addColumn("Assigned Server Groups");
-    connect(assigned, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(assignedDoubleClicked(QListViewItem *)));
+    connect(assigned, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(assignedDoubleClicked(Q3ListViewItem *)));
 
     // Create a layout for the server groups
-    QBoxLayout *sgl = new QBoxLayout(this, QBoxLayout::LeftToRight, 3, 3);
+    Q3BoxLayout *sgl = new Q3BoxLayout(this, Q3BoxLayout::LeftToRight, 3, 3);
     sgl->addWidget(available, 1);
 
-    QBoxLayout *sgbl = new QBoxLayout(QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout *sgbl = new Q3BoxLayout(Q3BoxLayout::TopToBottom, 3);
     sgbl->addStretch(1);
     sgbl->addWidget(addButton, 0);
     sgbl->addWidget(rmButton, 0);
@@ -518,13 +521,13 @@ void ServerGroupSelector::setRemoveButtonText(const char *newText)
   */
 void ServerGroupSelector::reset()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
 
     // Find the item in available list
     curItem = assigned->firstChild();
     if (curItem) {
         while(curItem) {
-            new QListViewItem(available, curItem->key(0,0), curItem->key(1,0));
+            new Q3ListViewItem(available, curItem->key(0,0), curItem->key(1,0));
             curItem = curItem->itemBelow();
         }
         assigned->clear();
@@ -536,13 +539,13 @@ void ServerGroupSelector::reset()
   */
 void ServerGroupSelector::assign(long serverGroupID)
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
 
     // Find the item in available list
     curItem = available->firstChild();
     while(curItem) {
         if (serverGroupID == atoi(curItem->key(idColumn,0))) {
-            new QListViewItem(assigned, curItem->key(0,0), curItem->key(1,0));
+            new Q3ListViewItem(assigned, curItem->key(0,0), curItem->key(1,0));
             available->removeItem(curItem);
             curItem = 0;
         } else {
@@ -556,13 +559,13 @@ void ServerGroupSelector::assign(long serverGroupID)
   */
 void ServerGroupSelector::unassign(long serverGroupID)
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
 
     // Find the item in available list
     curItem = assigned->firstChild();
     while(curItem) {
         if (serverGroupID == atoi(curItem->key(idColumn,0))) {
-            QListViewItem *tmpItem = new QListViewItem(available, curItem->key(0,0), curItem->key(1,0));
+            Q3ListViewItem *tmpItem = new Q3ListViewItem(available, curItem->key(0,0), curItem->key(1,0));
             assigned->removeItem(curItem);
             curItem = 0;
         } else {
@@ -578,7 +581,7 @@ void ServerGroupSelector::unassign(long serverGroupID)
   */
 long *ServerGroupSelector::getAssigned()
 {
-    QListViewItem   *curItem;
+    Q3ListViewItem   *curItem;
     long    *retVal = new long[assigned->childCount()+2];
     int     count = 0;
 
@@ -601,7 +604,7 @@ long *ServerGroupSelector::getAssigned()
   */
 void ServerGroupSelector::addClicked()
 {
-    QListViewItem *curItem = available->currentItem();
+    Q3ListViewItem *curItem = available->currentItem();
     if (curItem) assign(atol(curItem->key(idColumn,0)));
 }
 
@@ -610,7 +613,7 @@ void ServerGroupSelector::addClicked()
   */
 void ServerGroupSelector::rmClicked()
 {
-    QListViewItem *curItem = assigned->currentItem();
+    Q3ListViewItem *curItem = assigned->currentItem();
     if (curItem) unassign(atol(curItem->key(idColumn,0)));
 }
 
@@ -618,7 +621,7 @@ void ServerGroupSelector::rmClicked()
   * availableDoubleClicked - Gets called when the user double
   * clicks on an available server group.
   */
-void ServerGroupSelector::availableDoubleClicked(QListViewItem *curItem)
+void ServerGroupSelector::availableDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) assign(atol(curItem->key(idColumn,0)));
 }
@@ -627,7 +630,7 @@ void ServerGroupSelector::availableDoubleClicked(QListViewItem *curItem)
   * assignedDoubleClicked - Gets called when the user double
   * clicks on an assigned server group.
   */
-void ServerGroupSelector::assignedDoubleClicked(QListViewItem *curItem)
+void ServerGroupSelector::assignedDoubleClicked(Q3ListViewItem *curItem)
 {
     if (curItem) unassign(atol(curItem->key(idColumn,0)));
 }

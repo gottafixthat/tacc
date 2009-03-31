@@ -16,7 +16,7 @@ MOC	= $(QTDIR)/bin/moc
 
 ifdef ADBQT
     CFLAGS += -DADBQT -I/usr/X11R6/include -I$(QTDIR)/include
-    LFLAGS += -L$(QTDIR)/lib -lqt-mt
+    LFLAGS += -L$(QTDIR)/lib -lQtCore -lQtGui -lQt3Support
     TARGET	=	libadbqt
 else
     TARGET	=	libadb
@@ -37,15 +37,8 @@ endif
 SUBDIRS =	
 
 SOURCES =	ADBColumn.cpp ADBRow.cpp ADB.cpp ADBTable.cpp ADBList.cpp
-ifdef ADBQT
-    SOURCES += ADBLogin.cpp
-endif
 
 OBJECTS =	$(SOURCES:.cpp=.o)
-
-ifdef ADBQT
-SRCMETA =	moc_ADB.cpp
-endif
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 

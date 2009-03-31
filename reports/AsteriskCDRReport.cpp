@@ -17,9 +17,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
+#include <q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -85,7 +85,7 @@ void AsteriskCDRReport::refreshReport()
     while (DB.getrow()) {
         //DB2.query("select * from Domains where DomainType = %d and Active > 0", atol(DB.curRow["InternalID"]));
         //sprintf(tmpStr, "%5d", DB2.rowCount);
-        QListViewItem *curItem = new QListViewItem(repBody, 
+        Q3ListViewItem *curItem = new Q3ListViewItem(repBody, 
                 DB.curRow["calldate"], 
                 DB.curRow["clid"], 
                 DB.curRow["src"], 
@@ -110,7 +110,7 @@ void AsteriskCDRReport::refreshReport()
 **                    is double clicked.
 */
 
-void AsteriskCDRReport::listItemSelected(QListViewItem *curItem)
+void AsteriskCDRReport::listItemSelected(Q3ListViewItem *curItem)
 {
     if (curItem != NULL) {
         //AsteriskCDRDetail *add = new AsteriskCDRDetail();

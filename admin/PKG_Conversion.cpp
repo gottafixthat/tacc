@@ -34,10 +34,13 @@
 #include <ADB.h>
 
 #include <qapplication.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <calendar.h>
 #include <qlayout.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 
 PKG_Conversion::PKG_Conversion
 (
@@ -51,7 +54,7 @@ PKG_Conversion::PKG_Conversion
     connect(autoConvert, SIGNAL(clicked()), this, SLOT(checkForSave()));
 
     // We need a button group to hold certain widgets for us.
-    QButtonGroup *bGroup = new QButtonGroup(this, "bGroup");
+    Q3ButtonGroup *bGroup = new Q3ButtonGroup(this, "bGroup");
     bGroup->setFocusPolicy(QWidget::NoFocus);
 
     cvtDaysButton = new QRadioButton(bGroup, "cvtDaysButton");
@@ -99,26 +102,26 @@ PKG_Conversion::PKG_Conversion
     connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 
     // Create our layout now.
-    QBoxLayout *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     ml->addWidget(autoConvert, 0);
 
     // The bGroup layout.
-    QBoxLayout *bgl = new QBoxLayout(bGroup, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout *bgl = new Q3BoxLayout(bGroup, Q3BoxLayout::TopToBottom, 3, 3);
 
-    QBoxLayout *bgl1 = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bgl1 = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bgl1->addWidget(cvtDaysButton, 0);
     bgl1->addWidget(daysSpinner, 0);
     bgl1->addWidget(daysLabel, 0);
     bgl1->addStretch(1);
     bgl->addLayout(bgl1, 0);
 
-    QBoxLayout *bgl2 = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bgl2 = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bgl2->addWidget(cvtOnDateButton, 0);
     bgl2->addWidget(cvtDate, 0);
     bgl2->addStretch(1);
     bgl->addLayout(bgl2, 0);
 
-    QBoxLayout *bgl3 = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bgl3 = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bgl3->addWidget(cvtToLabel, 1);
     bgl3->addWidget(cvtToList, 0);
     bgl3->addStretch(1);
@@ -129,7 +132,7 @@ PKG_Conversion::PKG_Conversion
     ml->addWidget(new HorizLine(this), 0);
     ml->addWidget(isPromotional, 0);
 
-    QBoxLayout  *pl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout  *pl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     pl->addWidget(promoDateLabel, 1);
     pl->addWidget(promoDate, 0);
     pl->addStretch(1);
@@ -137,7 +140,7 @@ PKG_Conversion::PKG_Conversion
     ml->addLayout(pl, 0);
     ml->addStretch(1);
 
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
 

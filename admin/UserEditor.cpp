@@ -23,6 +23,10 @@
 #include <qlabel.h>
 #include <qhbuttongroup.h>
 #include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <Q3Frame>
 #include <ADB.h>
 
 #include <TAATools.h>
@@ -107,8 +111,8 @@ UserEditor::UserEditor
     sendTicketNotifications->setChecked(false);
 
     // We also need an Add/Save button
-    QHButtonGroup *bg = new QHButtonGroup(this);
-    bg->setFrameShape(QFrame::NoFrame);
+    Q3HButtonGroup *bg = new Q3HButtonGroup(this);
+    bg->setFrameShape(Q3Frame::NoFrame);
 
     delButton = new QPushButton(bg, "DeleteButton");
     delButton->setText("&Delete");
@@ -127,10 +131,10 @@ UserEditor::UserEditor
     
 
     // Create our layout.
-    QBoxLayout  *mainLayout = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3, "Main Layout");
+    Q3BoxLayout  *mainLayout = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3, "Main Layout");
 
     // The grid is where we contain all of our form fields.
-    QGridLayout *formLayout = new QGridLayout(4, 2, 1, "User Form");
+    Q3GridLayout *formLayout = new Q3GridLayout(4, 2, 1, "User Form");
     formLayout->setColStretch(0,0);
     formLayout->setColStretch(1,1);
    
@@ -187,7 +191,7 @@ UserEditor::UserEditor
     mainLayout->addStretch(1);
 
     // The button row now.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bg->insert(addSave);
     bl->addStretch(1);
     bl->addWidget(bg, 1);

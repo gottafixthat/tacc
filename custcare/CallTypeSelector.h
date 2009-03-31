@@ -29,7 +29,7 @@
 #include <CustomerSearch.h>
 #include <qwidget.h>
 #include <qradiobutton.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qtimer.h>
 #include <CustomerTickets.h>
 
@@ -57,7 +57,7 @@ protected:
 
     CustomerSearch  *custSearch;
 
-    QListView       *contactList;
+    Q3ListView       *contactList;
     //QListView       *ticketList;
     CustomerTickets *ticketList;
 };

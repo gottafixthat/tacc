@@ -16,6 +16,10 @@
 
 #include <qstring.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
+#include <QLabel>
 
 #include <ADB.h>
 #include <BlargDB.h>
@@ -113,10 +117,10 @@ GLAccountEditor::GLAccountEditor
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelAccount()));
 
     // Create our layout.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3);
     
     // A grid for most of the widgets
-    QGridLayout *gl = new QGridLayout(2,6);
+    Q3GridLayout *gl = new Q3GridLayout(2,6);
     int curRow = 0;
 
     gl->addWidget(accountNoLabel,       curRow, 0);
@@ -150,7 +154,7 @@ GLAccountEditor::GLAccountEditor
     ml->addStretch(1);
 
     // Button layout.
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

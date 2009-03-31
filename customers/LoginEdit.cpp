@@ -31,7 +31,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <qapp.h>
+#include <qapplication.h>
+//Added by qt3to4:
+#include <Q3BoxLayout>
+#include <Q3GridLayout>
+#include <Q3StrList>
 #include <ADB.h>
 #include <qlabel.h>
 #include <qlayout.h>
@@ -91,10 +95,10 @@ LoginEdit::LoginEdit
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelLogin()));
 
     // Now, create the layout for this widget.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Create a grid to hold the multi-entries
-    QGridLayout *gl  = new QGridLayout(4, 4, 3);
+    Q3GridLayout *gl  = new Q3GridLayout(4, 4, 3);
     gl->setColStretch(0, 0);
     gl->setColStretch(1, 1);
     gl->setColStretch(2, 0);
@@ -114,7 +118,7 @@ LoginEdit::LoginEdit
     ml->addLayout(gl, 0);
 
     // Create a box layout for our action buttons.
-    QBoxLayout *abl = new QBoxLayout(QBoxLayout::LeftToRight, 3);
+    Q3BoxLayout *abl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 3);
     abl->addStretch(1);
     abl->addWidget(saveButton, 0);
     abl->addWidget(cancelButton, 0);
@@ -409,7 +413,7 @@ void LoginEdit::mailPrimaryLogin(void)
     FILE    *fp;
     FILE    *fp2;
     
-    QStrList    files;          // The list of files to mail to the parents
+    Q3StrList    files;          // The list of files to mail to the parents
     
     files.setAutoDelete(TRUE);
     
@@ -467,7 +471,7 @@ void LoginEdit::mailAddOnLogin(void)
     FILE    *fp;
     FILE    *fp2;
     
-    QStrList    files;          // The list of files to mail to the parents
+    Q3StrList    files;          // The list of files to mail to the parents
     
     files.setAutoDelete(TRUE);
     
@@ -529,7 +533,7 @@ void LoginEdit::mailParent(void)
     
     CDB.get(myCustID);
 
-    QStrList    files;          // The list of files to mail to the parents
+    Q3StrList    files;          // The list of files to mail to the parents
     
     files.setAutoDelete(TRUE);
     
@@ -587,8 +591,8 @@ void LoginEdit::mailAdmins(void)
     FILE    *fp;
     FILE    *fp2;
 
-    QStrList    admins;         // The list of admins to mail.
-    QStrList    files;          // The list of files to mail to the admins
+    Q3StrList    admins;         // The list of admins to mail.
+    Q3StrList    files;          // The list of files to mail to the admins
     
     admins.setAutoDelete(TRUE);
     files.setAutoDelete(TRUE);

@@ -11,7 +11,8 @@
  */
 
 #include <stdlib.h>
-#include <qstring.h>
+
+#include <QtCore/QString>
 
 #include <ADB.h>
 #include <BlargDB.h>
@@ -60,7 +61,7 @@ CreditCardList getCreditCardList(long custID)
                 card->zip           = APDB.getStr("ZIP");
                 card->cardType      = APDB.getInt("CardType");
                 card->cardNo        = APDB.getStr("AcctNo");
-                card->expDate       = expDate.toString("MMyy").ascii();
+                card->expDate       = expDate.toString("MMyy").toAscii();
                 card->ccv           = APDB.getStr("SecurityCode");
 
                 idx++;
@@ -99,7 +100,7 @@ CreditCardList getCreditCardList(long custID)
                 card->zip           = CTDB.getStr("ZIP");
                 card->cardType      = CTDB.getInt("CardType");
                 card->cardNo        = CTDB.getStr("CardNo");
-                card->expDate       = expDate.toString("MMyy").ascii();
+                card->expDate       = expDate.toString("MMyy").toAscii();
                 card->ccv           = CTDB.getStr("SecurityCode");
 
                 idx++;

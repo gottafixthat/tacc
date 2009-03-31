@@ -16,6 +16,9 @@
 #include <qlabel.h>
 #include <qpushbutton.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3BoxLayout>
 #include <BlargDB.h>
 
 /**
@@ -91,10 +94,10 @@ CustomerContactEditor::CustomerContactEditor(QWidget *parent, const char * name)
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));
 
     // Create the layout now.
-    QBoxLayout  *ml = new QBoxLayout(this, QBoxLayout::TopToBottom, 3, 3);
+    Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
     // Create a grid for our input data.
-    QGridLayout *gl = new QGridLayout(3,5);
+    Q3GridLayout *gl = new Q3GridLayout(3,5);
     int rowNum = 0;
     gl->addWidget(custNameLabel,            rowNum, 0);
     gl->addWidget(custName,                 rowNum, 1);
@@ -128,7 +131,7 @@ CustomerContactEditor::CustomerContactEditor(QWidget *parent, const char * name)
 
     ml->addStretch(1);
     // Button layout
-    QBoxLayout *bl = new QBoxLayout(QBoxLayout::LeftToRight, 1);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::LeftToRight, 1);
     bl->addStretch(1);
     bl->addWidget(saveButton, 0);
     bl->addWidget(cancelButton, 0);

@@ -6,10 +6,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qapplication.h>
-#include <qdict.h>
-#include <qstrlist.h>
+#include <q3dict.h>
+#include <q3strlist.h>
 
 #include <ADB.h>
 #include <BString.h>
@@ -189,7 +189,7 @@ void BandwidthUsageReport::refreshReport()
 
             grandTotal += totDays[i];
             
-            (void) new QListViewItem(repBody,
+            (void) new Q3ListViewItem(repBody,
               dateStr,
               inStr,
               outStr,
@@ -206,7 +206,7 @@ void BandwidthUsageReport::refreshReport()
         reportTitle->setText(tmpStr);
         
     } else {
-        (void) new QListViewItem(repBody, "No data for specified period");
+        (void) new Q3ListViewItem(repBody, "No data for specified period");
     }
     
     delete query;
