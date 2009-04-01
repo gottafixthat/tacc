@@ -1,52 +1,34 @@
-/*
-** $Id: Report.h,v 1.1 2003/12/07 01:47:05 marc Exp $
-**
-***************************************************************************
-**
-** Report.h   - A base class for generic reports.  Defines the bulk of the
-**              window manipulation and allows generic printing, emailing
-**              and graphing.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Report.h,v $
-** Revision 1.1  2003/12/07 01:47:05  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef Report_included
 #define Report_included
 
+#include <QtCore/QDateTime>
+#include <QtCore/QString>
+#include <QtGui/QComboBox>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QLayout>
+#include <QtGui/QLineEdit>
+#include <QtGui/QCheckBox>
+#include <QtGui/QDialog>
+#include <QtGui/QCloseEvent>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3datetimeedit.h>
+
 #include <TAAWidget.h>
-
-#include <qdatetm.h>
-#include <q3datetimeedit.h>
-//#include <calendar.h>
-#include <qpainter.h>
-#include <q3listview.h>
-#include <q3textview.h>
-#include <qcombobox.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qstring.h>
-#include <qdialog.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <QCloseEvent>
-
-#include "calendar.h"
+#include <calendar.h>
 
 #ifdef USEQWT
 #include "Graph.h"
@@ -211,3 +193,5 @@ protected:
 };
 
 #endif // Report_included
+
+// vim: expandtab

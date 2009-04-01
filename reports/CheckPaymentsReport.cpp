@@ -1,8 +1,7 @@
-/**
- * CheckPaymentsReport.cpp - Check Payments report
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -12,13 +11,15 @@
 
 #include <stdlib.h>
 
-#include <CheckPaymentsReport.h>
+#include <mcve.h>
 #include <ADB.h>
 #include <CCValidate.h>
-#include <mcve.h>
 #include <TAATools.h>
 #include <BString.h>
 #include <Cfg.h>
+#include <CheckPaymentsReport.h>
+
+using namespace Qt;
 
 /**
  * CheckPaymentsReport()
@@ -139,3 +140,5 @@ void CheckPaymentsReport::listItemSelected(Q3ListViewItem *curItem)
 }
 
 
+
+// vim: expandtab

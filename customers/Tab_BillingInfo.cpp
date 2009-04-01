@@ -1,66 +1,42 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** Tab_BillingInfo - Maintains various billing information for the
-**                   customer.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Tab_BillingInfo.cpp,v $
-** Revision 1.3  2004/04/15 18:11:44  marc
-** Changed the way that automatic credit cards and pending payments display in the
-** Billing tab of the Edit Customer window.  It now shows what day automatic
-** payments go through on, and the last four digits of pending payments.  Added
-** options to remove pending charges and automatic payment cards in the Payments
-** menu option of the Edit Customer window.  Taking payments now checks for
-** pending payments and asks the user if they want to remove the pending payment
-** before taking the new one.
-**
-** Revision 1.2  2004/02/27 01:33:33  marc
-** The Customers table now tracks how many mailboxes are allowed.  LoginTypes
-** and Packages were both updated to include how many mailboxes are allowed with
-** each package or login type.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "Tab_BillingInfo.h"
-#include "BlargDB.h"
-#include <qstring.h>
-#include <qmenubar.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
-#include <stdlib.h>
 #include <stdio.h>
-#include <CCEntry.h>
-#include <CCRefund.h>
+#include <stdlib.h>
+
+#include <QtCore/QString>
+#include <QtGui/QMenuBar>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include "ChangeRatePlan.h"
 #include "ChangeBillingCycle.h"
 #include "StatementView.h"
 #include "ExtendGraceDate.h"
 #include "CustRegister.h"
-#include <BString.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
 
+#include <CCEntry.h>
+#include <CCRefund.h>
 #include <TAATools.h>
 #include <ADB.h>
+#include <BString.h>
+#include <BlargDB.h>
 #include <StatementEngine.h>
+
+#include "Tab_BillingInfo.h"
+
+using namespace Qt;
 
 Tab_BillingInfo::Tab_BillingInfo
 (
@@ -912,3 +888,5 @@ void Tab_BillingInfo::removeAutoPaymentCard()
     }
         
 }
+
+// vim: expandtab

@@ -1,44 +1,21 @@
-/*
-** $Id: Tab_Domains.h,v 1.5 2004/01/22 00:02:10 marc Exp $
-**
-***************************************************************************
-**
-** Tab_Domains - Handles domain information.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2002, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Tab_Domains.h,v $
-** Revision 1.5  2004/01/22 00:02:10  marc
-** Virtual Hosting database access is now complete in a basic form.
-**
-** Revision 1.4  2004/01/09 01:55:19  marc
-** Minor changes here and there
-**
-** Revision 1.3  2004/01/02 23:56:14  marc
-** Domain Template Editor and SQL based DNS is (for the most part) fully functional and ready to use.
-**
-** Revision 1.2  2004/01/02 15:00:20  marc
-** Added more DNS Management functionality
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef Tab_Domains_included
 #define Tab_Domains_included
 
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qpushbutton.h>
+#include <QtGui/QWidget>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
 
 class Tab_Domains : public TAAWidget
@@ -87,3 +64,6 @@ private:
 	long myCustID;
 };
 #endif // Tab_Domains_included
+
+// vim: expandtab
+

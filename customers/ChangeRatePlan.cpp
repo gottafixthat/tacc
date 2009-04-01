@@ -11,20 +11,21 @@
 
 #include <stdlib.h>
 
-#include <qdatetime.h>
-#include <qapplication.h>
-#include <qcursor.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
+#include <QtCore/QDateTime>
+#include <QtGui/QApplication>
+#include <QtGui/QCursor>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <BString.h>
 #include <TAATools.h>
 
 #include "ChangeRatePlan.h"
+
+using namespace Qt;
 
 ChangeRatePlan::ChangeRatePlan(QWidget* parent, const char* name, long CustID) :
 	TAAWidget( parent, name )

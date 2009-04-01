@@ -1,40 +1,28 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DNS_UnmanagedReport - Displays the list of all of the domains that TAA
-**                       has that are NOT managed via MyDNS.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DNS_UnmanagedReport.cpp,v $
-** Revision 1.1  2004/01/04 19:59:06  marc
-** New report, unmanaged active domains.
-**
-**
-*/
-
-
-#include "DNS_UnmanagedReport.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3listview.h>
-#include <qapplication.h>
-#include <q3dict.h>
+
+#include <QtGui/QApplication>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
 #include <Cfg.h>
 
+#include "DNS_UnmanagedReport.h"
+
+using namespace Qt;
 
 DNS_UnmanagedReport::DNS_UnmanagedReport
 (
@@ -121,4 +109,7 @@ void DNS_UnmanagedReport::listItemSelected(Q3ListViewItem *curItem)
     }
 }
 
+
+
+// vim: expandtab
 

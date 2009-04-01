@@ -1,42 +1,32 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DomainAliases - Allows the user to view, add and delete aliases for
-**                 a customer's domains.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2002, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DomainAliases.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include "DomainAliases.h"
+#include <QtCore/QRegExp>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include <ADB.h>
 #include <BlargDB.h>
 #include <TAATools.h>
 #include <TAAWidget.h>
 #include <Cfg.h>
 #include <StrTools.h>
-#include <qlayout.h>
-#include <qregexp.h>
-#include <qmessagebox.h>
-#include <qapplication.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
+
+#include "DomainAliases.h"
+
+using namespace Qt;
 
 DomainAliases::DomainAliases(QWidget *parent, const char *name)
    : TAAWidget(parent, name)
@@ -219,7 +209,7 @@ void DomainAliases::addAlias()
     // First, make sure that there are no invalid characters in the
     // address.
     QRegExp rexp("[^a-z0-9_.-]", false);
-    if (rexp.match(address->text()) >= 0) {
+    if (rexp.indexIn(address->text()) >= 0) {
         // Found a bad character.
         QMessageBox::warning(this, "Domain Alias", "Invalid character in address.\nOnly the characters a-z, A-Z, 0-9, '-', '_' and '.' are allowed.");
         return;
@@ -227,7 +217,7 @@ void DomainAliases::addAlias()
 
     // The address must start with an alpha-numeric character
     rexp.setPattern("^[a-z0-9]+[^a-z0-9_.-]*");
-    if (address->text().length() && rexp.match(address->text())) {
+    if (address->text().length() && rexp.indexIn(address->text())) {
         // Found a bad character.
         QMessageBox::warning(this, "Domain Alias", "The first character of an\nalias must be alphanumeric.");
         return;
@@ -397,3 +387,5 @@ void DomainAliases::refreshAlias()
 {
     setCustomerID(myCustID);
 }
+
+// vim: expandtab

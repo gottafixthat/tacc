@@ -1,36 +1,23 @@
-/*
-** $Id: LoginEdit.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** LoginEdit - Brings up a small dialog box that the user can use to edit
-**             a login type.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: LoginEdit.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef LoginEdit_included
 #define LoginEdit_included
 
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QComboBox>
+
 #include <TAAWidget.h>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qlined.h>
-#include <qcombo.h>
 
 class LoginEdit : public TAAWidget
 {
@@ -77,3 +64,5 @@ private:
 
 };
 #endif // LoginEdit_included
+
+// vim: expandtab

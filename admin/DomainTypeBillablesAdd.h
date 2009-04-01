@@ -13,7 +13,7 @@
 #ifndef DOMAINTYPEBILLABLESADD_H
 #define DOMAINTYPEBILLABLESADD_H
 
-#include <q3listview.h>
+#include <Qt3Support/q3listview.h>
 
 #include <TAAWidget.h>
 

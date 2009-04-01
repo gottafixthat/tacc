@@ -1,26 +1,13 @@
-/*
-** $Id: DNS_UnmanagedReport.h,v 1.1 2004/01/04 19:59:06 marc Exp $
-**
-***************************************************************************
-**
-** DNS_UnmanagedReport - Displays a list of all of the domains that we are
-**                       NOT managing via MyDNS.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DNS_UnmanagedReport.h,v $
-** Revision 1.1  2004/01/04 19:59:06  marc
-** New report, unmanaged active domains.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef DNS_UnmanagedReport_included
@@ -49,3 +36,5 @@ public slots:
     
 };
 #endif // DNS_UnmanagedReport_included
+
+// vim: expandtab

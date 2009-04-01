@@ -337,6 +337,8 @@ public:
     int     appendStr(uint colNo,         const char *val);
     int     appendStr(const char *colName,const char *val);
     #ifdef ADBQT
+    int     setValue(uint colNo,          const QString val);
+    int     setValue(const char *colName, const QString val);
     int     setValue(uint colNo,          const QDate val);
     int     setValue(const char *colName, const QDate val);
     int     setValue(uint colNo,          const QTime val);

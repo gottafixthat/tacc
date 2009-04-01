@@ -1,35 +1,23 @@
-/*
-** $Id: ELT_Flags.h,v 1.2 2003/12/22 23:46:48 marc Exp $
-**
-***************************************************************************
-**
-** ELT_Flags - Edit Login Types - Flags tab.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ELT_Flags.h,v $
-** Revision 1.2  2003/12/22 23:46:48  marc
-** Removed QTArchitect created files from ELT_Flags
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef ELT_Flags_included
 #define ELT_Flags_included
 
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qstring.h>
+#include <QtCore/QString>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
 
 class ELT_Flags : public TAAWidget
@@ -67,3 +55,5 @@ private:
 
 };
 #endif // ELT_Flags_included
+
+// vim: expandtab

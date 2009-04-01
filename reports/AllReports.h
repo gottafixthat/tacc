@@ -1,10 +1,20 @@
-/*
-** AllReports.h - A way for admin.cpp to include all reports without having
-**                to include the individual report files directly.
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef ALLREPORTS_H
 #define ALLREPORTS_H
+
+#include <Qt3Support/q3popupmenu.h>
+
+#include <TAAWidget.h>
 
 #include "CityReport.h"
 #include "LoginAvgReport.h"
@@ -28,9 +38,6 @@
 #include <CheckPaymentsReport.h>
 #include <GeneralLedgerReport.h>
 #include <AgingReport.h>
-
-#include <TAAWidget.h>
-#include <q3popupmenu.h>
 
 class AllReports : public TAAWidget
 {
@@ -68,3 +75,5 @@ private:
 };
 
 #endif /* ALLREPORTS_H */
+
+// vim: expandtab

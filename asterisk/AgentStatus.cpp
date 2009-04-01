@@ -12,28 +12,29 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlayout.h>
-#include <q3listview.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
-#include <Q3PopupMenu>
-#include <QSqlQuery>
 
-#include "ColorListViewItem.h"
+#include <QtCore/QTimer>
+#include <QtSql/QSqlQuery>
+#include <QtSql/QSqlDatabase>
+#include <QtGui/QPixmap>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3PopupMenu>
 
-#include "AgentStatus.h"
-#include "Cfg.h"
-
+#include <ColorListViewItem.h>
+#include <Cfg.h>
 #include <TAAWidget.h>
 #include <TAATools.h>
 #include <TAAPixmaps.h>
 #include <QSqlDbPool.h>
-#include <qsqldatabase.h>
-#include <qpixmap.h>
-#include <qtimer.h>
 #include <ADB.h>
+
+#include "AgentStatus.h"
+
+using namespace Qt;
 
 /**
   * AgentInfo is the container for a single agent's status.
@@ -304,9 +305,9 @@ AgentStatus::AgentStatus
 
     // Connect to the database and get the agents
     QSqlDbPool          pool;
-    QSqlDatabase        *myDB = pool.qsqldb();
+    QSqlDatabase        myDB = pool.sqldb();
     QSqlDbPool          pool2;
-    QSqlDatabase        *myDB2 = pool2.qsqldb();
+    QSqlDatabase        myDB2 = pool2.sqldb();
     /*
     myDB = QSqlDatabase::addDatabase("QMYSQL3","asteriskagentstatus");
     myDB->setHostName(cfgVal("TAAMySQLHost"));
@@ -621,14 +622,14 @@ void AgentStatus::asteriskEvent(const astEventRecord event)
         //if (newGuiStatus != statusinfo.at(myPosition)->status) {
             // Update the database with this change.
             //fprintf(stderr, "Inserting agent change into the database...\n");
-            QSqlDatabase        *myDB;
+            QSqlDatabase        myDB;
             myDB = QSqlDatabase::database("asteriskagentstatus");
-            myDB->setHostName(cfgVal("TAAMySQLHost"));
-            myDB->setDatabaseName(cfgVal("TAAMySQLDB"));
-            myDB->setUserName(cfgVal("TAAMySQLUser"));
-            myDB->setPassword(cfgVal("TAAMySQLPass"));
+            myDB.setHostName(cfgVal("TAAMySQLHost"));
+            myDB.setDatabaseName(cfgVal("TAAMySQLDB"));
+            myDB.setUserName(cfgVal("TAAMySQLUser"));
+            myDB.setPassword(cfgVal("TAAMySQLPass"));
 
-            if (!myDB->open()) {
+            if (!myDB.open()) {
                 fprintf(stderr, "AgentStatus::AgentStatus() Unable to connect to the databse!\n");
             } else {
                 QSqlQuery query(myDB);

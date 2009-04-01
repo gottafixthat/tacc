@@ -1,37 +1,24 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** ChangeBillingCycle - Allows the user to change the billing cycle of
-**                      a customer.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ChangeBillingCycle.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #include <stdlib.h>
-#include <qdatetime.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
+
+#include <QtCore/QDateTime>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -39,6 +26,8 @@
 #include <ADB.h>
 
 #include "ChangeBillingCycle.h"
+
+using namespace Qt;
 
 ChangeBillingCycle::ChangeBillingCycle(QWidget* parent, const char* name, long CustID) :
 	TAAWidget( parent, name )
@@ -167,3 +156,5 @@ void ChangeBillingCycle::cancelBillingCycleChange()
 
 
 
+
+// vim: expandtab

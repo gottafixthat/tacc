@@ -11,6 +11,7 @@ SUBLEVEL    = 0
 ## check, and secure connection encryption to be enabled.
 USEDES  = 1
 USEQTW  = 0
+EXPERIMENTAL = 1
 
 ## include file and library file path definitions
 INCDIR	=  /usr/lib/qt/include

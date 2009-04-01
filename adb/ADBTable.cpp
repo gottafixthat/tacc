@@ -300,6 +300,32 @@ int ADBTable::setValue(const char *colName, const char *val)
     return setValue(getColumnNumber(colName), val);
 }
 
+#ifdef ADBQT
+/*
+** ADBTable::setValue()   - Sets the column data to the passed in value.
+*/
+
+int ADBTable::setValue(uint colNo, const QString val)
+{
+    int retVal = 0;
+    if (colNo < numColumns) {
+        columnDefs[colNo]->set(val.toAscii().data());
+        retVal = 1;
+    }
+    return retVal;
+}
+
+/*
+** ADBTable::setValue()   - Sets the column data to the passed in value.
+*/
+
+int ADBTable::setValue(const char *colName, const QString val)
+{
+    return setValue(getColumnNumber(colName), val);
+}
+
+#endif
+
 /*
 ** ADBTable::appendStr() - Appends the string to the specified column.
 */

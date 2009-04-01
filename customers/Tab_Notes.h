@@ -1,39 +1,28 @@
-/*
-** $Id: Tab_Notes.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** Tab_Notes - Controls user note entries.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Tab_Notes.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef Tab_Notes_included
 #define Tab_Notes_included
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <q3listview.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <q3textview.h>
-#include <q3strlist.h>
-#include <qpainter.h>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QPainter>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3strlist.h>
+#include <Qt3Support/q3listview.h>
+
 #include <BlargDB.h>
 #include <TAAWidget.h>
 
@@ -90,3 +79,6 @@ private:
 };
 
 #endif // Tab_Notes_included
+
+// vim: expandtab
+

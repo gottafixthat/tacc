@@ -1,44 +1,33 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** ReceivePayment - Creates the Receive payment window.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ReceivePayment.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <QtCore/QDateTime>
+#include <QtGui/QToolTip>
+#include <QtGui/QLabel>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include <BlargDB.h>
 #include <Cfg.h>
-#include <qtooltip.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
-#include <AcctsRecv.h>
-#include <qdatetm.h>
-#include <qapplication.h>
-#include "ReceivePayment.h"
-#include <qmessagebox.h>
-#include <qlayout.h>
-
 #include <TAATools.h>
+#include <AcctsRecv.h>
+#include "ReceivePayment.h"
+
+using namespace Qt;
 
 ReceivePayment::ReceivePayment
 (
@@ -50,7 +39,7 @@ ReceivePayment::ReceivePayment
     myCustID = CustID;
     if (!myCustID) return;
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(WaitCursor);
 	setCaption( "Receive Payment" );
 
     // Create our widgets.
@@ -352,7 +341,7 @@ void ReceivePayment::savePayment()
     CDB.get(myCustID);
     AR.ARDB->setValue("TransDate", dateStr);
     AR.ARDB->setValue("CustomerID", myCustID);
-    AR.ARDB->setValue("RefNo", checkNumber->text());
+    AR.ARDB->setValue("RefNo", checkNumber->text().ascii());
     AR.ARDB->setValue("TransType", TRANSTYPE_PAYMENT);
     AR.ARDB->setValue("Price", (float) (atof(amount->text()) * -1.0));
     AR.ARDB->setValue("Amount", (float) (atof(amount->text()) * -1.0));
@@ -383,3 +372,5 @@ void ReceivePayment::refreshCustomer(long custID)
         fillUncleared();
     }
 }
+
+// vim: expandtab

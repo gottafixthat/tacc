@@ -1,34 +1,24 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** Customers.cpp - Provides a list for searching for customers.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <qnamespace.h>
-#include <qcursor.h>
-#include <qlayout.h>
-#include <qapplication.h>
-#include <qregexp.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3Frame>
-#include <QLabel>
-#include <Q3PopupMenu>
+#include <QtCore/QRegExp>
+#include <QtGui/QLayout>
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3Frame>
+#include <Qt3Support/Q3PopupMenu>
 
 #include "Customers.h"
 #include "NewCustomer.h"
@@ -42,6 +32,7 @@
 
 #include <TAATools.h>
 
+using namespace Qt;
 
 Customers::Customers ( QWidget* parent, const char* name) 
   : TAAWidget ( parent, name, 0 )
@@ -63,86 +54,22 @@ Customers::Customers ( QWidget* parent, const char* name)
     */
 
     QPushButton *newButton = new QPushButton(this, "NewButton");
-    newButton->setGeometry(0, 25, 100, 26);
-    newButton->setFocusPolicy(QWidget::TabFocus);
-    newButton->setBackgroundMode(QWidget::PaletteBackground);
     newButton->setText( "&New" );
-    newButton->setAutoRepeat( FALSE );
-    newButton->setAutoResize( FALSE );
-    newButton->setToggleButton( FALSE );
-    newButton->setDefault( FALSE );
-    newButton->setAutoDefault( FALSE );
-    newButton->setIsMenuButton( FALSE );
     connect(newButton, SIGNAL(clicked()), SLOT(newCustomer()));
 
     QPushButton *qtarch_EditButton = new QPushButton(this, "EditButton");
-    qtarch_EditButton->setGeometry(100, 25, 100, 26);
-    qtarch_EditButton->setFocusPolicy(QWidget::TabFocus);
-    qtarch_EditButton->setBackgroundMode(QWidget::PaletteBackground);
     qtarch_EditButton->setText( "&Edit" );
-    qtarch_EditButton->setAutoRepeat( FALSE );
-    qtarch_EditButton->setAutoResize( FALSE );
-    qtarch_EditButton->setToggleButton( FALSE );
-    qtarch_EditButton->setDefault( FALSE );
-    qtarch_EditButton->setAutoDefault( FALSE );
-    qtarch_EditButton->setIsMenuButton( FALSE );
     connect(qtarch_EditButton, SIGNAL(clicked()), SLOT(editCustomer()));
 
-    /*
-    QPushButton *qtarch_CloseButton = new QPushButton(this, "CloseButton");
-    qtarch_CloseButton->setGeometry(200, 25, 100, 26);
-    qtarch_CloseButton->setMinimumSize(0, 0);
-    qtarch_CloseButton->setMaximumSize(32767, 32767);
-    qtarch_CloseButton->setFocusPolicy(QWidget::TabFocus);
-    qtarch_CloseButton->setBackgroundMode(QWidget::PaletteBackground);
-    qtarch_CloseButton->setText( "&Close" );
-    qtarch_CloseButton->setAutoRepeat( FALSE );
-    qtarch_CloseButton->setAutoResize( FALSE );
-    qtarch_CloseButton->setToggleButton( FALSE );
-    qtarch_CloseButton->setDefault( FALSE );
-    qtarch_CloseButton->setAutoDefault( FALSE );
-    qtarch_CloseButton->setIsMenuButton( FALSE );
-    connect(qtarch_CloseButton, SIGNAL(clicked()), SLOT(close()));
-    */
-
     QPushButton *qtarch_AddNote_Button = new QPushButton(this, "AddNote_Button");
-    qtarch_AddNote_Button->setGeometry(300, 25, 100, 26);
-    qtarch_AddNote_Button->setFocusPolicy(QWidget::TabFocus);
-    qtarch_AddNote_Button->setBackgroundMode(QWidget::PaletteBackground);
     qtarch_AddNote_Button->setText( "&Add Note" );
-    qtarch_AddNote_Button->setAutoRepeat( FALSE );
-    qtarch_AddNote_Button->setAutoResize( FALSE );
-    qtarch_AddNote_Button->setToggleButton( FALSE );
-    qtarch_AddNote_Button->setDefault( FALSE );
-    qtarch_AddNote_Button->setAutoDefault( FALSE );
-    qtarch_AddNote_Button->setIsMenuButton( FALSE );
     connect(qtarch_AddNote_Button, SIGNAL(clicked()), SLOT(addCustNote()));
 
     QPushButton *qtarch_TakeCallButton = new QPushButton(this, "TakeCallButton");
-    qtarch_TakeCallButton->setGeometry(400, 25, 100, 26);
-    qtarch_TakeCallButton->setFocusPolicy(QWidget::TabFocus);
-    qtarch_TakeCallButton->setBackgroundMode(QWidget::PaletteBackground);
     qtarch_TakeCallButton->setText( "&Take Call" );
-    qtarch_TakeCallButton->setAutoRepeat( FALSE );
-    qtarch_TakeCallButton->setAutoResize( FALSE );
-    qtarch_TakeCallButton->setToggleButton( FALSE );
-    qtarch_TakeCallButton->setDefault( FALSE );
-    qtarch_TakeCallButton->setAutoDefault( FALSE );
-    qtarch_TakeCallButton->setIsMenuButton( FALSE );
     connect(qtarch_TakeCallButton, SIGNAL(clicked()), SLOT(takeCall()));
 
     queryLabel = new QLabel(this, "QueryLabel");
-    /*
-    queryLabel->setGeometry(0, 53, 60, 20);
-    queryLabel->setMinimumSize(60, 20);
-    queryLabel->setMaximumSize(60, 20);
-    queryLabel->setFocusPolicy(QWidget::NoFocus);
-    queryLabel->setBackgroundMode(QWidget::PaletteBackground);
-    queryLabel->setFrameStyle( 0 );
-    queryLabel->setLineWidth( 1 );
-    queryLabel->setMidLineWidth( 0 );
-    queryLabel->QFrame::setMargin( -1 );
-    */
     queryLabel->setText( "&Search:" );
     queryLabel->setAlignment( AlignRight|AlignVCenter|ExpandTabs );
     queryLabel->setMargin( -1 );
@@ -160,30 +87,11 @@ Customers::Customers ( QWidget* parent, const char* name)
     connect(searchButton, SIGNAL(clicked()), this, SLOT(listQueryS()));
 
     QPushButton *qtarch_ClearButton = new QPushButton(this, "ClearButton");
-    qtarch_ClearButton->setGeometry(258, 51, 50, 25);
-    /*
-    qtarch_ClearButton->setMinimumSize(50, 25);
-    qtarch_ClearButton->setMaximumSize(50, 25);
-    */
-    qtarch_ClearButton->setFocusPolicy(QWidget::TabFocus);
-    qtarch_ClearButton->setBackgroundMode(QWidget::PaletteBackground);
     qtarch_ClearButton->setText( "C&lear" );
-    qtarch_ClearButton->setAutoRepeat( FALSE );
-    qtarch_ClearButton->setAutoResize( FALSE );
-    qtarch_ClearButton->setToggleButton( FALSE );
-    qtarch_ClearButton->setDefault( FALSE );
-    qtarch_ClearButton->setAutoDefault( FALSE );
-    qtarch_ClearButton->setIsMenuButton( FALSE );
     connect(qtarch_ClearButton, SIGNAL(clicked()), SLOT(clearQuery()));
 
     autoOpenCustomer = new QCheckBox(this, "AutoOpenCheckbox");
-    autoOpenCustomer->setGeometry(313, 54, 187, 19);
-    autoOpenCustomer->setFocusPolicy(QWidget::TabFocus);
-    autoOpenCustomer->setBackgroundMode(QWidget::PaletteBackground);
     autoOpenCustomer->setText( "&Auto open if only one match." );
-    autoOpenCustomer->setAutoRepeat( FALSE );
-    autoOpenCustomer->setAutoResize( FALSE );
-    autoOpenCustomer->setChecked( FALSE );
 
     // Phone Number Information
     phoneNumberLabel   = new QLabel(this, "phoneNumberLabel");
@@ -255,21 +163,8 @@ Customers::Customers ( QWidget* parent, const char* name)
     locationLayout->addWidget(location,      1);
 
     list = new Q3ListView(this, "CustomerList");
-    list->setGeometry(0, 76, 500, 244);
-    list->setFocusPolicy(QWidget::TabFocus);
-    list->setBackgroundMode(QWidget::PaletteBackground);
-    list->setFrameStyle( 17 );
-    list->setLineWidth( 2 );
-    list->setMidLineWidth( 0 );
-    list->Q3Frame::setMargin( 0 );
-    list->setResizePolicy( Q3ScrollView::Manual );
-    list->setVScrollBarMode( Q3ScrollView::Auto );
-    list->setHScrollBarMode( Q3ScrollView::Auto );
-    list->setTreeStepSize( 20 );
     list->setMultiSelection( FALSE );
     list->setAllColumnsShowFocus( TRUE );
-    list->setItemMargin( 2 );
-    list->setRootIsDecorated( TRUE );
     list->addColumn( "Customer Name", 225 );
     list->setColumnWidthMode( 0, Q3ListView::Manual );
     list->setColumnAlignment( 0, 1 );
@@ -1011,3 +906,5 @@ void Customers::customerSearch(const char *searchStr)
     refreshList(0);
 }
 
+
+// vim: expandtab

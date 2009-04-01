@@ -1,44 +1,29 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DNS_ManagedReport - Displays the list of all of the domains that TAA has
-**                     in the databse that have managed DNS.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DNS_ManagedReport.cpp,v $
-** Revision 1.2  2004/01/12 23:26:25  marc
-** Added a DNS button as a user button as a shortcut to editing DNS records.
-**
-** Revision 1.1  2004/01/04 19:35:48  marc
-** New report, Managed DNS domains
-**
-**
-*/
-
-
-#include "DNS_ManagedReport.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3listview.h>
-#include <qapplication.h>
-#include <q3dict.h>
+
+#include <QtGui/QApplication>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
 #include <Cfg.h>
 #include <DNSManager.h>
 
+#include "DNS_ManagedReport.h"
+
+using namespace Qt;
 
 DNS_ManagedReport::DNS_ManagedReport
 (
@@ -143,3 +128,5 @@ void DNS_ManagedReport::userButtonClickedInt()
     }
 }
 
+
+// vim: expandtab

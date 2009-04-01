@@ -1,37 +1,25 @@
-/*
-** $Id: BI_Prices.h,v 1.2 2003/12/24 01:08:54 marc Exp $
-**
-***************************************************************************
-**
-** BI_Prices.h - Billable Items pricing editor page.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: BI_Prices.h,v $
-** Revision 1.2  2003/12/24 01:08:54  marc
-** Removed all of the QTArch generated dialogs and did the layouts manually.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef BI_Prices_included
 #define BI_Prices_included
 
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qspinbox.h>
-#include <qcombobox.h>
-#include <q3multilineedit.h>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QSpinBox>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
 
 class BI_Prices : public TAAWidget
@@ -74,3 +62,5 @@ private:
     char        *myAddDesc;
 };
 #endif // BI_Prices_included
+
+// vim: expandtab

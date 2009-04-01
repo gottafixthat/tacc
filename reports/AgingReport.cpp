@@ -1,8 +1,7 @@
-/**
- * AgingReport.cpp - Finds all customers with an open balance that is overdue.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -13,10 +12,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3listview.h>
-#include <qapplication.h>
-#include <q3dict.h>
-#include <qdatetime.h>
+
+#include <QtCore/QDateTime>
+#include <QtGui/QApplication>
+#include <Qt3Support/q3dict.h>
+#include <Qt3Support/q3listview.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -24,6 +24,8 @@
 #include <TAATools.h>
 
 #include <AgingReport.h>
+
+using namespace Qt;
 
 /**
  * AgingReport()
@@ -199,3 +201,5 @@ void AgingReport::listItemSelected(Q3ListViewItem *curItem)
 }
 
 
+
+// vim: expandtab

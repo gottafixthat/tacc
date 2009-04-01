@@ -1,34 +1,27 @@
-/*
-** $Id: Customers.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** Customers  - Handles the list of customers.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef Customers_included
 #define Customers_included
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <q3listview.h>
-#include <qcheckbox.h>
-#include <qmenubar.h>
-#include <q3popupmenu.h>
-#include <qlineedit.h>
-#include <q3strlist.h>
-#include <qmap.h>
+#include <QtCore/QMap>
+#include <QtGui/QWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QMenuBar>
+#include <QtGui/QLineEdit>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3popupmenu.h>
+#include <Qt3Support/q3strlist.h>
 
 #include <TAAWidget.h>
 
@@ -100,3 +93,6 @@ private:
 
 };
 #endif // Customers_included
+
+// vim: expandtab
+

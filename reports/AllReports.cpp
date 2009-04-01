@@ -1,9 +1,7 @@
-/**
- * AllReports.cpp - Creates the menu and interfaces to the various reports
- * found in TAA.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -11,11 +9,13 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include "AllReports.h"
+#include <Qt3Support/Q3PopupMenu>
 
 #include <TAATools.h>
-//Added by qt3to4:
-#include <Q3PopupMenu>
+
+#include "AllReports.h"
+
+using namespace Qt;
 
 AllReports::AllReports
 (
@@ -332,3 +332,5 @@ void AllReports::showAgingReport()
     rep->show();
     emit(setStatus(""));
 }
+
+// vim: expandtab

@@ -1,41 +1,35 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** TicketManager - Overview of its main function.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "TicketManager.h"
-#include "TicketsCommon.h"
-
-#include <q3listview.h>
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qfont.h>
-#include <qtimer.h>
+#include <QtCore/QDateTime>
+#include <QtCore/QTimer>
+#include <QtGui/QLayout>
+#include <QtGui/QFont>
 //Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3PopupMenu>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3PopupMenu>
 
 #include <ADB.h>
 #include <TAATools.h>
 
+#include "TicketManager.h"
+#include "TicketsCommon.h"
 #include "Ticket.h"
 #include "TicketEditor.h"
+
+using namespace Qt;
 
 TicketManager::TicketManager
 (
@@ -267,3 +261,5 @@ void TicketManager::showAllPersonalSelected()
     }
     refreshTicketList();
 }
+
+// vim: expandtab

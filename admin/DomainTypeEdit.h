@@ -1,36 +1,24 @@
-/*
-** $Id: DomainTypeEdit.h,v 1.2 2004/01/10 01:53:15 marc Exp $
-**
-***************************************************************************
-**
-** DomainTypeEdit - Allows the admin to edit the domain types.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DomainTypeEdit.h,v $
-** Revision 1.2  2004/01/10 01:53:15  marc
-** Re-written Domain type editor.  Still needs some work, but is getting there.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef DomainTypeEdit_Included 
 #define DomainTypeEdit_Included
 
-#include <qwidget.h>
-#include <q3listbox.h>
-#include <qpushbutton.h>
-#include <q3listview.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
-#include <qlineedit.h>
+#include <QtGui/QPushButton>
+#include <QtGui/QComboBox>
+#include <QtGui/QCheckBox>
+#include <QtGui/QLineEdit>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3listbox.h>
+
 #include <TAAWidget.h>
 
 class DomainTypeEdit : public TAAWidget
@@ -77,3 +65,5 @@ protected:
 
 };
 #endif // DomainTypeEdit_included
+
+// vim: expandtab

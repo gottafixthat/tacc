@@ -1,36 +1,22 @@
-/*
-** $Id: EditCustomer.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** EditCustomer.h - Edit Customer controls the main customer window.
-**                  It controls all of the tabs, and the menu.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: EditCustomer.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef EditCustomer_included
 #define EditCustomer_included
 
-#include <q3widgetstack.h>
-#include <qtabbar.h>
-#include <qpushbutton.h>
-#include <qmenubar.h>
-//Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QtGui/QTabBar>
+#include <QtGui/QPushButton>
+#include <QtGui/QMenuBar>
+#include <Qt3Support/Q3PopupMenu>
+#include <Qt3Support/q3widgetstack.h>
 
 #include "Tab_ContactInfo.h"
 #include "Tab_BillingInfo.h"
@@ -106,3 +92,6 @@ private:
     
 };
 #endif // EditCustomer_included
+
+// vim: expandtab
+

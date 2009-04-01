@@ -1,59 +1,38 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DomainAdd - Allows a customer to add a new domain.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DomainAdd.cpp,v $
-** Revision 1.5  2004/01/22 00:02:10  marc
-** Virtual Hosting database access is now complete in a basic form.
-**
-** Revision 1.4  2004/01/21 22:33:00  marc
-** Will now add a VHost record into the database as well.
-**
-** Revision 1.3  2004/01/11 16:57:53  marc
-** Will now optionally create DNS and Email Alias/Hosting records
-**
-** Revision 1.2  2004/01/10 21:59:03  marc
-** More changes to DomainAdd.  Auto widget enables, etc.  Not much left to do.
-**
-** Revision 1.1  2004/01/09 01:55:05  marc
-** New widget to include the framework for instant domain, email and web
-** hosting setups.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
-#include "DomainAdd.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "BlargDB.h"
-#include "BString.h"
-#include "ParseFile.h"
+
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3StrList>
+
+#include <BlargDB.h>
+#include <BString.h>
+#include <ParseFile.h>
 #include <Cfg.h>
 #include <ADB.h>
 #include <DNSUtils.h>
 #include <VHostUtils.h>
 #include <BrassClient.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
-#include <Q3StrList>
+
+#include "DomainAdd.h"
+
+using namespace Qt;
 
 DomainAdd::DomainAdd
 (
@@ -389,3 +368,5 @@ void DomainAdd::setMostPopular()
         tmpIDX++;
     }
 }
+
+// vim: expandtab

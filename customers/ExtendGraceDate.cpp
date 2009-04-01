@@ -9,23 +9,22 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-
-
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QPushButton>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
 #include <TAATools.h>
 
 #include "ExtendGraceDate.h"
+
+using namespace Qt;
 
 ExtendGraceDate::ExtendGraceDate(QWidget* parent, const char* name, long CustomerID) :
 	TAAWidget( parent, name )

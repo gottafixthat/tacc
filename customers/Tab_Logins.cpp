@@ -1,43 +1,31 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** FileName     - Overview of its main function.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Tab_Logins.cpp,v $
-** Revision 1.2  2004/02/27 01:33:33  marc
-** The Customers table now tracks how many mailboxes are allowed.  LoginTypes
-** and Packages were both updated to include how many mailboxes are allowed with
-** each package or login type.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
+#include <stdio.h>
+#include <stdlib.h>
 
-#include "Tab_Logins.h"
-#include "BlargDB.h"
-#include "BString.h"
-#include "qstring.h"
-//Added by qt3to4:
-#include <QLabel>
-#include <Q3GridLayout>
-#include <Q3PopupMenu>
-#include <Q3BoxLayout>
-#include "LoginEdit.h"
-#include <qmessagebox.h>
+#include <QtCore/QString>
+#include <QtCore/QDateTime>
+#include <QtGui/QLabel>
+#include <QtGui/QApplication>
+#include <QtGui/QMenuBar>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3PopupMenu>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3Dict>
+
+#include <ADB.h>
 #include "BrassClient.h"
 #include "AcctsRecv.h"
 #include "ChangePassword.h"
@@ -45,18 +33,15 @@
 #include "BandwidthUsageReport.h"
 #include "TransferLogin.h"
 #include <Cfg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <qapplication.h>
-#include <qdatetm.h>
-#include <q3listview.h>
-#include <qmenubar.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
-#include <ADB.h>
+#include "LoginEdit.h"
 #include <QSqlDbPool.h>
 #include <LoginService.h>
 #include "TAATools.h"
+#include "Tab_Logins.h"
+#include "BlargDB.h"
+#include "BString.h"
+
+using namespace Qt;
 
 Tab_Logins::Tab_Logins
 (
@@ -123,12 +108,10 @@ Tab_Logins::Tab_Logins
     adminMenu->insertItem("&Set Primary Login", this, SLOT(setPrimaryLogin()));
     adminMenu->insertItem("&Transfer Login", this, SLOT(transferLogin()));
     if (isAdmin()) adminMenu->insertItem("&Wipe Login", this, SLOT(wipeLogin()));
-    adminMenu->setFocusPolicy(QWidget::StrongFocus);
 	
 	QMenuBar    *tmpMenu;
 	tmpMenu = new QMenuBar(adminMenuArea, "Administrivia");
     tmpMenu->insertItem("&Administrivia", adminMenu);
-    tmpMenu->setFocusPolicy(QWidget::StrongFocus);
 
     hideWiped = new QCheckBox(this, "HideWiped");
     hideWiped->setText("&Hide Wiped");
@@ -337,7 +320,7 @@ void Tab_Logins::editLogin(void)
 	curItem = list->currentItem();
 	
     if (curItem != NULL) {
-		QApplication::setOverrideCursor(waitCursor);
+		QApplication::setOverrideCursor(WaitCursor);
 		// Make sure that the login is active before we edit it.
 		LDB.get(myCustID, (const char *) curItem->text(0));
 		
@@ -374,7 +357,7 @@ void Tab_Logins::unlockLogin(void)
     curItem = list->currentItem();
 
     if (curItem != NULL) {
-		QApplication::setOverrideCursor(waitCursor);
+		QApplication::setOverrideCursor(WaitCursor);
 		ADB		    DB;
 		BrassClient	*BC;
 		LoginsDB	LDB;
@@ -423,7 +406,7 @@ void Tab_Logins::unlockLogin(void)
 				sprintf(tmpstr, "Lock account '%s'\n\nAre you sure?", tmpLogin);
                 QApplication::restoreOverrideCursor();
                 if (QMessageBox::warning(this, "Lock Account", tmpstr, "&Yes", "&No", 0, 1) == 0) {
-                    QApplication::setOverrideCursor(waitCursor);
+                    QApplication::setOverrideCursor(WaitCursor);
                     if (!BC->LockUser(tmpLogin)) {
                         QApplication::restoreOverrideCursor();
                         // We were unsuccessful.
@@ -459,10 +442,10 @@ void Tab_Logins::unlockLogin(void)
                         if (isManager()) {
                             QApplication::restoreOverrideCursor();
                             if (QMessageBox::warning(this, "Prorate Charges", "Do you wish to prorate the charges for this login?", "&Yes", "&No", 0, 1) == 0) {
-                                QApplication::setOverrideCursor(waitCursor);
+                                QApplication::setOverrideCursor(WaitCursor);
                                 updateARForLock(tmpLogin);
                             } else {
-                                QApplication::setOverrideCursor(waitCursor);
+                                QApplication::setOverrideCursor(WaitCursor);
                             }
                         }
                         
@@ -694,12 +677,12 @@ void Tab_Logins::wipeLogin()
         strcpy(tmpLogin, LDB.getStr("LoginID"));
 
         // Remove their CCC Filters and other stuff first.
-        QApplication::setOverrideCursor(waitCursor);
+        QApplication::setOverrideCursor(WaitCursor);
         emit setStatus("Removing CCC preferences/filters...");
         ADB     CCCDB(cfgVal("CCCMySQLDB"), cfgVal("CCCMySQLUser"), cfgVal("CCCMySQLPass"), cfgVal("CCCMySQLHost"));
         QApplication::restoreOverrideCursor();
         if (CCCDB.Connected()) {
-            QApplication::setOverrideCursor(waitCursor);
+            QApplication::setOverrideCursor(WaitCursor);
             CCCDB.dbcmd("delete from AddressBook where LoginID  = '%s'", tmpLogin);
             CCCDB.dbcmd("delete from MailFilters where LoginID  = '%s'", tmpLogin);
             CCCDB.dbcmd("delete from Preferences where LoginID  = '%s'", tmpLogin);
@@ -714,12 +697,12 @@ void Tab_Logins::wipeLogin()
         }
         
         // Remove their CCC Filters and other stuff first.
-        QApplication::setOverrideCursor(waitCursor);
+        QApplication::setOverrideCursor(WaitCursor);
         emit setStatus("Removing email aliases...");
         ADB     mailDB(cfgVal("MailSQLDB"), cfgVal("MailSQLUser"), cfgVal("MailSQLPass"), cfgVal("MailSQLHost"));
         QApplication::restoreOverrideCursor();
         if (mailDB.Connected()) {
-            QApplication::setOverrideCursor(waitCursor);
+            QApplication::setOverrideCursor(WaitCursor);
             mailDB.dbcmd("delete from Virtual where Mailbox = '%s'", tmpLogin);
             emit setStatus("");
             QApplication::restoreOverrideCursor();
@@ -739,7 +722,7 @@ void Tab_Logins::wipeLogin()
                 QMessageBox::critical(this, "BRASS Error", "Error authenticating with the BRASS server.");
             } else {
                 // Well, we finally made it into brass.  Wipe the login.
-                QApplication::setOverrideCursor(waitCursor);
+                QApplication::setOverrideCursor(WaitCursor);
                 emit setStatus("Wiping account...");
                 if (BC->WipeUser(tmpLogin)) {
                     // Went okay, update the database.
@@ -797,11 +780,11 @@ void Tab_Logins::updateDBForWipe(const char * LoginID)
 	if (wasActive && isManager()) {
   		QApplication::restoreOverrideCursor();
         if (QMessageBox::warning(this, "Prorate Charges", "Do you wish to prorate the charges for this login?", "&Yes", "&No", 0, 1) == 0) {
-		    QApplication::setOverrideCursor(waitCursor);
+		    QApplication::setOverrideCursor(WaitCursor);
 			updateARForLock(tmpLogin);
             QApplication::restoreOverrideCursor();
 		}
-	    QApplication::setOverrideCursor(waitCursor);
+	    QApplication::setOverrideCursor(WaitCursor);
 	}
 
 	NDB.setValue("LoginID", tmpLogin);
@@ -1039,7 +1022,7 @@ CustomLoginFlagEditor::CustomLoginFlagEditor
     cancelButton->setText("&Cancel");
 
     // Label layout
-    Q3GridLayout *gl = new Q3GridLayout();
+    Q3GridLayout *gl = new Q3GridLayout(2, 2);
     int curRow = 0;
     gl->addWidget(custIDLabel,              curRow, 0);
     gl->addWidget(custIDValue,              curRow, 1);
@@ -1182,3 +1165,5 @@ void Tab_Logins::refreshCustomer(long custID)
 {
     if (custID == myCustID) refreshLoginList(myCustID);
 }
+
+// vim: expandtab

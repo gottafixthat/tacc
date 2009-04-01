@@ -12,10 +12,10 @@
 #ifndef DOMAINCHECKLIST_H
 #define DOMAINCHECKLIST_H
 
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qlineedit.h>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QComboBox>
+#include <QtGui/QLineEdit>
 
 #include <TAAWidget.h>
 

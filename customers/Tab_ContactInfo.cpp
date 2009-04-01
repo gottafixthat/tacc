@@ -1,51 +1,37 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** Tab_ContactInfo - Displays and allows the editing of the customers
-**                   contact information.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Tab_ContactInfo.cpp,v $
-** Revision 1.2  2003/12/30 01:53:02  marc
-** Fixed the font and stretch issues between the contact list and phone list.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
+#include <stdio.h>
 
-#include <qclipboard.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
+#include <QtGui/QPixmap>
+#include <QtGui/QClipboard>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include "Tab_ContactInfo.h"
 #include "BlargDB.h"
 #include "AddressEditor.h"
 #include <TAAPixmaps.h>
-#include <stdio.h>
-#include <qapplication.h>
-#include <qpixmap.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
 #include <TAATools.h>
 #include <ADB.h>
-#include <qmessagebox.h>
 #include <TAAStructures.h>
 #include <CustomerContactsDB.h>
 #include <CustomerContactEditor.h>
+
+using namespace Qt;
 
 Tab_ContactInfo::Tab_ContactInfo
 (
@@ -300,12 +286,12 @@ void Tab_ContactInfo::loadCustInfo()
 	
     contacts = CustomerContactsDB::allCustomerContacts((uint)myCustID);
     contactList->clear();
-    for (uint i = 0; i < contacts.count(); i++) {
-        customerContactRecord *ctc = contacts.at(i);
-        QString tmpSt = QString::number(ctc->contactID);
+    for (int i = 0; i < contacts.count(); i++) {
+        customerContactRecord ctc = contacts.at(i);
+        QString tmpSt = QString::number(ctc.contactID);
         QString tmpFlags = "";
-        if (ctc->sendStatements) tmpFlags += "Statements";
-        (void) new Q3ListViewItem(contactList, ctc->tag, ctc->name, ctc->phoneNumber, ctc->emailAddress, ctc->access, tmpFlags, tmpSt);
+        if (ctc.sendStatements) tmpFlags += "Statements";
+        (void) new Q3ListViewItem(contactList, ctc.tag, ctc.name, ctc.phoneNumber, ctc.emailAddress, ctc.access, tmpFlags, tmpSt);
     }
     debug(5, "Loaded %d contacts...\n", contacts.count());
 	cdb.get(myCustID);
@@ -534,3 +520,6 @@ void Tab_ContactInfo::copyContactInfoToClipboard()
     cb->setText(tmpStr, QClipboard::Clipboard);
         
 }
+
+// vim: expandtab
+

@@ -1,35 +1,22 @@
-/*
-** $Id: LoginCountReport.h,v 1.1 2003/12/07 01:47:05 marc Exp $
-**
-***************************************************************************
-**
-** LoginCountReport - Generates a report of the number of active logons on
-**                    the system.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: LoginCountReport.h,v $
-** Revision 1.1  2003/12/07 01:47:05  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef LoginCountReport_included
 #define LoginCountReport_included
 
+#include <QtCore/QEvent>
+#include <QtGui/QCloseEvent>
+
 #include "Report.h"
-//Added by qt3to4:
-#include <QCloseEvent>
-#include <QEvent>
 
 class LoginCountReport : public Report
 {
@@ -53,3 +40,5 @@ protected slots:
 
 };
 #endif // LoginCountReport_included
+
+// vim: expandtab

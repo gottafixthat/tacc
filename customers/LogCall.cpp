@@ -1,47 +1,37 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** LogCall - An interface for the user to log a call.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: LogCall.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "LogCall.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3listview.h>
-#include <qdatetm.h>
-#include <qapplication.h>
-#include <qregexp.h>
-#include <qlayout.h>
+
+#include <QtCore/QRegExp>
+#include <QtCore/QDateTime>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
 //Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <Q3Frame>
-#include <QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3Frame>
+#include <Qt3Support/q3listview.h>
 
 #include <BlargDB.h>
+#include <TAATools.h>
 
-#include "TAATools.h"
+#include "LogCall.h"
 
 #define TICK_INCREMENT 60
+
+using namespace Qt;
 
 LogCall::LogCall
 (
@@ -427,3 +417,5 @@ void LogCall::toggleTimer()
 
 
 
+
+// vim: expandtab

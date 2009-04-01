@@ -1,43 +1,25 @@
-/*
-** $Id: BI_General.h,v 1.4 2004/02/27 23:11:18 marc Exp $
-**
-***************************************************************************
-**
-** BI_General - The General tab of Billable Items editor.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: BI_General.h,v $
-** Revision 1.4  2004/02/27 23:11:18  marc
-** Fixed the way we're doing mailbox counts.  It now keys off of subscriptions.
-**
-** Revision 1.3  2003/12/27 21:37:29  marc
-** Switched a couple char variables to static sizes.
-**
-** Revision 1.2  2003/12/24 01:08:54  marc
-** Removed all of the QTArch generated dialogs and did the layouts manually.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef BI_General_included
 #define BI_General_included
 
-#include <qwidget.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qspinbox.h>
-#include <qcombobox.h>
-#include <q3multilineedit.h>
+#include <QtGui/QWidget>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QSpinBox>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+
 #include <TAAWidget.h>
 
 class BI_General : public TAAWidget
@@ -107,3 +89,5 @@ signals:
 };
 #endif // BI_General_included
 
+
+// vim: expandtab

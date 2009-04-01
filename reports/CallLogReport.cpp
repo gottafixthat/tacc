@@ -1,30 +1,19 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CalLLogReport - Given a date range, this shows the calls that were
-**                 logged.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: $
-**
-*/
-
-#include "CallLogReport.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3listview.h>
-#include <qapplication.h>
+
+#include <QtGui/QApplication>
+#include <Qt3Support/q3listview.h>
 
 #include <Report.h>
 
@@ -34,6 +23,9 @@
 #include <BString.h>
 
 #include "LoginTypeReport.h"
+#include "CallLogReport.h"
+
+using namespace Qt;
 
 CallLogReport::CallLogReport
 (
@@ -225,3 +217,5 @@ void CallLogReport::listItemSelected(Q3ListViewItem *curItem)
         }
     }
 }
+
+// vim: expandtab

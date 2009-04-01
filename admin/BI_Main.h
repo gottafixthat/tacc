@@ -1,35 +1,23 @@
-/*
-** $Id: BI_Main.h,v 1.2 2003/12/24 01:08:54 marc Exp $
-**
-***************************************************************************
-**
-** BI_Main.h - Billable Items Editor main window.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: BI_Main.h,v $
-** Revision 1.2  2003/12/24 01:08:54  marc
-** Removed all of the QTArch generated dialogs and did the layouts manually.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef BI_Main_included
 #define BI_Main_included
 
-#include <qwidget.h>
-#include <q3widgetstack.h>
-#include <q3listview.h>
-#include <qpushbutton.h>
-#include <qtabbar.h>
+#include <QtGui/QPushButton>
+#include <QtGui/QTabBar>
+#include <Qt3Support/q3widgetstack.h>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
 #include "BI_General.h"
 #include "BI_Prices.h"
@@ -74,3 +62,5 @@ private:
     BI_Measurement  *tmeasurement;
 };
 #endif // BI_Main_included
+
+// vim: expandtab

@@ -1,8 +1,7 @@
-/**
- * ccPaymentDetailReport.cpp - Credit Card Payments detail report
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -12,23 +11,25 @@
 
 #include <stdlib.h>
 
-#include <ccPaymentDetailReport.h>
-#include <QSqlDbPool.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QSqlQuery>
-#include <CCValidate.h>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QLayout>
+#include <QtGui/QPushButton>
+#include <QtSql/QSqlQuery>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/q3listbox.h>
+
 #include <mcve.h>
+
+#include <CCValidate.h>
 #include <TAATools.h>
 #include <BString.h>
+#include <QSqlDbPool.h>
 
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qlayout.h>
-#include <q3listbox.h>
-#include <qpushbutton.h>
+#include <ccPaymentDetailReport.h>
 
+using namespace Qt;
 
 /**
  * ccPaymentDetailReport()
@@ -80,7 +81,7 @@ ccPaymentDetailReport::~ccPaymentDetailReport()
 void ccPaymentDetailReport::refreshReport()
 {
     QSqlDbPool  dbpool;
-    QSqlQuery   q(dbpool.qsqldb());
+    QSqlQuery   q(dbpool.sqldb());
     QString     customerName;
     QString     companyName;
     QString     ccType;
@@ -452,3 +453,5 @@ void ccPaymentDetailOptions::allDispTypesChanged(int)
         dispList->setEnabled(true);
     }
 }
+
+// vim: expandtab

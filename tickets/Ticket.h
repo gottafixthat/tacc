@@ -1,25 +1,13 @@
-/*
-** $Id: Ticket.h,v 1.1 2003/12/07 01:47:05 marc Exp $
-**
-***************************************************************************
-**
-** Ticket.h - The Ticket class encapsulates all of the actions that can
-**            be taken on a ticket, as well as a few utilities of a ticket
-**            such as ticketAge() and ticketAgeStr().
-**
-**            The Ticket object can create new trouble tickets as well as
-**            maintain existing ones.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef Ticket_H
 #define Ticket_H
@@ -115,3 +103,5 @@ protected:
 
 
 #endif // Ticket_H
+
+// vim: expandtab
