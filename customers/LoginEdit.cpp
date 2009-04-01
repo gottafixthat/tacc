@@ -1,46 +1,38 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** LoginEdit - Allows the user to edit a login type.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: LoginEdit.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
-#include "LoginEdit.h"
-#include "BlargDB.h"
-#include "BString.h"
-#include "BrassClient.h"
-#include "ParseFile.h"
-#include <Cfg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <qapplication.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <Q3StrList>
+
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3StrList>
+
 #include <ADB.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
 #include <TAATools.h>
+#include <BlargDB.h>
+#include <BString.h>
+#include <BrassClient.h>
+#include <ParseFile.h>
+#include <Cfg.h>
+
+#include "LoginEdit.h"
+
+using namespace Qt;
 
 LoginEdit::LoginEdit
 (
@@ -208,7 +200,7 @@ void LoginEdit::saveLogin()
 	CustomersDB		CDB;
 	int             isNewLogin = 0;
 
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(WaitCursor);
 
 	DB.query("select InternalID, DiskSpace, DialupChannels from LoginTypes where LoginType = '%s'", (const char *)loginType->text(loginType->currentItem()));
 	if (DB.getrow()) {
@@ -640,3 +632,5 @@ void LoginEdit::mailAdmins(void)
     delete(tmpstr);
 }
 
+
+// vim: expandtab

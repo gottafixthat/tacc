@@ -1,8 +1,7 @@
-/**
- * CityReport.h - Gives a report for customers broken down by city.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -41,3 +40,5 @@ private:
     int     myShowActive;
 };
 #endif // CityReport_included
+
+// vim: expandtab

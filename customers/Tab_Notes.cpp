@@ -1,38 +1,29 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** Tab_Notes - This widget displays and shows user notes.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <qprinter.h>
-#include <qstring.h>
-#include <q3strlist.h>
-#include <qregexp.h>
-#include <qapplication.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <QLabel>
-#include <Q3GridLayout>
-#include <Q3Frame>
-#include <Q3BoxLayout>
+#include <QtCore/QString>
+#include <QtCore/QRegExp>
+#include <QtGui/QPrinter>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3strlist.h>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3Frame>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <FParse.h>
-
 #include "Tab_Notes.h"
 #include "BlargDB.h"
 #include "BString.h"
@@ -46,6 +37,8 @@
 
 #define NOTEIDCOL   4
 #define NOTETYPECOL 5
+
+using namespace Qt;
 
 Tab_Notes::Tab_Notes
 (
@@ -472,7 +465,7 @@ void Tab_Notes::startSearch()
 
 void Tab_Notes::showNoteDetail(Q3ListViewItem *newItem)
 {
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(WaitCursor);
 
     if (newItem) {
         if (atoi(newItem->key(NOTETYPECOL, 0)) == 0) {
@@ -780,7 +773,6 @@ void Tab_Notes::printHeader(QPainter *p, CustomersDB *cust, AddressesDB *cont)
     QRect       rect;
     QString     tmpSt;
     int         yPos;
-    long        CustID = cust->getLong("CustomerID");
 
     theDate = QDate::currentDate();
     
@@ -982,3 +974,5 @@ void Tab_Notes::noteDoubleClicked(Q3ListViewItem *curItem)
     }
 }
 
+
+// vim: expandtab

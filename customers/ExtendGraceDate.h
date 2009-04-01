@@ -9,13 +9,13 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-
 #ifndef EXTENDGRACEDATE_H
 #define EXTENDGRACEDATE_H
 
-#include <qdatetime.h>
-#include <qlabel.h>
-#include <qspinbox.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QLabel>
+#include <QtGui/QSpinBox>
+
 #include <TAAWidget.h>
 
 class ExtendGraceDate : public TAAWidget

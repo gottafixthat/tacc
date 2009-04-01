@@ -13,13 +13,12 @@
 #ifndef CHANGEPASSWORD_H
 #define CHANGEPASSWORD_H
 
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qstring.h>
-//Added by qt3to4:
-#include <QCloseEvent>
-#include <QEvent>
+#include <QtCore/QString>
+#include <QtCore/QEvent>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QCloseEvent>
 
 #include <TAAWidget.h>
 

@@ -10,16 +10,18 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <CustomerContactEditor.h>
-#include <CustomerContactsDB.h>
-#include <TAATools.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
 #include <BlargDB.h>
+#include <TAATools.h>
+#include <CustomerContactsDB.h>
+#include <CustomerContactEditor.h>
+
+using namespace Qt;
 
 /**
  * CustomerContactEditor()
@@ -180,17 +182,17 @@ void CustomerContactEditor::setContactID(uint id)
         customerContactList contacts;
         contacts = CustomerContactsDB::allCustomerContacts(contactRec.customerID);
         Tag->clear();
-        for (uint i = 0; i < contacts.count(); i++) {
-            if (contacts.at(i)->tag.length()) {
-                Tag->insertItem(contacts.at(i)->tag);
+        for (int i = 0; i < contacts.count(); i++) {
+            if (contacts.at(i).tag.length()) {
+                Tag->insertItem(contacts.at(i).tag);
             }
         }
         Tag->setCurrentText(contactRec.tag);
         // And the same with Access
         Access->clear();
-        for (uint i = 0; i < contacts.count(); i++) {
-            if (contacts.at(i)->access.length()) {
-                Access->insertItem(contacts.at(i)->access);
+        for (int i = 0; i < contacts.count(); i++) {
+            if (contacts.at(i).access.length()) {
+                Access->insertItem(contacts.at(i).access);
             }
         }
         Access->setCurrentText(contactRec.access);
@@ -216,17 +218,17 @@ void CustomerContactEditor::setCustomerID(uint id)
     customerContactList contacts;
     contacts = CustomerContactsDB::allCustomerContacts(contactRec.customerID);
     Tag->clear();
-    for (uint i = 0; i < contacts.count(); i++) {
-        if (contacts.at(i)->tag.length()) {
-            Tag->insertItem(contacts.at(i)->tag);
+    for (int i = 0; i < contacts.count(); i++) {
+        if (contacts.at(i).tag.length()) {
+            Tag->insertItem(contacts.at(i).tag);
         }
     }
 
     // And the same with Access
     Access->clear();
-    for (uint i = 0; i < contacts.count(); i++) {
-        if (contacts.at(i)->access.length()) {
-            Access->insertItem(contacts.at(i)->access);
+    for (int i = 0; i < contacts.count(); i++) {
+        if (contacts.at(i).access.length()) {
+            Access->insertItem(contacts.at(i).access);
         }
     }
 }

@@ -12,12 +12,11 @@
 #ifndef CHANGERATEPLAN_H
 #define CHANGERATEPLAN_H
 
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <q3datetimeedit.h>
-//Added by qt3to4:
-#include <QCloseEvent>
-#include <QEvent>
+#include <QtCore/QEvent>
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
+#include <QtGui/QCloseEvent>
+#include <Qt3Support/q3datetimeedit.h>
 
 #include <TAAWidget.h>
 

@@ -1,36 +1,22 @@
-/*
-** $Id: ReceivePayment.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** RecievePayment - A class that brings up open charges for a customer and
-**                  allows the user to enter a payment from them.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2002, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ReceivePayment.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef ReceivePayment_included
 #define ReceivePayment_included
 
-#include <qdialog.h>
-#include <qlabel.h>
-#include <q3listview.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
 
 class ReceivePayment : public TAAWidget
@@ -81,3 +67,5 @@ private:
 
 };
 #endif // ReceivePayment_included
+
+// vim: expandtab

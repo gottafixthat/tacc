@@ -1,50 +1,38 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** TicketEditor - Overview of its main function.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: TicketEditor.cpp,v $
-** Revision 1.1  2003/12/07 01:47:05  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "Ticket.h"
-#include "TicketEditor.h"
-
-#include <qmessagebox.h>
-#include <q3textview.h>
-#include <qdatetm.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qcheckbox.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <Q3Frame>
-#include <QLabel>
+#include <QtCore/QDateTime>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QCheckBox>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3header.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3Frame>
 
 #include <TAA.h>
 #include <TAATools.h>
-
 #include <ADB.h>
 #include <Cfg.h>
 #include <FParse.h>
+
+#include "Ticket.h"
+#include "TicketEditor.h"
+
+using namespace Qt;
 
 TicketHeader::TicketHeader
 (
@@ -759,3 +747,5 @@ void TicketLogAnnotater::saveNote()
     }
 }
 
+
+// vim: expandtab

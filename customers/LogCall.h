@@ -1,45 +1,30 @@
-/*
-** $Id: LogCall.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** LogCall - An interface for the operator to log a call with.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: LogCall.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef LogCall_included
 #define LogCall_included
 
-#include <TAAWidget.h>
+#include <QtCore/QDateTime>
+#include <QtCore/QTimer>
+#include <QtCore/QEvent>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QComboBox>
+#include <QtGui/QLCDNumber>
+#include <QtGui/QLineEdit>
+#include <QtGui/QCloseEvent>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3multilineedit.h>
 
-#include <qdatetm.h>
-#include <qtimer.h>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <q3listview.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
-#include <qmultilinedit.h>
-#include <qlcdnumber.h>
-#include <qlineedit.h>
-//Added by qt3to4:
-#include <QEvent>
-#include <QCloseEvent>
+#include <TAAWidget.h>
 
 class LogCall : public TAAWidget
 {
@@ -113,3 +98,5 @@ private slots:
 
 
 #endif // LogCall_included
+
+// vim: expandtab

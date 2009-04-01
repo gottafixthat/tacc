@@ -1,9 +1,7 @@
-/**
- * CCEntry.h - Allows the user to post a credit card payment from a
- * customer.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -11,26 +9,28 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include "CCEntry.h"
-#include "BlargDB.h"
-#include "BString.h"
-#include <AcctsRecv.h>
-#include <qdatetm.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
 #include <stdio.h>
 #include <stdlib.h>
-#include <qtooltip.h>
-#include <qlabel.h>
-#include <qhbuttongroup.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
 
+#include <QtCore/QDateTime>
+#include <QtGui/QToolTip>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
+#include <BlargDB.h>
+#include <BString.h>
+#include <AcctsRecv.h>
 #include <CCTools.h>
 #include <ConfirmBox.h>
 #include <TAATools.h>
 #include <ADB.h>
+
+#include "CCEntry.h"
+
+using namespace Qt;
 
 CCEntry::CCEntry
 (
@@ -389,7 +389,7 @@ void CCEntry::saveCCard()
         // All done with the security code.
 
         // One last check.  Confirm the amounts.
-        ConfirmBox  *cb = new ConfirmBox(this, "confirmBox");
+        ConfirmBox  *cb = new ConfirmBox(this);
         cb->setTitle("Confirm Charge");
         QString tmpText = "Confirm that you wish to charge $";
         tmpText += chargeAmount->text();
@@ -602,3 +602,5 @@ void CCEntry::cardListChanged(int idx)
         fillContactInfo();
     }
 }
+
+// vim: expandtab

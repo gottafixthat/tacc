@@ -1,46 +1,27 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** EditCustomer - EditCustomer is the main customer editor window.  It
-**                manages all of the tabs, and the customer menu.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: EditCustomer.cpp,v $
-** Revision 1.2  2004/04/15 18:08:31  marc
-** Removed the hot-keys for Save and Close from the Edit Customer window
-** which made the Save and Cancel hot keys work on the buttons.  No more hitting
-** Alt-S or Alt-C twice to close the window.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <qwidget.h>
-#include <qlayout.h>
-#include <qtabbar.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <q3accel.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3Frame>
-#include <Q3PopupMenu>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QTabBar>
+#include <QtGui/QTabWidget>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3Frame>
+#include <Qt3Support/Q3PopupMenu>
+#include <Qt3Support/q3accel.h>
 
 #include <ADB.h>
 
@@ -61,6 +42,8 @@
 #include <TAAWidget.h>
 #include <CreateCustTicket.h>
 
+using namespace Qt;
+
 EditCustomer::EditCustomer
 (
 	QWidget* parent,
@@ -75,44 +58,22 @@ EditCustomer::EditCustomer
 	setCaption( "Edit Customer" );
 
     customerMenu = new QMenuBar(this, "Customer Menu");
-    customerMenu->setGeometry(0, 0, 650, 25);
-    customerMenu->setMinimumSize(0, 25);
-    customerMenu->setMaximumSize(32767, 25);
-    customerMenu->setFocusPolicy(QWidget::NoFocus);
-    customerMenu->setBackgroundMode(QWidget::PaletteButton);
-    customerMenu->setFrameStyle( 35 );
-    customerMenu->setLineWidth( 2 );
-    customerMenu->setMidLineWidth( 0 );
-    customerMenu->Q3Frame::setMargin( 0 );
 
-    tabBar = new QTabBar(this, "Tabbar");
+    tabBar = new QTabBar(this);
     tabBar->setMinimumSize(0, 25);
     tabBar->setMaximumSize(4096, 25);
-    tabBar->setFocusPolicy(QWidget::StrongFocus);
     tabBar->setShape(QTabBar::RoundedAbove);
-    
-    QTab    *tab = new QTab("Contact Info");
-    tabBar->addTab(tab);
-
-    tab = new QTab("Billing Info");
-    tabBar->addTab(tab);
-
-    tab = new QTab("Subscriptions");
-    tabBar->addTab(tab);
-
-    tab = new QTab("Logins");
-    tabBar->addTab(tab);
-
-    tab = new QTab("Domains");
-    tabBar->addTab(tab);
+    tabBar->addTab("Contact Info");
+    tabBar->addTab("Billing Info");
+    tabBar->addTab("Subscriptions");
+    tabBar->addTab("Logins");
+    tabBar->addTab("Domains");
 
 #ifdef EXPERIMENTAL
-    tab = new QTab("VoIP");
-    tabBar->addTab(tab);
+    tabBar->addTab("VoIP");
 #endif
 
-    tab = new QTab("Notes");
-    tabBar->addTab(tab);
+    tabBar->addTab("Notes");
 
     connect(tabBar, SIGNAL(selected(int)), this, SLOT(tabSelected(int)));
     // Setup our hot keys for tabbed windows, Ctrl 1-6 to raise a tab.
@@ -392,3 +353,5 @@ void EditCustomer::createTicket()
     }
 }
 
+
+// vim: expandtab

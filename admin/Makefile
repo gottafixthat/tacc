@@ -27,6 +27,7 @@ ifdef USEDES
 	CFLAGS	+= -DUSEDES -I/usr/local/include
 	LFLAGS	+= -L/usr/local/lib -lbdes
 endif
+CFLAGS += -DQT3_SUPPORT
 
 ####### End of automatically generated section
 

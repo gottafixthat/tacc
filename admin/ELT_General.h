@@ -1,43 +1,25 @@
-/*
-** $Id: ELT_General.h,v 1.3 2004/02/27 01:33:33 marc Exp $
-**
-***************************************************************************
-**
-** ELT_General - The Edit Login Types general tab.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ELT_General.h,v $
-** Revision 1.3  2004/02/27 01:33:33  marc
-** The Customers table now tracks how many mailboxes are allowed.  LoginTypes
-** and Packages were both updated to include how many mailboxes are allowed with
-** each package or login type.
-**
-** Revision 1.2  2003/12/21 18:32:29  marc
-** Removed the old dialog editor layout code and did the layout manually.
-** Added the ability to edit the LoginClass.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef ELT_General_included
 #define ELT_General_included
 
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QSpinBox>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+
 #include <TAAWidget.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qspinbox.h>
-#include <qcombobox.h>
-#include <q3multilineedit.h>
 
 class ELT_General : public TAAWidget
 {
@@ -104,3 +86,5 @@ signals:
 
 };
 #endif // ELT_General_included
+
+// vim: expandtab

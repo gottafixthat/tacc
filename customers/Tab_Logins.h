@@ -1,37 +1,26 @@
-/*
-** $Id: Tab_Logins.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** Tab_Logins - The logins tab.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Tab_Logins.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef Tab_Logins_included
 #define Tab_Logins_included
 
-#include <q3strlist.h>
-#include <q3popupmenu.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <q3listview.h>
-#include <q3table.h>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3table.h>
+#include <Qt3Support/q3strlist.h>
+#include <Qt3Support/q3popupmenu.h>
+
 #include <TAAWidget.h>
 
 class Tab_Logins : public TAAWidget
@@ -122,3 +111,6 @@ protected:
 
 
 #endif // Tab_Logins_included
+
+// vim: expandtab
+

@@ -1,9 +1,7 @@
-/**
- * CustSubscrList.h - A widget that allows the user to view and edit
- * subscriptions.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -11,21 +9,24 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <QtCore/QString>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+
+#include <ADB.h>
+#include <TAATools.h>
 #include "CustSubscrList.h"
 #include "BlargDB.h"
 #include "BString.h"
 #include "SubscriptionEdit.h"
 #include "SelectionList.h"
-#include <qapplication.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <stdio.h>
-#include <stdlib.h>
-#include <qstring.h>
-#include <qlayout.h>
-#include <ADB.h>
-#include <TAATools.h>
-#include <qmessagebox.h>
+
+using namespace Qt;
 
 CustSubscrList::CustSubscrList
 (
@@ -490,3 +491,5 @@ const char *PackageSelector::getLoginID(void)
     return extraList->text(extraList->currentItem());
 }
 
+
+// vim: expandtab

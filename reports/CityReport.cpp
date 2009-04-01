@@ -1,21 +1,30 @@
-/*
-** CityReport - Gives a summary of cities that our active customers are
-**              located in.
-*/
-
-#include "CityReport.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3listview.h>
-#include <qapplication.h>
-#include <q3dict.h>
+
+#include <QtGui/QApplication>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
 
 #include "CityDetailReport.h"
 #include "CityFilters.h"
+
+#include "CityReport.h"
+
+using namespace Qt;
 
 CityReport::CityReport
 (
@@ -174,3 +183,5 @@ void CityReport::editFilters()
     filters->show();
 }
 
+
+// vim: expandtab

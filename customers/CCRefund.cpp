@@ -1,9 +1,7 @@
-/**
- * CCRefund.h - A widget that allows a manager to issue a refund
- * to a previously used credit card.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -11,14 +9,13 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qmessagebox.h>
-#include <qregexp.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
+#include <QtCore/QRegExp>
+#include <QtGui/QLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
 
 #include <mcve.h>
 
@@ -223,7 +220,7 @@ void CCRefund::processRefund()
     processButton->setEnabled(false);
 
     // One last confirmation before proceeding.
-    ConfirmBox  *cb = new ConfirmBox(this, "confirmBox");
+    ConfirmBox  *cb = new ConfirmBox(this);
     cb->setTitle("Confirm Refund");
     QString tmpText = "Confirm that you wish to refund $";
     tmpText += refundAmount->text();
@@ -414,3 +411,5 @@ void CCRefund::cancelClicked()
     delete this;
 }
 
+
+// vim: expandtab

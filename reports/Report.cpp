@@ -1,39 +1,43 @@
-/*
-** Report.cpp - A base class for generic reports.  Defines the bulk
-**              of the window manipulation and allows generic printing,
-**              emailing and graphing.
-*/
-
-#include "Report.h"
-
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <QLabel>
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QCloseEvent>
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qdatetm.h>
-#include <q3header.h>
-#include <qprinter.h>
-#include <qpainter.h>
-#include <qrect.h>
 #include <math.h>
-#include <qlayout.h>
-#include <qfile.h>
+
+#include <QtCore/QDateTime>
+#include <QtCore/QRect>
+#include <QtCore/QFile>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QPrinter>
+#include <QtGui/QLayout>
+#include <QtGui/QLineEdit>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3header.h>
+#include <Qt3Support/q3progressdialog.h>
 
 #include <calendar.h>
-#include <q3progressdialog.h>
-#include <qapplication.h>
-#include <qlineedit.h>
-
 #include <ADB.h>
 #include <QListViewPrint.h>
 #include <EmailMessage.h>
 #include <TAATools.h>
 #include <Cfg.h>
+
+#include "Report.h"
+
+using namespace Qt;
 
 Report::Report
 (
@@ -83,7 +87,7 @@ Report::Report
     connect(repBody, SIGNAL(doubleClicked(Q3ListViewItem *)), this, SLOT(listItemSelected(Q3ListViewItem *)));
 
     userText = new Q3TextView(this);
-    userText->setFocusPolicy(QWidget::NoFocus);
+    //userText->setFocusPolicy(QWidget::NoFocus);
 
     // The action buttons...
     filterButton = new QPushButton(this);
@@ -424,7 +428,7 @@ void Report::emailReport()
     // Now, get the longest item for each of the keys.
     Q3ListViewItem   *curItem;
     for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
-        for (uint i = 0; i < numCols; i++) {
+        for (int i = 0; i < numCols; i++) {
             if (curItem->key(i, 0).length() > colWidths[i]) {
                 colWidths[i] = curItem->key(i, 0).length();
             }
@@ -981,3 +985,5 @@ void ReportFilter::loadClicked()
     }
 }
 
+
+// vim: expandtab

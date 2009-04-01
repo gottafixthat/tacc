@@ -1,45 +1,29 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** AllDomainsReport - Displays the list of all of the domains that TAA has
-**                    in the databse.  It allows the user to double click
-**                    an item and bring up the customer window associated  
-**                    with the domain.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: AllDomainsReport.cpp,v $
-** Revision 1.2  2003/12/07 18:12:32  marc
-** Report complete.
-**
-** Revision 1.1  2003/12/07 17:49:37  marc
-** New report, AllDomains.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "AllDomainsReport.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3listview.h>
-#include <qapplication.h>
-#include <q3dict.h>
+
+#include <QtGui/QApplication>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3dict.h>
 
 #include <BlargDB.h>
 #include <BString.h>
 #include <Cfg.h>
 
+#include "AllDomainsReport.h"
+
+using namespace Qt;
 
 AllDomainsReport::AllDomainsReport
 (
@@ -111,3 +95,5 @@ void AllDomainsReport::listItemSelected(Q3ListViewItem *curItem)
 }
 
 
+
+// vim: expandtab

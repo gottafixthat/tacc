@@ -1,36 +1,26 @@
-/*
-** $Id: $
-**
-***************************************************************************
-**
-** BillingCycleEdit - The widget responsible for editing a billing
-**                    cycle definition.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: $
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef BILLINGCYCLEEDIT_H
 #define BILLINGCYCLEEDIT_H
 
-#include <TAAWidget.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qspinbox.h>
-#include <qstring.h>
-#include <qlabel.h>
-#include <qcombobox.h>
+#include <QtCore/QString>
+#include <QtGui/QLineEdit>
+#include <QtGui/QCheckBox>
+#include <QtGui/QSpinBox>
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
 
+#include <TAAWidget.h>
 
 class BillingCycleEdit : public TAAWidget
 {
@@ -83,3 +73,5 @@ protected:
     QSpinBox    *anniversaryPeriod;
 };
 #endif // BillingCycleEdit_included
+// vim: expandtab
+

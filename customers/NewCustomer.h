@@ -12,9 +12,9 @@
 #ifndef NEWCUSTOMER_H
 #define NEWCUSTOMER_H
 
-#include <qlineedit.h>
-#include <qcombobox.h>
-#include <q3multilineedit.h>
+#include <QtGui/QLineEdit>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
 
 #include <TAAWidget.h>
 

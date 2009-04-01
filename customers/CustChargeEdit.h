@@ -1,22 +1,27 @@
-/*
-** $Id: CustChargeEdit.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-** CustChargeEdit - Allows the user to enter charges directly for a customer.
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef CustChargeEdit_included
 #define CustChargeEdit_included
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
-#include <qmultilinedit.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <q3datetimeedit.h>
-#include "GenLedger.h"
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QComboBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3multilineedit.h>
+#include <Qt3Support/q3datetimeedit.h>
+
 #include <TAAWidget.h>
+#include <GenLedger.h>
 
 class CustChargeEdit : public TAAWidget
 {
@@ -82,3 +87,5 @@ protected slots:
 
 };
 #endif // CustChargeEdit_included
+
+// vim: expandtab

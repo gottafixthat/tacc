@@ -10,22 +10,25 @@
  */
 
 
-#include "BlargDB.h"
-#include "BString.h"
-#include "BrassClient.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <qapplication.h>
-#include <qtooltip.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
-#include <ADB.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
 
+#include <QtGui/QApplication>
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QToolTip>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
+#include <ADB.h>
+#include <BlargDB.h>
+#include <BString.h>
+#include <BrassClient.h>
 #include "ChangePassword.h"
+
+using namespace Qt;
 
 ChangePassword::ChangePassword(QWidget* parent, const char* name, long CustomerID, const char* LoginID) :
 	TAAWidget( parent, name )
@@ -209,23 +212,23 @@ void ChangePassword::savePassword()
     }
     
 
-	QApplication::setOverrideCursor(waitCursor);
+	QApplication::setOverrideCursor(WaitCursor);
 	BC = new BrassClient();
 	if (!BC->Connect()) {
     	QApplication::restoreOverrideCursor();
         QMessageBox::critical(this, "BRASS Error", "Error connecting to the BRASS server.", "&Ok");
-    	QApplication::setOverrideCursor(waitCursor);
+    	QApplication::setOverrideCursor(WaitCursor);
 	} else {
 		if (!BC->Authenticate()) {
         	QApplication::restoreOverrideCursor();
             QMessageBox::critical(this, "BRASS Error", "Error authenticating with the BRASS server.", "&Ok");
-        	QApplication::setOverrideCursor(waitCursor);
+        	QApplication::setOverrideCursor(WaitCursor);
 		} else {
 			// Well, we finally made it into brass.  Wipe the login.
 			if (!BC->SetPassword(myLoginID.ascii(), newPass)) {
             	QApplication::restoreOverrideCursor();
                 QMessageBox::critical(this, "BRASS Error", "Unable to change the password.", "&Ok");
-            	QApplication::setOverrideCursor(waitCursor);
+            	QApplication::setOverrideCursor(WaitCursor);
 			}
 		}
 	}

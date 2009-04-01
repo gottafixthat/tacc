@@ -1,16 +1,26 @@
-/*
-** ARReport - Gives a summary of the Accounts Receivable for a month.
-*/
-
-#include "ARReport.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3listview.h>
-#include <qapplication.h>
+
+#include <QtGui/QApplication>
+#include <Qt3Support/q3listview.h>
 
 #include <ADB.h>
 #include <BString.h>
+
+#include "ARReport.h"
+
+using namespace Qt;
 
 ARReport::ARReport
 (
@@ -79,3 +89,5 @@ void ARReport::refreshReport()
     
     QApplication::restoreOverrideCursor();
 }
+
+// vim: expandtab

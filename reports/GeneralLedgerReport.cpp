@@ -1,8 +1,7 @@
-/**
- * GeneralLedgerREport.cpp - General Ledger Report
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -11,19 +10,22 @@
  */
 
 #include <stdlib.h>
-#include <qmap.h>
-#include <qstringlist.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <QLabel>
 
-#include <GeneralLedgerReport.h>
+#include <QtCore/QMap>
+#include <QtCore/QStringList>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3GridLayout>
+
 #include <ADB.h>
 #include <TAATools.h>
 #include <BString.h>
 #include <Cfg.h>
 #include <TAAStructures.h>
+
+#include <GeneralLedgerReport.h>
+
+using namespace Qt;
 
 /**
  * GeneralLedgerReport()
@@ -679,3 +681,5 @@ void GeneralLedgerDetailFilters::loadFilters(const QString repName)
     emit(optionsUpdated());
 }
 
+
+// vim: expandtab

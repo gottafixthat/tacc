@@ -1,9 +1,7 @@
-/**
- * GeneralLedgerReport.h - Report class for check payments by
- * needed for Isomedia.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -14,9 +12,11 @@
 #ifndef GENERALLEDGERREPORT_H
 #define GENERALLEDGERREPORT_H
 
-#include "Report.h"
+#include <QtCore/QStringList>
+
 #include <TAAStructures.h>
-#include <qstringlist.h>
+
+#include "Report.h"
 
 /**
  * GeneralLedgerReport - Summary report for the GL.
@@ -62,12 +62,12 @@ public:
 protected slots:
     void                upClicked();
     void                downClicked();
-    QStringMap          myColumnNames;
     virtual void        saveFilters();
     virtual void        loadFilters(const QString);
 
 protected:
-    Q3ListBox            *columnList;
+    QStringMap          myColumnNames;
+    Q3ListBox           *columnList;
 };
 
 /**
@@ -103,3 +103,5 @@ protected:
 };
 
 #endif
+
+// vim: expandtab

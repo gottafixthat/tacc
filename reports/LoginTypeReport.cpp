@@ -1,36 +1,25 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** LoginTypeReport.cpp - A "drill down" report that shows a list of a
-**                       particular login type.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: LoginTypeReport.cpp,v $
-** Revision 1.1  2003/12/07 01:47:05  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include "Report.h"
-#include "LoginTypeReport.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <qdatetime.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QApplication>
 
 #include <ADB.h>
+#include <Report.h>
+#include "LoginTypeReport.h"
+
+using namespace Qt;
 
 /*
 ** LoginTypeReport()  - The constructor.  Hides the appropriate buttons
@@ -146,3 +135,5 @@ void LoginTypeReport::listItemSelected(Q3ListViewItem *curItem)
 
 
 
+
+// vim: expandtab

@@ -1,8 +1,7 @@
-/**
- * CustomerContactEditor.h - Class definition for the customer contact editor.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -13,12 +12,13 @@
 #ifndef CUSTOMERCONTACTEDITOR_H
 #define CUSTOMERCONTACTEDITOR_H
 
+#include <QtGui/QComboBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QCheckBox>
+#include <QtGui/QLabel>
+
 #include <TAAWidget.h>
 #include <TAAStructures.h>
-#include <qcombobox.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
 
 class CustomerContactEditor : public TAAWidget
 {
@@ -54,3 +54,5 @@ protected slots:
 
 #endif
 
+
+// vim: expandtab

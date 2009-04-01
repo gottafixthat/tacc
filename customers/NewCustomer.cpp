@@ -14,18 +14,16 @@
 #include <time.h>
 #include <sys/timeb.h>
 
-#include <qmessagebox.h>
-#include <qstring.h>
-#include <q3strlist.h>
-#include <qapplication.h>
-#include <qcursor.h>
-#include <qdatetime.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <q3groupbox.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
+#include <QtCore/QString>
+#include <QtCore/QDateTime>
+#include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/q3strlist.h>
+#include <Qt3Support/q3groupbox.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -37,6 +35,8 @@
 #include <TAATools.h>
 
 #include "NewCustomer.h"
+
+using namespace Qt;
 
 NewCustomer::NewCustomer(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )
@@ -343,8 +343,8 @@ void NewCustomer::addCustomer()
 	} else {
 		cdb.setValue("FullName", tmpstr);
 	}
-	cdb.setValue("ContactName", contactName->text());
-	cdb.setValue("AltContact",  altContact->text());
+	cdb.setValue("ContactName", contactName->text().ascii());
+	cdb.setValue("AltContact",  altContact->text().ascii());
 
     fprintf(stderr, "Checking address...\n");
 	// Now, the address...
@@ -548,7 +548,7 @@ void NewCustomer::addCustomer()
 		cdb.setValue("FreePrintedStatement", 0);
 	}
 	// cdb.FreePrintedStatement.setNum(freePrinted->isChecked());
-	cdb.setValue("ReferredBy", referredBy->currentText());
+	cdb.setValue("ReferredBy", referredBy->currentText().ascii());
 	cdb.setValue("RatePlanDate", theDate);
 	cdb.setValue("AccountOpened", theDate);
 	cdb.setValue("BillingAddress", "Billing");

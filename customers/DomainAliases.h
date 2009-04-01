@@ -1,36 +1,23 @@
-/*
-** $Id: DomainAliases.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** DomainAliases - Allows the operator to view and change the aliases for
-**                 a customer's domains.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2002, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DomainAliases.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef DomainAliases_included
 #define DomainAliases_included
 
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qcombobox.h>
 
 class DomainAliases : public TAAWidget
 {
@@ -65,3 +52,5 @@ protected slots:
 
 #endif // DomainAliases_included
 
+
+// vim: expandtab

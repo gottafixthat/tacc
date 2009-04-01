@@ -22,20 +22,23 @@
 **
 */
 
-#include "CustChargeEdit.h"
-#include "BlargDB.h"
-#include "AcctsRecv.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <sys/timeb.h>
-#include <qdatetm.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
+
+#include <QtCore/QDateTime>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include <ADB.h>
-#include <qlayout.h>
+#include <BlargDB.h>
+#include <AcctsRecv.h>
+#include "CustChargeEdit.h"
+
+using namespace Qt;
 
 CustChargeEdit::CustChargeEdit
 (
@@ -299,7 +302,7 @@ void CustChargeEdit::saveCharge()
 	AcctsRecv 	AR;
 	
 	AR.ARDB->setValue("CustomerID", myCustID);
-	AR.ARDB->setValue("LoginID", loginList->currentText());
+	AR.ARDB->setValue("LoginID", loginList->currentText().ascii());
 	AR.ARDB->setValue("ItemID", itemIDX[itemList->currentItem()]);
 	AR.ARDB->setValue("Quantity", (float)atof(quantity->text()));
 	AR.ARDB->setValue("Price", (float) atof(price->text()));
@@ -307,7 +310,7 @@ void CustChargeEdit::saveCharge()
 	AR.ARDB->setValue("TransDate", chargeDate->date());
     AR.ARDB->setValue("StartDate", startDate->date());
     AR.ARDB->setValue("EndDate",  stopDate->date());
-	AR.ARDB->setValue("Memo", memo->text());
+	AR.ARDB->setValue("Memo", memo->text().ascii());
 	AR.SaveTrans();
 	
 	emit(chargeSaved(1));

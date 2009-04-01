@@ -1,25 +1,27 @@
-/*
-** $Id: CustRegister.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-** CustRegister   - Class definitions for CustRegister.
-**
-**                  CustRegister loads and allows the manipulation of
-**                  a customers register directly.
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef CustRegister_included
 #define CustRegister_included
 
-#include <TAAWidget.h>
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qpainter.h>
-//Added by qt3to4:
-#include <QEvent>
-#include <QCloseEvent>
+#include <QtGui/QWidget>
+#include <QtGui/QPainter>
+#include <QtGui/QPushButton>
+#include <QtGui/QLabel>
+#include <QtCore/QEvent>
+#include <QtGui/QCloseEvent>
+#include <Qt3Support/q3listview.h>
+
 #include <BlargDB.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
+#include <TAAWidget.h>
 
 class CustRegister : public TAAWidget
 {
@@ -72,4 +74,7 @@ private:
 };
 #endif // CustRegister_included
 
+
+
+// vim: expandtab
 

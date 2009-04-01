@@ -1,46 +1,38 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CreateCustTicket - Creates a new ticket for the specified customer.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <QtCore/QDateTime>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QCheckBox>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3header.h>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
+#include <TAA.h>
+#include <TAATools.h>
+#include <ADB.h>
+#include <Cfg.h>
+#include <FParse.h>
 
 #include "Ticket.h"
 #include "TicketEditor.h"
 #include "CreateCustTicket.h"
 
-#include <qmessagebox.h>
-#include <q3textview.h>
-#include <qdatetm.h>
-#include <q3header.h>
-#include <qlayout.h>
-#include <qcheckbox.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
-
-#include <TAA.h>
-#include <TAATools.h>
-
-#include <ADB.h>
-#include <Cfg.h>
-#include <FParse.h>
-
+using namespace Qt;
 
 /*
 ** CreateCustTicket class.  This class allows a user to create a new ticket
@@ -284,3 +276,5 @@ void CreateCustTicket::cancelClicked()
     }
     if (okayToClose) close();
 }
+
+// vim: expandtab

@@ -1,8 +1,7 @@
-/**
- * GLAccountTypes.h - Allows the user to edit the account types in TACC.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -10,12 +9,11 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-
 #ifndef GLACCOUNTTYPES_H
 #define GLACCOUNTTYPES_H
 
-#include <q3listview.h>
-#include <qmenubar.h>
+#include <QtGui/QMenuBar>
+#include <Qt3Support/q3listview.h>
 
 #include <TAAWidget.h>
 #include <GenLedger.h>
@@ -83,3 +81,5 @@ protected:
 };
 
 #endif
+
+// vim: expandtab

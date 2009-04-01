@@ -22,6 +22,7 @@ endif
 ifdef EXPERIMENTAL
 	CFLAGS	+= -DEXPERIMENTAL
 endif
+CFLAGS += -DQT3_SUPPORT
 
 ####### End of automatically generated section
 

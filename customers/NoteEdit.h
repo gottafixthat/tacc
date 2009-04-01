@@ -1,35 +1,22 @@
-/*
-** $Id: NoteEdit.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** NoteEdit - Gives the user the ability to add/edit customer notes.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2002, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: NoteEdit.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef NoteEdit_included
 #define NoteEdit_included
 
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+
 #include <TAAWidget.h>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <q3multilineedit.h>
 
 class NoteEdit : public TAAWidget
 {
@@ -70,3 +57,5 @@ protected:
 
 };
 #endif // NoteEdit_included
+
+// vim: expandtab

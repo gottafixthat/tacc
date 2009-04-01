@@ -1,8 +1,7 @@
-/**
- * CityFilters.h - Filters for the Customer Cities report.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -13,7 +12,7 @@
 #ifndef CityFilters_included
 #define CityFilters_included
 
-#include <qradiobutton.h>
+#include <QtGui/QRadioButton>
 
 #include <Report.h>
 
@@ -48,3 +47,5 @@ protected:
     QRadioButton    *bothButton;
 };
 #endif // CityFilters_included
+
+// vim: expandtab

@@ -1,11 +1,13 @@
-/**********************************************************************
-
-	--- Qt Architect generated file ---
-
-	File: Report.h
-	Last generated: Wed Mar 31 18:33:32 1999
-
- *********************************************************************/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef LoginAvgReport_included
 #define LoginAvgReport_included
@@ -30,3 +32,5 @@ public:
 
 };
 #endif // LoginAvgReport_included
+
+// vim: expandtab

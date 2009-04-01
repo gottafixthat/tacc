@@ -1,8 +1,7 @@
-/**
- * GLAccountTypes.h - Displays the list of GL Account types in TACC
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -11,19 +10,22 @@
  */
 
 #include <stdlib.h>
-#include <BlargDB.h>
 #include <mysql/mysql.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
-#include <Q3PopupMenu>
 
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+//Added by qt3to4:
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3PopupMenu>
+
+#include <BlargDB.h>
 #include <ADB.h>
 #include <GLAccountTypes.h>
 #include <GenLedger.h>
+
+using namespace Qt;
 
 /**
  * GLAccountTypeEditor()
@@ -293,3 +295,5 @@ void GLAccountTypes::deleteAcctType()
     }
 }
 
+
+// vim: expandtab

@@ -1,41 +1,27 @@
-/*
-** $Id: SubscriptionEdit.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** SubscriptionEdit - Allows the user to edit a subscription item that has
-**                    been assigned to a customer.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: SubscriptionEdit.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef SubscriptionEdit_included
 #define SubscriptionEdit_included
 
+#include <QtCore/QDateTime>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+#include <Qt3Support/q3strlist.h>
+
 #include <TAAWidget.h>
-#include <q3strlist.h>
 #include <calendar.h>
-#include <qdatetm.h>
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <q3multilineedit.h>
-#include <qlineedit.h>
-#include <qcombobox.h>
 
 class SubscriptionEdit : public TAAWidget
 {
@@ -101,3 +87,6 @@ private:
     int             isParent;
 };
 #endif // SubscriptionEdit_included
+
+
+// vim: expandtab

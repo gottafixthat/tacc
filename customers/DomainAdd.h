@@ -1,40 +1,23 @@
-/*
-** $Id: DomainAdd.h,v 1.2 2004/01/10 21:59:03 marc Exp $
-**
-***************************************************************************
-**
-** DomainAdd - Allows the user to add a new domain entry for the customer.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DomainAdd.h,v $
-** Revision 1.2  2004/01/10 21:59:03  marc
-** More changes to DomainAdd.  Auto widget enables, etc.  Not much left to do.
-**
-** Revision 1.1  2004/01/09 01:55:05  marc
-** New widget to include the framework for instant domain, email and web
-** hosting setups.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef DomainAdd_included
 #define DomainAdd_included
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QComboBox>
+#include <QtGui/QCheckBox>
+
 #include <TAAWidget.h>
 
 class DomainAdd : public TAAWidget
@@ -83,3 +66,5 @@ signals:
 };
 
 #endif // DomainAdd_included
+
+// vim: expandtab

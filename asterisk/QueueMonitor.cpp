@@ -1,33 +1,33 @@
-/** QueueMonitor - Monitors the Blarg Sales/Support queue(s)
-  ***************************************************************************
-  * Written by R. Marc Lewis, 
-  *   (C)opyright 1998-2006, R. Marc Lewis and Blarg! Oline Services, Inc.
-  *   All Rights Reserved.
-  *
-  *  Unpublished work.  No portion of this file may be reproduced in whole
-  *  or in part by any means, electronic or otherwise, without the express
-  *  written consent of Blarg! Online Services and R. Marc Lewis.
-  ***************************************************************************
-  */
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlayout.h>
-#include <q3listview.h>
-#include <qregexp.h>
-#include <qdatetime.h>
-#include <qtimer.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3PopupMenu>
 
-#include "ColorListViewItem.h"
-
-#include "QueueMonitor.h"
+#include <QtCore/QRegExp>
+#include <QtCore/QDateTime>
+#include <QtCore/QTimer>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3PopupMenu>
+#include <Qt3Support/q3listview.h>
 
 #include <TAAWidget.h>
 #include <TAATools.h>
 #include <ADB.h>
+#include <ColorListViewItem.h>
+
+#include "QueueMonitor.h"
+
+using namespace Qt;
 
 QueueMonitor::QueueMonitor
 (
@@ -440,3 +440,6 @@ void QueueMonitor::refreshTimers()
         curItem->setText((QMColumnNames) Timer, tmpSt);
     }
 }
+
+// vim: expandtab
+

@@ -1,60 +1,38 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** Tab_Domains - The main place for viewing and editing domains.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Tab_Domains.cpp,v $
-** Revision 1.5  2004/01/22 00:02:10  marc
-** Virtual Hosting database access is now complete in a basic form.
-**
-** Revision 1.4  2004/01/09 01:55:19  marc
-** Minor changes here and there
-**
-** Revision 1.3  2004/01/02 23:56:14  marc
-** Domain Template Editor and SQL based DNS is (for the most part) fully functional and ready to use.
-**
-** Revision 1.2  2004/01/02 15:00:20  marc
-** Added more DNS Management functionality
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include "Tab_Domains.h"
-#include "BlargDB.h"
-#include <qstring.h>
-#include <q3strlist.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <stdlib.h>
 #include <stdio.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-#include "DomainAdd.h"
-#include "DomainChecklist.h"
-#include "DomainAliases.h"
+#include <stdlib.h>
+
+#include <QtCore/QString>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <Qt3Support/q3strlist.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include <ADB.h>
 #include <Cfg.h>
 #include <TAATools.h>
+#include "DomainAdd.h"
+#include "DomainChecklist.h"
+#include "DomainAliases.h"
 #include <DNSManager.h>
 #include <DNSTemplatePicker.h>
 #include <VHostUtils.h>
+#include "Tab_Domains.h"
+#include "BlargDB.h"
 
+using namespace Qt;
 
 Tab_Domains::Tab_Domains
 (
@@ -178,7 +156,7 @@ void Tab_Domains::refreshDomainList(int domainID)
 	// Fill in the subscriptions ListBox
     DB.query("select Domains.InternalID, Domains.LoginID, DomainTypes.DomainType, Domains.DomainName, Domains.Active, Domains.HasSSL, Domains.Server from Domains, DomainTypes where Domains.CustomerID = %ld and Domains.DomainType = DomainTypes.InternalID order by DomainName", myCustID);
     //fprintf(stderr, "Query returned %ld rows...\n", DB.rowCount);
-    QApplication::setOverrideCursor(waitCursor);
+    QApplication::setOverrideCursor(WaitCursor);
 	if (DB.rowCount) {
         ADB     mailDB(cfgVal("MailSQLDB"), cfgVal("MailSQLUser"), cfgVal("MailSQLPass"), cfgVal("MailSQLHost"));
         ADB     vhostDB(cfgVal("VHostSQLDB"), cfgVal("VHostSQLUser"), cfgVal("VHostSQLPass"), cfgVal("VHostSQLHost"));
@@ -265,7 +243,7 @@ void Tab_Domains::editChecklist()
 void Tab_Domains::deActivateDomain()
 {
     if (list->currentItem() != NULL) {
-	    QApplication::setOverrideCursor(waitCursor);
+	    QApplication::setOverrideCursor(WaitCursor);
 
 	    long        domainID = atol(list->currentItem()->key(8,0));
 	    DomainsDB   DDB;
@@ -279,7 +257,7 @@ void Tab_Domains::deActivateDomain()
 	        sprintf(tmpStr, "Deactivate the domain '%s'?", (const char *) DDB.getStr("DomainName"));
 	        switch(QMessageBox::information(this, "Deactivate Domain", tmpStr, "&Yes", "&No", "&Cancel", 0, 2 )) {
 	            case 0:         // yes selected
-	                QApplication::setOverrideCursor(waitCursor);
+	                QApplication::setOverrideCursor(WaitCursor);
 	                DDB.setValue("Active", (int) 0);
 	                DDB.upd();
 	                refreshDomainList(domainID);
@@ -287,7 +265,7 @@ void Tab_Domains::deActivateDomain()
                     // Now, ask the user if they want to remove the
                     // aliases for this domain.
                     if (!QMessageBox::information(this, "Deactivate Domain", "Do you wish to remove the\naliases for this domain as well?", "&Yes", "&No", 0, 1)) {
-	                    QApplication::setOverrideCursor(waitCursor);
+	                    QApplication::setOverrideCursor(WaitCursor);
                         ADB     mailDB(cfgVal("MailSQLDB"), cfgVal("MailSQLUser"), cfgVal("MailSQLPass"), cfgVal("MailSQLHost"));
                         mailDB.dbcmd("delete from Virtual where Address LIKE '%%@%s'", DDB.getStr("DomainName"));
                         mailDB.dbcmd("delete from Virtual where Address = '%s' and Mailbox = '%s'", DDB.getStr("DomainName"), DDB.getStr("DomainName"));
@@ -303,7 +281,7 @@ void Tab_Domains::deActivateDomain()
 	        sprintf(tmpStr, "Reactivate the domain '%s'?", (const char *) DDB.getStr("DomainName"));
 	        switch(QMessageBox::information(this, "Reactivate Domain", tmpStr, "&Yes", "&No", "&Cancel", 0, 2 )) {
 	            case 0:         // yes selected
-	                QApplication::setOverrideCursor(waitCursor);
+	                QApplication::setOverrideCursor(WaitCursor);
 	                DDB.setValue("Active", (int) 1);
 	                DDB.upd();
 	                refreshDomainList(domainID);
@@ -316,7 +294,7 @@ void Tab_Domains::deActivateDomain()
                         if (QMessageBox::warning(this, "Domain Aliases", "Do you wish to create the standard\ninfo, sales, support, webmaster aliases?", "&Yes", "&No", 0, 1)) {
                             doStockAliases = 0;
                         }
-	                    QApplication::setOverrideCursor(waitCursor);
+	                    QApplication::setOverrideCursor(WaitCursor);
                         createDomainAliases(myCustID, doStockAliases, DDB.getStr("DomainName"));
 	                    QApplication::restoreOverrideCursor();
                     }
@@ -397,7 +375,7 @@ void Tab_Domains::emailSelected()
             if (QMessageBox::warning(this, "Activate Domain Email", "Do you wish to create the standard\ninfo, sales, support, webmaster aliases?", "&Yes", "&No", 0, 1)) {
                 doStockAliases = 0;
             }
-            QApplication::setOverrideCursor(waitCursor);
+            QApplication::setOverrideCursor(WaitCursor);
             createDomainAliases(myCustID, doStockAliases, (const char*)curItem->key(2,0));
             QApplication::restoreOverrideCursor();
         }
@@ -532,3 +510,5 @@ void Tab_Domains::refreshCustomer(long custID)
         }
     }
 }
+
+// vim: expandtab

@@ -13,13 +13,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <q3groupbox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3groupbox.h>
 
 #include <BlargDB.h>
 #include <StatementEngine.h>
@@ -27,6 +26,8 @@
 #include <TAATools.h>
 
 #include <StatementView.h>
+
+using namespace Qt;
 
 StatementView::StatementView(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )

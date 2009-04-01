@@ -1,18 +1,20 @@
-/**********************************************************************
-
-	--- Qt Architect generated file ---
-
-	File: Report.h
-	Last generated: Wed Mar 31 18:33:32 1999
-
- *********************************************************************/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef ModemUsageReport_included
 #define ModemUsageReport_included
 
-#include "Report.h"
+#include <Qt3Support/q3intdict.h>
 
-#include <q3intdict.h>
+#include "Report.h"
 
 class ModemUsageReport : public Report
 {
@@ -40,3 +42,5 @@ private:
     Q3IntDict<char> strxlt;
 };
 #endif // ModemUsageReport_included
+
+// vim: expandtab

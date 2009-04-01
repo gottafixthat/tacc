@@ -12,10 +12,10 @@
 #ifndef STATEMENTVIEW_H
 #define STATEMENTVIEW_H
 
-#include <qlabel.h>
-#include <q3groupbox.h>
-#include <qpushbutton.h>
-#include <q3listview.h>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3groupbox.h>
+#include <Qt3Support/q3listview.h>
 
 #include <TAAWidget.h>
 

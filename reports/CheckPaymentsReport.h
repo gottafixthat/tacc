@@ -1,9 +1,7 @@
-/**
- * CheckPaymentsReport.h - Report class for check payments by
- * needed for Isomedia.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -37,3 +35,5 @@ public slots:
     
 };
 #endif
+
+// vim: expandtab

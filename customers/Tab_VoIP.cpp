@@ -1,32 +1,24 @@
-/*
-***************************************************************************
-**
-** Tab_VoIP - Provides an interface for customer care personnel to add
-** VoIP services for customers.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2006, R. Marc Lewis and Avvanta Communications Corp.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Avvanta Communications and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <qprinter.h>
-#include <qstring.h>
-#include <q3strlist.h>
-#include <qregexp.h>
-#include <qapplication.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
+#include <QtCore/QString>
+#include <QtCore/QRegExp>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/q3strlist.h>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <FParse.h>
 
@@ -156,3 +148,5 @@ void Tab_VoIP::addVoIPService()
 }
 
 
+
+// vim: expandtab

@@ -1,37 +1,25 @@
-/*
-** $Id: DNS_Templates.h,v 1.1 2003/12/31 21:35:26 marc Exp $
-**
-***************************************************************************
-**
-** DNS_Templates - A DNS template editor for SQL based DNS entries.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DNS_Templates.h,v $
-** Revision 1.1  2003/12/31 21:35:26  marc
-** Fully functional.  Could use a bit more polish, but then what software couldn't.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef DNS_Templates_Included
 #define DNS_Templates_Included
 
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <QtGui/QSpinBox>
+#include <QtGui/QCheckBox>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qspinbox.h>
-#include <qcheckbox.h>
-#include <qcombobox.h>
 
 class DNS_Templates : public TAAWidget
 {
@@ -86,3 +74,5 @@ private:
 
 #endif
 
+
+// vim: expandtab

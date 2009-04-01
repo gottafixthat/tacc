@@ -1,33 +1,20 @@
-/*
-** $Id: ELT_Billables.h,v 1.2 2003/12/23 00:29:46 marc Exp $
-**
-***************************************************************************
-**
-** ELT_Billables - Edit Login Types Billable Items tab.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ELT_Billables.h,v $
-** Revision 1.2  2003/12/23 00:29:46  marc
-** Removed QTArchitect created dialogs and created them manually.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef ELT_Billables_included
 #define ELT_Billables_included
 
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qpushbutton.h>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
 
 class ELT_Billables : public TAAWidget
@@ -61,3 +48,5 @@ private:
 
 };
 #endif // ELT_Billables_included
+
+// vim: expandtab

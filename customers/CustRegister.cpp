@@ -1,48 +1,38 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CustRegister - Loads and allows the manipulation of a customers
-**                register.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CustRegister.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include "CustRegister.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "CustChargeEdit.h"
-#include <qtooltip.h>
-#include <qcursor.h>
-#include <qapplication.h>
-#include <q3listview.h>
-#include <qprinter.h>
-#include <qprintdialog.h>
-#include <qpainter.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
-#include "RListViewItem.h"
-#include <ADB.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
-#include <TAATools.h>
 
+#include <QtGui/QToolTip>
+#include <QtGui/QCursor>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
+#include <QtGui/QPrinter>
+#include <QtGui/QPrintDialog>
+#include <QtGui/QPainter>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/q3listview.h>
+
+#include <ADB.h>
+#include <TAATools.h>
+#include <RListViewItem.h>
+
+#include "CustChargeEdit.h"
+#include "CustRegister.h"
+
+using namespace Qt;
 
 CustRegister::CustRegister
 (
@@ -496,7 +486,6 @@ void CustRegister::printHeader(QPainter *p, CustomersDB *cust, AddressesDB *cont
     QRect       rect;
     QString     tmpSt;
     int         yPos;
-    long        CustID = cust->getLong("CustomerID");
 
     theDate = QDate::currentDate();
     
@@ -642,3 +631,5 @@ void CustRegister::registerHeader(QPainter *p)
     p->setPen(black);
 }
 
+
+// vim: expandtab

@@ -1,40 +1,33 @@
-/*
-***************************************************************************
-**
-** CompanyEditor - An interface that allows an admin to maintain
-** the list of companies that TACC manages.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2006, R. Marc Lewis and Avvanta Communications Corp.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Avvanta Communications and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef CompanyEditor_included
 #define CompanyEditor_included
 
-#include "TAATools.h"
-#include "TAAWidget.h"
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <q3listview.h>
-#include <qcombobox.h>
-#include <q3multilineedit.h>
-//Added by qt3to4:
-#include <QEvent>
-#include <QCloseEvent>
+#include <QtCore/QEvent>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QComboBox>
+#include <QtGui/QCloseEvent>
+#include <QtSql/QSqlDatabase>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3multilineedit.h>
+#include <Qt3Support/q3textview.h>
+#include <Qt3Support/q3popupmenu.h>
+
 #include <calendar.h>
-#include <q3textview.h>
-#include <q3popupmenu.h>
-#include <qsqldatabase.h>
+#include <TAATools.h>
+#include <TAAWidget.h>
 
 class CompanyList : public TAAWidget
 {
@@ -114,3 +107,5 @@ protected:
 
 #endif // CompanyEditor_included
 
+
+// vim: expandtab

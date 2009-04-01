@@ -12,16 +12,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <QLabel>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
 #include "TransferLogin.h"
+
+using namespace Qt;
 
 TransferLogin::TransferLogin(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )

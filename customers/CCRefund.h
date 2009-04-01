@@ -1,9 +1,7 @@
-/**
- * CCRefund.h - A widget that allows a manager to issue a refund
- * to a previously used credit card.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -14,11 +12,12 @@
 #ifndef CCREFUND_H
 #define CCREFUND_H
 
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <qpushbutton.h>
-#include <qstring.h>
+#include <QtCore/QString>
+#include <QtGui/QLineEdit>
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
+#include <QtGui/QPushButton>
+
 #include <TAAWidget.h>
 
 struct CCRefundCardRecord {
@@ -60,3 +59,5 @@ protected:
 };
 
 #endif
+
+// vim: expandtab

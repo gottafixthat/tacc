@@ -12,10 +12,10 @@
 #ifndef TRANSFERLOGIN_H
 #define TRANSFERLOGIN_H
 
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <q3listview.h>
-#include <q3datetimeedit.h>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3datetimeedit.h>
 
 #include <TAAWidget.h>
 #include <CustomerSearch.h>

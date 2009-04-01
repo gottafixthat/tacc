@@ -12,11 +12,10 @@
 
 #include <stdlib.h>
 
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -24,6 +23,7 @@
 
 #include "DomainChecklist.h"
 
+using namespace Qt;
 
 DomainChecklist::DomainChecklist(QWidget* parent, const char* name, long DomainID) :
 	TAAWidget( parent, name )

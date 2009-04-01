@@ -1,8 +1,7 @@
-/**
- * CityFilters.h - Filters for the Customer City Report.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -10,10 +9,12 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <q3buttongroup.h>
-#include <qlayout.h>
+#include <QtGui/QLayout>
+#include <Qt3Support/q3buttongroup.h>
 
 #include <CityFilters.h>
+
+using namespace Qt;
 
 CityFilters::CityFilters(QWidget* parent, const char* name) : 
     ReportFilter( parent, name )
@@ -120,3 +121,5 @@ void CityFilters::applyAndExit()
 }
 
 
+
+// vim: expandtab
