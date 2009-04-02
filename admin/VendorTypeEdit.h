@@ -1,8 +1,7 @@
-/**
- * VendorTypeEdit.h - Class definition for the vendor type editor.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -13,8 +12,8 @@
 #ifndef VendorTypeEdit_included
 #define VendorTypeEdit_included
 
-#include <qlineedit.h>
-#include <qcombobox.h>
+#include <QtGui/QLineEdit>
+#include <QtGui/QComboBox>
 
 #include <TAAWidget.h>
 
@@ -48,3 +47,5 @@ private:
 
 };
 #endif // VendorTypeEdit_included
+
+// vim: expandtab

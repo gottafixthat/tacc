@@ -1,10 +1,7 @@
-/**
- * MakeDeposits.h - Allows the user to select funds that are currently
- * sitting in the Undeposited Funds account and transfer it into a cash
- * account.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -16,11 +13,11 @@
 #ifndef MakeDeposits_included
 #define MakeDeposits_included
 
-#include <qdialog.h>
-#include <qlabel.h>
-#include <q3listview.h>
-#include <qcombobox.h>
-#include <q3datetimeedit.h>
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3datetimeedit.h>
+
 #include <TAAWidget.h>
 
 class MakeDeposits : public TAAWidget
@@ -62,3 +59,5 @@ private:
 
 };
 #endif // MakeDeposits_included
+
+// vim: expandtab

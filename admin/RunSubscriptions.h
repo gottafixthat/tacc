@@ -1,11 +1,7 @@
-/**
- * RunSubscriptions.h - Class definition for the RunSubscriptions
- * widget.  RunSubscriptions brings up a window that gives a manager
- * the ability to run subscriptions for all customers that have
- * subscriptions pending.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -16,9 +12,10 @@
 #ifndef RunSubscriptions_included
 #define RunSubscriptions_included
 
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <q3listview.h>
+#include <QtGui/QLabel>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
 
 class RunSubscriptions : public TAAWidget
@@ -54,3 +51,5 @@ private:
     float   totCharged;
 };
 #endif // RunSubscriptions_included
+
+// vim: expandtab

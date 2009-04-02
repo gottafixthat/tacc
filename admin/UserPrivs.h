@@ -1,26 +1,21 @@
-/*
-** $Id: UserPrivs.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** UserPrivs.h   - UserPrivs is the widget that will allow the system
-**                 administrator to create and delete accounts, as well as
-**                 change their passwords and such.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**     under contract to The Public Defender Association
-***************************************************************************
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef UserPrivs_included
 #define UserPrivs_included
 
-#include <qevent.h>
-#include <qwidget.h>
-#include <q3widgetstack.h>
-#include <q3listview.h>
+#include <QtCore/QEvent>
+#include <Qt3Support/q3widgetstack.h>
+#include <Qt3Support/q3listview.h>
+
 #include <TAATools.h>
 #include <TAAWidget.h>
 
@@ -54,4 +49,7 @@ protected:
 };
 #endif // UserPrivs_included
 
+
+
+// vim: expandtab
 

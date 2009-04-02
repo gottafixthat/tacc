@@ -1,39 +1,27 @@
-/*
-** $Id: PKG_Conversion.h,v 1.2 2003/12/30 00:32:53 marc Exp $
-**
-***************************************************************************
-**
-** PKG_Conversion.h - Package Editor, conversion tab.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PKG_Conversion.h,v $
-** Revision 1.2  2003/12/30 00:32:53  marc
-** Removed QTArch created layouts.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef PKG_Conversion_included
 #define PKG_Conversion_included
 
 
-#include <qwidget.h>
-#include <qlabel.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qspinbox.h>
-#include <qradiobutton.h>
-#include <qcombobox.h>
-#include <qdatetm.h>
+#include <QtCore/QDateTime>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QSpinBox>
+#include <QtGui/QRadioButton>
+#include <QtGui/QComboBox>
+
 #include <calendar.h>
 #include <TAAWidget.h>
 
@@ -95,3 +83,5 @@ private:
 
 };
 #endif // PKG_Conversion_included
+
+// vim: expandtab

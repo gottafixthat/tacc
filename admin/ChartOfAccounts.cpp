@@ -1,8 +1,7 @@
-/**
- * ChartOfAccounts.h - Displays the Chart of Accounts
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -10,22 +9,24 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <BlargDB.h>
-#include <mysql/mysql.h>
-#include <qnamespace.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3PopupMenu>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <mysql/mysql.h>
+
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3PopupMenu>
+
 #include <TAATools.h>
 #include <ADB.h>
+#include <BlargDB.h>
 #include <GLAccountTypes.h>
 #include <ChartOfAccounts.h>
 #include <GenLedger.h>
 #include <GLAccountEditor.h>
+
+using namespace Qt;
 
 ChartOfAccounts::ChartOfAccounts
 (
@@ -39,7 +40,7 @@ ChartOfAccounts::ChartOfAccounts
     glAcctTypes = GLAccountTypesDB::getAccountTypeList();
 
     Q3PopupMenu * options = new Q3PopupMenu();
-    CHECK_PTR( options );
+    //CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newAccount()), Qt::CTRL+Qt::Key_N);
     options->insertItem("Edit", this, SLOT(editAccount()), Qt::CTRL+Qt::Key_E);
     options->insertItem("Delete", this, SLOT(deleteAccount()), Qt::CTRL+Qt::Key_D);
@@ -242,3 +243,5 @@ void ChartOfAccounts::editAccountTypes()
     GLAccountTypes   *glatl = new GLAccountTypes();
     glatl->show();
 }
+
+// vim: expandtab

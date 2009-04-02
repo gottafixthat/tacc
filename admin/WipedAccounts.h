@@ -13,18 +13,18 @@
 #ifndef WIPEDACCOUNTS_H
 #define WIPEDACCOUNTS_H
 
-#include <BlargDB.h>
-#include <qprinter.h>
-#include <qpainter.h>
-#include <qfont.h>
-#include <qdatetime.h>
-#include <qrect.h>
-#include <qcolor.h>
-#include <qstring.h>
-#include <qlabel.h>
-#include <q3listview.h>
-#include <qradiobutton.h>
+#include <QtCore/QDateTime>
+#include <QtCore/QRect>
+#include <QtCore/QString>
+#include <QtGui/QPrinter>
+#include <QtGui/QPainter>
+#include <QtGui/QFont>
+#include <QtGui/QColor>
+#include <QtGui/QLabel>
+#include <QtGui/QRadioButton>
+#include <Qt3Support/q3listview.h>
 
+#include <BlargDB.h>
 #include <TAAWidget.h>
 
 class WipedAccounts : public TAAWidget

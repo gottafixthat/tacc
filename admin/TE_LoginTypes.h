@@ -12,10 +12,9 @@
 #ifndef TE_LOGINTYPES_H
 #define TE_LOGINTYPES_H
 
-#include <qcheckbox.h>
-#include <q3listview.h>
-//Added by qt3to4:
-#include <QCloseEvent>
+#include <QtGui/QCheckBox>
+#include <QtGui/QCloseEvent>
+#include <Qt3Support/q3listview.h>
 
 #include <TAAWidget.h>
 

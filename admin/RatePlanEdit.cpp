@@ -9,24 +9,23 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-// vim: expandtab
-
 #include <stdlib.h>
 
-#include <qstring.h>
-#include <qmessagebox.h>
-#include <qlabel.h>
-#include <q3buttongroup.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
+#include <QtCore/QString>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
 #include <TAATools.h>
 
 #include <RatePlanEdit.h>
+
+using namespace Qt;
 
 RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
 	TAAWidget( parent, name )
@@ -408,3 +407,5 @@ void RatePlanEdit::saveRatePlan()
 	
 	delete this;
 }
+
+// vim: expandtab

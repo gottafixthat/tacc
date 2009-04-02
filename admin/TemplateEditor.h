@@ -1,9 +1,7 @@
-/**
- * TemplateEditor.h - An admin interface to edit email templates stored in the
- * database.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -14,10 +12,11 @@
 #ifndef TEMPLATEEDITOR_H
 #define TEMPLATEEDITOR_H
 
-#include <qpushbutton.h>
-#include <q3listview.h>
-#include <q3textedit.h>
-#include <qlineedit.h>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3textedit.h>
+
 #include <TAAWidget.h>
 
 class TemplateEditor : public TAAWidget
@@ -58,3 +57,5 @@ private:
 
 };
 #endif
+
+// vim: expandtab

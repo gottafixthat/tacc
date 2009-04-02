@@ -1,9 +1,7 @@
-/**
- * GLAccountEditor.cpp - Allows a manager or administrator to edit or create
- * an account in the GL/Chart of Accounts.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -14,18 +12,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qstring.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
+#include <QtCore/QString>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <ADB.h>
 #include <BlargDB.h>
 #include <GenLedger.h>
 #include <GLAccountEditor.h>
 #include <Cfg.h>
+
+using namespace Qt;
 
 GLAccountEditor::GLAccountEditor
 (
@@ -234,7 +233,7 @@ void GLAccountEditor::setIntAccountNo(int newIntAccountNo)
         loadParentList();
         parentID = acctDB.ParentID;
         // Find our account type in the list.
-        for (int i = 0; i < glAcctTypes.count(); i++) {
+        for (uint i = 0; i < glAcctTypes.count(); i++) {
             if (acctTypeIDX[i] == acctDB.AccountType) accountType->setCurrentItem(i);
         }
         // Find our parent in the list.
@@ -270,8 +269,6 @@ void GLAccountEditor::setIntAccountNo(int newIntAccountNo)
  */
 void GLAccountEditor::accountTypeChanged(int newIDX)
 {
-    int acctRange = (newIDX + 1) * 1000;
-
     // Fill the combo box...
     ADB DB;
     DB.query("select IntAccountNo, AccountNo, AcctName from Accounts where IntAccountNo <> %d and ParentID = 0 and AccountType = %d order by AccountType, AcctName", myIntAccountNo, newIDX);
@@ -336,3 +333,5 @@ void GLAccountEditor::saveAccount()
     delete this;
 }
 
+
+// vim: expandtab

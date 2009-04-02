@@ -1,33 +1,20 @@
-/*
-** $Id: LoginTypeFlagAdd.h,v 1.2 2003/12/23 02:20:41 marc Exp $
-**
-***************************************************************************
-**
-** LoginTypeFlagAdd.h - Allows flags to be added to login type definitions.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: LoginTypeFlagAdd.h,v $
-** Revision 1.2  2003/12/23 02:20:41  marc
-** Fixed the non-working dialog.  Removed the old QTArch created dialog.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef LoginTypeFlagAdd_included
 #define LoginTypeFlagAdd_included
 
-#include <qdialog.h>
-#include <qpushbutton.h>
-#include <q3listbox.h>
+#include <QtGui/QDialog>
+#include <QtGui/QPushButton>
+#include <Qt3Support/q3listbox.h>
 
 class LoginTypeFlagAdd : public QDialog
 {
@@ -57,3 +44,6 @@ protected slots:
 
 };
 #endif // LoginTypeFlagAdd_included
+
+
+// vim: expandtab

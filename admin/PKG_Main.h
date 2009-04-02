@@ -1,35 +1,23 @@
-/*
-** $Id: PKG_Main.h,v 1.2 2003/12/29 22:40:25 marc Exp $
-**
-***************************************************************************
-**
-** PKG_Main.h - Package Editor main widget definitions.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PKG_Main.h,v $
-** Revision 1.2  2003/12/29 22:40:25  marc
-** Removed old QTArch created widgets, done manually now.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef PKG_Main_included
 #define PKG_Main_included
 
-#include <qwidget.h>
-#include <q3widgetstack.h>
-#include <q3listview.h>
-#include <qpushbutton.h>
-#include <qtabbar.h>
+#include <QtGui/QPushButton>
+#include <QtGui/QTabBar>
+#include <Qt3Support/q3widgetstack.h>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
 #include "PKG_General.h"
 #include "PKG_Conversion.h"
@@ -74,3 +62,5 @@ private:
 
 };
 #endif // PKG_Main_included
+
+// vim: expandtab

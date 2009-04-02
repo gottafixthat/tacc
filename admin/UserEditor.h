@@ -1,27 +1,25 @@
-/*
-** $Id: UserEditor.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** UserEditor.h  - UserEditor allows the user to view and change various
-**                 information about a user.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**     under contract to The Public Defender Association
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #ifndef UserEditor_included
 #define UserEditor_included
 
-#include <qevent.h>
-#include <qwidget.h>
-#include <qcombobox.h>
-#include <qlineedit.h>
-#include <qpushbutton.h>
-#include <qcheckbox.h>
+#include <QtCore/QEvent>
+#include <QtGui/QWidget>
+#include <QtGui/QComboBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QPushButton>
+#include <QtGui/QCheckBox>
+
 #include <TAATools.h>
 #include <TAAWidget.h>
 
@@ -70,3 +68,5 @@ protected:
 #endif // UserEditor_included
 
 
+
+// vim: expandtab

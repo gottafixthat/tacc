@@ -9,19 +9,17 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-// vim: expandtab
-
-
 #ifndef RATEPLANEDIT_H
 #define RATEPLANEDIT_H
 
-#include <qlabel.h>
-#include <q3groupbox.h>
-#include <qcheckbox.h>
-#include <qlineedit.h>
-#include <q3datetimeedit.h>
-#include <qradiobutton.h>
-#include <qcombobox.h>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QLineEdit>
+#include <QtGui/QRadioButton>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3datetimeedit.h>
+#include <Qt3Support/q3groupbox.h>
+#include <Qt3Support/q3buttongroup.h>
 
 #include <TAAWidget.h>
 
@@ -75,3 +73,6 @@ private:
 	long            *planIndex;
 };
 #endif // RatePlanEdit_included
+
+// vim: expandtab
+

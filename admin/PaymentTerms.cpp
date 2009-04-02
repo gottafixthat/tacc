@@ -1,40 +1,28 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** PaymentTerms - A list of payment terms.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PaymentTerms.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3PopupMenu>
+#include <stdio.h>
+#include <stdlib.h>
 
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3PopupMenu>
+
+#include <BlargDB.h>
+#include <ADB.h>
 #include "PaymentTerms.h"
 #include "PaymentTermsEdit.h"
-#include "BlargDB.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <qnamespace.h>
-#include <qmessagebox.h>
-#include <ADB.h>
 
+using namespace Qt;
 
 PaymentTerms::PaymentTerms(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )
@@ -81,7 +69,7 @@ PaymentTerms::PaymentTerms(QWidget* parent, const char* name) :
     // Set up the menu...
     
     Q3PopupMenu * options = new Q3PopupMenu(this);
-    CHECK_PTR( options );
+    //CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newPaymentTerms()), CTRL+Key_N);
     options->insertItem("Edit", this, SLOT(editPaymentTerms()), CTRL+Key_E);
     options->insertItem("Delete", this, SLOT(deletePaymentTerms()), CTRL+Key_D);
@@ -199,3 +187,5 @@ void PaymentTerms::deletePaymentTerms()
     }
 }
 
+
+// vim: expandtab
