@@ -11,17 +11,18 @@
 
 #include <stdlib.h>
 
-#include <q3strlist.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
+#include <QtGui/QPushButton>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3strlist.h>
 
 #include <BlargDB.h>
 #include <BString.h>
 #include <ADB.h>
 
 #include <DomainTypeBillablesAdd.h>
+
+using namespace Qt;
 
 DomainTypeBillablesAdd::DomainTypeBillablesAdd(QWidget* parent, const char* name, int DomainTypeID) :
 	TAAWidget( parent, name )

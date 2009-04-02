@@ -1,45 +1,31 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** PKG_Billables - Package billables
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PKG_Billables.cpp,v $
-** Revision 1.2  2003/12/30 01:38:28  marc
-** Removed QTArch dialogs.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "PKG_Billables.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include <BlargDB.h>
 #include <ADB.h>
 
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
+#include "PKG_Billables.h"
+
+using namespace Qt;
 
 PKG_Billables::PKG_Billables
 (
@@ -385,3 +371,5 @@ void PKG_Billables::removeBillable()
         }
     }
 }
+
+// vim: expandtab

@@ -1,43 +1,29 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** BI_Main - Billable Items
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: BI_Main.cpp,v $
-** Revision 1.2  2003/12/24 01:08:54  marc
-** Removed all of the QTArch generated dialogs and did the layouts manually.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "BI_Main.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3buttongroup.h>
+
 #include <BlargDB.h>
 #include <ADB.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-#include <q3buttongroup.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
 
+#include "BI_Main.h"
+
+using namespace Qt;
 
 BI_Main::BI_Main
 (
@@ -65,19 +51,16 @@ BI_Main::BI_Main
     deleteButton->setText("&Delete");
     connect(deleteButton, SIGNAL(clicked()), this, SLOT(deleteBillable()));
 
-    theTabBar = new QTabBar(this, "theTabBar");
+    theTabBar = new QTabBar(this);
     theTabBar->setMinimumSize(0, 25);
     theTabBar->setMaximumSize(4096, 25);
-    theTabBar->setFocusPolicy(QWidget::StrongFocus);
-    theTabBar->addTab(new QTab("&General"));
-    theTabBar->addTab(new QTab("&Pricing"));
-    theTabBar->addTab(new QTab("&Measurement"));
+    theTabBar->addTab("&General");
+    theTabBar->addTab("&Pricing");
+    theTabBar->addTab("&Measurement");
 
     Q3ButtonGroup *bGroup = new Q3ButtonGroup(this, "bGroup");
-    bGroup->setFocusPolicy(QWidget::NoFocus);
 
     qws = new Q3WidgetStack(bGroup, "WidgetStack");
-    qws->setFocusPolicy(QWidget::NoFocus);
     connect(theTabBar, SIGNAL(selected(int)), qws, SLOT(raiseWidget(int)));
 
     // 'qws' is our QWidgetStack
@@ -223,7 +206,6 @@ void BI_Main::newBillable()
 void BI_Main::deleteBillable()
 {
 	ADB     DB;
-	char	query[1024];
 	char	tmpstr[1024];
 	int		itemNo = 0;
 	int		count = 0;
@@ -289,3 +271,5 @@ void BI_Main::updateBillable()
 }
 
 
+
+// vim: expandtab

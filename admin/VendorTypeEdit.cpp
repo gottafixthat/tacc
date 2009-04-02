@@ -1,39 +1,28 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** VendorTypeEdit - Edits the vendor type.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: VendorTypeEdit.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
 
 #include <VendorTypeEdit.h>
+
+using namespace Qt;
 
 VendorTypeEdit::VendorTypeEdit(QWidget* parent, const char* name, int InternalID) :
 	TAAWidget( parent, name )
@@ -188,3 +177,5 @@ void VendorTypeEdit::refreshVendList(int)
 {
 }
 
+
+// vim: expandtab

@@ -1,48 +1,30 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** PKG_Main - Main pakcage editor window.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PKG_Main.cpp,v $
-** Revision 1.3  2003/12/30 01:53:56  marc
-** Fixed a signal that was pointing to the wrong slot
-**
-** Revision 1.2  2003/12/29 22:40:25  marc
-** Removed old QTArch created widgets, done manually now.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
-
-#include "PKG_Main.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <q3tabdialog.h>
-#include <q3widgetstack.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-#include <q3buttongroup.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3tabdialog.h>
+#include <Qt3Support/q3widgetstack.h>
 
 #include <ADB.h>
+
+#include "PKG_Main.h"
+
+using namespace Qt;
 
 PKG_Main::PKG_Main
 (
@@ -59,22 +41,19 @@ PKG_Main::PKG_Main
     packageList->setAllColumnsShowFocus(true);
     connect(packageList, SIGNAL(currentChanged(Q3ListViewItem *)), this, SLOT(packageSelected(Q3ListViewItem *)));
 
-    theTabBar = new QTabBar(this, "theTabBar");
+    theTabBar = new QTabBar(this);
     theTabBar->setMinimumSize(0, 25);
     theTabBar->setMaximumSize(4096, 25);
-    theTabBar->setFocusPolicy(QWidget::StrongFocus);
-    theTabBar->addTab(new QTab("&General"));
-    theTabBar->addTab(new QTab("C&onversion"));
-    theTabBar->addTab(new QTab("&Prices"));
-    theTabBar->addTab(new QTab("&Billables"));
+    theTabBar->addTab("&General");
+    theTabBar->addTab("C&onversion");
+    theTabBar->addTab("&Prices");
+    theTabBar->addTab("&Billables");
 
     // Create a button group to hold the widget stack and other widgets
     Q3ButtonGroup    *bGroup = new Q3ButtonGroup(this, "bGroup");
-    bGroup->setFocusPolicy(QWidget::NoFocus);
 
     // Our widget stack
     qws = new Q3WidgetStack(bGroup, "WidgetStack");
-    qws->setFocusPolicy(QWidget::NoFocus);
     connect(theTabBar, SIGNAL(selected(int)), qws, SLOT(raiseWidget(int)));
     
     // Now add widgets to the stack
@@ -324,3 +303,5 @@ void PKG_Main::updatePackage()
     }
 }
 
+
+// vim: expandtab

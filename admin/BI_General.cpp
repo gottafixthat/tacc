@@ -1,49 +1,30 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** BI_General - Billable Items editing
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: BI_General.cpp,v $
-** Revision 1.4  2004/02/27 23:11:18  marc
-** Fixed the way we're doing mailbox counts.  It now keys off of subscriptions.
-**
-** Revision 1.3  2003/12/27 21:37:29  marc
-** Switched a couple char variables to static sizes.
-**
-** Revision 1.2  2003/12/24 01:08:54  marc
-** Removed all of the QTArch generated dialogs and did the layouts manually.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "BI_General.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "BlargDB.h"
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
+#include <BlargDB.h>
 #include <ADB.h>
 #include <TAAWidget.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
+
+#include "BI_General.h"
+
+using namespace Qt;
 
 BI_General::BI_General
 (
@@ -440,3 +421,5 @@ void BI_General::save()
 
 
 
+
+// vim: expandtab

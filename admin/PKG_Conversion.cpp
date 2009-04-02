@@ -1,46 +1,30 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** PKG_Conversion.cpp - Allows the editing of the conversion dates for
-**                      packages.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PKG_Conversion.cpp,v $
-** Revision 1.2  2003/12/30 00:32:53  marc
-** Removed QTArch created layouts.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
-#include "PKG_Conversion.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/Q3BoxLayout>
+
+#include <calendar.h>
 #include <BlargDB.h>
 #include <ADB.h>
 
-#include <qapplication.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <QLabel>
+#include "PKG_Conversion.h"
 
-#include <calendar.h>
-#include <qlayout.h>
-#include <q3buttongroup.h>
+using namespace Qt;
 
 PKG_Conversion::PKG_Conversion
 (
@@ -55,7 +39,6 @@ PKG_Conversion::PKG_Conversion
 
     // We need a button group to hold certain widgets for us.
     Q3ButtonGroup *bGroup = new Q3ButtonGroup(this, "bGroup");
-    bGroup->setFocusPolicy(QWidget::NoFocus);
 
     cvtDaysButton = new QRadioButton(bGroup, "cvtDaysButton");
     cvtDaysButton->setText("Convert");
@@ -400,3 +383,5 @@ void PKG_Conversion::checkForSave()
 
 }
 
+
+// vim: expandtab

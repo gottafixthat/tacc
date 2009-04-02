@@ -1,47 +1,30 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DomainTypeEdit - DomainType Editor.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DomainTypeEdit.cpp,v $
-** Revision 1.3  2004/01/10 01:53:15  marc
-** Re-written Domain type editor.  Still needs some work, but is getting there.
-**
-** Revision 1.2  2004/01/01 01:57:54  marc
-** *** empty log message ***
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "DomainTypeEdit.h"
-#include "DomainTypeBillablesAdd.h"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
 
+#include "DomainTypeEdit.h"
+#include "DomainTypeBillablesAdd.h"
+
+using namespace Qt;
 
 DomainTypeEdit::DomainTypeEdit
 (
@@ -342,3 +325,5 @@ void DomainTypeEdit::saveDomainType()
 
 
 
+
+// vim: expandtab

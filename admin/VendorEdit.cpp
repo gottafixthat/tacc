@@ -1,8 +1,7 @@
-/**
- * VendorEdit.h - Class file for the Vendor Edit widget.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -10,17 +9,18 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <qlabel.h>
-#include <qlayout.h>
-#include <q3groupbox.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/q3groupbox.h>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <ADB.h>
 #include <BlargDB.h>
 
 #include <VendorEdit.h>
+
+using namespace Qt;
 
 VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     TAAWidget(parent, name)
@@ -422,3 +422,5 @@ void VendorEdit::cancelVendor()
 	close();
 }
 
+
+// vim: expandtab

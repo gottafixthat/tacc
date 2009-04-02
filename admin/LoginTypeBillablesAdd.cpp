@@ -1,40 +1,28 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** LoginTypeBillablesAdd - 
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: LoginTypeBillablesAdd.cpp,v $
-** Revision 1.2  2003/12/23 01:23:58  marc
-** Broke some time ago because of the QTArchitect dialogs.  Did the layout manually.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "LoginTypeBillablesAdd.h"
-#include "BlargDB.h"
-#include "BString.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <q3strlist.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
+
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3strlist.h>
+
 #include <ADB.h>
+#include <BlargDB.h>
+#include <BString.h>
+
+#include "LoginTypeBillablesAdd.h"
+
+using namespace Qt;
 
 LoginTypeBillablesAdd::LoginTypeBillablesAdd
 (
@@ -136,3 +124,5 @@ void LoginTypeBillablesAdd::cancelBillableItem()
 {
     reject();
 }
+
+// vim: expandtab

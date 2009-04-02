@@ -1,45 +1,33 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** DNS_Templates - A DNS template editor for SQL based DNS entries.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: DNS_Templates.cpp,v $
-** Revision 1.2  2004/01/04 18:59:02  marc
-** delTemplate now checks to make sure the template is not in use before deleting.
-**
-** Revision 1.1  2003/12/31 21:35:26  marc
-** Fully functional.  Could use a bit more polish, but then what software couldn't.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdlib.h>
 
-#include "DNS_Templates.h"
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
-#include <qregexp.h>
-#include <qapplication.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
+#include <QtCore/QRegExp>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include <ADB.h>
 #include <Cfg.h>
 
+#include "DNS_Templates.h"
+
 // The column our TemplateID is in in the templateList
 #define TID_COLUMN 2
+
+using namespace Qt;
 
 DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
     : TAAWidget(parent, name)
@@ -685,3 +673,5 @@ void DNS_Templates::delRR()
     delete rrList->selectedItem();
 }
 
+
+// vim: expandtab
