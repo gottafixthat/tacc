@@ -1,49 +1,31 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** ELT_Billables - Edit Login Types Billables section
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ELT_Billables.cpp,v $
-** Revision 1.3  2003/12/23 14:59:18  marc
-** Minor updates to work with the new dialogs.
-**
-** Revision 1.2  2003/12/23 00:29:46  marc
-** Removed QTArchitect created dialogs and created them manually.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "ELT_Billables.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
+#include <ADB.h>
 #include <BlargDB.h>
 
-#include <qmessagebox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-
 #include "LoginTypeBillablesAdd.h"
-#include <ADB.h>
+#include "ELT_Billables.h"
+
+using namespace Qt;
 
 ELT_Billables::ELT_Billables
 (
@@ -185,3 +167,5 @@ void ELT_Billables::addBillable()
 }
 
 
+
+// vim: expandtab

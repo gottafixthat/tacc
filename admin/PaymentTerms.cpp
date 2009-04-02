@@ -99,9 +99,6 @@ void PaymentTerms::closeClicked()
 void PaymentTerms::refreshList(int)
 {
     ADB     DB;
-    char    tmpstr[128]; 
-    int     tmpTop, tmpCur;
-    int     rowcnt;
     
     // Save the state of the list.
     termsList->clear();

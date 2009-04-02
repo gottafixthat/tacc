@@ -1,9 +1,7 @@
-/**
- * TemplateEditor.cpp - An admin interface to edit email templates stored in
- * the database.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -11,17 +9,18 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <qmessagebox.h>
-#include <qlayout.h>
-#include <q3buttongroup.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <ADB.h>
 
 #include <TemplateEditor.h>
+
+using namespace Qt;
 
 TemplateEditor::TemplateEditor(QWidget* parent, const char* name) : 
     TAAWidget( parent, name )
@@ -342,3 +341,5 @@ void TemplateEditor::textItemChanged(const QString &)
     textItemChanged();
 }
 
+
+// vim: expandtab

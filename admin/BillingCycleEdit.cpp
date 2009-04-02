@@ -1,8 +1,7 @@
-/**
- * BillingCycleEdit.cpp - Allows an administrator to edit a billing cycle.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -10,16 +9,18 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <BillingCycleEdit.h>
-#include <BlargDB.h>
-#include <qlabel.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QMessageBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
 #include <ADB.h>
-#include <qmessagebox.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
+#include <BlargDB.h>
+#include "BillingCycleEdit.h"
+
+using namespace Qt;
 
 BillingCycleEdit::BillingCycleEdit
 (
@@ -100,7 +101,7 @@ BillingCycleEdit::BillingCycleEdit
     Q3BoxLayout *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
     
     // Create the main grid layout
-    Q3GridLayout *gl = new Q3GridLayout();
+    Q3GridLayout *gl = new Q3GridLayout(4, 2);
     int curRow = 0;
     gl->addWidget(cycleIDLabel,     curRow, 0);
     gl->addWidget(cycleID,          curRow, 1);
@@ -118,7 +119,7 @@ BillingCycleEdit::BillingCycleEdit
     curRow++;
 
     // Create another grid for our months.
-    Q3GridLayout *mgrid = new Q3GridLayout();
+    Q3GridLayout *mgrid = new Q3GridLayout(4, 3);
     int mRow = 0;
     mgrid->addWidget(january,       mRow, 0);
     mgrid->addWidget(february,      mRow, 1);
@@ -305,3 +306,5 @@ void BillingCycleEdit::cycleTypeChanged(int newCycleType)
     anniversaryPeriodLabel->setHidden(hideanniversary);
     anniversaryPeriod->setHidden(hideanniversary);
 }
+
+// vim: expandtab

@@ -1,44 +1,29 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** PKG_Pricing - Handles the pricing information for the Packages window.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PKG_Pricing.cpp,v $
-** Revision 1.2  2003/12/30 01:07:54  marc
-** Removed QTArch generated dialogs.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "PKG_Pricing.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
 #include <ADB.h>
 
-#include <qapplication.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include "PKG_Pricing.h"
 
+using namespace Qt;
 
 PKG_Pricing::PKG_Pricing
 (
@@ -313,3 +298,5 @@ void PKG_Pricing::save()
     }
     checkForSave();
 }
+
+// vim: expandtab

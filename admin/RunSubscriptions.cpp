@@ -1,11 +1,7 @@
-/**
- * RunSubscriptions.cpp - Class definition for the RunSubscriptions
- * widget.  RunSubscriptions brings up a window that gives a manager
- * the ability to run subscriptions for all customers that have
- * subscriptions pending.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -16,14 +12,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qdatetime.h>
-#include <q3groupbox.h>
-#include <qlayout.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <QBoxLayout>
-#include <QLabel>
+#include <QtCore/QDateTime>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3groupbox.h>
 
 #include <BlargDB.h>
 #include <ADB.h>
@@ -33,8 +27,7 @@
 
 #include "RunSubscriptions.h"
 
-
-#define Inherited RunSubscriptionsData
+using namespace Qt;
 
 RunSubscriptions::RunSubscriptions(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )
@@ -93,7 +86,7 @@ RunSubscriptions::RunSubscriptions(QWidget* parent, const char* name) :
     secLayout->addWidget(summaryBox, 1);
     secLayout->addStretch(1);
 
-    Q3BoxLayout *bl = new Q3BoxLayout(QBoxLayout::Q3BoxLayout::TopToBottom, 3);
+    Q3BoxLayout *bl = new Q3BoxLayout(Q3BoxLayout::Q3BoxLayout::TopToBottom, 3);
     bl->addStretch(1);
     bl->addWidget(beginButton, 0);
     bl->addWidget(cancelButton, 0);
@@ -257,3 +250,5 @@ void RunSubscriptions::cancelAction()
 {
     close();
 }
+
+// vim: expandtab

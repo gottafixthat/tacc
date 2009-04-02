@@ -1,8 +1,7 @@
-/**
- * PaymentTermsEdit.cpp - Class file to edit payment terms.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -10,18 +9,19 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-#include <qregexp.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtCore/QRegExp>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <QtGui/QPushButton>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 #include <ADB.h>
 
 #include <PaymentTermsEdit.h>
+
+using namespace Qt;
 
 PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int InternalID) :
 	TAAWidget( parent, name )
@@ -242,3 +242,5 @@ void PaymentTermsEdit::refreshVendList(int)
 {
 }
 
+
+// vim: expandtab

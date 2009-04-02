@@ -1,50 +1,32 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** ELT_Flags - Edit Login Types Flags page
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ELT_Flags.cpp,v $
-** Revision 1.3  2003/12/23 14:59:18  marc
-** Minor updates to work with the new dialogs.
-**
-** Revision 1.2  2003/12/22 23:46:48  marc
-** Removed QTArchitect created files from ELT_Flags
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "ELT_Flags.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
+#include <ADB.h>
 #include <BlargDB.h>
 
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-
 #include "LoginTypeFlagAdd.h"
-#include <ADB.h>
+#include "ELT_Flags.h"
+
+using namespace Qt;
 
 ELT_Flags::ELT_Flags
 (
@@ -255,3 +237,5 @@ void ELT_Flags::addFlag()
     if (ltfa->result()) setLoginTypeID(myLoginTypeID);
     delete ltfa;
 }
+
+// vim: expandtab

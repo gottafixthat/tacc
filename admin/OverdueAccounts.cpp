@@ -11,15 +11,14 @@
 
 #include <stdlib.h>
 
-#include <qmessagebox.h>
-#include <qdatetime.h>
-#include <qapplication.h>
-#include <qlayout.h>
-#include <q3groupbox.h>
-#include <q3buttongroup.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <QLabel>
+#include <QtCore/QDateTime>
+#include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3groupbox.h>
+#include <Qt3Support/q3buttongroup.h>
 
 #include <BlargDB.h>
 #include <BString.h>
@@ -30,6 +29,7 @@
 
 #include <OverdueAccounts.h>
 
+using namespace Qt;
 
 OverdueAccounts::OverdueAccounts(QWidget* parent, const char* name, int AccountTypes) :
 	TAAWidget( parent, name )

@@ -11,16 +11,15 @@
 
 #include <stdlib.h>
 
-#include <qmessagebox.h>
-#include <q3progressbar.h>
-#include <qdatetm.h>
-#include <qapplication.h>
-#include <q3groupbox.h>
-#include <q3buttongroup.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <QLabel>
+#include <QtCore/QDateTime>
+#include <QtGui/QMessageBox>
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/q3groupbox.h>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3progressbar.h>
 
 #include <AcctsRecv.h>
 #include <BlargDB.h>
@@ -32,6 +31,8 @@
 #include <Cfg.h>
 
 #include <WipedAccounts.h>
+
+using namespace Qt;
 
 WipedAccounts::WipedAccounts(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )

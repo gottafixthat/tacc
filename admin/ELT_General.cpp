@@ -1,58 +1,30 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** ELT_General - Edit Login Types General page
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: ELT_General.cpp,v $
-** Revision 1.5  2004/02/27 23:11:18  marc
-** Fixed the way we're doing mailbox counts.  It now keys off of subscriptions.
-**
-** Revision 1.4  2004/02/27 01:33:33  marc
-** The Customers table now tracks how many mailboxes are allowed.  LoginTypes
-** and Packages were both updated to include how many mailboxes are allowed with
-** each package or login type.
-**
-** Revision 1.3  2003/12/22 20:01:45  marc
-** Minor display fixes.
-**
-** Revision 1.2  2003/12/21 18:32:29  marc
-** Removed the old dialog editor layout code and did the layout manually.
-** Added the ability to edit the LoginClass.
-**
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "ELT_General.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtGui/QApplication>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include <ADB.h>
 #include <BlargDB.h>
 
-#include <qapplication.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <ADB.h>
+#include "ELT_General.h"
 
+using namespace Qt;
 
 ELT_General::ELT_General
 (
@@ -421,3 +393,5 @@ void ELT_General::loadBillableLists()
     }
 }
 
+
+// vim: expandtab
