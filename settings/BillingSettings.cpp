@@ -1,28 +1,29 @@
-/*
-** BillingSettings - Billing configuration options for TACC.
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2007, R. Marc Lewis and Avvatel Corporation
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Avvatel Corporation and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qtooltip.h>
-#include <q3filedialog.h>
-#include <qfile.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtCore/QFile>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QToolTip>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/q3filedialog.h>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
 #include <TAATools.h>
-#include "Cfg.h"
+#include <Cfg.h>
+
 #include "BillingSettings.h"
+
+using namespace Qt;
 
 /*
  * BillingSettings - Constructor.  Lays out the widget.
@@ -282,3 +283,5 @@ void BillingSettings::chooseEmailBodyFile()
 
 }
 
+
+// vim: expandtab

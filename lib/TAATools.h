@@ -16,10 +16,11 @@
 
 #include <time.h>
 
+#include <QtCore/QDateTime>
 #include <QtGui/QWidget>
+#include <QtGui/QMainWindow>
 #include <Qt3Support/q3strlist.h>
 #include <Qt3Support/q3listview.h>
-#include <QtCore/QDateTime>
 
 #define SCHEMA_VERSION_REQUIRED 12
 
@@ -45,7 +46,7 @@ struct taa_User {
 
 
 QWidget    *mainWin();
-void        setMainWin(QWidget *newWinPtr);
+void        setMainWin(QMainWindow *newWinPtr);
 
 bool        loadTAAConfig(bool isCritical = true);
 void        setDefaultConfigValues(void);

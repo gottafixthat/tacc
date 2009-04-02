@@ -6,7 +6,9 @@ INCDIRS	=  -I$(QTDIR)/include -I. -I../customers -I../include -I../lib -I../tick
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -DADBQT -I../adb -I../bdes
 # CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
 LFLAGS  += -ladmin -ltaasettings -lcustomers -L../reports -lreports -lvoicemail -lvoip -ltickets -lccards -lasterisk
-LFLAGS  += -L$(QTDIR)/lib -ltaa -ladbqt -lqt-mt -lcrypt -L../lib -L../adb -L../bdes
+LFLAGS  += -ltaa -ladbqt
+LFLAGS  += -lQtCore -lQtSql -lQt3Support -lQtGui
+LFLAGS  += -lcrypt -L../lib -L../adb -L../bdes
 LFLAGS	+= -L/usr/X11R6/lib -lX11 -lXext -lXft -lSM -lICE -L/usr/lib64/mysql -L/usr/lib/mysql -lmysqlclient
 LFLAGS  += -lmimepp_util -lmimepp_net -lmimepp_core 
 LFLAGS  += -lmimetic
@@ -24,6 +26,7 @@ ifdef USEDES
 	CFLAGS	+= -DUSEDES -I/usr/local/include
 	LFLAGS	+= -L/usr/local/lib -lbdes
 endif
+CFLAGS += -DQT3_SUPPORT
 
 ####### End of automatically generated section
 

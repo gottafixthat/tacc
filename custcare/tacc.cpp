@@ -1,42 +1,34 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** tacc - Total Accountability Customer Care interface.
-**        This is the main program that Blarg employees will use.  It
-**        encapsulates the main menu, the Main Window, a Take Call
-**        interface, and pulls in the active ticket list.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 
-#include <qmenubar.h>
-#include <qstatusbar.h>
-#include <q3popupmenu.h>
-#include <qmessagebox.h>
-#include <q3toolbar.h>
-#include <qtoolbutton.h>
-#include <qpixmap.h>
-#include <qstring.h>
-#include <qdatetime.h>
-#include <q3accel.h>
-#include <q3frame.h>
-//Added by qt3to4:
-#include <QLabel>
-#include <Q3BoxLayout>
+#include <mcve.h>
+
+#include <QtCore/QString>
+#include <QtCore/QDateTime>
+#include <QtGui/QApplication>
+#include <QtGui/QMenuBar>
+#include <QtGui/QStatusBar>
+#include <QtGui/QMessageBox>
+#include <QtGui/QToolButton>
+#include <QtGui/QPixmap>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3popupmenu.h>
+#include <Qt3Support/q3toolbar.h>
+#include <Qt3Support/q3accel.h>
+#include <Qt3Support/q3frame.h>
 
 #include "tacc.h"
 #include "Customers.h"
@@ -85,8 +77,8 @@
 
 #include "UserPrivs.h"
 
-// Monetra/MCVE/CCVS
-#include <mcve.h>
+using namespace Qt;
+
 
 #ifdef USEDES
 #include "loadKey.h"
@@ -96,7 +88,7 @@
 int main( int argc, char ** argv )
 {
     QApplication    a( argc, argv );
-    CustomerCare    *aw;
+    //CustomerCare    *aw;
     TAALogin        *lw;
     int             opt;
     a.setDesktopSettingsAware(true);
@@ -187,14 +179,13 @@ int main( int argc, char ** argv )
     // Re-Initialize our configuration values.
     loadTAAConfig();
 
-	aw = new CustomerCare(NULL, "CustomerCare");
+    CustomerCare    aw;
+    aw.show();
+	//aw = new CustomerCare();
 
-    a.setMainWidget(aw);
-
-    setMainWin(aw);
-    aw->show();
-
-    aw->appRef = &a;
+    //QApplication::setMainWidget(aw);
+    //setMainWin(aw);
+    //aw->show();
 
     //fprintf(stderr, "Font family: '%s'\n", (const char *) qApp->font().family());
     //fprintf(stderr, "Font point size: '%d'\n", qApp->font().pointSize());
@@ -213,9 +204,10 @@ int main( int argc, char ** argv )
 **                This should be the TAA MainWin().
 */
 
-CustomerCare::CustomerCare(QWidget *parent, const char *name) : Q3MainWindow(parent, name)
+CustomerCare::CustomerCare() : QMainWindow()
 {
     setMainWin(this);
+    //QApplication::setMainWidget(this);
     setCaption("Total Accountability - Customer Care");
     
     am = new AsteriskManager(this, "Asterisk Manager Connection");
@@ -227,6 +219,8 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : Q3MainWindow(par
     ac->connectItem(ac->insertItem(CTRL+Key_1), ccStack, SLOT(raiseTab1()));
     ac->connectItem(ac->insertItem(CTRL+Key_2), ccStack, SLOT(raiseTab2()));
     ac->connectItem(ac->insertItem(CTRL+Key_3), ccStack, SLOT(raiseTab3()));
+
+    connect(this, SIGNAL(openCustomer(long)), this, SLOT(openCustomerMW(long)));
 
     //setCentralWidget(tickets);
 
@@ -364,8 +358,7 @@ CustomerCare::CustomerCare(QWidget *parent, const char *name) : Q3MainWindow(par
     progressMeter = new Q3ProgressBar(statusBar(), "Progress Meter");
     progressMeter->setMinimumWidth(75);
     progressMeter->setMaximumWidth(75);
-    progressMeter->setIndicatorFollowsStyle(false);
-    progressMeter->setCenterIndicator(true);
+    //progressMeter->setCenterIndicator(true);
     statusBar()->addWidget(progressMeter, 0, true);
     realTimeProgress = false;
 
@@ -477,6 +470,7 @@ void CustomerCare::ticketChanged(long ticketNo)
 
 void CustomerCare::openCustomerMW(long custID)
 {
+    fprintf(stderr, "Open Customer called with %ld...\n", custID);
     if (custID) {
         EditCustomer    *custEdit;
         custEdit = new EditCustomer(0, "", custID);
@@ -548,7 +542,7 @@ void CustomerCare::setStatusMW(const char *msg)
         statusBar()->clear();
     } else {
         statusBar()->message(msg);
-        appRef->processEvents();
+        QApplication::processEvents();
         QApplication::flush();
         QApplication::flushX();
         QApplication::syncX();
@@ -566,7 +560,7 @@ void CustomerCare::setStatusMW(const char *msg, int msec)
         statusBar()->clear();
     } else {
         statusBar()->message(msg, msec);
-        appRef->processEvents();
+        QApplication::processEvents();
         QApplication::flush();
         QApplication::flushX();
         QApplication::syncX();
@@ -601,7 +595,7 @@ void CustomerCare::setProgressMW(int cur, int tot)
         }
         if (realTimeProgress) {
             this->repaint();
-            appRef->processEvents();
+            QApplication::processEvents();
         }
         QApplication::flush();
         QApplication::flushX();
@@ -633,14 +627,10 @@ CustomerCareStack::CustomerCareStack(AsteriskManager *astmgr, QWidget *parent, c
     // Create the widget stack and tab bar.
     tabs = new QTabBar(this);
     tabs->setShape(QTabBar::RoundedAbove);
-    customerTab = new QTab("Customers");
-    ticketTab = new QTab("Tickets");
-    voicemailTab = new QTab("Voice Mail");
-    //adminTab = new QTab("Admin");
-    tabs->insertTab(customerTab);
-    tabs->insertTab(ticketTab);
-    tabs->insertTab(voicemailTab);
-    //tabs->insertTab(adminTab);
+    tabs->addTab("Customers");
+    tabs->addTab("Tickets");
+    tabs->addTab("Voice Mail");
+    //tabs->addTab("Admin");
 
     QLabel *hline1 = new QLabel(this);
     hline1->setMinimumSize(0,3);
@@ -1313,3 +1303,5 @@ void CustomerCare::toggleAgentStatus()
     }
 }
 
+
+// vim: expandtab

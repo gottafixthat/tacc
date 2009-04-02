@@ -11,15 +11,15 @@
 
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <ADB.h>
 
 #include <TE_LoginTypes.h>
 
+using namespace Qt;
 
 TE_LoginTypes::TE_LoginTypes(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )

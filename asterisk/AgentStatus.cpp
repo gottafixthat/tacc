@@ -305,9 +305,9 @@ AgentStatus::AgentStatus
 
     // Connect to the database and get the agents
     QSqlDbPool          pool;
-    QSqlDatabase        myDB = pool.sqldb();
+    QSqlDatabase        myDB = pool.qsqldb();
     QSqlDbPool          pool2;
-    QSqlDatabase        myDB2 = pool2.sqldb();
+    QSqlDatabase        myDB2 = pool2.qsqldb();
     /*
     myDB = QSqlDatabase::addDatabase("QMYSQL3","asteriskagentstatus");
     myDB->setHostName(cfgVal("TAAMySQLHost"));

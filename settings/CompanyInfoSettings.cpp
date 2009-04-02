@@ -1,10 +1,7 @@
-/**
- * CompanyInfoSettings.cpp - A class that allows an administrator to
- * change the settings for the Company Information, i.e. company name
- * address, etc.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -13,15 +10,18 @@
  */
 
 
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qtooltip.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QToolTip>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
 #include <TAATools.h>
-#include "Cfg.h"
+#include <Cfg.h>
+
 #include "CompanyInfoSettings.h"
+
+using namespace Qt;
 
 /**
  * CompanyInfoSettings()
@@ -131,3 +131,5 @@ int CompanyInfoSettings::saveSettings()
 }
 
 
+
+// vim: expandtab

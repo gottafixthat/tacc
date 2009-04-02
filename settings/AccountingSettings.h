@@ -1,8 +1,7 @@
-/**
- * Accounting.h - Configuration options for certain GL/Accounting options.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -13,7 +12,8 @@
 #ifndef ACCOUNTINGSETTINGS_H
 #define ACCOUNTINGSETTINGS_H
 
-#include <qcombobox.h>
+#include <QtGui/QComboBox>
+
 #include <TAAWidget.h>
 
 class AccountingSettings : public TAAWidget
@@ -38,3 +38,5 @@ protected:
 
 #endif
 
+
+// vim: expandtab

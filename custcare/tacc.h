@@ -1,44 +1,34 @@
-/*
-** $Id: tacc.h,v 1.5 2004/02/27 01:33:33 marc Exp $
-**
-***************************************************************************
-**
-** tacc - Total Accountability Customer Care interface.
-**        This is the main program that Blarg employees will use.  It
-**        encapsulates the main menu, the Main Window, a Take Call
-**        interface, and pulls in the active ticket list.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef TACC_H 
 #define TACC_H
 
-#include <qwidget.h>
-#include <q3mainwindow.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <q3widgetstack.h>
-#include <qtabbar.h>
-#include <q3progressbar.h>
-//Added by qt3to4:
-#include <Q3PopupMenu>
-#include "TAATools.h"
-#include "TicketManager.h"
-#include "Customers.h"
-#include "ProcessVoiceMail.h"
-#include "AsteriskManager.h"
-#include "QueueMonitor.h"
-#include "AgentStatus.h"
-#include "Customers.h"
+#include <QtCore/QTimer>
+#include <QtGui/QMainWindow>
+#include <QtGui/QLabel>
+#include <QtGui/QTabBar>
+#include <Qt3Support/Q3PopupMenu>
+#include <Qt3Support/q3widgetstack.h>
+#include <Qt3Support/q3progressbar.h>
+
+#include <TAAWidget.h>
+#include <TAATools.h>
+#include <TicketManager.h>
+#include <Customers.h>
+#include <ProcessVoiceMail.h>
+#include <AsteriskManager.h>
+#include <QueueMonitor.h>
+#include <AgentStatus.h>
+#include <Customers.h>
 
 class CustomerCareStack : public TAAWidget
 {
@@ -73,19 +63,19 @@ protected:
 };
 
 
-class CustomerCare : public Q3MainWindow
+class CustomerCare : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    CustomerCare ( QWidget *parent = NULL, const char *name = NULL);
+    CustomerCare();
     virtual ~CustomerCare();
-    QApplication    *appRef;
 
 signals:
     // mainWin() relay signals
     void            refreshCustomer(long);
     void            refreshTicket(long);
+    void            openCustomer(long);
 
 public slots:
     void            takeCall();
@@ -167,3 +157,5 @@ protected:
 int main(int argc, char **argv);
 
 #endif // TACC_H
+
+// vim: expandtab

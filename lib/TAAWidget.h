@@ -16,6 +16,35 @@
 #include <QtGui/QWidget>
 #include <QtGui/QLabel>
 
+/*!
+ * \brief TACCWindow is a replacement for the Qt 3 main window functions.
+ * TAA GUI applications should create *ONE* TACCWindow.
+ *
+ * TACCWindow is the main application window for the system.  The TAAWidget
+ * class will connect its relay slots to TACCWindow objects, this includes
+ * relay messages, such as status bar updates, progress bars, opening customers
+ * or tickets, etc.
+ */
+/*
+class TACCWindow : public QWidget
+{
+    Q_OBJECT
+
+public:
+    TACCWindow(QWidget *parent Qt::WFlags f = Qt::Window);
+    virtual ~TACCWIndow();
+
+public slots:
+    virtual void updateStatusBar(QString)           {};
+    virtual void updateStatusBar(QString, int)      {};
+    virtual void updateProgressBar(int, int)        {};
+    virtual void updateProgressBarRT(int, int)      {};
+    virtual void openCustomerWindow(long)           {};
+    virtual void openTicketWindow(long)             {};
+
+};
+*/
+
 class TAAWidget : public QWidget
 {
     Q_OBJECT
@@ -44,8 +73,8 @@ signals:
     void    openTicket(long);
 
 public slots:
-    // Any widget that loads customer information should override this
-    // member function.  It will be called automatically whenever
+    // Any widget that loads customer information should override these
+    // member function.  They will be called automatically whenever
     // another customer function updates a customers data.
     virtual void    refreshCustomer(long)           {};
     virtual void    refreshTicket(long)             {};

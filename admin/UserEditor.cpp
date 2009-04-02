@@ -1,37 +1,32 @@
-/*
-***************************************************************************
-**
-** UserEditor.cpp -  UserEditor is the widget that will allow the user to
-**                   view and change user accounts.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2006, R. Marc Lewis and Avvanta Communications Corp.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qhbuttongroup.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <Q3Frame>
-#include <ADB.h>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3Frame>
 
+#include <ADB.h>
 #include <TAATools.h>
 
 #include "UserEditor.h"
+
+using namespace Qt;
 
 UserEditor::UserEditor
 (
@@ -112,7 +107,6 @@ UserEditor::UserEditor
 
     // We also need an Add/Save button
     Q3HButtonGroup *bg = new Q3HButtonGroup(this);
-    bg->setFrameShape(Q3Frame::NoFrame);
 
     delButton = new QPushButton(bg, "DeleteButton");
     delButton->setText("&Delete");
@@ -431,3 +425,5 @@ void UserEditor::deleteUser()
 
 
 
+
+// vim: expandtab

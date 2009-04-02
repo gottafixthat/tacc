@@ -1,50 +1,35 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CallTypeSelector - A set of widgets that determines what type of 
-**                    incoming call is being taken.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CallTypeSelector.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
-
-#include "CallTypeSelector.h"
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <qvbuttongroup.h>
-#include <qlayout.h>
-#include <qwidget.h>
-#include <qradiobutton.h>
-#include <q3listview.h>
-#include <qlabel.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3Frame>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <QtGui/QRadioButton>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3Frame>
 
+#include <ADB.h>
 #include <TAAWidget.h>
 #include <TAATools.h>
 #include <CustomerSearch.h>
 #include <CustomerTickets.h>
 
-#include <ADB.h>
+#include "CallTypeSelector.h"
+
+using namespace Qt;
 
 CallTypeSelector::CallTypeSelector
 (
@@ -165,3 +150,5 @@ void CallTypeSelector::refresh()
     QApplication::restoreOverrideCursor();
 }
 
+
+// vim: expandtab
