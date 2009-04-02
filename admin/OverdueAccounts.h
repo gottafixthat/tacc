@@ -13,14 +13,12 @@
 #ifndef OVERDUEACCOUNTS_H
 #define OVERDUEACCOUNTS_H
 
-#include <q3listview.h>
-#include <qdialog.h>
-#include <qlabel.h>
-#include <qradiobutton.h>
-#include <q3listview.h>
-//Added by qt3to4:
-#include <QEvent>
-#include <QCloseEvent>
+#include <QtCore/QEvent>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QDialog>
+#include <QtGui/QLabel>
+#include <QtGui/QRadioButton>
+#include <Qt3Support/q3listview.h>
 
 #include <TAAWidget.h>
 

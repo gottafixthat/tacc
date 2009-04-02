@@ -1,21 +1,21 @@
-/***************************************************************************
-** VendorTypes.h - Class definition for the VendorTypes widget.
-****************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2008, R. Marc Lewis and Avvatel Corporation
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Avvatel Corporation and R. Marc Lewis.
-****************************************************************************/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef VendorTypes_included
 #define VendorTypes_included
 
+#include <QtGui/QMenuBar>
+#include <Qt3Support/q3listview.h>
+
 #include <TAAWidget.h>
-#include <q3listview.h>
-#include <qmenubar.h>
 
 class VendorTypes : public TAAWidget
 {
@@ -50,3 +50,5 @@ protected:
     QMenuBar    *menu;
 };
 #endif // VendorTypes_included
+
+// vim: expandtab

@@ -159,7 +159,7 @@ GLAccountTypes::GLAccountTypes
     glAcctTypes = GLAccountTypesDB::getAccountTypeList();
 
     Q3PopupMenu * options = new Q3PopupMenu();
-    CHECK_PTR( options );
+    //CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newAcctType()), Qt::CTRL+Qt::Key_N);
     options->insertItem("Edit", this, SLOT(editAcctType()), Qt::CTRL+Qt::Key_E);
     options->insertItem("Delete", this, SLOT(deleteAcctType()), Qt::CTRL+Qt::Key_D);

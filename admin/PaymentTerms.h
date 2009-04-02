@@ -1,9 +1,7 @@
-/**
- * PaymentTerms.h - Class definition for PaymentTerms which allows the
- * user to view and edit the payment terms in TACC.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -14,8 +12,8 @@
 #ifndef PaymentTerms_included
 #define PaymentTerms_included
 
-#include <q3listview.h>
-#include <qmenubar.h>
+#include <QtGui/QMenuBar>
+#include <Qt3Support/q3listview.h>
 
 #include <TAAWidget.h>
 
@@ -52,3 +50,5 @@ private:
 };
 
 #endif
+
+// vim: expandtab

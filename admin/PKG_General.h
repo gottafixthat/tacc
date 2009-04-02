@@ -1,42 +1,24 @@
-/*
-** $Id: PKG_General.h,v 1.3 2004/02/27 01:33:33 marc Exp $
-**
-***************************************************************************
-**
-** PKG_General.h - Package Editor general tab.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2004, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: PKG_General.h,v $
-** Revision 1.3  2004/02/27 01:33:33  marc
-** The Customers table now tracks how many mailboxes are allowed.  LoginTypes
-** and Packages were both updated to include how many mailboxes are allowed with
-** each package or login type.
-**
-** Revision 1.2  2003/12/29 23:11:32  marc
-** Removed QTArch dialogs, doing them manually.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef PKG_General_included
 #define PKG_General_included
 
-#include <qwidget.h>
-#include <qcheckbox.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <q3multilineedit.h>
-#include <qspinbox.h>
-#include <qcombobox.h>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QLineEdit>
+#include <QtGui/QSpinBox>
+#include <QtGui/QComboBox>
+#include <Qt3Support/q3multilineedit.h>
+
 #include <TAAWidget.h>
 
 class PKG_General : public TAAWidget
@@ -93,3 +75,5 @@ signals:
 
 };
 #endif // PKG_General_included
+
+// vim: expandtab

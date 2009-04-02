@@ -1,24 +1,21 @@
-/*
-** RatePlans.h - Creates the list of rate plans.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2007, R. Marc Lewis and Avvatel Corporation
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef RatePlans_included
 #define RatePlans_included
 
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qmenubar.h>
-#include "TAAWidget.h"
+#include <QtGui/QMenuBar>
+#include <Qt3Support/q3listview.h>
+
+#include <TAAWidget.h>
 
 class RatePlans : public TAAWidget
 {
@@ -53,3 +50,5 @@ protected:
 
 };
 #endif // RatePlans_included
+
+// vim: expandtab

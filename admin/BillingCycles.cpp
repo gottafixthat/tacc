@@ -1,41 +1,28 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** BillingCycles - Billing Cycle list.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: BillingCycles.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
+#include <stdio.h>
 
-#include "BlargDB.h"
+#include <QtGui/QPushButton>
+#include <QtGui/QLayout>
+#include <QtGui/QMessageBox>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3strlist.h>
+
+#include <ADB.h>
+#include <BlargDB.h>
 #include "BillingCycles.h"
 #include "BillingCycleEdit.h"
 
-#include <qnamespace.h>
-#include <q3strlist.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <stdio.h>
-#include <ADB.h>
-#include <qmessagebox.h>
-
+using namespace Qt;
 
 BillingCycles::BillingCycles
 (
@@ -192,3 +179,5 @@ void BillingCycles::deleteCycle()
     }
 }
 
+
+// vim: expandtab

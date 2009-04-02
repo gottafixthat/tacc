@@ -1,8 +1,7 @@
-/**
- * VendorEdit.h - Class definition for the Vendor Edit widget.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -13,10 +12,10 @@
 #ifndef VendorEdit_included
 #define VendorEdit_included
 
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qcombobox.h>
-#include <qcheckbox.h>
+#include <QtGui/QLineEdit>
+#include <QtGui/QLabel>
+#include <QtGui/QComboBox>
+#include <QtGui/QCheckBox>
 
 #include <TAAWidget.h>
 
@@ -62,3 +61,5 @@ protected:
 
 };
 #endif // VendorEdit_included
+
+// vim: expandtab

@@ -1,33 +1,19 @@
-/*
-** $Id: Vendors.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** Vendors.h - Class definition for the vendor list.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: Vendors.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef VENDORS_H
 #define VENDORS_H
 
-#include <qwidget.h>
-#include <q3listview.h>
-#include <qmenubar.h>
+#include <QtGui/QMenuBar>
+#include <Qt3Support/q3listview.h>
 
 #include <TAAWidget.h>
 
@@ -59,3 +45,5 @@ protected:
 
 };
 #endif // Vendors_included
+
+// vim: expandtab

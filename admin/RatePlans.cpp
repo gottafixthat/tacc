@@ -1,39 +1,29 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** RatePlans - Brings up a list of rate plans.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: RatePlans.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
-#include "RatePlans.h"
-#include "BlargDB.h"
-#include "RatePlanEdit.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <qnamespace.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3PopupMenu>
+
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3PopupMenu>
+
 #include <ADB.h>
+#include <BlargDB.h>
+#include "RatePlans.h"
+#include "RatePlanEdit.h"
+
+using namespace Qt;
 
 RatePlans::RatePlans
 (
@@ -44,7 +34,7 @@ RatePlans::RatePlans
 	setCaption( "Rate Plans" );
 
     Q3PopupMenu * options = new Q3PopupMenu();
-    CHECK_PTR( options );
+    //CHECK_PTR( options );
     options->insertItem("New", this, SLOT(newRatePlan()), CTRL+Key_N);
     options->insertItem("Edit", this, SLOT(editRatePlan()), CTRL+Key_E);
     options->insertItem("Delete", this, SLOT(deleteRatePlan()), CTRL+Key_D);
@@ -209,3 +199,5 @@ void RatePlans::deleteRatePlan()
     }
 }
 
+
+// vim: expandtab

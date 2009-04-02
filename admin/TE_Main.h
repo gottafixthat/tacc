@@ -9,16 +9,12 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-// vim: expandtab
-
-
 #ifndef TE_MAIN_H
 #define TE_MAIN_H
 
-#include <q3widgetstack.h>
-#include <qtabbar.h>
-//Added by qt3to4:
-#include <QCloseEvent>
+#include <QtGui/QTabBar>
+#include <QtGui/QCloseEvent>
+#include <Qt3Support/q3widgetstack.h>
 
 #include <TAAWidget.h>
 
@@ -59,3 +55,5 @@ protected:
 };
 
 #endif
+
+// vim: expandtab

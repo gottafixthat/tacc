@@ -12,10 +12,9 @@
 #ifndef TE_MESSAGE_H
 #define TE_MESSAGE_H
 
-#include <qlineedit.h>
-#include <q3multilineedit.h>
-//Added by qt3to4:
-#include <QCloseEvent>
+#include <QtGui/QLineEdit>
+#include <QtGui/QCloseEvent>
+#include <Qt3Support/q3multilineedit.h>
 
 #include <TAAWidget.h>
 

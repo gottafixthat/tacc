@@ -1,9 +1,7 @@
-/**
- * PaymentTermsEdit.h - Class definition to for the payment terms edit
- * widget.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -14,8 +12,9 @@
 #ifndef PaymentTermsEdit_included
 #define PaymentTermsEdit_included
 
-#include <qlineedit.h>
-#include <qspinbox.h>
+#include <QtGui/QLineEdit>
+#include <QtGui/QSpinBox>
+
 #include <TAAWidget.h>
 
 class PaymentTermsEdit : public TAAWidget
@@ -52,3 +51,5 @@ private:
 };
 #endif // PaymentTermsEdit_included
 
+
+// vim: expandtab
