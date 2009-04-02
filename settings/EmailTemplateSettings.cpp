@@ -1,28 +1,27 @@
-/*
-** EmailTemplateSettings - Allows an admin to set the email templates used
-** by various programs.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2007, R. Marc Lewis and Avvatel Corporation
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Avvatel Corporation and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qtooltip.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QToolTip>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
+
 #include <TAATools.h>
 #include <Cfg.h>
 #include <ADB.h>
-#include <EmailTemplateSettings.h>
+
+#include "EmailTemplateSettings.h"
+
+using namespace Qt;
 
 /**
  * EmailTemplateSettings()
@@ -129,3 +128,5 @@ void EmailTemplateSettings::loadTemplates()
     }
 }
 
+
+// vim: expandtab

@@ -1,23 +1,22 @@
-/*
-** Settings - Allows an admin to configure settings within TACC.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2007, R. Marc Lewis and Avvatel Corporation
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Avvatel Corporation and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <QLabel>
-#include <Q3Frame>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3Frame>
+
 #include "SettingsManager.h"
+
+using namespace Qt;
 
 /*
  * SettingsManager - Constructor.  Lays out the widget.
@@ -118,31 +117,31 @@ void SettingsManager::saveSettings()
     // Call each of the widgets one by one to validate their settings
     if (!accounting->validateSettings()) {
         sections->raiseWidget(accounting);
-        sectionList->setSelected(sectionList->findItem(accounting->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(accounting->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
     if (!general->validateSettings()) {
         sections->raiseWidget(general);
-        sectionList->setSelected(sectionList->findItem(general->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(general->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
     if (!billing->validateSettings()) {
         sections->raiseWidget(billing);
-        sectionList->setSelected(sectionList->findItem(billing->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(billing->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
     if (!company->validateSettings()) {
         sections->raiseWidget(company);
-        sectionList->setSelected(sectionList->findItem(company->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(company->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
     if (!templates->validateSettings()) {
         sections->raiseWidget(templates);
-        sectionList->setSelected(sectionList->findItem(templates->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(templates->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
@@ -151,31 +150,31 @@ void SettingsManager::saveSettings()
     // Now call each of the widgets one by one to save their settings
     if (!accounting->saveSettings()) {
         sections->raiseWidget(accounting);
-        sectionList->setSelected(sectionList->findItem(accounting->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(accounting->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
     if (!general->saveSettings()) {
         sections->raiseWidget(general);
-        sectionList->setSelected(sectionList->findItem(general->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(general->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
     if (!billing->saveSettings()) {
         sections->raiseWidget(billing);
-        sectionList->setSelected(sectionList->findItem(billing->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(billing->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
     if (!company->saveSettings()) {
         sections->raiseWidget(company);
-        sectionList->setSelected(sectionList->findItem(company->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(company->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
     if (!templates->saveSettings()) {
         sections->raiseWidget(templates);
-        sectionList->setSelected(sectionList->findItem(templates->name(), Qt::ExactMatch), true);
+        sectionList->setSelected(sectionList->findItem(templates->name(), Q3ListBox::ExactMatch), true);
         return;
     }
 
@@ -209,3 +208,5 @@ void SettingsManager::changeSection(int item)
 
 
 
+
+// vim: expandtab

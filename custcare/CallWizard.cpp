@@ -1,49 +1,37 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** CallWizard - Creates an assload of widgets in a QWidgetStack and brings
-**              up the appropriate one based on user entry.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CallWizard.cpp,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
-
-#include "CallWizard.h"
-#include <CustomerSearch.h>
-
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <QLabel>
-#include <Q3Frame>
-
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <qdatetm.h>
-#include <q3header.h>
-#include <qprinter.h>
-#include <qpainter.h>
-#include <qrect.h>
-#include <qstatusbar.h>
-#include <qpushbutton.h>
-#include <math.h>
-#include <qlayout.h>
-#include <q3widgetstack.h>
+
+#include <QtCore/QDateTime>
+#include <QtCore/QRect>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <QtGui/QPrinter>
+#include <QtGui/QPainter>
+#include <QtGui/QStatusBar>
+#include <QtGui/QPushButton>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3Frame>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3widgetstack.h>
+#include <Qt3Support/q3header.h>
+
+#include <CustomerSearch.h>
+
+#include "CallWizard.h"
+
+using namespace Qt;
 
 CallWizard::CallWizard
 (
@@ -160,3 +148,5 @@ void CallWizard::stopTimer()
 }
 
 
+
+// vim: expandtab

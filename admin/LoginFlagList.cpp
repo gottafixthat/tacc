@@ -1,37 +1,30 @@
-/*
-***************************************************************************
-**
-** LoginFlagsList - Manages the login flags that can be associated with
-** login types.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Avvatel Corporation and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <QtCore/QDateTime>
+#include <QtCore/QTimer>
+#include <QtGui/QLayout>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
+
 #include <ADB.h>
-
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
 #include <Cfg.h>
-
 #include <TAA.h>
+
 #include "LoginFlagList.h"
 
 LoginFlagList::LoginFlagList
@@ -118,7 +111,7 @@ void LoginFlagList::refreshList()
 /** refreshLoginFlag - A slot that connects to the server group editor
   * so the server group that was affected can be refreshed after an edit.
   */
-void LoginFlagList::refreshLoginFlag(long intID)
+void LoginFlagList::refreshLoginFlag(long)
 {
     refreshList();
 }
@@ -245,7 +238,7 @@ LoginFlagEditor::LoginFlagEditor
 
     Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    Q3GridLayout *gl = new Q3GridLayout();
+    Q3GridLayout *gl = new Q3GridLayout(4, 2);
     int curRow = 0;
     gl->addWidget(loginFlagLabel,           curRow, 0);
     gl->addWidget(loginFlag,                curRow, 1);
@@ -551,3 +544,5 @@ void LoginFlagSelector::assignedDoubleClicked(Q3ListViewItem *curItem)
     if (curItem) unassign(atol(curItem->key(idColumn,0)));
 }
 
+
+// vim: expandtab

@@ -1,38 +1,33 @@
-/*
-***************************************************************************
-**
-** CompanyEditor - An interface that allows an admin to manage the
-** companies that TACC manages.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2006, R. Marc Lewis and Avvanta Communications Corp.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Avvanta Communications and R. Marc Lewis.
-***************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <ADB.h>
+#include <QtCore/QDateTime>
+#include <QtCore/QTimer>
+#include <QtGui/QLayout>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3BoxLayout>
 
-#include <qdatetm.h>
-#include <qlayout.h>
-#include <qtimer.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
-#include <Q3BoxLayout>
-#include <QLabel>
+#include <ADB.h>
+#include <TAA.h>
 #include <Cfg.h>
 
-#include <TAA.h>
 #include "CompanyEditor.h"
+
+using namespace Qt;
 
 CompanyList::CompanyList
 (
@@ -102,7 +97,7 @@ void CompanyList::refreshList()
     myDB.query("select CompanyID, CompanyName, Active from Companies");
     if (myDB.rowCount) {
         while (myDB.getrow()) {
-            Q3ListViewItem   *tmpItem = new Q3ListViewItem(coList, myDB.curRow["CompanyName"], myDB.curRow["Active"], myDB.curRow["CompanyID"]);
+            (void) new Q3ListViewItem(coList, myDB.curRow["CompanyName"], myDB.curRow["Active"], myDB.curRow["CompanyID"]);
         }
     }
 
@@ -112,7 +107,7 @@ void CompanyList::refreshList()
 /** refreshCompany - A slot that connects to the company editor so the
   * company that was affected can be refreshed after an edit.
   */
-void CompanyList::refreshCompany(long companyID)
+void CompanyList::refreshCompany(long)
 {
     refreshList();
 }
@@ -265,7 +260,7 @@ CompanyEditor::CompanyEditor
 
     Q3BoxLayout  *ml = new Q3BoxLayout(this, Q3BoxLayout::TopToBottom, 3, 3);
 
-    Q3GridLayout *gl = new Q3GridLayout();
+    Q3GridLayout *gl = new Q3GridLayout(5,2);
     int curRow = 0;
     gl->addWidget(companyTagLabel,          curRow, 0);
     gl->addWidget(companyTag,               curRow, 1);
@@ -357,8 +352,6 @@ void CompanyEditor::saveClicked()
 {
     // Validate the form data.
     ADB     DB;
-    long    vendorID = 0;
-    long    serverGroupID = 0;
 
     // Validate the tag line.
     if (companyTag->text().length() < 2 || companyTag->text().length() > 64) {
@@ -409,3 +402,5 @@ void CompanyEditor::cancelClicked()
     delete this;
 }
 
+
+// vim: expandtab

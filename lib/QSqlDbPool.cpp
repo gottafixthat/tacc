@@ -19,6 +19,8 @@
 #include <QtSql/QSqlError>
 #include <QSqlDbPool.h>
 
+#include <TAATools.h>
+
 static Q3PtrList<sql_Connection_Info> connectionPool;
 
 // Our default/global connection information.
@@ -113,11 +115,11 @@ QSqlDbPool::~QSqlDbPool()
         if (connInfo->connectionID == myConnectionID) {
             // Found it.  Set it to not be in use.
             connInfo->inUse = 0;
-            if (poolCloseOnRelease) connInfo->db->close();
+            if (poolCloseOnRelease) connInfo->db.close();
         }
     }
 
-    //fprintf(stderr, "QSqlDbPool Connection count is now %d/%d\n", activeConnectionCount(), connectionPool.count());
+    debug(5, "QSqlDbPool Connection count is now %d/%d\n", activeConnectionCount(), connectionPool.count());
 }
 
 /**
@@ -145,10 +147,10 @@ void QSqlDbPool::setDefaultDriver(const char *newDriver)
             poolDefDriver = new char[strlen(newDriver)+2];
             strcpy(poolDefDriver, newDriver);
         } else {
-            fprintf(stderr, "QSqlDbPool::setDefaultDriver() - Unable to set default driver to '%s'.  Qt reports driver not available.\n", newDriver);
+            debug(0, "QSqlDbPool::setDefaultDriver() - Unable to set default driver to '%s'.  Qt reports driver not available.\n", newDriver);
         }
     } else {
-        fprintf(stderr, "QSqlDbPool::setDefaultDriver() - Unable to set default driver to NULL\n");
+        debug(0, "QSqlDbPool::setDefaultDriver() - Unable to set default driver to NULL\n");
     }
 }
 
@@ -175,7 +177,7 @@ void QSqlDbPool::setDefaultHost(const char *newHost)
         poolDefHost = new char[strlen(newHost)+2];
         strcpy(poolDefHost, newHost);
     } else {
-        fprintf(stderr, "QSqlDbPool::setDefaultHost() - Unable to set default host to NULL\n");
+        debug(0, "QSqlDbPool::setDefaultHost() - Unable to set default host to NULL\n");
     }
 }
 
@@ -202,7 +204,7 @@ void QSqlDbPool::setDefaultName(const char *newName)
         poolDefName = new char[strlen(newName)+2];
         strcpy(poolDefName, newName);
     } else {
-        fprintf(stderr, "QSqlDbPool::setDefaultName() - Unable to set default database name to NULL\n");
+        debug(0, "QSqlDbPool::setDefaultName() - Unable to set default database name to NULL\n");
     }
 }
 
@@ -229,7 +231,7 @@ void QSqlDbPool::setDefaultUser(const char *newUser)
         poolDefUser = new char[strlen(newUser)+2];
         strcpy(poolDefUser, newUser);
     } else {
-        fprintf(stderr, "QSqlDbPool::setDefaultUser() - Unable to set default user name to NULL\n");
+        debug(0, "QSqlDbPool::setDefaultUser() - Unable to set default user name to NULL\n");
     }
 }
 
@@ -279,14 +281,9 @@ void QSqlDbPool::setDefaultOpts(const char *newOpts)
     strcpy(poolDefOpts, newOpts);
 }
 
-QSqlDatabase *QSqlDbPool::qsqldb()
+QSqlDatabase QSqlDbPool::qsqldb()
 {
     return myConnection->db;
-}
-
-QSqlDatabase QSqlDbPool::sqldb()
-{
-    return *myConnection->db;
 }
 
 /**
@@ -328,11 +325,11 @@ sql_Connection_Info *QSqlDbPool::findAvailableConnection()
             // This one is not in use, check to see if the connection
             // info matches the database info we're looking for.
             if (
-                    connInfo->db->databaseName() == QString(mydbName) &&
-                    connInfo->db->userName() == QString(mydbUser) &&
-                    connInfo->db->password() == QString(mydbPass) &&
-                    connInfo->db->hostName() == QString(mydbHost) &&
-                    connInfo->db->driverName() == QString(mydbDriver)
+                    connInfo->db.databaseName() == QString(mydbName) &&
+                    connInfo->db.userName() == QString(mydbUser) &&
+                    connInfo->db.password() == QString(mydbPass) &&
+                    connInfo->db.hostName() == QString(mydbHost) &&
+                    connInfo->db.driverName() == QString(mydbDriver)
                 ) {
                 retVal = connInfo;
                 break;
@@ -362,33 +359,33 @@ void QSqlDbPool::createNewConnection()
         char dbName[256];
         sprintf(dbName, "dbpool%06d", poolCounter);
         conn->connectionID = poolCounter;
-        conn->db = &QSqlDatabase::addDatabase(mydbDriver, dbName).database();
-        conn->db->setHostName(mydbHost);
-        conn->db->setDatabaseName(mydbName);
-        conn->db->setUserName(mydbUser);
-        conn->db->setPassword(mydbPass);
-        conn->db->setConnectOptions(mydbOpts);
+        conn->db = QSqlDatabase::addDatabase(mydbDriver, dbName); //.database();
+        conn->db.setHostName(mydbHost);
+        conn->db.setDatabaseName(mydbName);
+        conn->db.setUserName(mydbUser);
+        conn->db.setPassword(mydbPass);
+        conn->db.setConnectOptions(mydbOpts);
 
         connectionPool.append(conn);
     }
 
     conn->inUse = 1;
     myConnectionID = conn->connectionID;
-    if (!conn->db->isOpen()) {
+    if (!conn->db.isOpen()) {
         bool tmpRet;
-        tmpRet = conn->db->open();
+        tmpRet = conn->db.open();
         if (!tmpRet) {
-            fprintf(stderr, "Error opening database connection %s://%s@%s\n", mydbDriver, mydbUser, mydbHost);
-            QSqlError lErr = conn->db->lastError();
-            fprintf(stderr, "driver: '%s'\n", lErr.driverText().ascii());
-            fprintf(stderr, "database: '%s'\n", lErr.databaseText().ascii());
+            debug(0, "Error opening database connection %s://%s@%s\n", mydbDriver, mydbUser, mydbHost);
+            QSqlError lErr = conn->db.lastError();
+            debug(0, "driver: '%s'\n", lErr.driverText().ascii());
+            debug(0, "database: '%s'\n", lErr.databaseText().ascii());
         }
 
-        conn->db->setDatabaseName(mydbName);
+        conn->db.setDatabaseName(mydbName);
     }
 
     myConnection = conn;
 
-    //fprintf(stderr, "QSqlDbPool Connection count is now %d/%d\n", activeConnectionCount(), connectionPool.count());
+    debug(5, "QSqlDbPool Connection count is now %d/%d\n", activeConnectionCount(), connectionPool.count());
 }
 

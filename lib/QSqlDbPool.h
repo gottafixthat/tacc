@@ -23,7 +23,7 @@
 struct sql_Connection_Info {
     int             inUse;
     int             connectionID;
-    QSqlDatabase    *db;
+    QSqlDatabase    db;
 };
 
 class QSqlDbPool : public QObject
@@ -54,8 +54,7 @@ public:
     static const char *defaultOpts();
     static  void       setDefaultOpts(const char *newOpts);
 
-    QSqlDatabase    *qsqldb();
-    QSqlDatabase    sqldb();
+    QSqlDatabase    qsqldb();
 
     int              activeConnectionCount();
 

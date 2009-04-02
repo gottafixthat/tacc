@@ -9,15 +9,15 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-
-#include <qapplication.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
+#include <QtGui/QApplication>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
 
 #include <BlargDB.h>
 
 #include <TE_Cities.h>
+
+using namespace Qt;
 
 TE_Cities::TE_Cities(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )

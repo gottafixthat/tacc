@@ -26,18 +26,20 @@
 #include <unistd.h>
 #include <pwd.h>
 
-#include <QtGui/QApplication>
-#include <QtCore/QDateTime>
-#include <QtGui/QMessageBox>
-#include <QtGui/QWidget>
 #include <QtCore/QRegExp>
 #include <QtCore/QFile>
+#include <QtCore/QDateTime>
+#include <QtCore/QVariant>
+#include <QtCore/QDebug>
+#include <QtGui/QApplication>
+#include <QtGui/QMainWindow>
+#include <QtGui/QMessageBox>
+#include <QtGui/QWidget>
 #include <Qt3Support/q3textstream.h>
 #include <Qt3Support/q3listview.h>
 #include <Qt3Support/q3header.h>
 #include <Qt3Support/Q3StrList>
 #include <QtSql/QSqlQuery>
-#include <QtCore/QVariant>
 
 #include <ADB.h>
 #include <Cfg.h>
@@ -58,7 +60,7 @@ static const char* t_MonthNames[] = { "Jan", "Feb", "Mar", "Apr",
 
 taa_User        myCurrentUser;
 
-QWidget         *intMainWin;
+QMainWindow     *intMainWin;
 
 int      debugLevel = 0;
 
@@ -70,7 +72,9 @@ int      debugLevel = 0;
 
 QWidget *mainWin()
 {
+    //qDebug() << intMainWin << endl;
     return intMainWin;
+    //return QApplication::mainWidget();
 }
 
 /*
@@ -80,7 +84,7 @@ QWidget *mainWin()
 **                Note:  If this isn't set, really bad things will happen.
 */
 
-void setMainWin(QWidget *newWinPtr)
+void setMainWin(QMainWindow *newWinPtr)
 {
     intMainWin = newWinPtr;
 }
@@ -186,7 +190,7 @@ int schemaVersion()
 {
     QSqlDbPool  dbp;
 
-    QSqlQuery   q(dbp.sqldb());
+    QSqlQuery   q(dbp.qsqldb());
 
     if (!q.exec("select SchemaVersion from SchemaVersion")) {
         // If we can't query it, return false.

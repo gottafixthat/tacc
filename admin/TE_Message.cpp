@@ -9,20 +9,18 @@
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  */
 
-
-
-
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qfile.h>
-#include <q3textstream.h>
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
+#include <QtCore/QFile>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/q3textstream.h>
 
 #include <TE_Message.h>
+
+using namespace Qt;
 
 TE_Message::TE_Message(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )

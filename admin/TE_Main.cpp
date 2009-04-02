@@ -11,13 +11,12 @@
 
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <q3accel.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/q3accel.h>
 
 #include <BlargDB.h>
 #include <ParseFile.h>
@@ -25,18 +24,20 @@
 
 #include <TE_Main.h>
 
+using namespace Qt;
+
 TE_Main::TE_Main(QWidget* parent, const char* name) :
 	TAAWidget( parent, name )
 {
 	setCaption( "Targeted Email" );
 
     // Create our widgets.
-    theTabBar = new QTabBar(this, "theTabBar");
+    theTabBar = new QTabBar(this);
 
     // Create the tabs for the tab bar.
-    theTabBar->addTab(new QTab("Message"));
-    theTabBar->addTab(new QTab("Login Types"));
-    theTabBar->addTab(new QTab("Cities"));
+    theTabBar->addTab("Message");
+    theTabBar->addTab("Login Types");
+    theTabBar->addTab("Cities");
 
     qws = new Q3WidgetStack(this, "widgetStack");
     

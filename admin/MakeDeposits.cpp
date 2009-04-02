@@ -1,10 +1,7 @@
-/**
- * MakeDeposits.h - Allows the user to select funds that are currently
- * sitting in the Undeposited Funds account and transfer it into a cash
- * account.
+/* Total Accountability Customer Care (TACC)
  *
  * Written by R. Marc Lewis
- *   (C)opyright 1998-2009, R. Marc Lewis and Avvatel Corporation
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
  *   All Rights Reserved
  *
  *   Unpublished work.  No portion of this file may be reproduced in whole
@@ -15,22 +12,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qapplication.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <Q3GridLayout>
-#include <QLabel>
+#include <QtGui/QApplication>
+#include <QtGui/QPushButton>
+#include <QtGui/QLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/Q3BoxLayout>
+#include <Qt3Support/Q3GridLayout>
 
+#include <ADB.h>
 #include <BlargDB.h>
-#include <GenLedger.h>
 #include <Cfg.h>
-#include <TAATools.h>
+#include <GenLedger.h>
 #include <QListViewPrint.h>
+#include <TAATools.h>
 
 #include "MakeDeposits.h"
-#include <ADB.h>
+
+using namespace Qt;
 
 MakeDeposits::MakeDeposits
 (
@@ -250,8 +249,8 @@ void MakeDeposits::processSelections()
     // Start by walking through each of the undeposited items and
     // then adding a split item for it.
     Q3ListViewItem   *curItem;
-    int nameCol  = 2;
-    int numCol   = 3;
+    //int nameCol  = 2;
+    //int numCol   = 3;
     int amtCol   = 4;
     int intIDCol = 5;
     char tmpStr[1024];
@@ -398,3 +397,5 @@ void MakeDeposits::printSelected()
     lvPrn.print();
 }
 
+
+// vim: expandtab

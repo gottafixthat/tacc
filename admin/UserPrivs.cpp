@@ -1,32 +1,28 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** UserPrivs.cpp  -  UserPrivs is the widget that will allow the system
-**                   administrator to create and delete accounts, as well
-**                   as change their passwords and such.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**     under contract to The Public Defender Association
-***************************************************************************
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3BoxLayout>
-#include <ADB.h>
+#include <QtGui/QLayout>
+#include <Qt3Support/Q3BoxLayout>
 
+#include <ADB.h>
 #include <TAATools.h>
 
 #include "UserPrivs.h"
 
 #define IntIDCol 2
+
+using namespace Qt;
 
 UserPrivs::UserPrivs
 (
@@ -156,3 +152,5 @@ void UserPrivs::userUpdated(long newCurrent)
     userList->setFocus();
 }
 
+
+// vim: expandtab

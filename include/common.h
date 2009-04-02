@@ -6,7 +6,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <qapplication.h>
+#include <QtGui/QApplication>
 #include <mysql/mysql.h>
 #include "BlargDB.h"
 

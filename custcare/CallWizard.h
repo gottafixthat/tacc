@@ -1,38 +1,26 @@
-/*
-** $Id: CallWizard.h,v 1.1 2003/12/07 01:47:04 marc Exp $
-**
-***************************************************************************
-**
-** CallWizard - Starts an incoming call wizard.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2001, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: CallWizard.h,v $
-** Revision 1.1  2003/12/07 01:47:04  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef CALLWIZARD_H 
 #define CALLWIZARD_H
 
-#include <qwidget.h>
-#include <qstatusbar.h>
-#include <qlabel.h>
-#include <qtimer.h>
-#include <qradiobutton.h>
-#include <qpushbutton.h>
-#include <qlcdnumber.h>
-#include <qdatetime.h>
-#include <q3widgetstack.h>
+#include <QtCore/QTimer>
+#include <QtCore/QDateTime>
+#include <QtGui/QStatusBar>
+#include <QtGui/QLabel>
+#include <QtGui/QRadioButton>
+#include <QtGui/QPushButton>
+#include <QtGui/QLCDNumber>
+#include <Qt3Support/q3widgetstack.h>
+
 #include <TAAWidget.h>
 
 #include "CallTypeSelector.h"
@@ -69,3 +57,5 @@ protected:
 int main(int argc, char **argv);
 
 #endif // CALLWIZARD_H
+
+// vim: expandtab

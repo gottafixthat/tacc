@@ -1,43 +1,26 @@
-/*
-** $Id$
-**
-***************************************************************************
-**
-** TAAWidget - The TAAWidget is the base class for all of the windows and
-**             widgets in Total AccountAbility.  It connects various
-**             various signals and slots to the MainWin for automatic
-**             inter-widget communication.
-**
-***************************************************************************
-** Written by R. Marc Lewis, 
-**   (C)opyright 1998-2000, R. Marc Lewis and Blarg! Oline Services, Inc.
-**   All Rights Reserved.
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-***************************************************************************
-** $Log: TAAWidget.cpp,v $
-** Revision 1.2  2003/12/30 18:44:56  marc
-** Added a new real-time setProgress signal.
-**
-** Revision 1.1  2003/12/07 01:47:05  marc
-** New CVS tree, all cleaned up.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
+#include <QtCore/QDebug>
 #include <QtGui/QApplication>
 #include <QtGui/QWidget>
-//Added by qt3to4:
-#include <Qt3Support/Q3Frame>
 #include <QtGui/QLabel>
+#include <Qt3Support/Q3Frame>
 
 #include <TAATools.h>
 #include "TAAWidget.h"
 #include <ADB.h>
 
 
+// TAAWidget
 TAAWidget::TAAWidget(QWidget *parent, const char *name, Qt::WFlags f) : QWidget(parent, f)
 {
     TAAWidget::TAAWidget(parent, f);
@@ -53,6 +36,17 @@ TAAWidget::TAAWidget(QWidget *parent, Qt::WFlags f)
     connect(this, SIGNAL(setStatus(const char *, int)), mainWin(), SLOT(setStatusMW(const char *, int)));
     connect(this, SIGNAL(setProgress(int, int)), mainWin(), SLOT(setProgressMW(int, int)));
     connect(this, SIGNAL(setProgressRT(int, int)), mainWin(), SLOT(setProgressMWRT(int, int)));
+
+    // Connect our signals to top level widgets.
+    foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+        //qDebug() << "Top widget name = '" << widget->className() << endl;
+        if (!strcmp(widget->className(), "CustomerCare")) {
+            qDebug() << "Connecting signal to " << widget->className();
+            //connect(this, SIGNAL(openCustomer(long)), widget, SLOT(openCustomerMW(long)));
+            connect(this, SIGNAL(openCustomer(long)), widget, SIGNAL(openCustomer(long)));
+        }
+    }
+    dumpObjectInfo();
 
     // Relay slots.  Individual TAAWidgets will emit customerUpdated() whenever
     // they update customer information.  This, in turn, will call the 
@@ -126,3 +120,5 @@ VertLine::~VertLine()
 {
 }
 
+
+// vim: expandtab

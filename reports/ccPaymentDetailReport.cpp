@@ -81,7 +81,7 @@ ccPaymentDetailReport::~ccPaymentDetailReport()
 void ccPaymentDetailReport::refreshReport()
 {
     QSqlDbPool  dbpool;
-    QSqlQuery   q(dbpool.sqldb());
+    QSqlQuery   q(dbpool.qsqldb());
     QString     customerName;
     QString     companyName;
     QString     ccType;

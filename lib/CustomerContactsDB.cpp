@@ -47,8 +47,8 @@ uint CustomerContactsDB::loadContact(uint id)
 {
     uint            retVal = 0;
     QSqlDbPool      dbpool;
-    QSqlDatabase    db = dbpool.sqldb();
-    Q3SqlCursor     contacts(QString("CustomerContacts"), true, dbpool.sqldb());
+    QSqlDatabase    db = dbpool.qsqldb();
+    Q3SqlCursor     contacts(QString("CustomerContacts"), true, dbpool.qsqldb());
     QSqlIndex       prikey = contacts.primaryIndex();
 
     contacts.setValue("ContactID",  id);
@@ -88,7 +88,7 @@ uint CustomerContactsDB::loadContact(uint id)
 customerContactList CustomerContactsDB::allCustomerContacts(uint id)
 {
     QSqlDbPool                      dbpool;
-    Q3SqlCursor                     contacts(QString("CustomerContacts"), true, dbpool.sqldb());
+    Q3SqlCursor                     contacts(QString("CustomerContacts"), true, dbpool.qsqldb());
     QSqlIndex                       prikey = contacts.primaryIndex();
     QList<customerContactRecord>    retVal;
     QString                         selStr;
@@ -190,7 +190,7 @@ int CustomerContactsDB::update()
 
     
     QSqlDbPool      dbpool;
-    Q3SqlCursor     contacts("CustomerContacts", true, dbpool.sqldb());
+    Q3SqlCursor     contacts("CustomerContacts", true, dbpool.qsqldb());
     QSqlIndex       prikey = contacts.primaryIndex();
 
     contacts.setValue("ContactID",  custContact.contactID);
@@ -216,7 +216,7 @@ int CustomerContactsDB::insert()
 
     
     QSqlDbPool      dbpool;
-    Q3SqlCursor     contacts("CustomerContacts", true, dbpool.sqldb());
+    Q3SqlCursor     contacts("CustomerContacts", true, dbpool.qsqldb());
 
     QSqlRecord *buf = contacts.primeInsert();
     setCursorValues(buf);
@@ -233,11 +233,12 @@ int CustomerContactsDB::insert()
 int CustomerContactsDB::del()
 {
     QSqlDbPool  dbpool;
-    QSqlQuery   q(dbpool.sqldb());
+    QSqlQuery   q(dbpool.qsqldb());
     q.prepare("delete from CustomerContacts where ContactID = :contactID");
     q.bindValue(":contactID", custContact.contactID);
     q.exec();
 
+    return 0;
 }
 
 /**
