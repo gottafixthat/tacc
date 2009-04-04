@@ -39,7 +39,7 @@
 using namespace Qt;
 
 NewCustomer::NewCustomer(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 
     // Create the widgets
@@ -77,7 +77,7 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
     cityStateZIPLabel->setAlignment(AlignRight|AlignVCenter);
 
     // Now, create a widget to hold the city, state and zip
-    TAAWidget *cszWidget = new TAAWidget(addrGrp, "cszWidget");
+    TAAWidget *cszWidget = new TAAWidget(addrGrp);
     city = new QLineEdit(cszWidget, "city");
     city->setMaxLength(80);
 
@@ -132,7 +132,7 @@ NewCustomer::NewCustomer(QWidget* parent, const char* name) :
 
     // Billing info, we'll use our own layout for this one.
     Q3GroupBox *billGrp = new Q3GroupBox(1, Horizontal, "Billing Information", this, "billGrp");
-    TAAWidget *billWidget = new TAAWidget(billGrp, "billWidget");
+    TAAWidget *billWidget = new TAAWidget(billGrp);
 
     QLabel *ratePlanLabel = new QLabel("Rate Plan:", billWidget);
     ratePlanLabel->setAlignment(AlignRight|AlignVCenter);

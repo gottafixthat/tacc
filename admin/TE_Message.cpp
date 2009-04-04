@@ -23,7 +23,7 @@
 using namespace Qt;
 
 TE_Message::TE_Message(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Message" );
 

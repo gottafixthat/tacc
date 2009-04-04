@@ -35,7 +35,7 @@
 using namespace Qt;
 
 WipedAccounts::WipedAccounts(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Overdue Account Processing (Inactive Accounts)" );
 

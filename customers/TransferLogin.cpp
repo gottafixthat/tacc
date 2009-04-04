@@ -25,7 +25,7 @@
 using namespace Qt;
 
 TransferLogin::TransferLogin(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Transfer Login" );
     

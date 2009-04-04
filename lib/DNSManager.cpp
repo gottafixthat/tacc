@@ -25,8 +25,8 @@
 
 // TAA DNS Manager class/widget
 
-DNSManager::DNSManager(QWidget *parent, const char *name)
-    : TAAWidget(parent, name)
+DNSManager::DNSManager(QWidget *parent) : 
+    TAAWidget(parent)
 {
     setCaption("DNS Manager");
 

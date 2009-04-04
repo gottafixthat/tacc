@@ -29,7 +29,7 @@ using namespace Qt;
  * Constructor.  Sets up the main widget layout and structure.
  */
 CustomerContactEditor::CustomerContactEditor(QWidget *parent, const char * name) 
-    : TAAWidget(parent, name)
+    : TAAWidget(parent)
 {
     setCaption("Customer Contact Editor");
 

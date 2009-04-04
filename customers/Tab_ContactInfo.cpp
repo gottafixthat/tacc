@@ -38,7 +38,7 @@ Tab_ContactInfo::Tab_ContactInfo
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	if (!CustID) return;
 

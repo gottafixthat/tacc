@@ -43,7 +43,7 @@ AgentInfo::AgentInfo
 (
     QWidget *parent,
     const char *name
-) : TAAWidget(parent, name)
+) : TAAWidget(parent)
 {
     agentname = new QLabel(this, "agentname");
     location = new QLabel(this, "location");
@@ -295,7 +295,7 @@ AgentStatus::AgentStatus
     AsteriskManager *mgrptr,
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget( parent)
 {
     setCaption( "Queue Monitor" );
 

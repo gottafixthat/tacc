@@ -39,7 +39,7 @@ Tab_Domains::Tab_Domains
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Create the Widgets.
     list    = new Q3ListView(this, "DomainList");

@@ -32,7 +32,7 @@ UserEditor::UserEditor
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption("User Editor");
 

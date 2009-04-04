@@ -26,7 +26,7 @@ BillingCycleEdit::BillingCycleEdit
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption("New Billing Cycle");
     myCycleID = "";

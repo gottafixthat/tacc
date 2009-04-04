@@ -38,7 +38,7 @@ TicketHeader::TicketHeader
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption("Ticket Editor");
     
@@ -257,7 +257,7 @@ TicketEditor::TicketEditor
 	QWidget* parent,
 	const char* name,
     long ticketNo
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption("Ticket Editor");
     
@@ -578,7 +578,7 @@ TicketLogAnnotater::TicketLogAnnotater
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption("Annotate Ticket");
 

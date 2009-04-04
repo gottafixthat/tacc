@@ -13,12 +13,10 @@
 #include <stdio.h>
 
 #include <QtCore/QRegExp>
-#include <QtGui/QLayout>
 #include <QtGui/QApplication>
+#include <QtGui/QBoxLayout>
+#include <QtGui/QHeaderView>
 #include <QtGui/QLabel>
-#include <Qt3Support/Q3BoxLayout>
-#include <Qt3Support/Q3Frame>
-#include <Qt3Support/Q3PopupMenu>
 
 #include "Customers.h"
 #include "NewCustomer.h"
@@ -35,39 +33,22 @@
 using namespace Qt;
 
 Customers::Customers ( QWidget* parent, const char* name) 
-  : TAAWidget ( parent, name, 0 )
+  : TAAWidget (parent)
 {
 	setCaption( "Customer List" );
 
-    // Create the layout.
-    /*
-    menu = new QMenuBar(this, "MainMenu");
-    menu->setGeometry(0, 0, 500, 25);
-    menu->setMinimumSize(0, 25);
-    menu->setMaximumSize(32767, 25);
-    menu->setFocusPolicy(QWidget::NoFocus);
-    menu->setBackgroundMode(QWidget::PaletteBackground);
-    menu->setFrameStyle( QFrame::Panel | QFrame::Raised);
-    menu->setLineWidth( 2 );
-    menu->setMidLineWidth( 0 );
-    menu->QFrame::setMargin( 0 );
-    */
+    QPushButton *newButton = new QPushButton("&New", this);
+    connect(newButton, SIGNAL(clicked()), this, SLOT(newCustomer()));
 
-    QPushButton *newButton = new QPushButton(this, "NewButton");
-    newButton->setText( "&New" );
-    connect(newButton, SIGNAL(clicked()), SLOT(newCustomer()));
+    QPushButton *editButton = new QPushButton("&Edit", this);
+    editButton->setText("&Edit");
+    connect(editButton, SIGNAL(clicked()), this, SLOT(editCustomer()));
 
-    QPushButton *qtarch_EditButton = new QPushButton(this, "EditButton");
-    qtarch_EditButton->setText( "&Edit" );
-    connect(qtarch_EditButton, SIGNAL(clicked()), SLOT(editCustomer()));
+    QPushButton *addNoteButton = new QPushButton("&Add Note", this);
+    connect(addNoteButton, SIGNAL(clicked()), this, SLOT(addCustNote()));
 
-    QPushButton *qtarch_AddNote_Button = new QPushButton(this, "AddNote_Button");
-    qtarch_AddNote_Button->setText( "&Add Note" );
-    connect(qtarch_AddNote_Button, SIGNAL(clicked()), SLOT(addCustNote()));
-
-    QPushButton *qtarch_TakeCallButton = new QPushButton(this, "TakeCallButton");
-    qtarch_TakeCallButton->setText( "&Take Call" );
-    connect(qtarch_TakeCallButton, SIGNAL(clicked()), SLOT(takeCall()));
+    QPushButton *takeCallButton = new QPushButton("&Take Call", this);
+    connect(takeCallButton, SIGNAL(clicked()), this, SLOT(takeCall()));
 
     queryLabel = new QLabel(this, "QueryLabel");
     queryLabel->setText( "&Search:" );
@@ -86,9 +67,8 @@ Customers::Customers ( QWidget* parent, const char* name)
     searchButton->setText("Search");
     connect(searchButton, SIGNAL(clicked()), this, SLOT(listQueryS()));
 
-    QPushButton *qtarch_ClearButton = new QPushButton(this, "ClearButton");
-    qtarch_ClearButton->setText( "C&lear" );
-    connect(qtarch_ClearButton, SIGNAL(clicked()), SLOT(clearQuery()));
+    QPushButton *clearButton = new QPushButton("C&lear", this);
+    connect(clearButton, SIGNAL(clicked()), this, SLOT(clearQuery()));
 
     autoOpenCustomer = new QCheckBox(this, "AutoOpenCheckbox");
     autoOpenCustomer->setText( "&Auto open if only one match." );
@@ -144,7 +124,7 @@ Customers::Customers ( QWidget* parent, const char* name)
     location->setAlignment(AlignLeft|AlignVCenter);
 
     // Put the telephone number info into a layout
-	Q3BoxLayout* phoneNumberLayout = new Q3BoxLayout(Q3BoxLayout::LeftToRight);
+	QBoxLayout *phoneNumberLayout = new QBoxLayout(QBoxLayout::LeftToRight);
     phoneNumberLayout->addWidget(phoneNumberLabel, 0);
     phoneNumberLayout->addWidget(phoneNumber,      1);
     phoneNumberLayout->addWidget(telcoNameLabel,   1);
@@ -158,106 +138,97 @@ Customers::Customers ( QWidget* parent, const char* name)
     phoneNumberLayout->addWidget(dslQualLabel,     1);
     phoneNumberLayout->addWidget(dslQual,          0);
 
-	Q3BoxLayout* locationLayout = new Q3BoxLayout(Q3BoxLayout::LeftToRight);
+	QBoxLayout *locationLayout = new QBoxLayout(QBoxLayout::LeftToRight);
     locationLayout->addWidget(locationLabel, 0);
     locationLayout->addWidget(location,      1);
 
-    list = new Q3ListView(this, "CustomerList");
-    list->setMultiSelection( FALSE );
-    list->setAllColumnsShowFocus( TRUE );
-    list->addColumn( "Customer Name", 225 );
-    list->setColumnWidthMode( 0, Q3ListView::Manual );
-    list->setColumnAlignment( 0, 1 );
-    list->addColumn( "CID", -1 );
-    list->setColumnWidthMode( 1, Q3ListView::Maximum );
-    list->setColumnAlignment( 1, 2 );
-    list->addColumn( "Username", -1 );
-    list->setColumnWidthMode( 2, Q3ListView::Maximum );
-    list->setColumnAlignment( 2, 1 );
-    list->addColumn( "Balance", -1 );
-    list->setColumnWidthMode( 3, Q3ListView::Maximum );
-    list->setColumnAlignment( 3, 2 );
-    list->addColumn( "A", -1 );
-    list->setColumnWidthMode( 4, Q3ListView::Maximum );
-    list->setColumnAlignment( 4, 4 );
-    list->addColumn("Login Type");
+    list = new QTreeWidget(this);
+    list->setAllColumnsShowFocus(true);
+    list->setColumnCount(6);
+    QStringList headers;
+    headers += "Customer Name";
+    headers += "CID";
+    headers += "Username";
+    headers += "Balance";
+    headers += "A";
+    headers += "Type";
+    list->setHeaderLabels(headers);
+    list->headerItem()->setTextAlignment(3, AlignRight);
+    list->headerItem()->setTextAlignment(4, AlignCenter);
+    list->setRootIsDecorated(true);
+    //list->setSortingEnabled(true);
+    //list->header()->setClickable(true);
+    //list->header()->setSortIndicatorShown(true);
+    
+	connect(list, SIGNAL(itemActivated(QTreeWidgetItem *, int)), SLOT(custSelected(QTreeWidgetItem *, int)));
+	//connect(list, SIGNAL(returnPressed(Q3ListViewItem *)), SLOT(custSelected(Q3ListViewItem *)));
 
-	Q3BoxLayout* qtarch_layout_1 = new Q3BoxLayout( this, Q3BoxLayout::TopToBottom, 0, 0, NULL );
-	qtarch_layout_1->addStrut( 0 );
-	//qtarch_layout_1->addWidget( menu, 1, 0 );
-	Q3BoxLayout* qtarch_layout_1_2 = new Q3BoxLayout( Q3BoxLayout::LeftToRight, 0, NULL );
-	qtarch_layout_1->addLayout( qtarch_layout_1_2, 1 );
-	qtarch_layout_1_2->addStrut( 0 );
-	qtarch_layout_1_2->addWidget( newButton, 1, 0 );
-	qtarch_layout_1_2->addWidget( qtarch_EditButton, 1, 0 );
-	//qtarch_layout_1_2->addWidget( qtarch_CloseButton, 1, 0 );
-	qtarch_layout_1_2->addWidget( qtarch_AddNote_Button, 1, 0 );
-	qtarch_layout_1_2->addWidget( qtarch_TakeCallButton, 1, 0 );
-	Q3BoxLayout* qtarch_layout_1_3 = new Q3BoxLayout( Q3BoxLayout::LeftToRight, 0, NULL );
-	qtarch_layout_1->addLayout( qtarch_layout_1_3, 1 );
-	qtarch_layout_1_3->addStrut( 0 );
-	qtarch_layout_1_3->addWidget( queryLabel, 0, 0 );
-	qtarch_layout_1_3->addWidget( listQuery, 1, 0 );
-	qtarch_layout_1_3->addWidget( searchButton, 0, 0 );
-	qtarch_layout_1_3->addWidget( qtarch_ClearButton, 0, 0 );
-	qtarch_layout_1_3->addWidget( autoOpenCustomer, 0, 0 );
-	qtarch_layout_1->addWidget( list, 1, 0 );
-	qtarch_layout_1->addLayout( phoneNumberLayout, 0);
-	qtarch_layout_1->addLayout( locationLayout, 0);
+	QBoxLayout *ml = new QBoxLayout(QBoxLayout::TopToBottom);
+    ml->setMargin(2);
+    ml->setSpacing(2);
+
+    QHBoxLayout *bl = new QHBoxLayout();
+    bl->addWidget(newButton);
+    bl->addWidget(editButton);
+    bl->addWidget(addNoteButton);
+    bl->addWidget(takeCallButton);
+    ml->addLayout(bl);
+
+    QBoxLayout *ql = new QBoxLayout(QBoxLayout::LeftToRight);
+    ql->addWidget(queryLabel);
+    ql->addWidget(listQuery, 1);
+    ql->addWidget(searchButton);
+    ql->addWidget(clearButton);
+    ml->addLayout(ql);
+
+    ml->addWidget(list, 1);
+    ml->addLayout(phoneNumberLayout);
+    ml->addLayout(locationLayout);
+
+    setLayout(ml);
     /*
     resize(500,345);
     setMinimumSize(300, 300);
     setMaximumSize(32767, 32767);
     */
 
+    // Setup our actions.
+    actNew = new QAction(tr("&New"), this);
+    actNew->setShortcut(tr("Ctrl+N"));
+    connect(actNew, SIGNAL(triggered()), this, SLOT(newCustomer()));
+
+    actEdit = new QAction(tr("&Edit"), this);
+    actEdit->setShortcut(tr("Ctrl+E"));
+    connect(actEdit, SIGNAL(triggered()), this, SLOT(editCustomer()));
+
+    actAddNote = new QAction(tr("&Add Note"), this);
+    actAddNote->setShortcut(tr("Ctrl+A"));
+    connect(actAddNote, SIGNAL(triggered()), this, SLOT(addCustNote()));
+
+    actReceivePayment = new QAction(tr("&Receive Payment"), this);
+    actReceivePayment->setShortcut(tr("Ctrl+R"));
+    connect(actReceivePayment, SIGNAL(triggered()), this, SLOT(receivePayment()));
+
+    actDomainAliases = new QAction(tr("D&omain Aliases (Global)"), this);
+    connect(actDomainAliases, SIGNAL(triggered()), this, SLOT(globalAliases()));
+
     // Set up the menu...
-    
-    optionsMenu = new Q3PopupMenu();
-    optionsMenu->insertItem("New", this, SLOT(newCustomer()), CTRL+Key_N);
-    optionsMenu->insertItem("Edit", this, SLOT(editCustomer()), CTRL+Key_E);
-//    optionsMenu->insertItem("Delete", this, SLOT(deleteCustomer()), CTRL+Key_D);
+    optionsMenu = new QMenu("&Options");
+    optionsMenu->addAction(actNew);
+    optionsMenu->addAction(actEdit);
     optionsMenu->insertSeparator();
-    optionsMenu->insertItem("Add Note", this, SLOT(addCustNote()), CTRL+Key_A);
-    optionsMenu->insertItem("Receive Payment", this, SLOT(receivePayment()), CTRL+Key_R);
+    optionsMenu->addAction(actAddNote);
+    optionsMenu->addAction(actReceivePayment);
     if (isManager()) {
         optionsMenu->insertSeparator();
-        optionsMenu->insertItem("Domain Aliases (Global)", this, SLOT(globalAliases()));
+        optionsMenu->addAction(actDomainAliases);
     }
-    //optionsMenu->insertItem("Close", this, SLOT(close()), CTRL+Key_C);
 
-    //menu->insertItem("&Options", options);
-
-    /*
-    if (!isAdmin()) {
-	    QPopupMenu *help = new QPopupMenu;
-	    CHECK_PTR( help );
-	    help->insertItem( "About", this, SLOT(showAbout()), CTRL+Key_H );
-	    menu->insertSeparator();
-	    menu->insertItem( "&Help", help );
-    }
-    */
-    
     
     listQuery->setFocus();
-//    list->setSmoothScrolling(TRUE);
     
     queryLabel->setBuddy(listQuery);
 
-    /*
-    list->addColumn("Customer Name");
-    list->addColumn("Cust ID");
-    list->addColumn("Primary Login");
-    list->addColumn("Balance");
-    list->addColumn("A");
-    */
-    list->setColumnAlignment(3, AlignRight);
-    list->setColumnAlignment(4, AlignCenter);
-    list->setRootIsDecorated(TRUE);
-    
-	connect(list, SIGNAL(doubleClicked(Q3ListViewItem *)), SLOT(custSelected(Q3ListViewItem *)));
-	connect(list, SIGNAL(returnPressed(Q3ListViewItem *)), SLOT(custSelected(Q3ListViewItem *)));
-
-    list->setAllColumnsShowFocus(TRUE);
     
     autoOpenCustomer->hide();
     // We only want to show the phone number data if the user enters a phone number
@@ -314,10 +285,10 @@ void Customers::refreshList(long)
     
     // Change the cursor to an hourglass
     QApplication::setOverrideCursor(waitCursor);
-    emit(setStatus("Searching..."));
+    emit setStatus("Searching...");
     
     // Save the state of the list.
-    Q3ListViewItem       *tmpCur;
+    QTreeWidgetItem *tmpCur;
     tmpCur  = list->currentItem();
     
     list->clear();
@@ -328,13 +299,13 @@ void Customers::refreshList(long)
     tmpsub = listQuery->text().replace(QRegExp("[^a-zA-Z0-9\\,.\\-_ /]"), "").simplifyWhiteSpace();
     listQuery->setText(tmpsub);
 
-    emit(setStatus(""));
+    emit setStatus("");
     QApplication::restoreOverrideCursor();
     // If there is no query at all, simply return since the
     // list is now empty.
     if (!tmpsub.length()) return;
     QApplication::setOverrideCursor(waitCursor);
-    emit(setStatus("Searching..."));
+    emit setStatus("Searching...");
 
     phoneNumber->setText("");
     telcoName->setText("");
@@ -590,10 +561,10 @@ void Customers::refreshList(long)
         // One of our queries matched.  DB will have a query full of
         // Customer IDs.  We run several other queries on this one
         // to get the entire customer record for them.
-        emit(setStatus("Loading matching customers..."));
+        emit setStatus("Loading matching customers...");
         loadedCustMap::Iterator it;
         for (it = loadedCusts.begin(); it != loadedCusts.end(); ++it) {
-            emit(setProgress(++curRow, rowcnt));
+            emit setProgress(++curRow, rowcnt);
             custDB.get(it.data());
             
             sprintf(tmpstr, "%s", custDB.getStr("FullName"));
@@ -614,19 +585,21 @@ void Customers::refreshList(long)
 
 
             // Create the parent record.
-            tmpCur = new Q3ListViewItem(list, 
-              tmpstr,               // FullName/Contact Name
-              custDB.getStr("CustomerID"),
-              custDB.getStr("PrimaryLogin"),
-              custDB.getStr("CurrentBalance"),
-              isActive,             // Active
-              ltypeStr
-            );
+            tmpCur = new QTreeWidgetItem(list);
+            tmpCur->setText(0, tmpstr);
+            tmpCur->setText(1, custDB.getStr("CustomerID"));
+            tmpCur->setText(2, custDB.getStr("PrimaryLogin"));
+            tmpCur->setText(3, custDB.getStr("CurrentBalance"));
+            tmpCur->setText(4, isActive);
+            tmpCur->setText(5, ltypeStr);
             if (!strcmp(custDB.getStr("PrimaryLogin"), tmpsub)) {
                 list->setCurrentItem(tmpCur);
-                list->ensureItemVisible(tmpCur);
+                list->scrollToItem(tmpCur);
                 matchFound = true;
             }
+            tmpCur->setTextAlignment(1, Qt::AlignRight);
+            tmpCur->setTextAlignment(3, Qt::AlignRight);
+            tmpCur->setTextAlignment(4, Qt::AlignCenter);
 
             // Get any child records.
             DB2.query("select Logins.ContactName, Logins.LoginID, Logins.Active, LoginTypes.LoginType from Logins, LoginTypes where Logins.CustomerID = %ld and LoginTypes.InternalID = Logins.LoginType", custDB.getLong("CustomerID"));
@@ -635,18 +608,20 @@ void Customers::refreshList(long)
                 if (strcmp(custDB.getStr("PrimaryLogin"), DB2.curRow["LoginID"])) {
                     if (atoi(DB2.curRow["Active"])) strcpy(isActive, "Yes");
                     else strcpy(isActive, "No");
-                    Q3ListViewItem *tmpChild = new Q3ListViewItem(tmpCur,
-                                             DB2.curRow["ContactName"],
-                                             custDB.getStr("CustomerID"),
-                                             DB2.curRow["LoginID"],
-                                             "",
-                                             isActive,
-                                             DB2.curRow["LoginType"]
-                                             );
+                    QTreeWidgetItem *tmpChild = new QTreeWidgetItem(tmpCur);
+                    tmpChild->setText(0, DB2.curRow["ContactName"]);
+                    tmpChild->setText(1, custDB.getStr("CustomerID"));
+                    tmpChild->setText(2, DB2.curRow["LoginID"]);
+                    tmpChild->setText(3, "");
+                    tmpChild->setText(4, isActive);
+                    tmpChild->setText(5, DB2.curRow["LoginType"]);
+                    tmpChild->setTextAlignment(1, Qt::AlignRight);
+                    tmpChild->setTextAlignment(3, Qt::AlignRight);
+                    tmpChild->setTextAlignment(4, Qt::AlignCenter);
                     if (!strcmp(DB2.curRow["LoginID"], tmpsub)) {
-                        tmpCur->setOpen(true);
+                        tmpCur->setExpanded(true);
                         list->setCurrentItem(tmpChild);
-                        list->ensureItemVisible(tmpChild);
+                        list->scrollToItem(tmpChild);
                         matchFound = true;
                     }
                 }
@@ -654,38 +629,35 @@ void Customers::refreshList(long)
         }
 
         // Make sure that our selected item is visible
-        if (!matchFound && list->firstChild()) list->setCurrentItem(list->firstChild());
+        //if (!matchFound && list->topLevelItem(0)) list->setCurrentItem(list->topLevelItem(0));
 
+        /*
         if (list->currentItem()) {
             if (list->currentItem()->itemBelow()) {
-                list->ensureItemVisible(list->currentItem()->itemBelow());
+                list->scrollToItem(list->currentItem()->itemBelow());
             }
         }
         if (list->currentItem()) {
             if (list->currentItem()->itemAbove()) {
-                list->ensureItemVisible(list->currentItem()->itemAbove());
+                list->scrollToItem(list->currentItem()->itemAbove());
             }
         }
+        */
+        for (int i = 0; i < list->columnCount(); i++) {
+            list->resizeColumnToContents(i);
+        }
 
-        emit(setStatus(""));
+        emit setStatus("");
     }
 
-    emit(setStatus(""));    // Searching...
+    emit setStatus("");    // Searching...
     
-    emit(refreshTabs(1));
+    emit refreshTabs(1);
     
     QApplication::restoreOverrideCursor();
 
 }
 
-/*
-** menu - Returns our menu for the customers list.
-*/
-
-Q3PopupMenu *Customers::menu()
-{
-    return optionsMenu;
-}
 
 
 
@@ -700,7 +672,7 @@ void Customers::listQueryS()
 {
     refreshList(0);
     list->setFocus();
-    if ((list->childCount() == 1) && autoOpenCustomer->isChecked()) {
+    if ((list->topLevelItemCount() == 1) && autoOpenCustomer->isChecked()) {
     	editCustomer();
     }
 }
@@ -726,15 +698,17 @@ void Customers::newCustomer()
 
 void Customers::editCustomer()
 {
-	int CustID = -1;
+	long CustID = -1;
 //	int tmpIDX = 0; //list->currentItem();
-	Q3ListViewItem   *tmpItem;
+	QTreeWidgetItem *tmpItem;
 	tmpItem = list->currentItem();
 
-    emit(setStatus("Loading customer information..."));
+    emit setStatus("Loading customer information...");
 	if (tmpItem != NULL) {
-		CustID = atol(tmpItem->key(1, 1));
-        emit(openCustomer(CustID));
+		//CustID = atol(tmpItem->key(1, 1));
+		CustID = tmpItem->text(1).toInt();
+        fprintf(stderr, "emitting openCustomer(%ld)...\n", CustID);
+        emit openCustomer(CustID);
         /*
 		EditCustomer *custEdit;
 		custEdit = new EditCustomer(0, "", CustID);
@@ -743,7 +717,7 @@ void Customers::editCustomer()
         */
 		listQuery->setFocus();
 	}
-    emit(setStatus(""));
+    emit setStatus("");
 }
 
 /*
@@ -754,19 +728,20 @@ void Customers::addCustNote()
 {
 	int CustID = -1;
 //	int tmpIDX = 0; //list->currentItem();
-	Q3ListViewItem   *tmpItem;
+	QTreeWidgetItem  *tmpItem;
 	tmpItem = list->currentItem();
 
-    emit(setStatus("Loading customer information..."));
+    emit setStatus("Loading customer information...");
 	if (tmpItem != NULL) {
-		CustID = atol(tmpItem->key(1, 1));
+		//CustID = atol(tmpItem->key(1, 1));
+		CustID = tmpItem->text(1).toInt();
 		NoteEdit *custNote;
 		custNote = new NoteEdit(0, "", CustID, 0);
 		custNote->show();
 		// connect(custNote, SIGNAL(refreshCustList()), SLOT(refreshListV()));
 		listQuery->setFocus();
 	}
-    emit(setStatus(""));
+    emit setStatus("");
 }
 
 
@@ -777,11 +752,12 @@ void Customers::addCustNote()
 void Customers::receivePayment()
 {
 	int CustID = -1;
-	Q3ListViewItem   *tmpItem;
+	QTreeWidgetItem  *tmpItem;
 	tmpItem = list->currentItem();
 	
 	if (tmpItem != NULL) {
-		CustID = atol(tmpItem->key(1,1));
+		//CustID = atol(tmpItem->key(1,1));
+		CustID = tmpItem->text(1).toInt();
 		ReceivePayment *recPay;
 		recPay = new ReceivePayment(0, "", CustID);
 		recPay->show();
@@ -796,12 +772,13 @@ void Customers::receivePayment()
 **                 on an item in the customer list.
 */
 
-void Customers::custSelected(Q3ListViewItem * sitem)
+void Customers::custSelected(QTreeWidgetItem *sitem, int)
 {
-    emit(setStatus("Loading customer information..."));
+    emit setStatus("Loading customer information...");
     if (sitem != NULL) {
-        long tmpCustID = atol(sitem->key(1,1));
-        emit(openCustomer(tmpCustID));
+        //long tmpCustID = atol(sitem->key(1,1));
+		long tmpCustID = sitem->text(1).toInt();
+        emit openCustomer(tmpCustID);
         /*
         custEdit = new EditCustomer(0, "", atol(sitem->key(1,1)));
         EditCustomer    *custEdit;
@@ -810,7 +787,7 @@ void Customers::custSelected(Q3ListViewItem * sitem)
         */
         listQuery->setFocus();
     }
-    emit(setStatus(""));
+    emit setStatus("");
 }
 
 /*
@@ -834,11 +811,12 @@ void Customers::takeCall()
 	call = new LogCall();
 	call->show();
 	
-	Q3ListViewItem   *tmpItem;
+	QTreeWidgetItem  *tmpItem;
 	tmpItem = list->currentItem();
 	
 	if (tmpItem != NULL) {
-		call->setLoginID((const char *) tmpItem->key(2,1));
+		//call->setLoginID((const char *) tmpItem->key(2,1));
+		call->setLoginID(tmpItem->text(2).ascii());
 	}
 	
 	// connect(newCust, SIGNAL(refreshCustList()), SLOT(refreshListV()));
@@ -860,12 +838,11 @@ void Customers::refreshCustomer(long custID)
         // We have it loaded.  Find it in the list
         ADBTable    custDB("Customers");
         custDB.get(custID);
-        Q3ListViewItemIterator   it(list);
-        Q3ListViewItem           *curItem;
+        QTreeWidgetItem        *curItem;
         char                    tmpStr[1024];
-        for (; it.current(); ++it) {
-            curItem = it.current();
-            if (atol(curItem->key(1,0)) == custID) {
+        for (int i = 0; i < list->topLevelItemCount(); i++) {
+            curItem = list->topLevelItem(i);
+		    if (curItem->text(1).toInt() == custID) {
                 sprintf(tmpStr, "%s", custDB.getStr("FullName"));
                 if (strlen(custDB.getStr("ContactName"))) {
                     strcat(tmpStr, "/");

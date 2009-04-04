@@ -38,7 +38,7 @@ VoIPServiceTypes::VoIPServiceTypes
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "VoIP Services" );
 
@@ -219,7 +219,7 @@ VoIPServiceTypeEditor::VoIPServiceTypeEditor
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "VoIP Service Type Add" );
 

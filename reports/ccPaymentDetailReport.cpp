@@ -259,7 +259,7 @@ void ccPaymentDetailReport::editFilters()
  * Constructor.
  */
 ccPaymentDetailOptions::ccPaymentDetailOptions(QWidget *parent, const char *name) :
-    TAAWidget(parent, name, 0)
+    TAAWidget(parent)
 {
     setCaption("Credit Card Payment Detail Report Options");
 

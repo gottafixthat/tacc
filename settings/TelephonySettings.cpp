@@ -24,7 +24,7 @@ using namespace Qt;
 /*
  * TelephonySettings - Constructor.  Lays out the widget.
  */
-TelephonySettings::TelephonySettings(QWidget *parent, const char *name) : TAAWidget(parent, name)
+TelephonySettings::TelephonySettings(QWidget *parent, const char *name) : TAAWidget(parent)
 {
     setCaption("Telephony Settings");
 

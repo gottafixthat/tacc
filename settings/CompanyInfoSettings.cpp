@@ -28,7 +28,7 @@ using namespace Qt;
  *
  * Constructor.
  */
-CompanyInfoSettings::CompanyInfoSettings(QWidget *parent, const char *name) : TAAWidget(parent, name)
+CompanyInfoSettings::CompanyInfoSettings(QWidget *parent, const char *name) : TAAWidget(parent)
 {
     setCaption("Company Information");
 

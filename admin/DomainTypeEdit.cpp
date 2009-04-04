@@ -30,7 +30,7 @@ DomainTypeEdit::DomainTypeEdit
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Edit Domain Types" );
     // Create our widgets

@@ -27,7 +27,7 @@
 using namespace Qt;
 
 ExtendGraceDate::ExtendGraceDate(QWidget* parent, const char* name, long CustomerID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
     if (!CustomerID) return;
     myCustID = CustomerID;

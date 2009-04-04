@@ -34,7 +34,7 @@ SubscriptionEdit::SubscriptionEdit
 	const char* name,
 	long CustID,
 	long SubscrID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Create all of our widgets.  This one has quite a few widgets,
     // it will be a box layout from top to bottom, and then a grid for

@@ -45,7 +45,7 @@ Tab_Notes::Tab_Notes
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Notes" );
 

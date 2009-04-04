@@ -37,7 +37,7 @@ LogCall::LogCall
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 
     setCaption("Call Logger");

@@ -46,7 +46,7 @@ CustChargeEdit::CustChargeEdit
 	const char* name,
 	const long CustID,
 	const long TransID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	char	tmpstr[128];
 	char	separator[4] = "";

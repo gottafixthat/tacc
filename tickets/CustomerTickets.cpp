@@ -30,7 +30,7 @@ CustomerTickets::CustomerTickets
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 
     ticketList = new Q3ListView(this);

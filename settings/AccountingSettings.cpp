@@ -27,7 +27,7 @@ using namespace Qt;
  *
  * Constructor.  Lays out the widget.
  */
-AccountingSettings::AccountingSettings(QWidget *parent, const char *name) : TAAWidget(parent, name)
+AccountingSettings::AccountingSettings(QWidget *parent, const char *name) : TAAWidget(parent)
 {
     setCaption("Accounting Settings");
 

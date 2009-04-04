@@ -27,11 +27,7 @@
 #include "AddressEditor.h"
 
 
-AddressEditor::AddressEditor
-(
-	QWidget* parent,
-	const char* name
-) : TAAWidget( parent, name )
+AddressEditor::AddressEditor(QWidget* parent) : TAAWidget(parent)
 {
 	setCaption( "Edit Address" );
 	myIntID			= 0;

@@ -38,7 +38,7 @@ DIDManager::DIDManager
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setWindowTitle( "DID Manager" );
 
@@ -56,7 +56,7 @@ DIDManagerAdd::DIDManagerAdd
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "DID Manager - Add DIDs" );
 

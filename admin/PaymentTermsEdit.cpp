@@ -24,7 +24,7 @@
 using namespace Qt;
 
 PaymentTermsEdit::PaymentTermsEdit(QWidget* parent, const char* name, int InternalID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Edit Payment Terms" );
 

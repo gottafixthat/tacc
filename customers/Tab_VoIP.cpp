@@ -43,7 +43,7 @@ Tab_VoIP::Tab_VoIP
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "VoIP" );
 

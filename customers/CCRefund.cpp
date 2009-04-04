@@ -35,7 +35,7 @@
  * Constructor.
  */
 CCRefund::CCRefund(QWidget *parent, const char *name) :
-    TAAWidget(parent, name)
+    TAAWidget(parent)
 {
     setCaption("Issue Credit Card Refund");
 

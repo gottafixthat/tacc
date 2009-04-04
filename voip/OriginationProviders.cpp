@@ -38,7 +38,7 @@ OriginationProviders::OriginationProviders
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Origination Providers" );
 
@@ -245,7 +245,7 @@ OriginationProviderEditor::OriginationProviderEditor
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Origination Provider Add" );
 

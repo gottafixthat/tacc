@@ -35,7 +35,7 @@ CallTypeSelector::CallTypeSelector
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 
     Q3ButtonGroup   *bGroup = new Q3ButtonGroup(5, Qt::Horizontal, this, "ButtonGroup");

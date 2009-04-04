@@ -31,7 +31,7 @@ PKG_Billables::PKG_Billables
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Okay, create our widgets.
     billableList = new Q3ListView(this, "billableList");

@@ -52,7 +52,8 @@ showfiles:
 	@echo $(SOURCES) $(HEADERS) Makefile
 
 clean:
-	-rm -f *.o *.bak *~ *% #*
+	set -e; for i in $(SUBDIRS); do cd $$i ; echo make clean in $$i ; $(MAKE) clean ; cd ..; done
+	-rm -f *.a *.o *.bak *~ *% #*
 	-rm -f $(SRCMETA) $(TARGET)
 
 install: $(TARGET)

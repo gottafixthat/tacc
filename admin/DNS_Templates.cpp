@@ -30,7 +30,7 @@
 using namespace Qt;
 
 DNS_Templates::DNS_Templates(QWidget *parent, const char *name)
-    : TAAWidget(parent, name)
+    : TAAWidget(parent)
 {
     setCaption("DNS Template Editor");
     // Create our widgets.

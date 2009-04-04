@@ -21,7 +21,7 @@ AllReports::AllReports
 (
     QWidget *parent,
     const char *name
-) : TAAWidget(parent, name)
+) : TAAWidget(parent)
 {
     hide();
 

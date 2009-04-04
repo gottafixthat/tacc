@@ -26,7 +26,7 @@
 using namespace Qt;
 
 DomainChecklist::DomainChecklist(QWidget* parent, const char* name, long DomainID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Domain Checklist" );
 	

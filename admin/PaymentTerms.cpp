@@ -25,7 +25,7 @@
 using namespace Qt;
 
 PaymentTerms::PaymentTerms(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Payment Terms" );
 

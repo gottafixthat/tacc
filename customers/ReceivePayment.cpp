@@ -34,7 +34,7 @@ ReceivePayment::ReceivePayment
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name, Qt::WType_Dialog )
+) : TAAWidget(parent, Qt::WType_Dialog )
 {
     myCustID = CustID;
     if (!myCustID) return;

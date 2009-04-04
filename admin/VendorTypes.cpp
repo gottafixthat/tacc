@@ -29,7 +29,7 @@ VendorTypes::VendorTypes
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption("Vendor Types");
 

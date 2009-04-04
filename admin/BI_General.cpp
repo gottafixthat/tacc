@@ -30,7 +30,7 @@ BI_General::BI_General
 (
     QWidget* parent,
     const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Setup our layout.
     QLabel  *itemNameLabel = new QLabel(this, "itemNameLabel");

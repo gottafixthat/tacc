@@ -30,7 +30,7 @@ PKG_Main::PKG_Main
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Edit Packages" );
     

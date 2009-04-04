@@ -29,7 +29,7 @@
 using namespace Qt;
 
 DomainAliases::DomainAliases(QWidget *parent, const char *name)
-   : TAAWidget(parent, name)
+   : TAAWidget(parent)
 {
     setCaption("Email Alias List");
     // Create the widgets we'll need

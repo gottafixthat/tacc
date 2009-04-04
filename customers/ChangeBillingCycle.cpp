@@ -30,7 +30,7 @@
 using namespace Qt;
 
 ChangeBillingCycle::ChangeBillingCycle(QWidget* parent, const char* name, long CustID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Edit Customer Billing Cycle" );
 

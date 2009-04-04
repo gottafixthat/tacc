@@ -31,7 +31,7 @@
 using namespace Qt;
 
 ChangePassword::ChangePassword(QWidget* parent, const char* name, long CustomerID, const char* LoginID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Change Password" );
 	

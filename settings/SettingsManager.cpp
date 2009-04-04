@@ -21,7 +21,7 @@ using namespace Qt;
 /*
  * SettingsManager - Constructor.  Lays out the widget.
  */
-SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(parent, name)
+SettingsManager::SettingsManager(QWidget *parent, const char *name) : TAAWidget(parent)
 {
     setCaption("Settings Manager");
 

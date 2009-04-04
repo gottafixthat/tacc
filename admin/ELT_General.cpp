@@ -31,7 +31,7 @@ ELT_General::ELT_General
 	QWidget* parent,
 	const char* name
 )
-	: TAAWidget(parent, name)
+	: TAAWidget(parent)
 {
     // We start out by disabling all of our buttons and fields.
     // By setting the Login Type ID to zero.

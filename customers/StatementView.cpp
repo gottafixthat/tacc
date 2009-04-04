@@ -30,7 +30,7 @@
 using namespace Qt;
 
 StatementView::StatementView(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Statement View" );
 

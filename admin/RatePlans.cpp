@@ -29,7 +29,7 @@ RatePlans::RatePlans
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Rate Plans" );
 

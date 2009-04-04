@@ -35,7 +35,7 @@ TicketManager::TicketManager
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 
     // Create a menu for our parent to pull into its own menu bar.

@@ -23,7 +23,7 @@
 using namespace Qt;
 
 VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
-    TAAWidget(parent, name)
+    TAAWidget(parent)
 {
 	myVendorID = vID;
 	
@@ -79,7 +79,7 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     Q3GroupBox   *addrGB = new Q3GroupBox(1, Qt::Horizontal, "Company Address", this, "addrGB");
 
     // Now the widget for the address group box.
-    TAAWidget   *addrWidget = new TAAWidget(addrGB, "addrWidget");
+    TAAWidget   *addrWidget = new TAAWidget(addrGB);
 
     QLabel *address1Label = new QLabel(addrWidget);
     address1Label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
@@ -135,7 +135,7 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     Q3GroupBox   *phoneGB = new Q3GroupBox(1, Qt::Horizontal, "Phone Numbers", this, "phoneGB");
 
     // Now the widget for the address group box.
-    TAAWidget   *phoneWidget = new TAAWidget(phoneGB, "phoneWidget");
+    TAAWidget   *phoneWidget = new TAAWidget(phoneGB);
 
     QLabel *phoneLabel = new QLabel(phoneWidget);
     phoneLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
@@ -181,7 +181,7 @@ VendorEdit::VendorEdit(QWidget* parent, const char* name, int vID) :
     Q3GroupBox   *acctGB = new Q3GroupBox(1, Qt::Horizontal, "Account Information", this, "acctGB");
 
     // Now the widget for the address group box.
-    TAAWidget   *acctWidget = new TAAWidget(acctGB, "acctWidget");
+    TAAWidget   *acctWidget = new TAAWidget(acctGB);
 
     QLabel *checkNameLabel = new QLabel(acctWidget);
     checkNameLabel->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
