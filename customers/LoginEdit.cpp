@@ -40,7 +40,7 @@ LoginEdit::LoginEdit
 	const char* name,
 	long CustID,
 	const char* LoginID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 
     // Create our widgets and our layout.

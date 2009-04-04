@@ -47,7 +47,7 @@ CCBatch::CCBatch
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget ( parent, name )
+) : TAAWidget (parent)
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
 	setCaption( "Credit Card Batch Processing" );

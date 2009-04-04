@@ -43,7 +43,7 @@ RateCenterManager::RateCenterManager
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Rate Center Manager" );
 
@@ -288,7 +288,7 @@ RateCenterEditor::RateCenterEditor
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Rate Center Add" );
 

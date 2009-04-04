@@ -39,7 +39,7 @@ DomainAdd::DomainAdd
 	QWidget* parent,
 	const char* name,
 	long CustomerID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Add Domain" );
 

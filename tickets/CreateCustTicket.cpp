@@ -44,7 +44,7 @@ CreateCustTicket::CreateCustTicket
 	QWidget* parent,
 	const char* name,
     long custID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption("Create New Ticket");
     

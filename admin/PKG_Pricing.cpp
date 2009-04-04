@@ -29,7 +29,7 @@ PKG_Pricing::PKG_Pricing
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Setup our widgets.
     pricingList = new Q3ListView(this, "pricingList");

@@ -208,7 +208,7 @@ CustomerCare::CustomerCare() : QMainWindow()
 {
     setMainWin(this);
     //QApplication::setMainWidget(this);
-    setCaption("Total Accountability - Customer Care");
+    setWindowTitle("Total Accountability - Customer Care");
     
     am = new AsteriskManager(this, "Asterisk Manager Connection");
     ccStack = new CustomerCareStack(am, this);
@@ -620,7 +620,7 @@ void CustomerCare::setProgressMWRT(int cur, int tot)
 **                     the user tickets, voice mail, customers, etc.
 */
 
-CustomerCareStack::CustomerCareStack(AsteriskManager *astmgr, QWidget *parent, const char *name) : TAAWidget(parent, name)
+CustomerCareStack::CustomerCareStack(AsteriskManager *astmgr, QWidget *parent, const char *name) : TAAWidget(parent)
 {
     setCaption("Total Accountability - Customer Care");
     

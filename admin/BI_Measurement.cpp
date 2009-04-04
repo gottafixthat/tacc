@@ -30,7 +30,7 @@ BI_Measurement::BI_Measurement
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Create all our widgets.
     measureList = new Q3ListView(this, "measureList");

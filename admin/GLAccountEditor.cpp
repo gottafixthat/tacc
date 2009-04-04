@@ -31,7 +31,7 @@ GLAccountEditor::GLAccountEditor
 	QWidget* parent,
 	const char* name,
 	int AcctNo
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     ADB     DB;
 

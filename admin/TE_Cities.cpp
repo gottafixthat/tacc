@@ -20,7 +20,7 @@
 using namespace Qt;
 
 TE_Cities::TE_Cities(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
     allCitiesButton = new QCheckBox("Send to customers in all cities", this, "allCitiesButton");
     connect(allCitiesButton, SIGNAL(clicked()), this, SLOT(allCitiesClicked()));

@@ -28,7 +28,7 @@ using namespace Qt;
 /*
  * BillingSettings - Constructor.  Lays out the widget.
  */
-BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(parent, name)
+BillingSettings::BillingSettings(QWidget *parent, const char *name) : TAAWidget(parent)
 {
     setCaption("General Settings");
 

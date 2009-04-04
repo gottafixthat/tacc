@@ -3,7 +3,7 @@
 ##
 
 .SILENT:
-VERSION     = 3
+VERSION     = 4
 PATCHLEVEL  = 0
 SUBLEVEL    = 0
 
@@ -37,19 +37,14 @@ endif
 
 SUBDIRS += voip voicemail ccards asterisk customers
 SUBDIRS += reports tickets admin settings custcare
-# SUBDIRS += sam taa
-#SUBDIRS += mbrassd 
-# SUBDIRS += gettraffic
-SUBDIRS += taccupgrade
-SUBDIRS += taamaild
-SUBDIRS += ccexpired cccimport
-SUBDIRS += modembilling
-SUBDIRS += radimport
-SUBDIRS += ccget
-SUBDIRS += wasync
-#SUBDIRS += radcreate
-SUBDIRS += backend
-#SUBDIRS += webhost
+#SUBDIRS += taccupgrade
+#SUBDIRS += taamaild
+#SUBDIRS += ccexpired cccimport
+#SUBDIRS += modembilling
+#SUBDIRS += radimport
+#SUBDIRS += ccget
+#SUBDIRS += wasync
+#SUBDIRS += backend
 
 SOURCES =	
 

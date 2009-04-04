@@ -39,7 +39,7 @@ CustRegister::CustRegister
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Register" );
 	

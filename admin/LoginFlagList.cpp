@@ -31,7 +31,7 @@ LoginFlagList::LoginFlagList
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Login Flags" );
 
@@ -199,7 +199,7 @@ LoginFlagEditor::LoginFlagEditor
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Add Login Flag" );
 
@@ -363,7 +363,7 @@ LoginFlagSelector::LoginFlagSelector
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     ADB     DB;
 

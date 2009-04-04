@@ -29,7 +29,7 @@ BI_Main::BI_Main
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Edit Billables" );
 

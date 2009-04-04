@@ -31,7 +31,7 @@ ELT_Billables::ELT_Billables
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Create our widgets
     QLabel *billableListLabel  = new QLabel(this, "billableListLabel");

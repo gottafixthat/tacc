@@ -51,7 +51,6 @@ class TAAWidget : public QWidget
 
 public:
     TAAWidget(QWidget *parent = NULL, Qt::WFlags f = Qt::Widget);
-    TAAWidget(QWidget *parent = NULL, const char *name = NULL, Qt::WFlags f = Qt::Widget);
     virtual ~TAAWidget();
 
     void        setUserPref(const char *key, const char *subkey, const char *val);

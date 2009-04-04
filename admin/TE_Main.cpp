@@ -27,7 +27,7 @@
 using namespace Qt;
 
 TE_Main::TE_Main(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Targeted Email" );
 

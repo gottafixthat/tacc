@@ -30,7 +30,7 @@ PKG_Conversion::PKG_Conversion
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Create our widgets.
     autoConvert = new QCheckBox(this, "autoConvert");

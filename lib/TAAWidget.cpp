@@ -21,10 +21,6 @@
 
 
 // TAAWidget
-TAAWidget::TAAWidget(QWidget *parent, const char *name, Qt::WFlags f) : QWidget(parent, f)
-{
-    TAAWidget::TAAWidget(parent, f);
-}
 
 TAAWidget::TAAWidget(QWidget *parent, Qt::WFlags f)
     : QWidget(parent, f)
@@ -38,15 +34,17 @@ TAAWidget::TAAWidget(QWidget *parent, Qt::WFlags f)
     connect(this, SIGNAL(setProgressRT(int, int)), mainWin(), SLOT(setProgressMWRT(int, int)));
 
     // Connect our signals to top level widgets.
+    /*
     foreach(QWidget *widget, QApplication::topLevelWidgets()) {
-        //qDebug() << "Top widget name = '" << widget->className() << endl;
+        qDebug() << "Top widget name = '" << widget << "'";
         if (!strcmp(widget->className(), "CustomerCare")) {
             qDebug() << "Connecting signal to " << widget->className();
-            //connect(this, SIGNAL(openCustomer(long)), widget, SLOT(openCustomerMW(long)));
-            connect(this, SIGNAL(openCustomer(long)), widget, SIGNAL(openCustomer(long)));
+            connect(this, SIGNAL(openCustomer(long)), widget, SLOT(openCustomerMW(long)));
+            //connect(this, SIGNAL(openCustomer(long)), widget->centralWidget(), SLOT(openCustomerMW(long)));
         }
     }
-    dumpObjectInfo();
+    this->dumpObjectInfo();
+    */
 
     // Relay slots.  Individual TAAWidgets will emit customerUpdated() whenever
     // they update customer information.  This, in turn, will call the 
@@ -96,6 +94,7 @@ const char *TAAWidget::getUserPref(const char *key, const char *subkey)
     return (const char *) retStr;
 }
     
+
 HorizLine::HorizLine(QWidget *parent, const char *name, Qt::WFlags f)
     : QLabel(parent, name, f)
 {

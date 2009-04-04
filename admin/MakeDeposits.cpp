@@ -35,7 +35,7 @@ MakeDeposits::MakeDeposits
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Make Deposits" );
 

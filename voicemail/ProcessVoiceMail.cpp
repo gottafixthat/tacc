@@ -43,7 +43,7 @@ ProcessVoiceMail::ProcessVoiceMail
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Process Voice Mail" );
 

@@ -22,7 +22,7 @@
 using namespace Qt;
 
 TE_LoginTypes::TE_LoginTypes(QWidget* parent, const char* name) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 
     allLoginsButton = new QCheckBox("Send to all Login Types", this, "allLoginsButton");

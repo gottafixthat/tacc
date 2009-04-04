@@ -25,7 +25,7 @@
 using namespace Qt;
 
 DomainTypeBillablesAdd::DomainTypeBillablesAdd(QWidget* parent, const char* name, int DomainTypeID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Add Billable Item" );
 

@@ -37,7 +37,7 @@ CCEntry::CCEntry
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	if (!CustID) return;
 

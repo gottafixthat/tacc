@@ -23,7 +23,7 @@
 using namespace Qt;
 
 TemplateEditor::TemplateEditor(QWidget* parent, const char* name) : 
-    TAAWidget( parent, name )
+    TAAWidget(parent)
 {
 	setCaption( "Edit Email Templates" );
     

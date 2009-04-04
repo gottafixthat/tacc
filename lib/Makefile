@@ -108,7 +108,7 @@ showfiles:
 	@echo $(SOURCES) $(HEADERS) Makefile
 
 clean:
-	-rm -f *.o *.bak *~ *% #*
+	-rm -f *.a *.o *.bak *~ *% #*
 	-rm -f $(SRCMETA) $(TARGET)
 
 FORCE:

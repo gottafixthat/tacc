@@ -33,7 +33,7 @@ CustSubscrList::CustSubscrList
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	myCustID = CustID;
 	setCaption( "Subscriptions" );

@@ -38,7 +38,7 @@ ServerGroups::ServerGroups
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name)
+) : TAAWidget(parent)
 {
     setCaption( "Server Groups" );
 
@@ -206,7 +206,7 @@ ServerGroupEditor::ServerGroupEditor
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Server Group Add" );
 
@@ -454,7 +454,7 @@ ServerGroupSelector::ServerGroupSelector
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     ADB     DB;
 

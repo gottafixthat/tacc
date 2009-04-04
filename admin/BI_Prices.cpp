@@ -29,7 +29,7 @@ BI_Prices::BI_Prices
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Create our widgets.
     pricingList = new Q3ListView(this, "pricingList");

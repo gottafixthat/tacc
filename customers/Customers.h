@@ -14,14 +14,13 @@
 #define Customers_included
 
 #include <QtCore/QMap>
-#include <QtGui/QWidget>
-#include <QtGui/QLabel>
+#include <QtGui/QAction>
 #include <QtGui/QCheckBox>
-#include <QtGui/QMenuBar>
+#include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
-#include <Qt3Support/q3listview.h>
-#include <Qt3Support/q3popupmenu.h>
-#include <Qt3Support/q3strlist.h>
+#include <QtGui/QMenu>
+#include <QtGui/QMenuBar>
+#include <QtGui/QTreeWidget>
 
 #include <TAAWidget.h>
 
@@ -40,7 +39,7 @@ public:
     );
 
     virtual ~Customers();
-    Q3PopupMenu  *menu();
+    QMenu      *menu()     { return optionsMenu; };
 
 public slots:
     virtual void refreshList(long);
@@ -49,7 +48,7 @@ public slots:
 protected slots:
     void         refreshListV();
     virtual void listQueryS();
-    virtual void custSelected(Q3ListViewItem * sitem);
+    virtual void custSelected(QTreeWidgetItem *sitem, int);
     
     // These are inhereted from TAAWidget
     virtual void refreshCustomer(long custID);
@@ -67,8 +66,14 @@ protected:
     QLabel      *queryLabel;
     QLineEdit   *listQuery;
     QCheckBox   *autoOpenCustomer;
-    Q3ListView   *list;
-    Q3PopupMenu  *optionsMenu;
+    QTreeWidget  *list;
+    QMenu       *optionsMenu;
+
+    QAction     *actNew;
+    QAction     *actEdit;
+    QAction     *actAddNote;
+    QAction     *actReceivePayment;
+    QAction     *actDomainAliases;
 
     QLabel      *phoneNumberLabel;
     QLabel      *phoneNumber;

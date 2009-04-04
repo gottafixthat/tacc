@@ -25,7 +25,7 @@
 using namespace Qt;
 
 VendorTypeEdit::VendorTypeEdit(QWidget* parent, const char* name, int InternalID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
     // Create our layout
     setCaption("New Vendor Type");

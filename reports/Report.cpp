@@ -43,7 +43,7 @@ Report::Report
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "Report" );
 
@@ -850,7 +850,7 @@ bool EmailReportDialog::attachCSV()
  * Constructor for ReportFilter base class.
  */
 ReportFilter::ReportFilter(QWidget *parent, const char *name) :
-    TAAWidget(parent, name)
+    TAAWidget(parent)
 {
     // Create our common widgets.
     saveListLabel = new QLabel(this, "saveListLabel");

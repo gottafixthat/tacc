@@ -28,7 +28,7 @@
 using namespace Qt;
 
 RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
     setCaption("Edit Rate Plan");
 
@@ -65,7 +65,7 @@ RatePlanEdit::RatePlanEdit(QWidget* parent, const char* name, long IntID) :
     autoConvertGroup->setExclusive(true);
 
     // The autoConvertGroup widget (acgw)
-    TAAWidget *acgw = new TAAWidget(autoConvertGroup, "acgw");
+    TAAWidget *acgw = new TAAWidget(autoConvertGroup);
 
     // The child widgets for the acgw widget
     noAutoConvert = new QRadioButton("Do not auto-convert", acgw, "noAutoConvert");

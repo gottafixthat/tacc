@@ -32,7 +32,7 @@ ELT_Flags::ELT_Flags
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Create our widgets.
     QLabel *flagListLabel = new QLabel(this, "flagListLabel");

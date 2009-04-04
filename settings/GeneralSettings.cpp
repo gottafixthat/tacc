@@ -25,7 +25,7 @@ using namespace Qt;
 /*
  * GeneralSettings - Constructor.  Lays out the widget.
  */
-GeneralSettings::GeneralSettings(QWidget *parent, const char *name) : TAAWidget(parent, name)
+GeneralSettings::GeneralSettings(QWidget *parent, const char *name) : TAAWidget(parent)
 {
     setCaption("General Settings");
 

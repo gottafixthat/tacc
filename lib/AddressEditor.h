@@ -41,11 +41,7 @@ class AddressEditor : public TAAWidget
 
 public:
 
-    AddressEditor
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
+    AddressEditor(QWidget* parent = NULL);
 
     virtual ~AddressEditor();
     

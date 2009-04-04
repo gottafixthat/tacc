@@ -28,7 +28,7 @@
 using namespace Qt;
 
 ChangeRatePlan::ChangeRatePlan(QWidget* parent, const char* name, long CustID) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Edit Customer Rate Plan" );
 	

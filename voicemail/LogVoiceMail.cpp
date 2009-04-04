@@ -43,7 +43,7 @@ LogVoiceMail::LogVoiceMail
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Voice Mail Logging" );
 

@@ -32,7 +32,7 @@
 using namespace Qt;
 
 OverdueAccounts::OverdueAccounts(QWidget* parent, const char* name, int AccountTypes) :
-	TAAWidget( parent, name )
+	TAAWidget(parent)
 {
 	setCaption( "Overdue Account Processing (Active Accounts)" );
 	

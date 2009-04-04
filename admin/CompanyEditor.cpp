@@ -33,7 +33,7 @@ CompanyList::CompanyList
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Manage Companies" );
 
@@ -182,7 +182,7 @@ CompanyEditor::CompanyEditor
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     setCaption( "Company Add" );
 

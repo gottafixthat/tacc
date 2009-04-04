@@ -36,7 +36,7 @@ NoteEdit::NoteEdit
 	const char* name,
 	long CustID,
 	long InternalID
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     // Create our widgets and our layout
     QLabel  *noteTypeLabel  = new QLabel(this);

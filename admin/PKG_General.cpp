@@ -28,7 +28,7 @@ PKG_General::PKG_General
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
     ADB     DB;
     // Create our widgets.

@@ -51,7 +51,7 @@ CCMonetra::CCMonetra
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget ( parent, name )
+) : TAAWidget (parent)
 {
     QApplication::setOverrideCursor(WaitCursor);
 	setCaption( "Credit Card Batch Processing (Monetra)" );

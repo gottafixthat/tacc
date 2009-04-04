@@ -29,7 +29,7 @@ using namespace Qt;
  * Constructor.  Lays out the widget.
  */
 EmailTemplateSettings::EmailTemplateSettings(QWidget *parent, const char *name) : 
-    TAAWidget(parent, name)
+    TAAWidget(parent)
 {
     setCaption("Email Template Settings");
 

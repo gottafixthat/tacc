@@ -37,7 +37,7 @@ GLAccountTypeEditor::GLAccountTypeEditor
     int acctType,
     QWidget *parent,
     const char *name
-) : TAAWidget(parent, name)
+) : TAAWidget(parent)
 {
     setCaption("GL Account Type Editor");
 
@@ -151,7 +151,7 @@ GLAccountTypes::GLAccountTypes
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 	setCaption( "GL Account Types" );
 

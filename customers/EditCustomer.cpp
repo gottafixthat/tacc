@@ -50,7 +50,7 @@ EditCustomer::EditCustomer
 	const char* name,
 	long CustID
 )
-	: TAAWidget( parent, name)
+	: TAAWidget(parent)
 {
 	ADB DB;
 	char tmpstr[1024];

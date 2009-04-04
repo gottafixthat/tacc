@@ -33,7 +33,7 @@ Vendors::Vendors
 (
 	QWidget* parent,
 	const char* name
-) : TAAWidget( parent, name )
+) : TAAWidget(parent)
 {
 
     // Create our widgets and our layout.

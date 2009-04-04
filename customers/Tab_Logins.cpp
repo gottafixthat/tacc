@@ -48,7 +48,7 @@ Tab_Logins::Tab_Logins
 	QWidget* parent,
 	const char* name,
 	long CustID
-) : TAAWidget ( parent, name )
+) : TAAWidget(parent)
 {
 
 	setCaption( "Logins" );
@@ -982,7 +982,7 @@ CustomLoginFlagEditor::CustomLoginFlagEditor
 	long CustID,
     const char *loginID
 
-) : TAAWidget ( parent, name )
+) : TAAWidget(parent)
 {
 
 	setCaption( "Login Flags" );
