@@ -646,6 +646,8 @@ void Customers::refreshList(long)
         for (int i = 0; i < list->columnCount(); i++) {
             list->resizeColumnToContents(i);
         }
+        list->sortItems(0, Qt::AscendingOrder);
+        list->scrollToItem(list->currentItem());
 
         emit setStatus("");
     }

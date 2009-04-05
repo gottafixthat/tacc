@@ -1,35 +1,13 @@
-/*
-** $Id: ADBRow.cpp,v 1.5 2002/09/29 18:43:47 marc Exp $
-**
-**  ADBRow.cpp - Row definitions used by other ADB Classes.
-**
-*****************************************************************************
-**
-**  (C)opyright 1998, 1999 by R. Marc Lewis and Blarg! Online Services, Inc.
-**  All Rights Reserved
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-**
-*****************************************************************************
-**
-** $Log: ADBRow.cpp,v $
-** Revision 1.5  2002/09/29 18:43:47  marc
-** *** empty log message ***
-**
-** Revision 1.4  2000/05/02 20:12:49  marc
-** Added the option to return zero dates as empty strings instead of '0000-00-00'.
-**
-** Revision 1.3  1999/12/17 18:04:10  marc
-** Added the ability for ADB to log to stderr as well as syslog (the default).
-**
-** Revision 1.2  1999/10/27 00:55:41  marc
-** Added some comments to the headers.
-** Added appendStr and getLLong to ADBTable.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #include <stdlib.h>
@@ -316,3 +294,5 @@ ADBColumn *ADBRow::findColumn(const char *colName)
 
 
 
+
+// vim: expandtab

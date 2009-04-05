@@ -1,9 +1,10 @@
 ####### This section is automatically generated
 
 USEDES	= 1
-ADBQT = 1
 
-INCDIR	=  -I. -I../bdes
+INCDIR	=  -I. -I../bdes -I../taccCore
+# FIXME:  These will go away...
+INCDIR  += -I../lib -I../include
 INCDIR  += -I/usr/local/include
 # CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I.
 CFLAGS	= -g -fno-strength-reduce -Wall -W
@@ -14,13 +15,9 @@ SHELL   = /bin/sh
 CC	= g++
 MOC	= $(QTDIR)/bin/moc
 
-ifdef ADBQT
-    CFLAGS += -DADBQT -I/usr/X11R6/include -I$(QTDIR)/include
-    LFLAGS += -L$(QTDIR)/lib -lQtCore -lQtGui -lQt3Support
-    TARGET	=	libadbqt
-else
-    TARGET	=	libadb
-endif
+CFLAGS += -I$(QTDIR)/include
+LFLAGS += -L$(QTDIR)/lib -lQtCore -lQt3Support
+TARGET	= libtaccGui
 
 # Uncomment this to remove Qt support for date fields.
 # CFLAGS += -DNOADBQT
@@ -29,6 +26,7 @@ ifdef USEDES
 	CFLAGS	+= -DUSEDES
     LFLAGS  += -lbdes
 endif
+CFLAGS += -DQT3_SUPPORT
 
 ####### End of automatically generated section
 
@@ -36,9 +34,15 @@ endif
 
 SUBDIRS =	
 
-SOURCES =	ADBColumn.cpp ADBRow.cpp ADB.cpp ADBTable.cpp ADBList.cpp
+SOURCES =	TAAWidget.cpp\
+		   	PrintTreeWidget.cpp\
+			TACCReport.cpp
 
 OBJECTS =	$(SOURCES:.cpp=.o)
+
+SRCMETA =	moc_TAAWidget.cpp\
+			moc_PrintTreeWidget.cpp\
+			moc_TACCReport.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
 
@@ -48,21 +52,17 @@ OBJMETA =	$(SRCMETA:.cpp=.o)
 .SUFFIXES: .cpp
 
 .cpp.o:
+	echo Compiling  $<
 	$(CC) -c $(CFLAGS) $(INCDIR) $<
 
 ####### Build rules
 
-all: $(SRCMETA) $(OBJMETA) db-lib adbtest
+all: $(SRCMETA) $(OBJMETA) db-lib
 
 db-lib: $(OBJECTS)
 	ar r $(TARGET).a $(OBJECTS) $(OBJMETA)
 	ranlib $(TARGET).a
 #$(CC) -shared -o $(TARGET).so $(OBJECTS) $(OBJMETA)
-
-adbtest: adbtest.cpp $(OBJECTS) $(OBJMETA)
-	$(CC) -c $(CFLAGS) $(INCDIR) adbtest.cpp
-	$(CC) $(OBJECTS) $(OBJMETA) adbtest.o -o adbtest $(LFLAGS)
-
 
 $(SUBDIRS): FORCE
 	cd $@; $(MAKE)
@@ -79,8 +79,8 @@ showfiles:
 clean:
 	-rm -f *.o *.bak *~ *% #*
 	-rm -f $(SRCMETA) $(TARGET).a
-	-rm -f adbtest
 
+# FIXME
 install: $(TARGET).a
 	install -m 644 ADB.h /usr/local/include/
 	install -m 644 libadb.a /usr/local/lib
@@ -90,8 +90,14 @@ FORCE:
 
 ####### Meta objects
 
-moc_ADB.cpp: ADB.h
-	$(MOC) ADB.h -o moc_ADB.cpp
+moc_TAAWidget.cpp: TAAWidget.h
+	$(MOC) TAAWidget.h -o moc_TAAWidget.cpp
+
+moc_PrintTreeWidget.cpp: PrintTreeWidget.h
+	$(MOC) PrintTreeWidget.h -o moc_PrintTreeWidget.cpp
+
+moc_TACCReport.cpp: TACCReport.h
+	$(MOC) TACCReport.h -o moc_TACCReport.cpp
 
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.

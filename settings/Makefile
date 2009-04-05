@@ -4,12 +4,11 @@ USEDES = 1
 
 INCDIRS	=  -I$(QTDIR)/include -I. -I../customers -I../include -I../lib
 INCDIRS += -I../ccards
-INCDIRS += -I../reports -I../config -I../voicemail -I../adb
+INCDIRS += -I../reports -I../config -I../voicemail -I../taccCore -I../taccGui
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
-CFLAGS += -DADBQT
 # CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
 LFLAGS  += -lcustomers -lccards -L../reports -lreports -lconfig -lvoicemail -lscheduler
-LFLAGS  += -ladbqt -lqt -lmysqlclient -lblarg -lcrypt -L../lib -L$(QTDIR)/lib 
+LFLAGS  += -lqt -lmysqlclient -lblarg -lcrypt -L../lib -L$(QTDIR)/lib 
 LFLAGS	+= -L/usr/X11R6/lib -lX11 -lXext -L/usr/lib/mysql -lmysqlclient
 LFLAGS  += -lBTools -lFParse
 LFLAGS  += -lccvs

@@ -3,12 +3,12 @@
 USEDES = 1
 
 INCDIRS	=  -I$(QTDIR)/include -I. -I../customers -I../include -I../lib -I../tickets -I../reports -I../voicemail -I../voip -I../admin -I../settings -I../ccards -I../asterisk
-CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -DADBQT -I../adb -I../bdes
+CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I../taccCore -I../taccGui -I../bdes
 # CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
 LFLAGS  += -ladmin -ltaasettings -lcustomers -L../reports -lreports -lvoicemail -lvoip -ltickets -lccards -lasterisk
-LFLAGS  += -ltaa -ladbqt
+LFLAGS  += -ltaa -L../taccCore -ltaccCore -L../taccGui -ltaccGui
 LFLAGS  += -lQtCore -lQtSql -lQt3Support -lQtGui
-LFLAGS  += -lcrypt -L../lib -L../adb -L../bdes
+LFLAGS  += -lcrypt -L../lib -L../bdes
 LFLAGS	+= -L/usr/X11R6/lib -lX11 -lXext -lXft -lSM -lICE -L/usr/lib64/mysql -L/usr/lib/mysql -lmysqlclient
 LFLAGS  += -lmimepp_util -lmimepp_net -lmimepp_core 
 LFLAGS  += -lmimetic

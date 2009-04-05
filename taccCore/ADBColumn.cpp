@@ -1,47 +1,13 @@
-/*
-** $Id: ADBColumn.cpp,v 1.8 2002/09/29 18:43:47 marc Exp $
-**
-**  ADBColumn.cpp - Column definitions used by other ADB Classes.
-**
-*****************************************************************************
-**
-**  (C)opyright 1998, 1999 by R. Marc Lewis and Blarg! Online Services, Inc.
-**  All Rights Reserved
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-**
-*****************************************************************************
-**
-** $Log: ADBColumn.cpp,v $
-** Revision 1.8  2002/09/29 18:43:47  marc
-** *** empty log message ***
-**
-** Revision 1.7  2000/06/12 21:48:07  marc
-** Added a new class - ADBLogin.  This is a generic login dialog that can
-** be used in any Qt based program that uses ADB for database access.
-** Altered the defines for using the Qt exentions to ADB.  To use them, the
-** user must now define ADBQT=1 in their Makefiles.
-**
-** Revision 1.6  2000/06/11 02:02:30  marc
-** Fixes for new date formats in MySQL.
-**
-** Revision 1.5  2000/05/02 20:12:49  marc
-** Added the option to return zero dates as empty strings instead of '0000-00-00'.
-**
-** Revision 1.4  1999/12/28 02:21:06  marc
-** Fixed a minor bug in the toQDateTime routine.
-**
-** Revision 1.3  1999/12/17 18:04:10  marc
-** Added the ability for ADB to log to stderr as well as syslog (the default).
-**
-** Revision 1.2  1999/10/27 00:55:41  marc
-** Added some comments to the headers.
-** Added appendStr and getLLong to ADBTable.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -56,9 +22,7 @@
 #include "bdes.h"
 #endif
 
-#ifdef ADBQT
 #include <QtCore/QString>
-#endif
 
 
 /*
@@ -287,7 +251,6 @@ int ADBColumn::append(const char *appVal)
     return ret;
 }
 
-#ifdef ADBQT
 
 /*
 ** set    - Sets a columns data to the passed in value.
@@ -332,8 +295,6 @@ int ADBColumn::set(const QDateTime newValue)
       newValue.time().hour(), newValue.time().minute(), newValue.time().second());
     return ret;
 }
-
-#endif  // ADBQT
 
 
 /*
@@ -631,8 +592,6 @@ time_t ADBColumn::toTime_t(int useBackup)
 }
 
 
-#ifdef ADBQT
-
 /*
 ** toQDate()  - Converts data to a QDate and returns it.
 */
@@ -733,9 +692,6 @@ const QDateTime ADBColumn::toQDateTime(int useBackup)
 }
 
 
-
-#endif
-
 /*
 ** insStr   - Creates an insert string suitable for use in an insert or
 **            update query, including any necessary quotes.
@@ -835,4 +791,4 @@ void ADBColumn::encryptData(void)
 
 
 
-
+// vim: expandtab
