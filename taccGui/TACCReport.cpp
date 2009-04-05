@@ -27,6 +27,7 @@
 #include <calendar.h>
 #include <ADB.h>
 #include <PrintTreeWidget.h>
+#include <EmailTreeWidget.h>
 #include <EmailMessage.h>
 #include <TAATools.h>
 #include <Cfg.h>
@@ -437,6 +438,18 @@ void TACCReport::printReport()
 
 void TACCReport::emailReport()
 {
+    EmailTreeWidget *ew;
+
+    ew = new EmailTreeWidget(repBody, this);
+    ew->setTitle(reportTitle->text());
+    if (myAllowDates) {
+        QString tmpStr = "For the period from ";
+        tmpStr += startDate().toString();
+        tmpStr += " to ";
+        tmpStr += endDate().toString();
+        ew->setDateLine(tmpStr);
+    }
+    ew->show();
     /*
     uint    colWidths[20];
     uint    numCols;

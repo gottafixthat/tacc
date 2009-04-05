@@ -716,6 +716,76 @@ uint QListViewToCSV(Q3ListView *qlist, const char *fName, bool forceQuotes)
     return retVal;
 }
 
+/**
+ * QTreeWidgetToCSV()
+ *
+ * Given a QTreeWidget this exports it into CSV format into the
+ * specified file name.
+ *
+ * It returns the number of rows exported.
+ */
+uint QTreeWidgetToCSV(QTreeWidget *tree, const char *fName, bool forceQuotes)
+{
+    uint    retVal = 0;
+    int     numCols;
+    bool    quoteIt;
+
+    if (!tree) return 0;
+    numCols = tree->columnCount();
+    if (!numCols) return 0;
+
+
+    // Open the output file
+    QFile   ofile(fName);
+    if (ofile.open(QIODevice::WriteOnly)) {
+        Q3TextStream ostr(&ofile);
+        // Output the header line
+        for(int i = 0; i < numCols; i++) {
+            if (i) ostr << ",";
+            // Check to see if we need to quote it.
+            if (forceQuotes) {
+                quoteIt = true;
+            } else {
+                if (tree->headerItem()->text(i).find(',') >= 0) quoteIt = true;
+                else quoteIt = false;
+            }
+            if (quoteIt) ostr << '"';
+            ostr << tree->headerItem()->text(i).stripWhiteSpace();
+            if (quoteIt) ostr << '"';
+        }
+        ostr << endl;
+
+        // Now walk through the rest of the list and output the data.
+        QTreeWidgetItem *curItem;
+        for (int j = 0; j < tree->topLevelItemCount(); j++) {
+            curItem = tree->topLevelItem(j);
+            for(int i = 0; i < numCols; i++) {
+                if (i) ostr << ",";
+                // Check to see if we need to quote it.
+                if (forceQuotes) {
+                    quoteIt = true;
+                } else {
+                    if (curItem->text(i).find(',') >= 0) quoteIt = true;
+                    else quoteIt = false;
+                }
+                if (quoteIt) ostr << '"';
+                ostr << curItem->text(i).stripWhiteSpace();
+                if (quoteIt) ostr << '"';
+            }
+            ostr << endl;
+
+            retVal++;
+        }
+
+        // Close the file
+        ofile.close();
+        
+    } else {
+        debug(0, "QListViewToCSV(qlist, '%s') - Unable to open file\n", fName);
+    }
+    return retVal;
+}
+
 /*
  * setDebugLevel - Sets the current debug level
  */
