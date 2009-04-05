@@ -1,26 +1,13 @@
-/*
-** $Id: ADBList.cpp,v 1.3 1999/10/27 00:55:41 marc Exp $
-**
-**  ADBList.cpp - An ADBTable hybrid that simulates a linked list.
-**
-*****************************************************************************
-**
-**  (C)opyright 1998, 1999 by R. Marc Lewis and Blarg! Online Services, Inc.
-**  All Rights Reserved
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-**
-*****************************************************************************
-**
-** $Log: ADBList.cpp,v $
-** Revision 1.3  1999/10/27 00:55:41  marc
-** Added some comments to the headers.
-** Added appendStr and getLLong to ADBTable.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -185,3 +172,5 @@ long ADBList::next(void)
 
 
 
+
+// vim: expandtab

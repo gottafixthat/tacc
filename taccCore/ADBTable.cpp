@@ -1,43 +1,13 @@
-/*
-** $Id: ADBTable.cpp,v 1.7 2002/09/29 18:43:47 marc Exp $
-**
-**  ADBTable.cpp - Class definitions for working with entire rows within a 
-**                 table, including insertions, smart updates and deletions.
-**
-*****************************************************************************
-**
-**  (C)opyright 1998, 1999 by R. Marc Lewis and Blarg! Online Services, Inc.
-**  All Rights Reserved
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-**
-*****************************************************************************
-**
-** $Log: ADBTable.cpp,v $
-** Revision 1.7  2002/09/29 18:43:47  marc
-** *** empty log message ***
-**
-** Revision 1.6  2000/06/12 21:48:07  marc
-** Added a new class - ADBLogin.  This is a generic login dialog that can
-** be used in any Qt based program that uses ADB for database access.
-** Altered the defines for using the Qt exentions to ADB.  To use them, the
-** user must now define ADBQT=1 in their Makefiles.
-**
-** Revision 1.5  2000/05/02 20:12:49  marc
-** Added the option to return zero dates as empty strings instead of '0000-00-00'.
-**
-** Revision 1.4  1999/12/17 18:04:10  marc
-** Added the ability for ADB to log to stderr as well as syslog (the default).
-**
-** Revision 1.3  1999/10/27 00:55:41  marc
-** Added some comments to the headers.
-** Added appendStr and getLLong to ADBTable.
-**
-**
-*/
-
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -300,7 +270,6 @@ int ADBTable::setValue(const char *colName, const char *val)
     return setValue(getColumnNumber(colName), val);
 }
 
-#ifdef ADBQT
 /*
 ** ADBTable::setValue()   - Sets the column data to the passed in value.
 */
@@ -324,7 +293,6 @@ int ADBTable::setValue(const char *colName, const QString val)
     return setValue(getColumnNumber(colName), val);
 }
 
-#endif
 
 /*
 ** ADBTable::appendStr() - Appends the string to the specified column.
@@ -350,7 +318,6 @@ int ADBTable::appendStr(const char *colName, const char *val)
 }
 
 
-#ifdef ADBQT
 
 /*
 ** ADBTable::setValue()   - Sets the column data to the passed in value.
@@ -421,7 +388,6 @@ int ADBTable::setValue(const char *colName, const QDateTime val)
     return setValue(getColumnNumber(colName), val);
 }
 
-#endif   // ADBQT
 
 
 /*
@@ -558,7 +524,6 @@ time_t ADBTable::getTime_t(const char *colName, int useBackup)
     return getTime_t(getColumnNumber(colName), useBackup);
 }
 
-#ifdef ADBQT
 
 /*
 ** ADBTable::getDate() - Gets the column data and returns a QDate.
@@ -626,8 +591,6 @@ const QDateTime ADBTable::getDateTime(const char *colName, int useBackup)
     return getDateTime(getColumnNumber(colName), useBackup);
 }
 
-
-#endif  // NOADBQT
 
 /*
 ** get   - Gets a data row based on a long key.
@@ -911,4 +874,7 @@ uint ADBTable::getColumnNumber(const char *colName)
     return retVal;
 }
 
+
+
+// vim: expandtab
 

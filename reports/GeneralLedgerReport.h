@@ -16,29 +16,25 @@
 
 #include <TAAStructures.h>
 
+#include "TACCReport.h"
 #include "Report.h"
 
 /**
  * GeneralLedgerReport - Summary report for the GL.
  */
-class GeneralLedgerReport : public Report
+class GeneralLedgerReport : public TACCReport
 {
     Q_OBJECT
 
 public:
 
-    GeneralLedgerReport
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    GeneralLedgerReport(QWidget* parent = NULL);
     virtual ~GeneralLedgerReport();
 
     virtual void refreshReport();
 
 public slots:
-    virtual void    listItemSelected(Q3ListViewItem *curItem);
+    virtual void    listItemSelected(QTreeWidgetItem *curItem, int col);
     
 };
 

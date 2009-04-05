@@ -29,7 +29,8 @@ export MYSQLLIB=/usr/lib/mysql
 export MYSQLINC=/usr/include/mysql
 BUILDNUM=scripts/buildnum
 #SUBDIRS	= qgtimespinbox lib
-SUBDIRS	= bdes adb lib
+SUBDIRS	= bdes
+SUBDIRS	+= taccCore taccGui lib
 ifdef USEDES
 # SUBDIRS	+= libdes bdes
 	export USEDES=1

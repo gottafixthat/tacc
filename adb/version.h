@@ -1,4 +1,0 @@
-#ifndef ADBVERSION
-#define ADBVERSION "1.0.7-1"
-#define ADBBUILDDATE "Tue Nov 20 15:31:01 PST 2007"
-#endif ADBVERSION

@@ -4,7 +4,8 @@ USEDES	= 1
 
 INCDIR	=  $(QTDIR)/include
 # CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I.
-CFLAGS	= -O2 -Wall -fno-strength-reduce -I/usr/X11R6/include -I. -I../include/ -I../adb -I../bdes
+CFLAGS	= -O2 -Wall -fno-strength-reduce -I/usr/X11R6/include -I. -I../include/ -I../bdes
+CFLAGS += -I../taccCore -I../taccGui
 #CFLAGS	+= -I/usr/include/c++/3.2.2/ext
 LFLAGS  = -lqt -lmysqlclient -lcrypt -L$(QTDIR)/lib -shared
 SHELL   = /bin/sh
@@ -25,7 +26,7 @@ endif
 SUBDIRS =	gl
 
 SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
-			IClient.cpp BString.cpp TAAWidget.cpp\
+			IClient.cpp BString.cpp\
 			ConfirmBox.cpp\
 			QSqlDbPool.cpp\
 			QListViewPrint.cpp\
@@ -59,8 +60,7 @@ SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 
-SRCMETA =	moc_TAAWidget.cpp\
-			moc_ConfirmBox.cpp\
+SRCMETA =	moc_ConfirmBox.cpp\
 			moc_QSqlDbPool.cpp\
 			moc_QListViewPrint.cpp\
 			moc_CustomerSearch.cpp\
@@ -114,9 +114,6 @@ clean:
 FORCE:
 
 ####### Meta objects
-
-moc_TAAWidget.cpp: TAAWidget.h
-	$(MOC) TAAWidget.h -o moc_TAAWidget.cpp
 
 moc_CustomerSearch.cpp: CustomerSearch.h
 	$(MOC) CustomerSearch.h -o moc_CustomerSearch.cpp

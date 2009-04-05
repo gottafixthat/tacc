@@ -4,9 +4,10 @@ USEDES	= 1
 
 INCDIR	=  $(QTDIR)/include
 # CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I.
-CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/ -I../adb
+CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
 CFLAGS += -I../customers
 CFLAGS += -I../lib
+CFLAGS += -I../taccCore -I../taccGui
 CFLAGS += -DADBQT
 LFLAGS  = -lqt -lmysqlclient -lcrypt -L$(QTDIR)/lib -shared
 LFLAGS += -L../lib -lblarg

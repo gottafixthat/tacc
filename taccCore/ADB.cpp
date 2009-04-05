@@ -1,20 +1,13 @@
-/*
-** $Id: ADB.cpp,v 1.19 2002/09/29 18:43:47 marc Exp $
-**
-**  ADB.cpp - Generic Database Routines for queries containing specific
-**            columns or joins.
-**
-*****************************************************************************
-**
-**  (C)opyright 1998, 1999 by R. Marc Lewis and Blarg! Online Services, Inc.
-**  All Rights Reserved
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-**
-*****************************************************************************
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 
 #include <stdlib.h>
@@ -492,3 +485,5 @@ const char *ADB::escapeString(const char *src, int truncLen)
     return escWorkStr;
 }
 
+
+// vim: expandtab

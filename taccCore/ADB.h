@@ -1,79 +1,19 @@
-/*
-** $Id: ADB.h,v 1.21 2002/09/29 18:43:47 marc Exp $
-**
-**  ADB.h    - Object Database Routines.
-**
-**  (C)opyright 1998, 1999 by R. Marc Lewis and Blarg! Online Services, Inc.
-**  All Rights Reserved
-**
-**  Unpublished work.  No portion of this file may be reproduced in whole
-**  or in part by any means, electronic or otherwise, without the express
-**  written consent of Blarg! Online Services and R. Marc Lewis.
-**
-*****************************************************************************
-**
-** The ADB classes comprise three classes which create simple access methods
-** for one or more MySQL databases.  The databases can be local or remote.
-** The Blarg! triple-DES libraries are supported for data protection if
-** they are defined and compiled in.
-**
-** The three classes are:  ADB, ADBTable and ADBList.
-**
-**    The ADB class provides simple and direct access to a database, 
-**    supporting both queries and commands.
-**
-**    The ADBTable class provides access to a single table within a class.
-**    When given the Table name in a database, it automatically determines
-**    all data types and the primary key for the table (provided it is a
-**    single column).  All operations perform on a single row of the table
-**    after a get() or ins() command has been issued.
-**
-**    ADBList is derived from the ADBTable class and can be used to work
-**    with a query that returns multiple rows (such as reports).  Access
-**    to individual rows is supported through the inherited ADBTable class.
-**
-**
-** Requres:  - Blarg DES libraries are required if encrypted columns are 
-**             to be supported.  Available from Blarg! Online Services, Inc.
-**           - MySQL libraries avalable from TCX DataKonsult AB
-**
-*****************************************************************************
-**
-** $Log: ADB.h,v $
-** Revision 1.21  2002/09/29 18:43:47  marc
-** *** empty log message ***
-**
-** Revision 1.20  2000/06/12 21:48:07  marc
-** Added a new class - ADBLogin.  This is a generic login dialog that can
-** be used in any Qt based program that uses ADB for database access.
-** Altered the defines for using the Qt exentions to ADB.  To use them, the
-** user must now define ADBQT=1 in their Makefiles.
-**
-** Revision 1.19  2000/05/02 20:12:49  marc
-** Added the option to return zero dates as empty strings instead of '0000-00-00'.
-**
-** Revision 1.18  2000/01/03 18:22:58  marc
-** Made the order of the fields in the constructors consistant.
-**
-** Revision 1.17  1999/12/17 18:04:10  marc
-** Added the ability for ADB to log to stderr as well as syslog (the default).
-**
-** Revision 1.16  1999/10/27 00:56:35  marc
-** A test for the CVS log function.
-**
-** Revision 1.15  1999/10/27 00:55:41  marc
-** Added some comments to the headers.
-** Added appendStr and getLLong to ADBTable.
-**
-**
-*/
+/* Total Accountability Customer Care (TACC)
+ *
+ * Written by R. Marc Lewis
+ *   (C)opyright 1997-2009, R. Marc Lewis and Avvatel Corporation
+ *   All Rights Reserved
+ *
+ *   Unpublished work.  No portion of this file may be reproduced in whole
+ *   or in part by any means, electronic or otherwise, without the express
+ *   written consent of Avvatel Corporation and R. Marc Lewis.
+ */
 
 #ifndef ADB_H
 #define ADB_H
 
 #include <mysql/mysql.h>
 
-#ifdef ADBQT
 #include <QtCore/QDateTime>
 #include <QtGui/QDialog>
 #include <QtGui/QWidget>
@@ -82,7 +22,6 @@
 #include <Qt3Support/q3textview.h>
 #include <QtGui/QLineEdit>
 #include <QtGui/QComboBox>
-#endif
 
 // As MySQL defines bigint as a long long, we need to define it so we don't
 // have data overflows or corrupted data.
@@ -123,11 +62,9 @@ public:
     int                 set(float newValue);
     int                 set(double newValue);
     int                 append(const char *appVal);
-    #ifdef ADBQT
     int                 set(const QDate newValue);
     int                 set(const QTime newValue);
     int                 set(const QDateTime newValue);
-    #endif
     
     int                 setColumnName(const char *newName);
     void                setColumnNumber(uint newNum);
@@ -150,12 +87,10 @@ public:
     
     time_t              toTime_t(int useBackup = 0);
     
-    #ifdef ADBQT
     // QDateTime functions.
     const QDateTime     toQDateTime(int useBackup = 0);
     const QDate         toQDate(int useBackup = 0);
     const QTime         toQTime(int useBackup = 0);
-    #endif
     
     const char          *insStr();
     
@@ -336,7 +271,6 @@ public:
     int     setValue(const char *colName, const char *val);
     int     appendStr(uint colNo,         const char *val);
     int     appendStr(const char *colName,const char *val);
-    #ifdef ADBQT
     int     setValue(uint colNo,          const QString val);
     int     setValue(const char *colName, const QString val);
     int     setValue(uint colNo,          const QDate val);
@@ -345,7 +279,6 @@ public:
     int     setValue(const char *colName, const QTime val);
     int     setValue(uint colNo,          const QDateTime val);
     int     setValue(const char *colName, const QDateTime val);
-    #endif
     
     // Data retrieval members
     int     getInt(uint colNo, int useBackup = 0);
@@ -362,14 +295,12 @@ public:
     
     time_t              getTime_t(uint colNo, int useBackup = 0);
     time_t              getTime_t(const char *colName, int useBackup = 0);
-    #ifdef ADBQT
     const   QDate       getDate(uint colNo, int useBackup = 0);
     const   QDate       getDate(const char *colName, int useBackup = 0);
     const   QTime       getTime(uint colNo, int useBackup = 0);
     const   QTime       getTime(const char *colName, int useBackup = 0);
     const   QDateTime   getDateTime(uint colNo, int useBackup = 0);
     const   QDateTime   getDateTime(const char *colName, int useBackup = 0);
-    #endif
     
     // Row retrieval access
     long    get(long keyVal);
@@ -454,3 +385,5 @@ private:
 
 #endif // ifdef ADB_H
 
+
+// vim: expandtab

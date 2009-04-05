@@ -32,20 +32,19 @@ using namespace Qt;
  *
  * Constructor.
  */
-GeneralLedgerReport::GeneralLedgerReport
-(
-	QWidget* parent,
-	const char* name
-)
-	: Report( parent, name )
+GeneralLedgerReport::GeneralLedgerReport(QWidget* parent)
+	: TACCReport(parent)
 {
-	setCaption("General Ledger");
+	if (isWindow()) setWindowTitle("General Ledger");
 	setTitle("General Ledger");
-	
-	repBody->setColumnText(0, "Account");  repBody->setColumnAlignment(0, Qt::AlignLeft);
-	repBody->addColumn("Name");            repBody->setColumnAlignment(1, Qt::AlignLeft);
-	repBody->addColumn("Type");            repBody->setColumnAlignment(2, Qt::AlignLeft);
-	repBody->addColumn("Amount");          repBody->setColumnAlignment(3, Qt::AlignRight);
+    repBody->setColumnCount(4);
+    QStringList headers;
+    headers += "Account";
+    headers += "Name";
+    headers += "Type";
+    headers += "Amount";
+    repBody->setHeaderLabels(headers);
+    //repBody->headerItem()->setTextAlignment(3, Qt::AlignRight);
 	
     // By default use the current month.
     setDateRange(d_thisMonth);
@@ -53,6 +52,11 @@ GeneralLedgerReport::GeneralLedgerReport
     allowDates(REP_ALLDATES);
     allowFilters(0);
 	refreshReport();
+
+    QSize   mainSize = sizeHint();
+    QSize   listSize = repBody->sizeHint();
+    mainSize.setWidth(listSize.width()+25);
+    resize(mainSize);
 }
 
 
@@ -146,13 +150,22 @@ void GeneralLedgerReport::refreshReport()
         intAcctNo.setNum(it.data().intAccountNo);
         balance.setNum(it.data().balance);
         balance.sprintf("%.2f", balance.toDouble());
-        new Q3ListViewItem(repBody,
-                it.data().accountNo,
-                it.data().acctName,
-                it.data().accountTypeName,
-                balance,
-                intAcctNo);
+        TACCReportItem *curItem = new TACCReportItem(repBody);
+        curItem->setText(0, it.data().accountNo);
+        curItem->setText(1, it.data().acctName);
+        curItem->setText(2, it.data().accountTypeName);
+        curItem->setText(3, balance);
+        curItem->setText(4, intAcctNo);
+        curItem->setTextAlignment(0, Qt::AlignLeft);
+        curItem->setTextAlignment(1, Qt::AlignLeft);
+        curItem->setTextAlignment(2, Qt::AlignLeft);
+        curItem->setTextAlignment(3, Qt::AlignRight);
+        curItem->setTextAlignment(4, Qt::AlignLeft);
+        curItem->setSortType(3, TACCReportItem::rDouble);
     }
+    for (int i = 0; i < repBody->columnCount(); i++) repBody->resizeColumnToContents(i);
+    repBody->sortItems(0, Qt::AscendingOrder);
+    repBody->setSortingEnabled(true);
 
     QApplication::restoreOverrideCursor();
 }
@@ -165,16 +178,16 @@ void GeneralLedgerReport::refreshReport()
  * in the report, opening a ccPaymentDetails report for the specified
  * day.
  */
-void GeneralLedgerReport::listItemSelected(Q3ListViewItem *curItem)
+void GeneralLedgerReport::listItemSelected(QTreeWidgetItem *curItem, int)
 {
     if (curItem != NULL) {
         // If they double click, open the customer's window.
-        QString intAcctNo = curItem->key(4,0);
-        if (intAcctNo.toInt()) {
+        int intAcctNo = curItem->text(4).toInt();
+        if (intAcctNo) {
             GeneralLedgerDetailReport   *detRep = new GeneralLedgerDetailReport();
             detRep->setStartDate(startDate());
             detRep->setEndDate(endDate());
-            detRep->setIntAccountNo(intAcctNo.toInt());
+            detRep->setIntAccountNo(intAcctNo);
             detRep->show();
         }
     }
