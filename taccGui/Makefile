@@ -36,12 +36,14 @@ SUBDIRS =
 
 SOURCES =	TAAWidget.cpp\
 		   	PrintTreeWidget.cpp\
+		   	EmailTreeWidget.cpp\
 			TACCReport.cpp
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 
 SRCMETA =	moc_TAAWidget.cpp\
 			moc_PrintTreeWidget.cpp\
+			moc_EmailTreeWidget.cpp\
 			moc_TACCReport.cpp
 
 OBJMETA =	$(SRCMETA:.cpp=.o)
@@ -95,6 +97,9 @@ moc_TAAWidget.cpp: TAAWidget.h
 
 moc_PrintTreeWidget.cpp: PrintTreeWidget.h
 	$(MOC) PrintTreeWidget.h -o moc_PrintTreeWidget.cpp
+
+moc_EmailTreeWidget.cpp: EmailTreeWidget.h
+	$(MOC) EmailTreeWidget.h -o moc_EmailTreeWidget.cpp
 
 moc_TACCReport.cpp: TACCReport.h
 	$(MOC) TACCReport.h -o moc_TACCReport.cpp

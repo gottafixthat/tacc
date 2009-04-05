@@ -19,6 +19,7 @@
 #include <QtCore/QDateTime>
 #include <QtGui/QWidget>
 #include <QtGui/QMainWindow>
+#include <QtGui/QTreeWidget>
 #include <Qt3Support/q3strlist.h>
 #include <Qt3Support/q3listview.h>
 
@@ -75,6 +76,7 @@ void        emailAdmins(const char *subj, const char *body);
 
 const QString makeTmpFileName(const char *);
 uint        QListViewToCSV(Q3ListView *qlist, const char *fName, bool forceQuotes = false);
+uint        QTreeWidgetToCSV(QTreeWidget *tree, const char *fName, bool forceQuotes = false);
 
 void        setDebugLevel(int newLevel);
 void        debug(int level, const char *format, ... );
