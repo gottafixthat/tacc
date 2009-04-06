@@ -36,24 +36,23 @@ using namespace Qt;
  *
  * Constructor.
  */
-ccPaymentDetailReport::ccPaymentDetailReport
-(
-	QWidget* parent,
-	const char* name
-)
-	: Report( parent, name )
+ccPaymentDetailReport::ccPaymentDetailReport(QWidget* parent)
+	: TACCReport(parent)
 {
-	setCaption("Credit Card Transaction Detail Report");
+	setWindowTitle("Credit Card Transaction Detail Report");
 	setTitle("Credit Card Transaction Detail Report");
 	
-	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, Qt::AlignLeft);
-	repBody->addColumn("Amount");       repBody->setColumnAlignment(1, Qt::AlignRight);
-	repBody->addColumn("Cust ID");      repBody->setColumnAlignment(2, Qt::AlignLeft);
-	repBody->addColumn("Customer Name");repBody->setColumnAlignment(3, Qt::AlignLeft);
-	repBody->addColumn("Company");      repBody->setColumnAlignment(4, Qt::AlignLeft);
-	repBody->addColumn("CC Type");      repBody->setColumnAlignment(5, Qt::AlignLeft);
-	repBody->addColumn("Disposition");  repBody->setColumnAlignment(6, Qt::AlignLeft);
-	
+    QStringList headers;
+    headers += "Date";
+    headers += "Amount";
+    headers += "Cust ID";
+    headers += "Customer Name";
+    headers += "Company";
+    headers += "CC Type";
+    headers += "Disposition";
+    repBody->setColumnCount(headers.count());
+    repBody->setHeaderLabels(headers);
+
     allowDates(REP_ALLDATES);
     allowFilters(1);
     opts = new ccPaymentDetailOptions();
@@ -203,23 +202,41 @@ void ccPaymentDetailReport::refreshReport()
                     break;
             }
 
-
-            (void) new Q3ListViewItem(repBody, 
-                    q.value(transDateCol).toString(),
-                    amount,
-                    q.value(customerIDCol).toString(),
-                    customerName,
-                    companyName,
-                    ccType,
-                    disposition);
+            TACCReportItem *curItem = new TACCReportItem(repBody);
+            curItem->setText(0, q.value(transDateCol).toString());
+            curItem->setText(1, amount);
+            curItem->setText(2, q.value(customerIDCol).toString());
+            curItem->setText(3, customerName);
+            curItem->setText(4, companyName);
+            curItem->setText(5, ccType);
+            curItem->setText(6, disposition);
+            curItem->setSortType(1, TACCReportItem::rDouble);
+            curItem->setTextAlignment(0, Qt::AlignLeft);
+            curItem->setTextAlignment(1, Qt::AlignRight);
+            curItem->setTextAlignment(2, Qt::AlignLeft);
+            curItem->setTextAlignment(3, Qt::AlignLeft);
+            curItem->setTextAlignment(4, Qt::AlignLeft);
+            curItem->setTextAlignment(5, Qt::AlignLeft);
+            curItem->setTextAlignment(6, Qt::AlignLeft);
         }
         // Add the total line
         amount = amount.sprintf("%.2f", total);
-        (void) new Q3ListViewItem(repBody, 
-                "Total",
-                amount);
+        TACCReportItem *totItem = new TACCReportItem(repBody);
+        totItem->setIsTotalLine(true);
+        totItem->setText(0, "Total");
+        totItem->setText(1, amount);
+        totItem->setTextAlignment(0, Qt::AlignLeft);
+        totItem->setTextAlignment(1, Qt::AlignRight);
+        QFont tmpFont = totItem->font(0);
+        tmpFont.setWeight(QFont::Bold);
+        totItem->setFont(0, tmpFont);
+        totItem->setFont(1, tmpFont);
     }
     debug(1, "Last Query: '%s'\n", q.lastQuery().ascii());
+
+    for (int i = 0; i < repBody->columnCount(); i++) repBody->resizeColumnToContents(i);
+    repBody->sortItems(0, Qt::AscendingOrder);
+    repBody->setSortingEnabled(true);
 
     QApplication::restoreOverrideCursor();
 }
@@ -231,11 +248,11 @@ void ccPaymentDetailReport::refreshReport()
  * When an item is double clicked, this is called.  It drills down
  * in the report.
  */
-void ccPaymentDetailReport::listItemSelected(Q3ListViewItem *curItem)
+void ccPaymentDetailReport::listItemSelected(QTreeWidgetItem *curItem, int)
 {
     if (curItem != NULL) {
         // Open the customer window
-        QString tmpStr = curItem->key(2,0);
+        QString tmpStr = curItem->text(2);
         if (tmpStr.toInt() > 0) {
             emit(openCustomer(tmpStr.toInt()));
         }

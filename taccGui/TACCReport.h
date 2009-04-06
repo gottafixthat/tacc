@@ -57,6 +57,7 @@ public:
 
     void setSortType(int col, int sType);
     void setIsTotalLine(bool tot);
+    bool isTotalLine();
 
 private:
     bool    myIsTotalLine;

@@ -28,22 +28,21 @@ using namespace Qt;
  *
  * Constructor.
  */
-ccPaymentsByTypeReport::ccPaymentsByTypeReport
-(
-	QWidget* parent,
-	const char* name
-)
-	: Report( parent, name )
+ccPaymentsByTypeReport::ccPaymentsByTypeReport(QWidget* parent)
+	: TACCReport(parent)
 {
-	setCaption("Credit Card Transactions By Type");
+	setWindowTitle("Credit Card Transactions By Type");
 	setTitle("Credit Card Transactions By Type");
-	
-	repBody->setColumnText(0, "Date");  repBody->setColumnAlignment(0, Qt::AlignLeft);
-	repBody->addColumn("Visa/MC");      repBody->setColumnAlignment(1, Qt::AlignRight);
-	repBody->addColumn("AmEx");         repBody->setColumnAlignment(2, Qt::AlignRight);
-	repBody->addColumn("Discover");     repBody->setColumnAlignment(3, Qt::AlignRight);
-	repBody->addColumn("Other");        repBody->setColumnAlignment(4, Qt::AlignRight);
-	repBody->addColumn("Total");        repBody->setColumnAlignment(5, Qt::AlignRight);
+
+    QStringList headers;
+    headers += "Date";
+    headers += "Visa/MC";
+    headers += "AmEx";
+    headers += "Discover";
+    headers += "Other";
+    headers += "Total";
+    repBody->setColumnCount(6);
+    repBody->setHeaderLabels(headers);
 	
     //setStartDate(QDate(2007,6,1));
     //setEndDate(QDate(2007,6,30));
@@ -136,7 +135,25 @@ void ccPaymentsByTypeReport::refreshReport()
         txtOther = txtOther.sprintf("%.2f", otherTot);
         txtTotal = txtTotal.sprintf("%.2f", dateTot);
         txtVisa = txtVisa.rightJustify(10, ' ');
-        (void) new Q3ListViewItem(repBody, strDate, txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
+        TACCReportItem *curItem = new TACCReportItem(repBody);
+        curItem->setText(0, strDate);
+        curItem->setText(1, txtVisa);
+        curItem->setText(2, txtAmex);
+        curItem->setText(3, txtDisc);
+        curItem->setText(4, txtOther);
+        curItem->setText(5, txtTotal);
+        curItem->setSortType(0, TACCReportItem::rString);
+        curItem->setSortType(1, TACCReportItem::rDouble);
+        curItem->setSortType(2, TACCReportItem::rDouble);
+        curItem->setSortType(3, TACCReportItem::rDouble);
+        curItem->setSortType(4, TACCReportItem::rDouble);
+        curItem->setSortType(5, TACCReportItem::rDouble);
+        curItem->setTextAlignment(0, Qt::AlignLeft);
+        curItem->setTextAlignment(1, Qt::AlignRight);
+        curItem->setTextAlignment(2, Qt::AlignRight);
+        curItem->setTextAlignment(3, Qt::AlignRight);
+        curItem->setTextAlignment(4, Qt::AlignRight);
+        curItem->setTextAlignment(5, Qt::AlignRight);
         curDate = curDate.addDays(1);
     }
     // One last one to make our bar go away...
@@ -148,7 +165,40 @@ void ccPaymentsByTypeReport::refreshReport()
     txtDisc = txtDisc.sprintf("%.2f", discGT);
     txtOther = txtOther.sprintf("%.2f", otherGT);
     txtTotal = txtTotal.sprintf("%.2f", grandTot);
-    (void) new Q3ListViewItem(repBody, "Total", txtVisa, txtAmex, txtDisc, txtOther, txtTotal);
+
+    TACCReportItem *curItem = new TACCReportItem(repBody);
+    curItem->setText(0, "Total");
+    curItem->setText(1, txtVisa);
+    curItem->setText(2, txtAmex);
+    curItem->setText(3, txtDisc);
+    curItem->setText(4, txtOther);
+    curItem->setText(5, txtTotal);
+    curItem->setSortType(0, TACCReportItem::rString);
+    curItem->setSortType(1, TACCReportItem::rDouble);
+    curItem->setSortType(2, TACCReportItem::rDouble);
+    curItem->setSortType(3, TACCReportItem::rDouble);
+    curItem->setSortType(4, TACCReportItem::rDouble);
+    curItem->setSortType(5, TACCReportItem::rDouble);
+    curItem->setTextAlignment(0, Qt::AlignLeft);
+    curItem->setTextAlignment(1, Qt::AlignRight);
+    curItem->setTextAlignment(2, Qt::AlignRight);
+    curItem->setTextAlignment(3, Qt::AlignRight);
+    curItem->setTextAlignment(4, Qt::AlignRight);
+    curItem->setTextAlignment(5, Qt::AlignRight);
+    curItem->setIsTotalLine(true);
+    QFont tmpFont = curItem->font(0);
+    tmpFont.setWeight(QFont::Bold);
+    curItem->setFont(0, tmpFont);
+    curItem->setFont(1, tmpFont);
+    curItem->setFont(2, tmpFont);
+    curItem->setFont(3, tmpFont);
+    curItem->setFont(4, tmpFont);
+    curItem->setFont(5, tmpFont);
+
+    for (int i = 0; i < repBody->columnCount(); i++) repBody->resizeColumnToContents(i);
+    repBody->sortItems(0, Qt::AscendingOrder);
+    repBody->setSortingEnabled(true);
+
     QApplication::restoreOverrideCursor();
 }
 
@@ -160,13 +210,13 @@ void ccPaymentsByTypeReport::refreshReport()
  * in the report, opening a ccPaymentDetails report for the specified
  * day.
  */
-void ccPaymentsByTypeReport::listItemSelected(Q3ListViewItem *curItem)
+void ccPaymentsByTypeReport::listItemSelected(QTreeWidgetItem *curItem, int)
 {
     if (curItem != NULL) {
         // Only run the report if its not the total line
-        if (strcmp(curItem->key(0,0), "Total")) {
+        if (curItem->text(0).compare("Total")) {
             QDate   dateSel;
-            myDatetoQDate(curItem->key(0,0), &dateSel);
+            myDatetoQDate(curItem->text(0), &dateSel);
             ccPaymentDetailReport   *rep = new ccPaymentDetailReport();
             rep->setStartDate(dateSel);
             rep->setEndDate(dateSel);
