@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Get our build number in the source tree
-VERSION=3.0.0
+VERSION=4.0.0
 BUILDNUM=`svn info | grep Revision | cut -f2 -d" "`
 
 echo "Creating tarball..."
-tar zcf /tmp/tacc-$VERSION-$BUILDNUM.tgz --exclude .svn --exclude *~ --exclude *.bak adb admin asterisk backend bdes bin ccards cccimport ccexpired ccget conf custcare customers doc include lib Makefile modembilling radimport reports scripts seanetimport settings taamaild taccupgrade tickets voicemail voip wasync
+tar zcf /tmp/tacc-$VERSION-$BUILDNUM.tgz --exclude .svn --exclude *~ --exclude *.bak admin asterisk backend bdes bin ccards cccimport ccexpired ccget conf custcare customers doc include lib Makefile modembilling radimport reports scripts settings taamaild taccCore taccGui taccupgrade tickets voicemail voip wasync
 mkdir /tmp/tacc-$VERSION
 pushd /tmp/tacc-$VERSION
 tar zxf /tmp/tacc-$VERSION-$BUILDNUM.tgz

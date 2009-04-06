@@ -99,7 +99,7 @@ include/version.h: ./Makefile
 	@echo \#endif >> .ver
 	@mv -f .ver $@
 
-rpms: clean FORCE
+rpms: clean
 	$(BUILDNUM)
 	scripts/makerpm
 
