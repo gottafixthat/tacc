@@ -38,13 +38,14 @@ endif
 
 SUBDIRS += voip voicemail ccards asterisk customers
 SUBDIRS += reports tickets admin settings custcare
-#SUBDIRS += taccupgrade
-#SUBDIRS += taamaild
-#SUBDIRS += ccexpired cccimport
-#SUBDIRS += modembilling
-#SUBDIRS += radimport
-#SUBDIRS += ccget
-#SUBDIRS += wasync
+SUBDIRS += taccupgrade
+SUBDIRS += taamaild
+SUBDIRS += ccexpired
+SUBDIRS += cccimport
+SUBDIRS += modembilling
+SUBDIRS += radimport
+SUBDIRS += ccget
+SUBDIRS += wasync
 #SUBDIRS += backend
 
 SOURCES =	

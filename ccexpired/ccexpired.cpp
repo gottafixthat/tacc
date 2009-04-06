@@ -57,11 +57,8 @@
 #include <syslog.h>
 
 // Qt Includes
-#include <qlist.h>
-#include <qdatetm.h>
-#include <qregexp.h>
-#include <q3strlist.h>
-#include <qstring.h>
+#include <QtCore/QString>
+#include <QtCore/QDateTime>
 
 // Blarg includes
 #include <ADB.h>
@@ -158,7 +155,7 @@ void findCards(void)
                 // Send them the mail
                 sprintf(dstFile, "%s/ccexpired-%ld-%s-%s", (const char *) cfgVal("MailSpool"), CDB.getLong("CustomerID"), (const char *) LDB.getStr("LoginID"), (const char *) APDB.getStr("ExpDate"));
                 tmpDate = APDB.getDate("ExpDate");
-                parseFile(srcFile, dstFile, CDB.getLong("CustomerID"), LDB.getStr("LoginID"), (const char *) tmpDate.toString());
+                parseFile(srcFile, dstFile, CDB.getLong("CustomerID"), LDB.getStr("LoginID"), tmpDate.toString().toAscii().constData());
                 addNote(CDB.getLong("CustomerID"), LDB.getStr("LoginID"), APDB.getStr("ExpDate"), 1);
             } else {
                 addNote(CDB.getLong("CustomerID"), LDB.getStr("LoginID"), APDB.getStr("ExpDate"), 0);

@@ -38,10 +38,10 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/wait.h>
-#include <qdir.h>
-#include <qstring.h>
-//Added by qt3to4:
-#include <Q3CString>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+#include <QtCore/QRegExp>
+#include <QtCore/QString>
 
 #include "Cfg.h"
 #include <ADB.h>
@@ -110,8 +110,8 @@ void scanDir(void)
     char     tmpbuf[1024];
     char     fromline[1024];
     char     toaddr[1024];
-    Q3CString tmpstr;
-    Q3CString tmpstr2;
+    QString  tmpstr;
+    QString  tmpstr2;
     FILE     *src;
     QDir     dir("/var/spool/taamail");
     char     *bigbuf;
@@ -120,14 +120,15 @@ void scanDir(void)
     // Our SMTP stuff
     DwSmtpClient    smtp;
     
-    const   QFileInfoList   *list = dir.entryInfoList();
-    QFileInfoListIterator it(*list);
-    QFileInfo *fi;
+    const   QFileInfoList   list = dir.entryInfoList();
+    QFileInfo fi;
     QDateTime   curDateTime = QDateTime::currentDateTime();
     // printf(" Bytes, File Name\n");
-    while((fi = it.current())) {
+    for (int z = 0; z < list.count(); z++) {
+        fi = list.at(z);
+    //while((fi = it.current())) {
         // Make sure its a file and at least SLEEPTIME seconds old
-        if (fi->isFile() && (fi->lastModified().secsTo(curDateTime) > SLEEPTIME)) {
+        if (fi.isFile() && (fi.lastModified().secsTo(curDateTime) > SLEEPTIME)) {
             if (!smtp.IsOpen()) {
                 if (!smtp.Open(smtpHost)) {
                     syslog(LOG_INFO, "Unable to connect to mail host '%s'", smtpHost);
@@ -148,18 +149,18 @@ void scanDir(void)
             }
         
             // printf("%10i %s\n", fi->size(), fi->fileName().data());
-            sprintf(tmpbuf, "/var/spool/taamail/%s", fi->fileName().data());
+            sprintf(tmpbuf, "/var/spool/taamail/%s", fi.fileName().toAscii().constData());
             src = fopen(tmpbuf, "r");
             if (src != NULL) {
                 // First, lets get the from Line out of the message
                 strcpy(fromline, "");
                 while(fgets(tmpbuf, sizeof(tmpbuf), src)) {
-                    tmpstr.setStr(tmpbuf);
-                    if (tmpstr.find("From:", 0, FALSE) == 0) {
-                        tmpstr2 = tmpstr.simplifyWhiteSpace();
+                    tmpstr = tmpbuf;
+                    if (tmpstr.contains(QRegExp("^From:"))) {
+                        tmpstr2 = tmpstr.simplified();
                         tmpstr  = tmpstr2;
                         tmpstr2 = tmpstr.remove(0, 6);
-                        strcpy(fromline, tmpstr2);
+                        strcpy(fromline, tmpstr2.toAscii().constData());
                         continue;
                     }
                 }
@@ -168,16 +169,16 @@ void scanDir(void)
                 // Now, lets get the to Line out of the message
                 strcpy(toaddr, "");
                 while(fgets(tmpbuf, sizeof(tmpbuf), src)) {
-                    tmpstr.setStr(tmpbuf);
-                    if (tmpstr.find("To:", 0, FALSE) == 0) {
-                        tmpstr2 = tmpstr.simplifyWhiteSpace();
+                    tmpstr = tmpbuf;
+                    if (tmpstr.contains(QRegExp("^To:"))) {
+                        tmpstr2 = tmpstr.simplified();
                         tmpstr  = tmpstr2;
                         tmpstr2 = tmpstr.remove(0, 4);
                         // Make sure the "To" address has a domain.
-                        if (!tmpstr2.find("@")) {
-                            tmpstr2.append("@avvanta.com");
+                        if (!tmpstr2.contains("@")) {
+                            tmpstr2.append(cfgVal("EmailDomain"));
                         }
-                        strcpy(toaddr, tmpstr2);
+                        strcpy(toaddr, tmpstr2.toAscii().constData());
                         continue;
                     }
                 }
@@ -188,7 +189,7 @@ void scanDir(void)
                 
                 // Read the file into our bigbuf
                 if (!fread(bigbuf, sizeof(char), BIGBUFSIZE, src)) {
-                    syslog(LOG_INFO, "Unable to read from source file '%s'", (const char *) fi->fileName().data());
+                    syslog(LOG_INFO, "Unable to read from source file '%s'", (const char *) fi.fileName().data());
                     fclose(src);
                     smtp.Close();
                     return;
@@ -199,12 +200,12 @@ void scanDir(void)
                 if (strlen(fromline)) {
                     sprintf(tmpbuf, "/usr/sbin/sendmail -t -f\"%s\"", fromline);
                 } else {
-                    sprintf(fromline, "support@avvanta.com");
-                    sprintf(tmpbuf, "/usr/sbin/sendmail -t -fsupport@avvanta.com");
+                    sprintf(fromline, "support@%s", cfgVal("EmailDomain"));
+                    sprintf(tmpbuf, "/usr/sbin/sendmail -t -fsupport@%s", cfgVal("EmailDomain"));
                 }
                 
                 if (!strlen(toaddr)) {
-                    syslog(LOG_INFO, "File %s has no To: address", (const char *) fi->fileName().data());
+                    syslog(LOG_INFO, "File %s has no To: address", (const char *) fi.fileName().data());
                 } else {
                     // Set the from address.
                     DwMailbox *fraddr = new DwMailbox(fromline);
@@ -233,7 +234,7 @@ void scanDir(void)
                     DwString rcptaddrst = rcptaddr->LocalPart();
                     rcptaddrst += "@";
                     if (!strlen(rcptaddr->Domain().c_str())) {
-                        rcptaddrst += "avvanta.com";
+                        rcptaddrst += cfgVal("EmailDomain");
                     } else {
                         rcptaddrst += rcptaddr->Domain();
                     }
@@ -241,7 +242,7 @@ void scanDir(void)
                     respCode = smtp.Rcpt(rcptaddrst.c_str());
                     //respCode = smtp.Rcpt(toaddr);
                     if (!respCode || respCode >= 400) {
-                        syslog(LOG_INFO, "The SMTP server did not accept the To address of '%s' in file %s", rcptaddrst.c_str(), (const char *) fi->fileName().data());
+                        syslog(LOG_INFO, "The SMTP server did not accept the To address of '%s' in file %s", rcptaddrst.c_str(), (const char *) fi.fileName().data());
                         smtp.Close();
                         return;
                     }
@@ -265,16 +266,16 @@ void scanDir(void)
 
                     // If we've made it here, it is safe to remove the
                     // source file.
-                    sprintf(tmpbuf, "/var/spool/taamail/%s", fi->fileName().data());
+                    sprintf(tmpbuf, "/var/spool/taamail/%s", fi.fileName().toAscii().constData());
                     unlink(tmpbuf);
                     
-                    syslog(LOG_INFO, "message %s sent from %s to %s\n", (const char *) fi->fileName().data(), fromline, toaddr);
+                    syslog(LOG_INFO, "message %s sent from %s to %s\n", fi.fileName().toAscii().constData(), fromline, toaddr);
                     ++msgCount;
                 }                             
                 free((void *)bigbuf);
                 
             } else {
-                printf("Unable to open /var/spool/taamail/%s\n", fi->fileName().data());
+                printf("Unable to open /var/spool/taamail/%s\n", fi.fileName().toAscii().constData());
             }
         }
         // sleep(1);
@@ -282,7 +283,6 @@ void scanDir(void)
             syslog(LOG_INFO, "Sent %d messages (reached maximum per pass)", MAXMSGS);
             return;
         }
-        ++it;
     }
     smtp.Close();
     if (msgCount) syslog(LOG_INFO, "Sent %d messages", msgCount);
@@ -296,11 +296,10 @@ void scanDir(void)
 
 void scanDb(void)
 {
-    char     tmpbuf[1024];
     char     fromline[1024];
     char     toaddr[1024];
-    Q3CString tmpstr;
-    Q3CString tmpstr2;
+    QString  tmpstr;
+    QString  tmpstr2;
     char     *bigbuf;
     int      respCode;
     
@@ -394,7 +393,7 @@ void scanDb(void)
             DwString rcptaddrst = rcptaddr->LocalPart();
             rcptaddrst += "@";
             if (!strlen(rcptaddr->Domain().c_str())) {
-                rcptaddrst += "avvanta.com";
+                rcptaddrst += cfgVal("EmailDomain");
             } else {
                 rcptaddrst += rcptaddr->Domain();
             }

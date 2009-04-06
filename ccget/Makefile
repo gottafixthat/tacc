@@ -3,14 +3,14 @@
 USEDES = 1
 
 MYSQLDIR = /usr/lib/mysql
-INCDIRS	=  -I. -I../include -I../adb -I../lib -I../bdes
+INCDIRS	=  -I. -I../include -I../taccCore -I../lib -I../bdes
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
 #LFLAGS  += -lg++ -lstdc++
 LFLAGS  += -lstdc++
-LFLAGS  += -L/usr/local/lib -L../lib -L../adb -L../bdes -ltaa -lbdes
+LFLAGS  += -L/usr/local/lib -L../lib -L../taccCore -L../bdes -ltaa -lbdes
 #LFLAGS	+= -L$(QTDIR)/lib -lqt -L/usr/X11R6/lib -lX11 -lXext -lqutil
-LFLAGS  += -L$(MYSQLDIR) -ladbqt -lmysqlclient
-LFLAGS	+= -L$(QTDIR)/lib -lqt-mt
+LFLAGS  += -L$(MYSQLDIR) -ltaccCore -lmysqlclient
+LFLAGS	+= -L$(QTDIR)/lib -lQtCore
 #LFLAGS	+= -static
 
 

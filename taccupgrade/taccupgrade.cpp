@@ -6,13 +6,13 @@
  */
 
 #include <TAATools.h>
-#include <qapplication.h>
+#include <QtCore/QCoreApplication>
 #include <QSqlDbPool.h>
-#include <q3sqlcursor.h>
-#include <qsqlrecord.h>
-#include <qlist.h>
-//Added by qt3to4:
-#include <QSqlQuery>
+#include <Qt3Support/q3sqlcursor.h>
+#include <QtSql/QSqlRecord>
+#include <QtCore/QList>
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlQuery>
 #include <ADB.h>
 #include <Cfg.h>
 
@@ -23,7 +23,7 @@ int main( int argc, char ** argv )
 {
     // Load the main config file and setup our QApplication.
     loadTAAConfig();
-    QApplication    a( argc, argv );
+    QCoreApplication    a( argc, argv );
 
     // Setup the database pool
     ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
