@@ -17,6 +17,7 @@
 #include <QtCore/QRect>
 #include <QtCore/QFile>
 #include <QtGui/QApplication>
+#include <QtGui/QFont>
 #include <QtGui/QMessageBox>
 #include <QtGui/QLabel>
 #include <QtGui/QCloseEvent>
@@ -85,6 +86,11 @@ void TACCReportItem::setSortType(int col, int sType)
 void TACCReportItem::setIsTotalLine(bool tot)
 {
     myIsTotalLine = tot;
+}
+
+bool TACCReportItem::isTotalLine()
+{
+    return myIsTotalLine;
 }
 
 TACCReport::TACCReport(QWidget* parent, Qt::WFlags f) : TAAWidget(parent, f)
@@ -450,132 +456,6 @@ void TACCReport::emailReport()
         ew->setDateLine(tmpStr);
     }
     ew->show();
-    /*
-    uint    colWidths[20];
-    uint    numCols;
-    QString fmtStr;
-    char    tmpStr[4096];
-    QString tmpQstr;
-    QString colStr;
-    QString txtBody;
-    QString txtStr;
-    QString csvName;
-    QDate   tmpDate = QDate::currentDate();
-    QTime   tmpTime = QTime::currentTime();
-
-    numCols = repBody->header()->count();
-    
-    if (!numCols) return;
-
-    //debug(5,"QListViewToCSV() returned %d lines\n", QListViewToCSV(repBody, "/tmp/test.csv"));
-
-    EmailReportDialog   *eOpts = new EmailReportDialog(this, "emailReportDialog");
-    if (eOpts->exec() != QDialog::Accepted) {
-        delete eOpts;
-        return;
-    }
-    
-    // Get the width of each header item.
-    for (uint i = 0; i < numCols; i++) {
-        colWidths[i] = repBody->header()->label(i).length();
-    }
-
-    // Now, get the longest item for each of the keys.
-    Q3ListViewItem   *curItem;
-    for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
-        for (int i = 0; i < numCols; i++) {
-            if (curItem->key(i, 0).length() > colWidths[i]) {
-                colWidths[i] = curItem->key(i, 0).length();
-            }
-        }
-    }
-    
-    // If dates are allowed, then put them in here.
-    if (myAllowDates) {
-        txtBody += txtStr.sprintf("%11s: %s\n", "Start Date", startDate().toString().ascii());
-        txtBody += txtStr.sprintf("%11s: %s\n\n\n", "End Date", endDate().toString().ascii());
-    }
-    
-    // Okay, now print our headers
-    for (uint i = 0; i < numCols; i++) {
-        colStr  = repBody->header()->label(i).ascii();
-        if (repBody->columnAlignment(i) == Qt::AlignRight) {
-            colStr = colStr.rightJustify(colWidths[i]+1);
-        } else {
-            colStr = colStr.leftJustify(colWidths[i]+1);
-        }
-        txtBody += colStr;
-    }
-    txtBody += "\n";
-
-    // And now a line seperating the headers from the data.
-    for (uint i = 0; i < numCols; i++) {
-        strcpy(tmpStr, "");
-        for (uint n = 0; n < colWidths[i]; n++) strcat(tmpStr, "=");
-        
-        txtBody += tmpStr;
-        txtBody += " ";
-        
-    }
-    txtBody += "\n";
-    
-    // And now, finally, the data itself
-    for (curItem = repBody->firstChild(); curItem != NULL; curItem = curItem->itemBelow()) {
-        for (uint i = 0; i < numCols; i++) {
-            fmtStr = "%";
-            if (repBody->columnAlignment(i) != AlignRight) fmtStr += "-";
-            sprintf(tmpStr, "%d", colWidths[i]);
-            fmtStr += tmpStr;
-            fmtStr += "s ";
-            txtBody += txtStr.sprintf(fmtStr.ascii(), curItem->key(i, 0).ascii());
-        }
-        txtBody += "\n";
-    }
-    
-    txtBody += txtStr.sprintf("\n\nReport generated on %s at %s\n\n", tmpDate.toString().ascii(), tmpTime.toString().ascii());
-
-    // Now, create the email.
-    QString     fromAddr;
-    QString     subj;
-
-    fromAddr = fromAddr.sprintf("%s@%s", curUser().userName, cfgVal("EmailDomain"));
-    subj = subj.sprintf("Report - %s", reportTitle->text().ascii());
-
-    EmailMessage    msg;
-
-    msg.setFrom(fromAddr);
-    msg.setTo(eOpts->emailAddress());
-    msg.setSubject(subj);
-
-    // Only allow them to not send the body if we're attaching a CSV
-    if (eOpts->attachCSV()) {
-        if (eOpts->doPlainText()) {
-            msg.setBody(txtBody);
-        }
-    } else {
-        msg.setBody(txtBody);
-    }
-
-    // Are we attaching the CSV part?
-    if (eOpts->attachCSV()) {
-        // Create a temp file name.
-        csvName = makeTmpFileName("/tmp/report-XXXXXX.csv");
-        QListViewToCSV(repBody, csvName.ascii());
-
-        msg.addAttachment(csvName.ascii(), "text/csv", "report.csv");
-    }
-
-    msg.send();
-
-    // Delete our csv file if necessary
-    if (eOpts->attachCSV()) {
-        unlink(csvName.ascii());
-    }
-
-    QMessageBox::information(this, "Email Report", "The report has been spooled for mailing.");
-
-    */
-
 }
 
 /**

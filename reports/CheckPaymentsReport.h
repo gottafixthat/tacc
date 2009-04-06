@@ -12,26 +12,20 @@
 #ifndef CHECKPAYMENTSREPORT_H
 #define CHECKPAYMENTSREPORT_H
 
-#include "Report.h"
+#include <TACCReport.h>
 
-class CheckPaymentsReport : public Report
+class CheckPaymentsReport : public TACCReport
 {
     Q_OBJECT
 
 public:
-
-    CheckPaymentsReport
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    CheckPaymentsReport(QWidget* parent = NULL);
     virtual ~CheckPaymentsReport();
 
     virtual void refreshReport();
 
 public slots:
-    virtual void    listItemSelected(Q3ListViewItem *curItem);
+    virtual void    listItemSelected(QTreeWidgetItem *curItem, int col);
     
 };
 #endif

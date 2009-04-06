@@ -12,26 +12,20 @@
 #ifndef CCPAYMENTSBYTYPEREPORT_H
 #define CCPAYMENTSBYTYPEREPORT_H
 
-#include "Report.h"
+#include <TACCReport.h>
 
-class ccPaymentsByTypeReport : public Report
+class ccPaymentsByTypeReport : public TACCReport
 {
     Q_OBJECT
 
 public:
-
-    ccPaymentsByTypeReport
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    ccPaymentsByTypeReport(QWidget* parent = NULL);
     virtual ~ccPaymentsByTypeReport();
 
     virtual void refreshReport();
 
 public slots:
-    virtual void    listItemSelected(Q3ListViewItem *curItem);
+    virtual void    listItemSelected(QTreeWidgetItem *curItem, int col);
     
 };
 #endif

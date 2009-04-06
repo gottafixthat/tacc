@@ -11,11 +11,8 @@
 
 #include <stdlib.h>
 
-#include <mcve.h>
 #include <ADB.h>
-#include <CCValidate.h>
 #include <TAATools.h>
-#include <BString.h>
 #include <Cfg.h>
 #include <CheckPaymentsReport.h>
 
@@ -26,22 +23,21 @@ using namespace Qt;
  *
  * Constructor.
  */
-CheckPaymentsReport::CheckPaymentsReport
-(
-	QWidget* parent,
-	const char* name
-)
-	: Report( parent, name )
+CheckPaymentsReport::CheckPaymentsReport(QWidget* parent)
+	: TACCReport(parent)
 {
-	setCaption("Check Payments");
+	setWindowTitle("Check Payments");
 	setTitle("Check Payments");
-	
-	repBody->setColumnText(0, "Date");     repBody->setColumnAlignment(0, Qt::AlignLeft);
-	repBody->addColumn("Amount");          repBody->setColumnAlignment(1, Qt::AlignRight);
-	repBody->addColumn("CustomerID");      repBody->setColumnAlignment(2, Qt::AlignLeft);
-	repBody->addColumn("Customer Name");   repBody->setColumnAlignment(3, Qt::AlignLeft);
-	repBody->addColumn("Company");         repBody->setColumnAlignment(4, Qt::AlignLeft);
-	repBody->addColumn("Comments");        repBody->setColumnAlignment(5, Qt::AlignLeft);
+
+    QStringList headers;
+    headers += "Date";
+    headers += "Amount";
+    headers += "Cust ID";
+    headers += "Customer Name";
+    headers += "Company";
+    headers += "Comments";
+    repBody->setColumnCount(6);
+	repBody->setHeaderLabels(headers);
 	
     //setStartDate(QDate(2007,6,1));
     //setEndDate(QDate(2007,6,30));
@@ -102,20 +98,38 @@ void CheckPaymentsReport::refreshReport()
                 customerName = DB.curRow["FullName"];
             }
 
-            (void) new Q3ListViewItem(repBody, 
-                    DB.curRow["TransDate"],
-                    amount,
-                    DB.curRow["CustomerID"],
-                    customerName,
-                    companyName,
-                    DB.curRow["Memo"]);
+            TACCReportItem *curItem = new TACCReportItem(repBody);
+            curItem->setText(0, DB.curRow["TransDate"]);
+            curItem->setText(1, amount);
+            curItem->setText(2, DB.curRow["CustomerID"]);
+            curItem->setText(3, customerName);
+            curItem->setText(4, companyName);
+            curItem->setText(5, DB.curRow["Memo"]);
+            curItem->setSortType(1, TACCReportItem::rDouble);
+            curItem->setTextAlignment(0, Qt::AlignLeft);
+            curItem->setTextAlignment(1, Qt::AlignRight);
+            curItem->setTextAlignment(2, Qt::AlignLeft);
+            curItem->setTextAlignment(3, Qt::AlignLeft);
+            curItem->setTextAlignment(4, Qt::AlignLeft);
+            curItem->setTextAlignment(5, Qt::AlignLeft);
         }
         // Add the total line
         amount = amount.sprintf("%.2f", total);
-        (void) new Q3ListViewItem(repBody, 
-                "Total",
-                amount);
+        TACCReportItem *totItem = new TACCReportItem(repBody);
+        totItem->setIsTotalLine(true);
+        totItem->setText(0, "Total");
+        totItem->setText(1, amount);
+        totItem->setTextAlignment(0, Qt::AlignLeft);
+        totItem->setTextAlignment(1, Qt::AlignRight);
+        QFont tmpFont = totItem->font(0);
+        tmpFont.setWeight(QFont::Bold);
+        totItem->setFont(0, tmpFont);
+        totItem->setFont(1, tmpFont);
     }
+
+    for (int i = 0; i < repBody->columnCount(); i++) repBody->resizeColumnToContents(i);
+    repBody->sortItems(0, Qt::AscendingOrder);
+    repBody->setSortingEnabled(true);
 
     QApplication::restoreOverrideCursor();
 }
@@ -128,13 +142,13 @@ void CheckPaymentsReport::refreshReport()
  * in the report, opening a ccPaymentDetails report for the specified
  * day.
  */
-void CheckPaymentsReport::listItemSelected(Q3ListViewItem *curItem)
+void CheckPaymentsReport::listItemSelected(QTreeWidgetItem *curItem, int)
 {
     if (curItem != NULL) {
         // If they double click, open the customer's window.
-        QString custID = curItem->key(2,0);
-        if (custID.toInt()) {
-            emit(openCustomer(custID.toInt()));
+        int custID = curItem->text(2).toInt();
+        if (custID) {
+            emit openCustomer(custID);
         }
     }
 }

@@ -15,7 +15,7 @@
 #include <QtGui/QCheckBox>
 #include <Qt3Support/q3listbox.h>
 
-#include "Report.h"
+#include <TACCReport.h>
 
 // Our "Filter" widget
 class ccPaymentDetailOptions : public TAAWidget
@@ -46,24 +46,19 @@ protected:
 
 };
 
-class ccPaymentDetailReport : public Report
+class ccPaymentDetailReport : public TACCReport
 {
     Q_OBJECT
 
 public:
 
-    ccPaymentDetailReport
-    (
-        QWidget* parent = NULL,
-        const char* name = NULL
-    );
-
+    ccPaymentDetailReport(QWidget* parent = NULL);
     virtual ~ccPaymentDetailReport();
 
     virtual void refreshReport();
 
 public slots:
-    virtual void    listItemSelected(Q3ListViewItem *curItem);
+    virtual void    listItemSelected(QTreeWidgetItem *curItem, int col);
     virtual void    editFilters();
 
 private:
