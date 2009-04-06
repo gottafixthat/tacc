@@ -27,6 +27,7 @@
 #include <Cfg.h>
 #include <ADB.h>
 #include <DNSUtils.h>
+#include <TAATools.h>
 #include <VHostUtils.h>
 #include <BrassClient.h>
 
@@ -202,7 +203,7 @@ void DomainAdd::saveDomain()
     Q3StrList    parts;
     Q3StrList    validtlds;
     char        tmpstr[1024];
-    char        dstFile[1024];
+    QString     dstFile;
     char        tmpLogin[1024];
     char        tmpDomain[1024];
     DomainsDB   DDB;
@@ -253,13 +254,13 @@ void DomainAdd::saveDomain()
     }
     
     // Process the mail to hostmaster...
-    tmpnam(dstFile);
+    dstFile = makeTmpFileName("/tmp/domainaddXXXXXX");
     strcpy(tmpLogin, loginID->text(loginID->currentItem()));
     strcpy(tmpDomain, domainName->text());
-    parseFile("/usr/local/lib/taa/domain-template.txt", dstFile, myCustID, tmpLogin, tmpDomain);
-    sprintf(tmpstr, "cp %s /var/spool/taamail/new-domain-%s-%s", dstFile, tmpDomain, tmpLogin);
+    parseFile("/usr/local/lib/taa/domain-template.txt", dstFile.toAscii().constData(), myCustID, tmpLogin, tmpDomain);
+    sprintf(tmpstr, "cp %s /var/spool/taamail/new-domain-%s-%s", dstFile.toAscii().constData(), tmpDomain, tmpLogin);
     system(tmpstr);
-    unlink(dstFile);            // Clean up our tmpfile.
+    unlink(dstFile.toAscii().constData());            // Clean up our tmpfile.
     
     // Now, lets save this bad boy.
     DDB.setValue("CustomerID",  myCustID);
