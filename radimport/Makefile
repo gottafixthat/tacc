@@ -1,10 +1,10 @@
 ####### This section is automatically generated
 
-INCDIRS	=  -I. -I/usr/local/include -I../adb -I../lib
+INCDIRS	=  -I. -I/usr/local/include -I../taccCore -I../lib
 CFLAGS= -O2 -fno-strength-reduce -Wall
-LFLAGS  = -L/usr/local/lib -L/usr/lib/mysql -L../adb -L../lib -L../bdes
-LFLAGS  += -ladbqt -lmysqlclient -ltaa
-LFLAGS	+= -L$(QTDIR)/lib -lqt-mt
+LFLAGS  = -L/usr/local/lib -L/usr/lib/mysql -L../taccCore -L../lib -L../bdes
+LFLAGS  += -ltaccCore -lmysqlclient -ltaa
+LFLAGS	+= -L$(QTDIR)/lib -lQtCore
 SHELL   = /bin/sh
 CC	= g++
 

@@ -25,7 +25,7 @@ endif
 
 SUBDIRS =	gl
 
-SOURCES =	StrTools.cpp Cfg.cpp CCValidate.cpp FParse.cpp\
+SOURCES =	CCValidate.cpp\
 			IClient.cpp BString.cpp\
 			ConfirmBox.cpp\
 			QSqlDbPool.cpp\

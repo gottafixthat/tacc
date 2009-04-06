@@ -13,8 +13,7 @@
 #ifndef TACCUPGRADE_H
 #define TACCUPGRADE_H
 
-#include <qstring.h>
-#include <q3ptrlist.h>
+#include <QtCore/QString>
 
 
 int main( int argc, char ** argv );

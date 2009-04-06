@@ -1,9 +1,9 @@
 ####### This section is automatically generated
 
-INCDIRS	=  -I. -I/usr/local/include -I../include -I../lib -I$(QTDIR)/include -I../adb -I../bdes
+INCDIRS	=  -I. -I/usr/local/include -I../include -I../lib -I$(QTDIR)/include -I../taccCore -I../bdes
 CFLAGS= -O2 -fno-strength-reduce -Wall
-LFLAGS  = -L/usr/local/lib -L/usr/lib/mysql -L../lib -L../adb -L../bdes -L$(QTDIR)/lib -L/usr/X11R6/lib/
-LFLAGS += -ltaa -ladbqt -lqt-mt -lmysqlclient -lXext -lX11 -lSM -ldl -lICE -lpcre 
+LFLAGS  = -L/usr/local/lib -L/usr/lib/mysql -L../lib -L../taccCore -L../bdes -L$(QTDIR)/lib -L/usr/X11R6/lib/
+LFLAGS += -ltaa -ltaccCore -lQtCore -lQt3Support -lQtSql -lmysqlclient -lpcre 
 #LFLAGS += -static
 SHELL   = /bin/sh
 CC	= g++
@@ -14,6 +14,7 @@ ifdef USEDES
 	CFLAGS	+= -DUSEDES
 	LFLAGS	+= -lbdes
 endif
+CFLAGS += -DQT3_SUPPORT
 
 # LFLAGS += -static
 

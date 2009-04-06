@@ -2,18 +2,17 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../include -I../lib -I../adb
+INCDIRS	=  -I$(QTDIR)/include -I. -I../include -I../lib -I../taccCore
 INCDIRS += -I/usr/local/include
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -DADBQT
 #LFLAGS  += -lg++ -lstdc++
 #LFLAGS  += -lstdc++
-LFLAGS  += -L../lib -ltaa
-LFLAGS  += -L/usr/X11R6/lib -lXext
-LFLAGS  += -L/usr/local/lib -ladbqt
+#LFLAGS  += -L../lib -ltaa
+LFLAGS  += -L/usr/local/lib -L../taccCore -ltaccCore
 LFLAGS  += -L/usr/lib/mysql -lmysqlclient
-LFLAGS  += -L../adb -L../bdes
+LFLAGS  += -L../bdes
 LFLAGS  += -lmimepp_net -lmimepp_core -lmimepp_util
-LFLAGS	+= -L$(QTDIR)/lib -lqt-mt
+LFLAGS	+= -L$(QTDIR)/lib -lQtCore
 #LFLAGS	+= -static
 
 ifdef USEDES

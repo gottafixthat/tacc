@@ -8,9 +8,9 @@
 #include <syslog.h>
 
 // Qt Includes
-#include <qlist.h>
-#include <q3intdict.h>
-#include <qdatetm.h>
+#include <QtCore/QDateTime>
+#include <QtCore/QList>
+#include <Qt3Support/q3intdict.h>
 
 // Blarg includes
 #include <ADB.h>
@@ -173,8 +173,8 @@ Q3IntDict<RemoteRegister> RemoteRegListDict;
 // Function prototypes
 void loadConfig(void);
 int loginCount(long CustID);
-AutoPayments *getAutoPayment(long CustID);
-PendingPayments *getPendingPayment(long CustID);
+AutoPayments getAutoPayment(long CustID);
+PendingPayments getPendingPayment(long CustID);
 int loadRemoteLogins(void);
 int loadLocalLogins(void);
 int loadRemoteLoginTypes(void);
@@ -252,10 +252,11 @@ int main(int, char **)
 int loginCount(long CustID)
 {
     int RetVal = 0;
-    RemoteLogin *curItem;
+    RemoteLogin curItem;
     
-    for (curItem = LLoginList.first(); curItem != 0; curItem = LLoginList.next()) {
-        if (curItem->CustomerID == CustID) RetVal++;
+    for (int i = 0; i < LLoginList.size(); i++) {
+        curItem = LLoginList.at(i);
+        if (curItem.CustomerID == CustID) RetVal++;
     }
     
     return RetVal;
@@ -266,13 +267,15 @@ int loginCount(long CustID)
 **                   for the customer or NULL if none was found.
 */
 
-AutoPayments *getAutoPayment(long CustID)
+AutoPayments getAutoPayment(long CustID)
 {
-    AutoPayments *RetVal = NULL;
-    AutoPayments *curItem;
+    AutoPayments RetVal;
+    AutoPayments curItem;
+    RetVal.CustomerID = 0;
     
-    for (curItem = AutoPayList.first(); curItem != 0; curItem = AutoPayList.next()) {
-        if (curItem->CustomerID == CustID) RetVal = curItem;
+    for (int i = 0; i < AutoPayList.size(); i++) {
+        curItem = AutoPayList.at(i);
+        if (curItem.CustomerID == CustID) RetVal = curItem;
     }
     
     return RetVal;
@@ -283,13 +286,15 @@ AutoPayments *getAutoPayment(long CustID)
 **                      record for the customer or NULL if none was found.
 */
 
-PendingPayments *getPendingPayment(long CustID)
+PendingPayments getPendingPayment(long CustID)
 {
-    PendingPayments *RetVal = NULL;
-    PendingPayments *curItem;
+    PendingPayments RetVal;
+    PendingPayments curItem;
+    RetVal.CustomerID = 0;
     
-    for (curItem = PendingList.first(); curItem != 0; curItem = PendingList.next()) {
-        if (curItem->CustomerID == CustID) RetVal = curItem;
+    for (int i = 0; i < PendingList.size(); i++) {
+        curItem = PendingList.at(i);
+        if (curItem.CustomerID == CustID) RetVal = curItem;
     }
     
     return RetVal;
@@ -303,26 +308,25 @@ PendingPayments *getPendingPayment(long CustID)
 int loadLocalLogins(void)
 {
     int         RetVal = 0;
-    RemoteLogin *curItem;
     
     ADB         ldb(LOCALDBASE, LOCALUSER, LOCALPASS, LOCALHOST);
 
     ldb.query("select * from Logins where Active <> 0 order by CustomerID");
 
     if (ldb.rowCount) while (ldb.getrow()) {
-        curItem = new RemoteLogin;
-        curItem->InternalID     = atol(ldb.curRow["InternalID"]);
-        curItem->CustomerID     = atol(ldb.curRow["CustomerID"]);
-        curItem->LoginType      = atol(ldb.curRow["LoginType"]);
-        strcpy(curItem->LoginID, ldb.curRow["LoginID"]);
-        curItem->Active         = atoi(ldb.curRow["Active"]);
+        RemoteLogin curItem;
+        curItem.InternalID     = atol(ldb.curRow["InternalID"]);
+        curItem.CustomerID     = atol(ldb.curRow["CustomerID"]);
+        curItem.LoginType      = atol(ldb.curRow["LoginType"]);
+        strcpy(curItem.LoginID, ldb.curRow["LoginID"]);
+        curItem.Active         = atoi(ldb.curRow["Active"]);
 
-        curItem->Status = STAT_NOCHANGE;    // No change/update/delete/etc.
+        curItem.Status = STAT_NOCHANGE;    // No change/update/delete/etc.
         
-        LLoginList.append(curItem);
+        LLoginList += curItem;
     }
     
-    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", LLoginList.count(), LOCALDBASE, "Logins", LOCALHOST);
+    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", LLoginList.size(), LOCALDBASE, "Logins", LOCALHOST);
     
     return RetVal;
 }
@@ -336,7 +340,6 @@ int loadLocalLogins(void)
 int loadRemoteLogins(void)
 {
     int         RetVal = 0;
-    RemoteLogin *curItem;
     
     ADB         rdb(REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
     //ADBTable    rldb("Logins", REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
@@ -344,22 +347,22 @@ int loadRemoteLogins(void)
     rdb.query("select * from Logins order by CustomerID");
 
     if (rdb.rowCount) while (rdb.getrow()) {
+        RemoteLogin curItem;
         // rldb.get(atol(rdb.curRow["InternalID"]));
 
-        curItem = new RemoteLogin;
-        curItem->InternalID     = atol(rdb.curRow["InternalID"]); //rldb.getLong("InternalID");
-        curItem->CustomerID     = atol(rdb.curRow["CustomerID"]); //rldb.getLong("CustomerID");
-        curItem->LoginType      = atol(rdb.curRow["LoginType"]); //rldb.getLong("LoginType");
+        curItem.InternalID     = atol(rdb.curRow["InternalID"]); //rldb.getLong("InternalID");
+        curItem.CustomerID     = atol(rdb.curRow["CustomerID"]); //rldb.getLong("CustomerID");
+        curItem.LoginType      = atol(rdb.curRow["LoginType"]); //rldb.getLong("LoginType");
         //strcpy(curItem->LoginID, rldb.getStr("LoginID"));
-        strcpy(curItem->LoginID, rdb.curRow["LoginID"]);
-        curItem->Active         = atoi(rdb.curRow["Active"]); //rldb.getInt("Active");
+        strcpy(curItem.LoginID, rdb.curRow["LoginID"]);
+        curItem.Active         = atoi(rdb.curRow["Active"]); //rldb.getInt("Active");
 
-        curItem->Status = STAT_NOCHANGE;    // No change/update/delete/etc.
+        curItem.Status = STAT_NOCHANGE;    // No change/update/delete/etc.
         
-        RLoginList.append(curItem);
+        RLoginList += curItem;
     }
     
-    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", RLoginList.count(), REMOTEDBASE, "Logins", REMOTEHOST);
+    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", RLoginList.size(), REMOTEDBASE, "Logins", REMOTEHOST);
     
     return RetVal;
 }
@@ -372,28 +375,27 @@ int loadRemoteLogins(void)
 int loadRemoteLoginTypes(void)
 {
     int             RetVal = 0;
-    RemoteLoginType *curItem;
     
     ADB         rdb(REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
 
     rdb.query("select * from LoginTypes order by InternalID");
 
     if (rdb.rowCount) while (rdb.getrow()) {
-        curItem = new RemoteLoginType;
-        curItem->InternalID     = atol(rdb.curRow["InternalID"]);
-        curItem->DiskSpace      = atoi(rdb.curRow["DiskSpace"]);
-        curItem->Active         = atoi(rdb.curRow["Active"]);
-        strcpy(curItem->LoginType,   rdb.curRow["LoginType"]);
-        strcpy(curItem->Description, rdb.curRow["Description"]);
-        strcpy(curItem->LoginClass,  rdb.curRow["LoginClass"]);
-        strcpy(curItem->Flags,       rdb.curRow["LoginFlags"]);
+        RemoteLoginType curItem;
+        curItem.InternalID     = atol(rdb.curRow["InternalID"]);
+        curItem.DiskSpace      = atoi(rdb.curRow["DiskSpace"]);
+        curItem.Active         = atoi(rdb.curRow["Active"]);
+        strcpy(curItem.LoginType,   rdb.curRow["LoginType"]);
+        strcpy(curItem.Description, rdb.curRow["Description"]);
+        strcpy(curItem.LoginClass,  rdb.curRow["LoginClass"]);
+        strcpy(curItem.Flags,       rdb.curRow["LoginFlags"]);
 
-        curItem->Status = STAT_NOCHANGE;    // No change/update/delete/etc.
+        curItem.Status = STAT_NOCHANGE;    // No change/update/delete/etc.
         
-        RLoginTypeList.append(curItem);
+        RLoginTypeList += curItem;
     }
     
-    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", RLoginTypeList.count(), REMOTEDBASE, "LoginTypes", REMOTEHOST);
+    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", RLoginTypeList.size(), REMOTEDBASE, "LoginTypes", REMOTEHOST);
     
     return RetVal;
 }
@@ -406,7 +408,6 @@ int loadRemoteLoginTypes(void)
 int loadLocalLoginTypes(void)
 {
     int             RetVal = 0;
-    RemoteLoginType *curItem;
     char            flagStr[4096];
     
     ADB         ldb(LOCALDBASE, LOCALUSER, LOCALPASS, LOCALHOST);
@@ -415,18 +416,18 @@ int loadLocalLoginTypes(void)
     ldb.query("select * from LoginTypes order by InternalID");
 
     if (ldb.rowCount) while (ldb.getrow()) {
+        RemoteLoginType curItem;
         //fprintf(stderr, "Examining login type '%ld'\n", atol(ldb.curRow["InternalID"]));
-        curItem = new RemoteLoginType;
-        curItem->InternalID     = atol(ldb.curRow["InternalID"]);
-        curItem->DiskSpace      = atoi(ldb.curRow["DiskSpace"]);
-        curItem->Active         = atoi(ldb.curRow["Active"]);
-        strcpy(curItem->LoginType,   ldb.curRow["LoginType"]);
-        strcpy(curItem->Description, ldb.curRow["Description"]);
-        strcpy(curItem->LoginClass,  ldb.curRow["LoginClass"]);
-        strcpy(curItem->Flags,       "");
+        curItem.InternalID     = atol(ldb.curRow["InternalID"]);
+        curItem.DiskSpace      = atoi(ldb.curRow["DiskSpace"]);
+        curItem.Active         = atoi(ldb.curRow["Active"]);
+        strcpy(curItem.LoginType,   ldb.curRow["LoginType"]);
+        strcpy(curItem.Description, ldb.curRow["Description"]);
+        strcpy(curItem.LoginClass,  ldb.curRow["LoginClass"]);
+        strcpy(curItem.Flags,       "");
         // Get the flags for them now.
         strcpy(flagStr, "");
-        fdb.query("select LoginTypeFlags.Tag, LoginTypeFlags.Value, LoginFlags.IsBool from LoginTypeFlags, LoginFlags where LoginTypeFlags.Tag = LoginFlags.LoginFlag and LoginTypeFlags.LoginTypeID = %ld order by LoginTypeFlags.Tag", curItem->InternalID);
+        fdb.query("select LoginTypeFlags.Tag, LoginTypeFlags.Value, LoginFlags.IsBool from LoginTypeFlags, LoginFlags where LoginTypeFlags.Tag = LoginFlags.LoginFlag and LoginTypeFlags.LoginTypeID = %ld order by LoginTypeFlags.Tag", curItem.InternalID);
         if (fdb.rowCount) {
             while (fdb.getrow()) {
                 if (strlen(flagStr)) strcat(flagStr, ",");
@@ -437,14 +438,14 @@ int loadLocalLoginTypes(void)
                 }
             }
         }
-        strcpy(curItem->Flags, flagStr);
+        strcpy(curItem.Flags, flagStr);
 
-        curItem->Status = STAT_NOCHANGE;    // No change/update/delete/etc.
+        curItem.Status = STAT_NOCHANGE;    // No change/update/delete/etc.
         
-        LLoginTypeList.append(curItem);
+        LLoginTypeList += curItem;
     }
     
-    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", LLoginTypeList.count(), LOCALDBASE, "LoginTypes", LOCALHOST);
+    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", LLoginTypeList.size(), LOCALDBASE, "LoginTypes", LOCALHOST);
     
     return RetVal;
 }
@@ -458,7 +459,6 @@ int loadLocalLoginTypes(void)
 int loadLocalDomains(void)
 {
     int          RetVal = 0;
-    RemoteDomain *curItem;
     
     ADB         ldb(LOCALDBASE, LOCALUSER, LOCALPASS, LOCALHOST);
     ADBTable    lddb("Domains", LOCALDBASE, LOCALUSER, LOCALPASS, LOCALHOST);
@@ -467,23 +467,23 @@ int loadLocalDomains(void)
 
     if (ldb.rowCount) while (ldb.getrow()) {
         // lddb.get(atol(ldb.curRow["InternalID"]));
+        RemoteDomain curItem;
 
-        curItem = new RemoteDomain;
-        curItem->InternalID       = atol(ldb.curRow["InternalID"]); //lddb.getLong("InternalID");
-        curItem->CustomerID       = atol(ldb.curRow["CustomerID"]); //lddb.getLong("CustomerID");
-        curItem->DomainType       = atoi(ldb.curRow["DomainType"]); //lddb.getInt("DomainType");
-        curItem->HasSSL           = atoi(ldb.curRow["HasSSL"]); // lddb.getInt("HasSSL");
+        curItem.InternalID       = atol(ldb.curRow["InternalID"]); //lddb.getLong("InternalID");
+        curItem.CustomerID       = atol(ldb.curRow["CustomerID"]); //lddb.getLong("CustomerID");
+        curItem.DomainType       = atoi(ldb.curRow["DomainType"]); //lddb.getInt("DomainType");
+        curItem.HasSSL           = atoi(ldb.curRow["HasSSL"]); // lddb.getInt("HasSSL");
         //strcpy(curItem->LoginID,    lddb.getStr("LoginID"));
         //strcpy(curItem->DomainName, lddb.getStr("DomainName"));
-        strcpy(curItem->LoginID,    ldb.curRow["LoginID"]);
-        strcpy(curItem->DomainName, ldb.curRow["DomainName"]);
+        strcpy(curItem.LoginID,    ldb.curRow["LoginID"]);
+        strcpy(curItem.DomainName, ldb.curRow["DomainName"]);
 
-        curItem->Status = STAT_NOCHANGE;    // No change/update/delete/etc.
+        curItem.Status = STAT_NOCHANGE;    // No change/update/delete/etc.
         
-        LDomainList.append(curItem);
+        LDomainList += curItem;
     }
     
-    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", LDomainList.count(), LOCALDBASE, "Domains", LOCALHOST);
+    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", LDomainList.size(), LOCALDBASE, "Domains", LOCALHOST);
     
     return RetVal;
 }
@@ -497,7 +497,6 @@ int loadLocalDomains(void)
 int loadRemoteDomains(void)
 {
     int         RetVal = 0;
-    RemoteDomain *curItem;
     
     ADB         rdb(REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
     ADBTable    rddb("Domains", REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
@@ -506,23 +505,23 @@ int loadRemoteDomains(void)
 
     if (rdb.rowCount) while (rdb.getrow()) {
         // rddb.get(atol(rdb.curRow["InternalID"]));
+        RemoteDomain curItem;
 
-        curItem = new RemoteDomain;
-        curItem->InternalID       = atol(rdb.curRow["InternalID"]); //rddb.getLong("InternalID");
-        curItem->CustomerID       = atol(rdb.curRow["CustomerID"]); //rddb.getLong("CustomerID");
-        curItem->DomainType       = atoi(rdb.curRow["DomainType"]); //rddb.getInt("DomainType");
-        curItem->HasSSL           = atoi(rdb.curRow["HasSSL"]); // rddb.getInt("HasSSL");
+        curItem.InternalID       = atol(rdb.curRow["InternalID"]); //rddb.getLong("InternalID");
+        curItem.CustomerID       = atol(rdb.curRow["CustomerID"]); //rddb.getLong("CustomerID");
+        curItem.DomainType       = atoi(rdb.curRow["DomainType"]); //rddb.getInt("DomainType");
+        curItem.HasSSL           = atoi(rdb.curRow["HasSSL"]); // rddb.getInt("HasSSL");
         //strcpy(curItem->LoginID,    rddb.getStr("LoginID"));
         //strcpy(curItem->DomainName, rddb.getStr("DomainName"));
-        strcpy(curItem->LoginID,    rdb.curRow["LoginID"]);
-        strcpy(curItem->DomainName, rdb.curRow["DomainName"]);
+        strcpy(curItem.LoginID,    rdb.curRow["LoginID"]);
+        strcpy(curItem.DomainName, rdb.curRow["DomainName"]);
 
-        curItem->Status = STAT_NOCHANGE;    // No change/update/delete/etc.
+        curItem.Status = STAT_NOCHANGE;    // No change/update/delete/etc.
         
-        RDomainList.append(curItem);
+        RDomainList += curItem;
     }
     
-    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", RDomainList.count(), REMOTEDBASE, "Domains", REMOTEHOST);
+    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", RDomainList.size(), REMOTEDBASE, "Domains", REMOTEHOST);
     
     return RetVal;
 }
@@ -536,7 +535,6 @@ int loadRemoteDomains(void)
 int loadRemoteCustomers(void)
 {
     int             RetVal = 0;
-    RemoteCustomer  *curItem;
     
     ADB         rdb(REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
     // ADBTable    rcdb("Customers", REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
@@ -545,6 +543,7 @@ int loadRemoteCustomers(void)
 
     if (rdb.rowCount) while (rdb.getrow()) {
         // rcdb.get(atol(rdb.curRow["CustomerID"]));
+        RemoteCustomer  *curItem;
         curItem = new RemoteCustomer;
         curItem->CustomerID     = atol(rdb.curRow["CustomerID"]);
         curItem->CurrentBalance = atof(rdb.curRow["CurrentBalance"]);
@@ -563,11 +562,11 @@ int loadRemoteCustomers(void)
         
         curItem->Status = STAT_NOCHANGE;    // No change/update/delete/etc.
         
-        RCustList.append(curItem);
+        RCustList += *curItem;
         RCustListDict.insert(curItem->CustomerID, curItem);
     }
     
-    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", RCustList.count(), REMOTEDBASE, "Customers", REMOTEHOST);
+    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", RCustList.size(), REMOTEDBASE, "Customers", REMOTEHOST);
     
     return RetVal;
 }
@@ -580,9 +579,8 @@ int loadRemoteCustomers(void)
 int loadLocalCustomers(void)
 {
     int             RetVal = 0;
-    RemoteCustomer  *curItem;
-    AutoPayments    *aPay = NULL;
-    PendingPayments *ccTrans = NULL;
+    AutoPayments    aPay;
+    PendingPayments ccTrans;
     
     ADB         ldb(LOCALDBASE, LOCALUSER, LOCALPASS, LOCALHOST);
     // ADBTable    lcdb("Customers", LOCALDBASE, LOCALUSER, LOCALPASS, LOCALHOST);
@@ -594,15 +592,15 @@ int loadLocalCustomers(void)
         
         // Make sure this customer has active logins...
         if (loginCount(atol(ldb.curRow["CustomerID"]))) {
-	        curItem = new RemoteCustomer;
+            RemoteCustomer *curItem = new RemoteCustomer;
 	        curItem->CustomerID     = atol(ldb.curRow["CustomerID"]);
 	        curItem->CurrentBalance = atof(ldb.curRow["CurrentBalance"]);
 	        
 	        aPay = getAutoPayment(curItem->CustomerID);
-	        if (aPay != NULL) {
-	            curItem->AutoPayment    = aPay->TransType + 1;
-	            strcpy(curItem->AutoExpires, aPay->ExpDate);
-	            strcpy(curItem->AutoLastFour, aPay->LastFour);
+	        if (aPay.CustomerID == curItem->CustomerID) {
+	            curItem->AutoPayment    = aPay.TransType + 1;
+	            strcpy(curItem->AutoExpires, aPay.ExpDate);
+	            strcpy(curItem->AutoLastFour, aPay.LastFour);
 	        } else {
     	        curItem->AutoPayment    = 0;
     	        strcpy(curItem->AutoExpires,  "0000-00-00");
@@ -610,10 +608,10 @@ int loadLocalCustomers(void)
 	        }
 	        
 	        ccTrans = getPendingPayment(curItem->CustomerID);
-	        if (ccTrans != NULL) {
+	        if (ccTrans.CustomerID == curItem->CustomerID) {
 	            curItem->PendingPayment = 1;
-	            curItem->PendingAmount = ccTrans->Amount;
-	            strcpy(curItem->PendingDate, ccTrans->TransDate);
+	            curItem->PendingAmount = ccTrans.Amount;
+	            strcpy(curItem->PendingDate, ccTrans.TransDate);
 	        } else {
 	            curItem->PendingPayment = 0;
 	            curItem->PendingAmount  = 0.00;
@@ -630,12 +628,12 @@ int loadLocalCustomers(void)
 	        
 	        curItem->Status = STAT_NOCHANGE;    // No change/update/delete/etc.
 	        
-	        LCustList.append(curItem);
+            LCustList += *curItem;
 	        LCustListDict.insert(curItem->CustomerID, curItem);
         }
     }
     
-    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", LCustList.count(), LOCALDBASE, "Customers", LOCALHOST);
+    syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", LCustList.size(), LOCALDBASE, "Customers", LOCALHOST);
     
     return RetVal;
 }
@@ -648,7 +646,6 @@ int loadLocalCustomers(void)
 int loadAutoPayments(void)
 {
     int             RetVal = 0;
-    AutoPayments    *curItem;
     QString         tmpQSt;
     
 
@@ -665,6 +662,7 @@ int loadAutoPayments(void)
         // Before this will work, we'll need to load the TAA encryption
         // key and use the legacy decryption routines on the CardType.
         // Manual decryption would probably be best for now...
+        AutoPayments    *curItem;
         
         curItem = new AutoPayments;
         curItem->InternalID     = lapdb.getLong("InternalID");
@@ -674,7 +672,7 @@ int loadAutoPayments(void)
         tmpQSt = lapdb.getStr("AcctNo");
         strcpy(curItem->LastFour, (const char *) tmpQSt.right(4));
 	        
-        AutoPayList.append(curItem);
+        AutoPayList += *curItem;
     }
     
     syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", AutoPayList.count(), LOCALDBASE, "AutoPayments", LOCALHOST);
@@ -706,7 +704,7 @@ int loadPendingPayments(void)
         curItem->Amount         = lccdb.getFloat("Amount");
         strcpy(curItem->TransDate, lccdb.getStr("TransDate"));
 	        
-        PendingList.append(curItem);
+        PendingList += *curItem;
     }
     
     syslog(LOG_INFO, "Loaded %d records from %s:%s on %s\n", PendingList.count(), LOCALDBASE, "CCTrans", LOCALHOST);
@@ -785,7 +783,7 @@ int loadLocalRegister(void)
             
             curItem->Status = STAT_NOCHANGE;
             
-            LocalRegList.append(curItem);
+            LocalRegList += *curItem;
             
             LocalRegListDict.insert(curItem->InternalID, curItem);
         }
@@ -841,7 +839,7 @@ int loadRemoteRegister(void)
         // We default to delete, and then update the no-change items later.
         curItem->Status = STAT_NOCHANGE;
         
-        RemoteRegList.append(curItem);
+        RemoteRegList += *curItem;
         
         RemoteRegListDict.insert(curItem->InternalID, curItem);
     }
@@ -864,95 +862,96 @@ int loadRemoteRegister(void)
 int checkRemoteCustomers(void)
 {
     int             RetVal = 0;
-    RemoteCustomer  *curItem;
+    RemoteCustomer  curItem;
     RemoteCustomer  *curLocal;
     int             foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = RCustList.first(); curItem != 0; curItem = RCustList.next()) {
+    for (int z = 0; z < RCustList.size(); z++) {
+        curItem = RCustList.at(z);
         foundIt = 0;
         // And our inner loop, which actually does the checking.
-        curLocal = LCustListDict[curItem->CustomerID];
+        curLocal = LCustListDict[curItem.CustomerID];
         if (curLocal != 0) {
         // for (curLocal = LCustList.first(); curLocal != 0; curLocal = LCustList.next()) {
-            if (curItem->CustomerID == curLocal->CustomerID) {
+            if (curItem.CustomerID == curLocal->CustomerID) {
                 foundIt = 1;
                 // Found the item.  Check for any updates.
                 
                 // Check the primary login ID.
-                if (strcmp(curItem->PrimaryLogin, curLocal->PrimaryLogin)) {
-                    strcpy(curItem->PrimaryLogin, curLocal->PrimaryLogin);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.PrimaryLogin, curLocal->PrimaryLogin)) {
+                    strcpy(curItem.PrimaryLogin, curLocal->PrimaryLogin);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check how many mailboxes
-                if (curItem->MailboxesAllowed != curLocal->MailboxesAllowed) {
-                    curItem->MailboxesAllowed = curLocal->MailboxesAllowed;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.MailboxesAllowed != curLocal->MailboxesAllowed) {
+                    curItem.MailboxesAllowed = curLocal->MailboxesAllowed;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the current balance
-                if (curItem->CurrentBalance != curLocal->CurrentBalance) {
-                    curItem->CurrentBalance = curLocal->CurrentBalance;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.CurrentBalance != curLocal->CurrentBalance) {
+                    curItem.CurrentBalance = curLocal->CurrentBalance;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the previous balance
-                if (curItem->PrevBalance != curLocal->PrevBalance) {
-                    curItem->PrevBalance = curLocal->PrevBalance;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.PrevBalance != curLocal->PrevBalance) {
+                    curItem.PrevBalance = curLocal->PrevBalance;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check AutoPayment status
-                if (curItem->AutoPayment != curLocal->AutoPayment) {
-                    curItem->AutoPayment = curLocal->AutoPayment;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.AutoPayment != curLocal->AutoPayment) {
+                    curItem.AutoPayment = curLocal->AutoPayment;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // When does the automatic payment expire?
-                if (strcmp(curItem->AutoExpires, curLocal->AutoExpires)) {
-                    strcpy(curItem->AutoExpires, curLocal->AutoExpires);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.AutoExpires, curLocal->AutoExpires)) {
+                    strcpy(curItem.AutoExpires, curLocal->AutoExpires);
+                    curItem.Status = STAT_UPDATE;
                 }
 
-                if (strcmp(curItem->AutoLastFour, curLocal->AutoLastFour)) {
-                    strcpy(curItem->AutoLastFour, curLocal->AutoLastFour);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.AutoLastFour, curLocal->AutoLastFour)) {
+                    strcpy(curItem.AutoLastFour, curLocal->AutoLastFour);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check PendingPayment status
-                if (curItem->PendingPayment != curLocal->PendingPayment) {
-                    curItem->PendingPayment = curLocal->PendingPayment;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.PendingPayment != curLocal->PendingPayment) {
+                    curItem.PendingPayment = curLocal->PendingPayment;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check PendingAmount status
-                if (curItem->PendingAmount != curLocal->PendingAmount) {
-                    curItem->PendingAmount = curLocal->PendingAmount;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.PendingAmount != curLocal->PendingAmount) {
+                    curItem.PendingAmount = curLocal->PendingAmount;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the date of the pending amount
-                if (strcmp(curItem->PendingDate, curLocal->PendingDate)) {
-                    strcpy(curItem->PendingDate, curLocal->PendingDate);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.PendingDate, curLocal->PendingDate)) {
+                    strcpy(curItem.PendingDate, curLocal->PendingDate);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the grace date on the account
-                if (strcmp(curItem->GraceDate, curLocal->GraceDate)) {
-                    strcpy(curItem->GraceDate, curLocal->GraceDate);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.GraceDate, curLocal->GraceDate)) {
+                    strcpy(curItem.GraceDate, curLocal->GraceDate);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the previous balance date on the account
-                if (strcmp(curItem->PrevBalanceDate, curLocal->PrevBalanceDate)) {
-                    strcpy(curItem->PrevBalanceDate, curLocal->PrevBalanceDate);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.PrevBalanceDate, curLocal->PrevBalanceDate)) {
+                    strcpy(curItem.PrevBalanceDate, curLocal->PrevBalanceDate);
+                    curItem.Status = STAT_UPDATE;
                 }
             }
         }
         // If we didn't find the record, mark it for deletion.
-        if (!foundIt) curItem->Status = STAT_DELETE;
+        if (!foundIt) curItem.Status = STAT_DELETE;
     }
 
     return RetVal;    
@@ -967,42 +966,43 @@ int checkRemoteCustomers(void)
 int checkLocalCustomers(void)
 {
     int             RetVal = 0;
-    RemoteCustomer  *curItem;
+    RemoteCustomer  curItem;
     RemoteCustomer  *curRemote;
     int             foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = LCustList.first(); curItem != 0; curItem = LCustList.next()) {
+    for (int z = 0; z < LCustList.size(); z++) {
+        curItem = LCustList.at(z);
         foundIt = 0;
         // And our inner loop, which actually does the checking.
-        curRemote = RCustListDict[curItem->CustomerID];
+        curRemote = RCustListDict[curItem.CustomerID];
         if (curRemote != 0) {
         // for (curRemote = RCustList.first(); curRemote != 0; curRemote = RCustList.next()) {
-            if (curItem->CustomerID == curRemote->CustomerID) {
+            if (curItem.CustomerID == curRemote->CustomerID) {
                 foundIt = 1;
             }
         }
         // If we didn't find the record, add it in.
         if (!foundIt) {
 	        curRemote = new RemoteCustomer;
-	        curRemote->CustomerID       = curItem->CustomerID;
-	        curRemote->CurrentBalance   = curItem->CurrentBalance;
-	        curRemote->AutoPayment      = curItem->AutoPayment;
-	        curRemote->PendingPayment   = curItem->PendingPayment;
-	        curRemote->PendingAmount    = curItem->PendingAmount;
-	        curRemote->PrevBalance      = curItem->PrevBalance;
-            curRemote->MailboxesAllowed = curItem->MailboxesAllowed;
+	        curRemote->CustomerID       = curItem.CustomerID;
+	        curRemote->CurrentBalance   = curItem.CurrentBalance;
+	        curRemote->AutoPayment      = curItem.AutoPayment;
+	        curRemote->PendingPayment   = curItem.PendingPayment;
+	        curRemote->PendingAmount    = curItem.PendingAmount;
+	        curRemote->PrevBalance      = curItem.PrevBalance;
+            curRemote->MailboxesAllowed = curItem.MailboxesAllowed;
 
-	        strcpy(curRemote->PrimaryLogin, curItem->PrimaryLogin);
-	        strcpy(curRemote->AutoExpires,  curItem->AutoExpires);
-	        strcpy(curRemote->AutoLastFour, curItem->AutoLastFour);
-	        strcpy(curRemote->PendingDate,  curItem->PendingDate);
-	        strcpy(curRemote->GraceDate,    curItem->GraceDate);
-	        strcpy(curRemote->LastModified, curItem->LastModified);
+	        strcpy(curRemote->PrimaryLogin, curItem.PrimaryLogin);
+	        strcpy(curRemote->AutoExpires,  curItem.AutoExpires);
+	        strcpy(curRemote->AutoLastFour, curItem.AutoLastFour);
+	        strcpy(curRemote->PendingDate,  curItem.PendingDate);
+	        strcpy(curRemote->GraceDate,    curItem.GraceDate);
+	        strcpy(curRemote->LastModified, curItem.LastModified);
 	        
 	        curRemote->Status = STAT_INSERT;    // No change/update/delete/etc.
 	        
-	        RCustList.append(curRemote);
+	        RCustList += *curRemote;
         }
     }
 
@@ -1018,45 +1018,47 @@ int checkLocalCustomers(void)
 int checkRemoteLogins(void)
 {
     int         RetVal = 0;
-    RemoteLogin *curItem;
-    RemoteLogin *curLocal;
+    RemoteLogin curItem;
+    RemoteLogin curLocal;
     int         foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = RLoginList.first(); curItem != 0; curItem = RLoginList.next()) {
+    for (int z = 0; z < RLoginList.size(); z++) {
+        curItem = RLoginList.at(z);
         foundIt = 0;
         // And our inner loop, which actually does the checking.
-        for (curLocal = LLoginList.first(); curLocal != 0; curLocal = LLoginList.next()) {
-            if (curItem->InternalID == curLocal->InternalID) {
+        for (int x = 0; x < LLoginList.size(); x++) {
+            curLocal = LLoginList.at(x);
+            if (curItem.InternalID == curLocal.InternalID) {
                 foundIt = 1;
                 // Found the item.  Check for any updates.
                 
                 // Check the Customer ID
-                if (curItem->CustomerID != curLocal->CustomerID) {
-                    curItem->CustomerID = curLocal->CustomerID;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.CustomerID != curLocal.CustomerID) {
+                    curItem.CustomerID = curLocal.CustomerID;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the login ID
-                if (strcmp(curItem->LoginID, curLocal->LoginID)) {
-                    strcpy(curItem->LoginID, curLocal->LoginID);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.LoginID, curLocal.LoginID)) {
+                    strcpy(curItem.LoginID, curLocal.LoginID);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the Login type
-                if (curItem->LoginType != curLocal->LoginType) {
-                    curItem->LoginType = curLocal->LoginType;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.LoginType != curLocal.LoginType) {
+                    curItem.LoginType = curLocal.LoginType;
+                    curItem.Status = STAT_UPDATE;
                 }
 
-                if (curItem->Active != curLocal->Active) {
-                    curItem->Active = curLocal->Active;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.Active != curLocal.Active) {
+                    curItem.Active = curLocal.Active;
+                    curItem.Status = STAT_UPDATE;
                 }
             }
         }
         // If we didn't find the record, mark it for deletion.
-        if (!foundIt) curItem->Status = STAT_DELETE;
+        if (!foundIt) curItem.Status = STAT_DELETE;
     }
 
     return RetVal;    
@@ -1070,32 +1072,34 @@ int checkRemoteLogins(void)
 int checkLocalLogins(void)
 {
     int         RetVal = 0;
-    RemoteLogin *curItem;
-    RemoteLogin *curRemote;
+    RemoteLogin curItem;
+    RemoteLogin curRemote;
     int         foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = LLoginList.first(); curItem != 0; curItem = LLoginList.next()) {
+    for (int z = 0; z < LLoginList.size(); z++) {
+        curItem = LLoginList.at(z);
         foundIt = 0;
         // And our inner loop, which actually does the checking.
-        for (curRemote = RLoginList.first(); curRemote != 0; curRemote = RLoginList.next()) {
-            if (curItem->InternalID == curRemote->InternalID) {
+        for (int x = 0; x < RLoginList.size(); x++) {
+            curRemote = LLoginList.at(x);
+            if (curItem.InternalID == curRemote.InternalID) {
                 foundIt = 1;
             }
         }
         // If we didn't find the record, add it in.
         if (!foundIt) {
-	        curRemote = new RemoteLogin;
-	        curRemote->InternalID     = curItem->InternalID;
-	        curRemote->CustomerID     = curItem->CustomerID;
-	        curRemote->LoginType      = curItem->LoginType;
-            curRemote->Active         = curItem->Active;
+	        RemoteLogin *tmpRemote = new RemoteLogin;
+	        tmpRemote->InternalID     = curItem.InternalID;
+	        tmpRemote->CustomerID     = curItem.CustomerID;
+	        tmpRemote->LoginType      = curItem.LoginType;
+            tmpRemote->Active         = curItem.Active;
 
-	        strcpy(curRemote->LoginID, curItem->LoginID);
+	        strcpy(tmpRemote->LoginID, curItem.LoginID);
 	        
-	        curRemote->Status = STAT_INSERT;    // No change/update/delete/etc.
+	        tmpRemote->Status = STAT_INSERT;    // No change/update/delete/etc.
 	        
-	        RLoginList.append(curRemote);
+	        RLoginList += *tmpRemote;
         }
     }
 
@@ -1110,59 +1114,61 @@ int checkLocalLogins(void)
 int checkRemoteLoginTypes(void)
 {
     int             RetVal = 0;
-    RemoteLoginType *curItem;
-    RemoteLoginType *curLocal;
+    RemoteLoginType curItem;
+    RemoteLoginType curLocal;
     int             foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = RLoginTypeList.first(); curItem != 0; curItem = RLoginTypeList.next()) {
+    for (int z = 0; z < RLoginTypeList.size(); z++) {
+        curItem = RLoginTypeList.at(z);
         foundIt = 0;
         // And our inner loop, which actually does the checking.
-        for (curLocal = LLoginTypeList.first(); curLocal != 0; curLocal = LLoginTypeList.next()) {
-            if (curItem->InternalID == curLocal->InternalID) {
+        for (int x = 0; x < LLoginTypeList.size(); x++) {
+            curLocal = LLoginTypeList.at(x);
+            if (curItem.InternalID == curLocal.InternalID) {
                 foundIt = 1;
                 // Found the item.  Check for any updates.
                 
                 // Check the login type
-                if (strcmp(curItem->LoginType, curLocal->LoginType)) {
-                    strcpy(curItem->LoginType, curLocal->LoginType);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.LoginType, curLocal.LoginType)) {
+                    strcpy(curItem.LoginType, curLocal.LoginType);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the description
-                if (strcmp(curItem->Description, curLocal->Description)) {
-                    strcpy(curItem->Description, curLocal->Description);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.Description, curLocal.Description)) {
+                    strcpy(curItem.Description, curLocal.Description);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the class
-                if (strcmp(curItem->LoginClass, curLocal->LoginClass)) {
-                    strcpy(curItem->LoginClass, curLocal->LoginClass);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.LoginClass, curLocal.LoginClass)) {
+                    strcpy(curItem.LoginClass, curLocal.LoginClass);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the disk space
-                if (curItem->DiskSpace != curLocal->DiskSpace) {
-                    curItem->DiskSpace = curLocal->DiskSpace;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.DiskSpace != curLocal.DiskSpace) {
+                    curItem.DiskSpace = curLocal.DiskSpace;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // And whether or not it was active
-                if (curItem->Active != curLocal->Active) {
-                    curItem->Active = curLocal->Active;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.Active != curLocal.Active) {
+                    curItem.Active = curLocal.Active;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the flags
-                if (strcmp(curItem->Flags, curLocal->Flags)) {
-                    strcpy(curItem->Flags, curLocal->Flags);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.Flags, curLocal.Flags)) {
+                    strcpy(curItem.Flags, curLocal.Flags);
+                    curItem.Status = STAT_UPDATE;
                 }
 
             }
         }
         // If we didn't find the record, mark it for deletion.
-        if (!foundIt) curItem->Status = STAT_DELETE;
+        if (!foundIt) curItem.Status = STAT_DELETE;
     }
 
     return RetVal;    
@@ -1176,33 +1182,35 @@ int checkRemoteLoginTypes(void)
 int checkLocalLoginTypes(void)
 {
     int             RetVal = 0;
-    RemoteLoginType *curItem;
-    RemoteLoginType *curRemote;
+    RemoteLoginType curItem;
+    RemoteLoginType curRemote;
     int             foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = LLoginTypeList.first(); curItem != 0; curItem = LLoginTypeList.next()) {
+    for (int z = 0; z < LLoginTypeList.size(); z++) {
+        curItem = LLoginTypeList.at(z);
         foundIt = 0;
         // And our inner loop, which actually does the checking.
-        for (curRemote = RLoginTypeList.first(); curRemote != 0; curRemote = RLoginTypeList.next()) {
-            if (curItem->InternalID == curRemote->InternalID) {
+        for (int x = 0; x < RLoginTypeList.size(); x++) {
+            curRemote = RLoginTypeList.at(x);
+            if (curItem.InternalID == curRemote.InternalID) {
                 foundIt = 1;
             }
         }
         // If we didn't find the record, add it in.
         if (!foundIt) {
-	        curRemote = new RemoteLoginType;
-	        curRemote->InternalID     = curItem->InternalID;
-	        curRemote->DiskSpace      = curItem->DiskSpace;
-	        curRemote->Active         = curItem->Active;
-            strcpy(curRemote->LoginType,    curItem->LoginType);
-            strcpy(curRemote->Description,  curItem->Description);
-            strcpy(curRemote->LoginClass,   curItem->LoginClass);
-            strcpy(curRemote->Flags,        curItem->Flags);
+	        RemoteLoginType *tmpRemote = new RemoteLoginType;
+	        tmpRemote->InternalID     = curItem.InternalID;
+	        tmpRemote->DiskSpace      = curItem.DiskSpace;
+	        tmpRemote->Active         = curItem.Active;
+            strcpy(tmpRemote->LoginType,    curItem.LoginType);
+            strcpy(tmpRemote->Description,  curItem.Description);
+            strcpy(tmpRemote->LoginClass,   curItem.LoginClass);
+            strcpy(tmpRemote->Flags,        curItem.Flags);
 	        
-	        curRemote->Status = STAT_INSERT;    // No change/update/delete/etc.
+	        tmpRemote->Status = STAT_INSERT;    // No change/update/delete/etc.
 	        
-	        RLoginTypeList.append(curRemote);
+	        RLoginTypeList += *tmpRemote;
         }
     }
 
@@ -1218,53 +1226,55 @@ int checkLocalLoginTypes(void)
 int checkRemoteDomains(void)
 {
     int             RetVal = 0;
-    RemoteDomain    *curItem;
-    RemoteDomain    *curLocal;
+    RemoteDomain    curItem;
+    RemoteDomain    curLocal;
     int             foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = RDomainList.first(); curItem != 0; curItem = RDomainList.next()) {
+    for (int z = 0; z < RDomainList.size(); z++) {
+        curItem = RDomainList.at(z);
         foundIt = 0;
         // And our inner loop, which actually does the checking.
-        for (curLocal = LDomainList.first(); curLocal != 0; curLocal = LDomainList.next()) {
-            if (curItem->InternalID == curLocal->InternalID) {
+        for (int x = 0; x < LDomainList.size(); x++) {
+            curLocal = LDomainList.at(x);
+            if (curItem.InternalID == curLocal.InternalID) {
                 foundIt = 1;
                 // Found the item.  Check for any updates.
                 
                 // Check the Customer ID
-                if (curItem->CustomerID != curLocal->CustomerID) {
-                    curItem->CustomerID = curLocal->CustomerID;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.CustomerID != curLocal.CustomerID) {
+                    curItem.CustomerID = curLocal.CustomerID;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the login ID
-                if (strcmp(curItem->LoginID, curLocal->LoginID)) {
-                    strcpy(curItem->LoginID, curLocal->LoginID);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.LoginID, curLocal.LoginID)) {
+                    strcpy(curItem.LoginID, curLocal.LoginID);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the Login type
-                if (curItem->DomainType != curLocal->DomainType) {
-                    curItem->DomainType = curLocal->DomainType;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.DomainType != curLocal.DomainType) {
+                    curItem.DomainType = curLocal.DomainType;
+                    curItem.Status = STAT_UPDATE;
                 }
                 
                 // Check the Domain Name
-                if (strcmp(curItem->DomainName, curLocal->DomainName)) {
-                    strcpy(curItem->DomainName, curLocal->DomainName);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.DomainName, curLocal.DomainName)) {
+                    strcpy(curItem.DomainName, curLocal.DomainName);
+                    curItem.Status = STAT_UPDATE;
                 }
                 
                 // Check for SSL
-                if (curItem->HasSSL != curLocal->HasSSL) {
-                    curItem->HasSSL = curLocal->HasSSL;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.HasSSL != curLocal.HasSSL) {
+                    curItem.HasSSL = curLocal.HasSSL;
+                    curItem.Status = STAT_UPDATE;
                 }
                 
             }
         }
         // If we didn't find the record, mark it for deletion.
-        if (!foundIt) curItem->Status = STAT_DELETE;
+        if (!foundIt) curItem.Status = STAT_DELETE;
     }
 
     return RetVal;    
@@ -1278,32 +1288,34 @@ int checkRemoteDomains(void)
 int checkLocalDomains(void)
 {
     int             RetVal = 0;
-    RemoteDomain    *curItem;
-    RemoteDomain    *curRemote;
+    RemoteDomain    curItem;
+    RemoteDomain    curRemote;
     int             foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = LDomainList.first(); curItem != 0; curItem = LDomainList.next()) {
+    for (int z = 0; z < LDomainList.size(); z++) {
+        curItem = LDomainList.at(z);
         foundIt = 0;
         // And our inner loop, which actually does the checking.
-        for (curRemote = RDomainList.first(); curRemote != 0; curRemote = RDomainList.next()) {
-            if (curItem->InternalID == curRemote->InternalID) {
+        for (int x = 0; x < RDomainList.size(); x++) {
+            curRemote = RDomainList.at(x);
+            if (curItem.InternalID == curRemote.InternalID) {
                 foundIt = 1;
             }
         }
         // If we didn't find the record, add it in.
         if (!foundIt) {
-	        curRemote = new RemoteDomain;
-	        curRemote->InternalID     = curItem->InternalID;
-	        curRemote->CustomerID     = curItem->CustomerID;
-	        curRemote->DomainType     = curItem->DomainType;
-            curRemote->HasSSL         = curItem->HasSSL;
-	        strcpy(curRemote->LoginID, curItem->LoginID);
-	        strcpy(curRemote->DomainName, curItem->DomainName);
+	        RemoteDomain *tmpRemote = new RemoteDomain;
+	        tmpRemote->InternalID     = curItem.InternalID;
+	        tmpRemote->CustomerID     = curItem.CustomerID;
+	        tmpRemote->DomainType     = curItem.DomainType;
+            tmpRemote->HasSSL         = curItem.HasSSL;
+	        strcpy(tmpRemote->LoginID, curItem.LoginID);
+	        strcpy(tmpRemote->DomainName, curItem.DomainName);
 	        
-	        curRemote->Status = STAT_INSERT;    // No change/update/delete/etc.
+	        tmpRemote->Status = STAT_INSERT;    // No change/update/delete/etc.
 	        
-	        RDomainList.append(curRemote);
+	        RDomainList += *tmpRemote;
         }
     }
 
@@ -1319,96 +1331,97 @@ int checkLocalDomains(void)
 int checkRemoteRegister(void)
 {
     int             RetVal = 0;
-    RemoteRegister  *curItem;
+    RemoteRegister  curItem;
     RemoteRegister  *curLocal;
     
     // Lets just jump right into it...
-    for (curItem = RemoteRegList.first(); curItem != 0; curItem = RemoteRegList.next()) {
-        curLocal = LocalRegListDict[curItem->InternalID];
+    for (int z = 0; z < RemoteRegList.size(); z++) {
+        curItem = RemoteRegList.at(z);
+        curLocal = LocalRegListDict[curItem.InternalID];
         if (curLocal != 0) {
         // And our inner loop, which actually does the checking.
         // for (curLocal = LocalRegList.first(); curLocal != 0; curLocal = RemoteRegList.next()) {
-            if (curItem->InternalID == curLocal->InternalID) {
+            if (curItem.InternalID == curLocal->InternalID) {
                 // Found the item.  Check for any updates.
-                // curItem->Status = STAT_NOCHANGE;
+                // curItem.Status = STAT_NOCHANGE;
                 
                 // Check the Customer ID
-                if (curItem->CustomerID != curLocal->CustomerID) {
-                    curItem->CustomerID = curLocal->CustomerID;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.CustomerID != curLocal->CustomerID) {
+                    curItem.CustomerID = curLocal->CustomerID;
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the login ID
-                if (strcmp(curItem->LoginID, curLocal->LoginID)) {
-                    strcpy(curItem->LoginID, curLocal->LoginID);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.LoginID, curLocal->LoginID)) {
+                    strcpy(curItem.LoginID, curLocal->LoginID);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the Quantity
-                if (curItem->Quantity != curLocal->Quantity) {
-                    curItem->Quantity = curLocal->Quantity;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.Quantity != curLocal->Quantity) {
+                    curItem.Quantity = curLocal->Quantity;
+                    curItem.Status = STAT_UPDATE;
                 }
                 
                 // Check the Price
-                if (curItem->Price != curLocal->Price) {
-                    curItem->Price = curLocal->Price;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.Price != curLocal->Price) {
+                    curItem.Price = curLocal->Price;
+                    curItem.Status = STAT_UPDATE;
                 }
                 
                 // Check the Amount
-                if (curItem->Amount != curLocal->Amount) {
-                    curItem->Amount = curLocal->Amount;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.Amount != curLocal->Amount) {
+                    curItem.Amount = curLocal->Amount;
+                    curItem.Status = STAT_UPDATE;
                 }
                 
                 // Check the StatementNo
-                if (curItem->StatementNo != curLocal->StatementNo) {
-                    curItem->StatementNo = curLocal->StatementNo;
-                    curItem->Status = STAT_UPDATE;
+                if (curItem.StatementNo != curLocal->StatementNo) {
+                    curItem.StatementNo = curLocal->StatementNo;
+                    curItem.Status = STAT_UPDATE;
                 }
                 
                 // Check the TransDate
-                if (strcmp(curItem->TransDate, curLocal->TransDate)) {
-                    strcpy(curItem->TransDate, curLocal->TransDate);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.TransDate, curLocal->TransDate)) {
+                    strcpy(curItem.TransDate, curLocal->TransDate);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the BilledDate
-                if (strcmp(curItem->BilledDate, curLocal->BilledDate)) {
-                    strcpy(curItem->BilledDate, curLocal->BilledDate);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.BilledDate, curLocal->BilledDate)) {
+                    strcpy(curItem.BilledDate, curLocal->BilledDate);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the DueDate
-                if (strcmp(curItem->DueDate, curLocal->DueDate)) {
-                    strcpy(curItem->DueDate, curLocal->DueDate);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.DueDate, curLocal->DueDate)) {
+                    strcpy(curItem.DueDate, curLocal->DueDate);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the StartDate
-                if (strcmp(curItem->StartDate, curLocal->StartDate)) {
-                    strcpy(curItem->StartDate, curLocal->StartDate);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.StartDate, curLocal->StartDate)) {
+                    strcpy(curItem.StartDate, curLocal->StartDate);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the EndDate
-                if (strcmp(curItem->EndDate, curLocal->EndDate)) {
-                    strcpy(curItem->EndDate, curLocal->EndDate);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.EndDate, curLocal->EndDate)) {
+                    strcpy(curItem.EndDate, curLocal->EndDate);
+                    curItem.Status = STAT_UPDATE;
                 }
 
                 // Check the Memo
-                if (strcmp(curItem->Memo, curLocal->Memo)) {
-                    delete curItem->Memo;
-                    curItem->Memo = new char[strlen(curLocal->Memo)+2];
-                    strcpy(curItem->Memo, curLocal->Memo);
-                    curItem->Status = STAT_UPDATE;
+                if (strcmp(curItem.Memo, curLocal->Memo)) {
+                    delete curItem.Memo;
+                    curItem.Memo = new char[strlen(curLocal->Memo)+2];
+                    strcpy(curItem.Memo, curLocal->Memo);
+                    curItem.Status = STAT_UPDATE;
                 }
-                curLocal = LocalRegList.last();
+                continue;
             }
         } else {
-            curItem->Status = STAT_DELETE;
+            curItem.Status = STAT_DELETE;
         }
     }
 
@@ -1424,38 +1437,39 @@ int checkRemoteRegister(void)
 int checkLocalRegister(void)
 {
     int             RetVal = 0;
-    RemoteRegister  *curItem;
+    RemoteRegister  curItem;
     RemoteRegister  *curRemote;
     int             foundIt = 0;
     
     // Lets just jump right into it...
-    for (curItem = LocalRegList.first(); curItem != 0; curItem = LocalRegList.next()) {
+    for (int z = 0; z < LocalRegList.size(); z++) {
+        curItem = LocalRegList.at(z);
         foundIt = 0;
-        curRemote = RemoteRegListDict[curItem->InternalID];
+        curRemote = RemoteRegListDict[curItem.InternalID];
         if (curRemote == 0) {
             // We didn't find the record, add it in.
 	        curRemote = new RemoteRegister;
 
-	        curRemote->InternalID     = curItem->InternalID;
-	        curRemote->CustomerID     = curItem->CustomerID;
-	        curRemote->Quantity       = curItem->Quantity;
-	        curRemote->Price          = curItem->Price;
-	        curRemote->Amount         = curItem->Amount;
-	        curRemote->StatementNo    = curItem->StatementNo;
+	        curRemote->InternalID     = curItem.InternalID;
+	        curRemote->CustomerID     = curItem.CustomerID;
+	        curRemote->Quantity       = curItem.Quantity;
+	        curRemote->Price          = curItem.Price;
+	        curRemote->Amount         = curItem.Amount;
+	        curRemote->StatementNo    = curItem.StatementNo;
 	        
-	        strcpy(curRemote->LoginID,    curItem->LoginID);
-	        strcpy(curRemote->TransDate,  curItem->TransDate);
-	        strcpy(curRemote->BilledDate, curItem->BilledDate);
-	        strcpy(curRemote->DueDate,    curItem->DueDate);
-	        strcpy(curRemote->StartDate,  curItem->StartDate);
-	        strcpy(curRemote->EndDate,    curItem->EndDate);
+	        strcpy(curRemote->LoginID,    curItem.LoginID);
+	        strcpy(curRemote->TransDate,  curItem.TransDate);
+	        strcpy(curRemote->BilledDate, curItem.BilledDate);
+	        strcpy(curRemote->DueDate,    curItem.DueDate);
+	        strcpy(curRemote->StartDate,  curItem.StartDate);
+	        strcpy(curRemote->EndDate,    curItem.EndDate);
 	        
-	        curRemote->Memo = new char[strlen(curItem->Memo) + 2];
-	        strcpy(curRemote->Memo, curItem->Memo);
+	        curRemote->Memo = new char[strlen(curItem.Memo) + 2];
+	        strcpy(curRemote->Memo, curItem.Memo);
 	        
 	        curRemote->Status = STAT_INSERT;
 	        
-	        RemoteRegList.append(curRemote);
+	        RemoteRegList += *curRemote;
         }
     }
 
@@ -1475,7 +1489,7 @@ int checkLocalRegister(void)
 int updateRemoteCustomers(void)
 {
     int             RetVal = 0;
-    RemoteCustomer  *curItem;
+    RemoteCustomer  curItem;
     ADBTable RCDB("Customers", REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
     
     long            inscount = 0;
@@ -1483,30 +1497,31 @@ int updateRemoteCustomers(void)
     long            delcount = 0;
     long            nochange = 0;
     
-    for (curItem = RCustList.first(); curItem != 0; curItem = RCustList.next()) {
-        switch (curItem->Status) {
+    for (int z = 0; z < RCustList.size(); z++) {
+        curItem = RCustList.at(z);
+        switch (curItem.Status) {
             case STAT_DELETE:
-                RCDB.del(curItem->CustomerID);
+                RCDB.del(curItem.CustomerID);
                 delcount++;
                 break;
             
             case STAT_UPDATE:
             case STAT_INSERT:
-                if (curItem->Status == STAT_UPDATE) RCDB.get(curItem->CustomerID);
-                RCDB.setValue("CustomerID",       curItem->CustomerID);
-                RCDB.setValue("PrimaryLogin",     curItem->PrimaryLogin);
-                RCDB.setValue("CurrentBalance",   curItem->CurrentBalance);
-                RCDB.setValue("AutoPayment",      curItem->AutoPayment);
-                RCDB.setValue("AutoExpires",      curItem->AutoExpires);
-                RCDB.setValue("AutoLastFour",     curItem->AutoLastFour);
-                RCDB.setValue("PendingPayment",   curItem->PendingPayment);
-                RCDB.setValue("PendingAmount",    curItem->PendingAmount);
-                RCDB.setValue("PendingDate",      curItem->PendingDate);
-                RCDB.setValue("GraceDate",        curItem->GraceDate);
-                RCDB.setValue("PrevBalance",      curItem->PrevBalance);
-                RCDB.setValue("PrevBalanceDate",  curItem->PrevBalanceDate);
-                RCDB.setValue("MailboxesAllowed", curItem->MailboxesAllowed);
-                if (curItem->Status == STAT_UPDATE) {
+                if (curItem.Status == STAT_UPDATE) RCDB.get(curItem.CustomerID);
+                RCDB.setValue("CustomerID",       curItem.CustomerID);
+                RCDB.setValue("PrimaryLogin",     curItem.PrimaryLogin);
+                RCDB.setValue("CurrentBalance",   curItem.CurrentBalance);
+                RCDB.setValue("AutoPayment",      curItem.AutoPayment);
+                RCDB.setValue("AutoExpires",      curItem.AutoExpires);
+                RCDB.setValue("AutoLastFour",     curItem.AutoLastFour);
+                RCDB.setValue("PendingPayment",   curItem.PendingPayment);
+                RCDB.setValue("PendingAmount",    curItem.PendingAmount);
+                RCDB.setValue("PendingDate",      curItem.PendingDate);
+                RCDB.setValue("GraceDate",        curItem.GraceDate);
+                RCDB.setValue("PrevBalance",      curItem.PrevBalance);
+                RCDB.setValue("PrevBalanceDate",  curItem.PrevBalanceDate);
+                RCDB.setValue("MailboxesAllowed", curItem.MailboxesAllowed);
+                if (curItem.Status == STAT_UPDATE) {
                     RCDB.upd();
                     updcount++;
                 } else {
@@ -1536,7 +1551,7 @@ int updateRemoteCustomers(void)
 int updateRemoteLogins(void)
 {
     int         RetVal = 0;
-    RemoteLogin *curItem;
+    RemoteLogin curItem;
     ADBTable    RLDB("Logins", REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
     
     long        inscount = 0;
@@ -1544,29 +1559,30 @@ int updateRemoteLogins(void)
     long        delcount = 0;
     long        nochange = 0;
     
-    for (curItem = RLoginList.first(); curItem != 0; curItem = RLoginList.next()) {
-        switch (curItem->Status) {
+    for (int z = 0; z < RLoginList.size(); z++) {
+        curItem = RLoginList.at(z);
+        switch (curItem.Status) {
             case STAT_DELETE:
-                RLDB.del(curItem->InternalID);
+                RLDB.del(curItem.InternalID);
                 delcount++;
                 break;
             
             case STAT_UPDATE:
-                RLDB.get(curItem->InternalID);
-                RLDB.setValue("CustomerID", curItem->CustomerID);
-                RLDB.setValue("LoginID",    curItem->LoginID);
-                RLDB.setValue("LoginType",  curItem->LoginType);
-                RLDB.setValue("Active",     curItem->Active);
+                RLDB.get(curItem.InternalID);
+                RLDB.setValue("CustomerID", curItem.CustomerID);
+                RLDB.setValue("LoginID",    curItem.LoginID);
+                RLDB.setValue("LoginType",  curItem.LoginType);
+                RLDB.setValue("Active",     curItem.Active);
                 RLDB.upd();
                 updcount++;
                 break;
             
             case STAT_INSERT:
-                RLDB.setValue("InternalID", curItem->InternalID);
-                RLDB.setValue("CustomerID", curItem->CustomerID);
-                RLDB.setValue("LoginID",    curItem->LoginID);
-                RLDB.setValue("LoginType",  curItem->LoginType);
-                RLDB.setValue("Active",     curItem->Active);
+                RLDB.setValue("InternalID", curItem.InternalID);
+                RLDB.setValue("CustomerID", curItem.CustomerID);
+                RLDB.setValue("LoginID",    curItem.LoginID);
+                RLDB.setValue("LoginType",  curItem.LoginType);
+                RLDB.setValue("Active",     curItem.Active);
                 RLDB.ins();
                 inscount++;
                 break;
@@ -1591,7 +1607,7 @@ int updateRemoteLogins(void)
 int updateRemoteLoginTypes(void)
 {
     int             RetVal = 0;
-    RemoteLoginType *curItem;
+    RemoteLoginType curItem;
     ADBTable        RLDB("LoginTypes", REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
     
     long        inscount = 0;
@@ -1599,33 +1615,34 @@ int updateRemoteLoginTypes(void)
     long        delcount = 0;
     long        nochange = 0;
     
-    for (curItem = RLoginTypeList.first(); curItem != 0; curItem = RLoginTypeList.next()) {
-        switch (curItem->Status) {
+    for (int z = 0; z < RLoginTypeList.size(); z++) {
+        curItem = RLoginTypeList.at(z);
+        switch (curItem.Status) {
             case STAT_DELETE:
-                RLDB.del(curItem->InternalID);
+                RLDB.del(curItem.InternalID);
                 delcount++;
                 break;
             
             case STAT_UPDATE:
-                RLDB.get(curItem->InternalID);
-                RLDB.setValue("LoginType",      curItem->LoginType);
-                RLDB.setValue("Description",    curItem->Description);
-                RLDB.setValue("DiskSpace",      curItem->DiskSpace);
-                RLDB.setValue("LoginClass",     curItem->LoginClass);
-                RLDB.setValue("Active",         curItem->Active);
-                RLDB.setValue("LoginFlags",     curItem->Flags);
+                RLDB.get(curItem.InternalID);
+                RLDB.setValue("LoginType",      curItem.LoginType);
+                RLDB.setValue("Description",    curItem.Description);
+                RLDB.setValue("DiskSpace",      curItem.DiskSpace);
+                RLDB.setValue("LoginClass",     curItem.LoginClass);
+                RLDB.setValue("Active",         curItem.Active);
+                RLDB.setValue("LoginFlags",     curItem.Flags);
                 RLDB.upd();
                 updcount++;
                 break;
             
             case STAT_INSERT:
-                RLDB.setValue("InternalID",     curItem->InternalID);
-                RLDB.setValue("LoginType",      curItem->LoginType);
-                RLDB.setValue("Description",    curItem->Description);
-                RLDB.setValue("DiskSpace",      curItem->DiskSpace);
-                RLDB.setValue("LoginClass",     curItem->LoginClass);
-                RLDB.setValue("Active",         curItem->Active);
-                RLDB.setValue("LoginFlags",     curItem->Flags);
+                RLDB.setValue("InternalID",     curItem.InternalID);
+                RLDB.setValue("LoginType",      curItem.LoginType);
+                RLDB.setValue("Description",    curItem.Description);
+                RLDB.setValue("DiskSpace",      curItem.DiskSpace);
+                RLDB.setValue("LoginClass",     curItem.LoginClass);
+                RLDB.setValue("Active",         curItem.Active);
+                RLDB.setValue("LoginFlags",     curItem.Flags);
                 RLDB.ins();
                 inscount++;
                 break;
@@ -1649,7 +1666,7 @@ int updateRemoteLoginTypes(void)
 int updateRemoteDomains(void)
 {
     int          RetVal = 0;
-    RemoteDomain *curItem;
+    RemoteDomain curItem;
     ADBTable     RDDB("Domains", REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
     
     long        inscount = 0;
@@ -1657,31 +1674,32 @@ int updateRemoteDomains(void)
     long        delcount = 0;
     long        nochange = 0;
     
-    for (curItem = RDomainList.first(); curItem != 0; curItem = RDomainList.next()) {
-        switch (curItem->Status) {
+    for (int z = 0; z < RDomainList.size(); z++) {
+        curItem = RDomainList.at(z);
+        switch (curItem.Status) {
             case STAT_DELETE:
-                RDDB.del(curItem->InternalID);
+                RDDB.del(curItem.InternalID);
                 delcount++;
                 break;
             
             case STAT_UPDATE:
-                RDDB.get(curItem->InternalID);
-                RDDB.setValue("CustomerID",  curItem->CustomerID);
-                RDDB.setValue("LoginID",     curItem->LoginID);
-                RDDB.setValue("DomainName",  curItem->DomainName);
-                RDDB.setValue("DomainType",  curItem->DomainType);
-                RDDB.setValue("HasSSL",      curItem->HasSSL);
+                RDDB.get(curItem.InternalID);
+                RDDB.setValue("CustomerID",  curItem.CustomerID);
+                RDDB.setValue("LoginID",     curItem.LoginID);
+                RDDB.setValue("DomainName",  curItem.DomainName);
+                RDDB.setValue("DomainType",  curItem.DomainType);
+                RDDB.setValue("HasSSL",      curItem.HasSSL);
                 RDDB.upd();
                 updcount++;
                 break;
             
             case STAT_INSERT:
-                RDDB.setValue("InternalID", curItem->InternalID);
-                RDDB.setValue("CustomerID", curItem->CustomerID);
-                RDDB.setValue("LoginID",    curItem->LoginID);
-                RDDB.setValue("DomainName", curItem->DomainName);
-                RDDB.setValue("DomainType", curItem->DomainType);
-                RDDB.setValue("HasSSL",     curItem->HasSSL);
+                RDDB.setValue("InternalID", curItem.InternalID);
+                RDDB.setValue("CustomerID", curItem.CustomerID);
+                RDDB.setValue("LoginID",    curItem.LoginID);
+                RDDB.setValue("DomainName", curItem.DomainName);
+                RDDB.setValue("DomainType", curItem.DomainType);
+                RDDB.setValue("HasSSL",     curItem.HasSSL);
                 RDDB.ins();
                 inscount++;
                 break;
@@ -1705,7 +1723,7 @@ int updateRemoteDomains(void)
 int updateRemoteRegister(void)
 {
     int             RetVal = 0;
-    RemoteRegister  *curItem;
+    RemoteRegister  curItem;
     ADBTable        RRDB("Register", REMOTEDBASE, REMOTEUSER, REMOTEPASS, REMOTEHOST);
     
     long        inscount = 0;
@@ -1713,32 +1731,33 @@ int updateRemoteRegister(void)
     long        delcount = 0;
     long        nochange = 0;
     
-    for (curItem = RemoteRegList.first(); curItem != 0; curItem = RemoteRegList.next()) {
-        switch (curItem->Status) {
+    for (int z = 0; z < RemoteRegList.size(); z++) {
+        curItem = RemoteRegList.at(z);
+        switch (curItem.Status) {
             case STAT_DELETE:
-                RRDB.del(curItem->InternalID);
+                RRDB.del(curItem.InternalID);
                 delcount++;
                 break;
             
             case STAT_UPDATE:
             case STAT_INSERT:
-                // if (curItem->Status == STAT_INSERT) RRDB.setValue("InternalID", curItem->InternalID);
-                if (curItem->Status == STAT_UPDATE) RRDB.get(curItem->InternalID);
-                else RRDB.setValue("InternalID", curItem->InternalID);
-                RRDB.setValue("CustomerID",     curItem->CustomerID);
-                RRDB.setValue("LoginID",        curItem->LoginID);
-                RRDB.setValue("Quantity",       curItem->Quantity);
-                RRDB.setValue("Price",          curItem->Price);
-                RRDB.setValue("Amount",         curItem->Amount);
-                RRDB.setValue("StatementNo",    curItem->StatementNo);
-                RRDB.setValue("TransDate",      curItem->TransDate);
-                RRDB.setValue("BilledDate",     curItem->BilledDate);
-                RRDB.setValue("DueDate",        curItem->DueDate);
-                RRDB.setValue("StartDate",      curItem->StartDate);
-                RRDB.setValue("EndDate",        curItem->EndDate);
-                RRDB.setValue("Memo",           curItem->Memo);
+                // if (curItem.Status == STAT_INSERT) RRDB.setValue("InternalID", curItem.InternalID);
+                if (curItem.Status == STAT_UPDATE) RRDB.get(curItem.InternalID);
+                else RRDB.setValue("InternalID", curItem.InternalID);
+                RRDB.setValue("CustomerID",     curItem.CustomerID);
+                RRDB.setValue("LoginID",        curItem.LoginID);
+                RRDB.setValue("Quantity",       curItem.Quantity);
+                RRDB.setValue("Price",          curItem.Price);
+                RRDB.setValue("Amount",         curItem.Amount);
+                RRDB.setValue("StatementNo",    curItem.StatementNo);
+                RRDB.setValue("TransDate",      curItem.TransDate);
+                RRDB.setValue("BilledDate",     curItem.BilledDate);
+                RRDB.setValue("DueDate",        curItem.DueDate);
+                RRDB.setValue("StartDate",      curItem.StartDate);
+                RRDB.setValue("EndDate",        curItem.EndDate);
+                RRDB.setValue("Memo",           curItem.Memo);
                 
-                if (curItem->Status == STAT_UPDATE) {
+                if (curItem.Status == STAT_UPDATE) {
                     RRDB.upd();
                     updcount++;
                 } else {

@@ -31,7 +31,7 @@ endif
 
 SUBDIRS =	
 
-SOURCES =	ADBColumn.cpp ADBRow.cpp ADB.cpp ADBTable.cpp ADBList.cpp
+SOURCES =	ADBColumn.cpp ADBRow.cpp ADB.cpp ADBTable.cpp ADBList.cpp StrTools.cpp Cfg.cpp FParse.cpp
 
 OBJECTS =	$(SOURCES:.cpp=.o)
 

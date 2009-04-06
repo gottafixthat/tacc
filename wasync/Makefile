@@ -2,16 +2,14 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../include -I../lib -I../adb -I../bdes
+INCDIRS	=  -I$(QTDIR)/include -I. -I../include -I../lib -I../taccCore -I../bdes
 INCDIRS += -I/home/marc/src/taa/include
-CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
-CFLAGS  += -DADBQT
+CFLAGS= -O2 -fno-strength-reduce -Wall -W
 #LFLAGS  += -lg++ -lstdc++
 #LFLAGS  += -lstdc++
-LFLAGS  += -L/usr/X11R6/lib -lXext
-LFLAGS  += -L../lib -L../adb -L../bdes -ltaa -ladbqt
+LFLAGS  += -L../lib -L../taccCore -L../bdes -ltaa -ltaccCore
 LFLAGS  += -L/usr/lib/mysql/ -lmysqlclient
-LFLAGS	+= -L$(QTDIR)/lib -lqt-mt
+LFLAGS	+= -L$(QTDIR)/lib -lQtCore -lQt3Support
 #LFLAGS	+= -static
 
 
@@ -23,6 +21,7 @@ ifdef USEDES
 	CFLAGS += -DUSEDES -I/usr/local/include
 	LFLAGS += -L/usr/local/lib -lbdes
 endif
+CFLAGS += -DQT3_SUPPORT
 
 
 ####### End of automatically generated section
