@@ -581,9 +581,9 @@ void StatementEngine::emailStatement(uint StNo, int Force = 0, int Dup = 0)
 	char				fmtLine1[128];
 	char				fmtLine2[128];
 	char				fmtLine1s[128];
-	char                tmpFName[512];
-	char                headerFName[512];
-	char                footerFName[512];
+	QString             tmpFName;
+	QString             headerFName;
+	QString             footerFName;
 	QDate               tmpDate;
 	QDate               tmpDate2;
 	QDate               tmpDate3;
@@ -620,19 +620,19 @@ void StatementEngine::emailStatement(uint StNo, int Force = 0, int Dup = 0)
     }
 
 	// Get a temporary file name so we can write the statement to it.
-	tmpnam(tmpFName);
-	tmpnam(headerFName);
-	tmpnam(footerFName);
-	stfp = fopen(tmpFName, "w");
+	tmpFName = makeTmpFileName("/tmp/statementXXXXXX");
+	headerFName = makeTmpFileName("/tmp/statementheaderXXXXXX");
+	footerFName = makeTmpFileName("/tmp/statementfooterXXXXXX");
+	stfp = fopen(tmpFName.toAscii().constData(), "w");
 	if (stfp == NULL) {
-		printf("Unable to create file '%s' for writing.\n", tmpFName);
+		printf("Unable to create file '%s' for writing.\n", tmpFName.toAscii().constData());
 		return;
 	}
 
     // Parse the header and footer files.
     strcpy(tmpLogin, STDB.getStr("EmailedTo"));
-    parseFile("/usr/local/lib/taa/StatementHeader.txt", headerFName, STDB.getLong("CustomerID"), tmpLogin, "");
-    parseFile("/usr/local/lib/taa/StatementFooter.txt", footerFName, STDB.getLong("CustomerID"), tmpLogin, "");
+    parseFile("/usr/local/lib/taa/StatementHeader.txt", headerFName.toAscii().constData(), STDB.getLong("CustomerID"), tmpLogin, "");
+    parseFile("/usr/local/lib/taa/StatementFooter.txt", footerFName.toAscii().constData(), STDB.getLong("CustomerID"), tmpLogin, "");
 
     // Put the email headers into the file.
     fprintf(stfp, "From: %s\n", cfgVal("StatementFromAddress"));
@@ -642,15 +642,15 @@ void StatementEngine::emailStatement(uint StNo, int Force = 0, int Dup = 0)
     fprintf(stfp, "\n\n");
 
     // Now, write the header file to our output file.
-    tmpfp = fopen(headerFName, "r");
+    tmpfp = fopen(headerFName.toAscii().constData(), "r");
     if (tmpfp != NULL) {
         while (fgets(tmpstr, sizeof(tmpstr), tmpfp) != NULL) {
             fprintf(stfp, tmpstr);
         }
         fclose(tmpfp);
-        unlink(headerFName);
+        unlink(headerFName.toAscii().constData());
     } else {
-        printf("Warning!  Could not open header file '%s' for reading.\n", headerFName);
+        printf("Warning!  Could not open header file '%s' for reading.\n", headerFName.toAscii().constData());
     }
     
     // Now for the actual statement data itself.
@@ -749,24 +749,24 @@ void StatementEngine::emailStatement(uint StNo, int Force = 0, int Dup = 0)
 	}
 	
     // Now, write the footer file to our output file.
-    tmpfp = fopen(footerFName, "r");
+    tmpfp = fopen(footerFName.toAscii().constData(), "r");
     if (tmpfp != NULL) {
         while (fgets(tmpstr, sizeof(tmpstr), tmpfp) != NULL) {
             fprintf(stfp, tmpstr);
         }
         fclose(tmpfp);
-        unlink(footerFName);
+        unlink(footerFName.toAscii().constData());
     } else {
-        printf("Warning!  Could not open footer file '%s' for reading.\n", headerFName);
+        printf("Warning!  Could not open footer file '%s' for reading.\n", headerFName.toAscii().constData());
     }
     
 
 
 	fclose(stfp);
 
-    sprintf(tmpstr, "cp %s /var/spool/taamail/statement-%09ld", tmpFName, STDB.getLong("StatementNo"));
+    sprintf(tmpstr, "cp %s /var/spool/taamail/statement-%09ld", tmpFName.toAscii().constData(), STDB.getLong("StatementNo"));
 	system(tmpstr);
-	unlink(tmpFName);
+	unlink(tmpFName.toAscii().constData());
 	
 	// Now, update the database with the date that the statement was mailed.
 	tmpDate = QDate::currentDate();

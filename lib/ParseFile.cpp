@@ -19,6 +19,7 @@
 #include <BlargDB.h>
 #include <ADB.h>
 #include <FParse.h>
+#include <TAATools.h>
 
 /*
 ** parseFile   - The only function for it.  It reads SrcFile, and spits
@@ -30,7 +31,7 @@ void    parseFile(const char *SrcFile, const char *DstFile, long CustomerID, con
     FParser  parser;
 	FILE     *dfp;
 	char 	 tmpstr[1024];
-    char     tmpDst[1024];
+    QString  tmpDst;
 	Q3StrList tmplist(TRUE);
 	QString	 qst;
 	QString	 tmpqstr2;
@@ -70,9 +71,9 @@ void    parseFile(const char *SrcFile, const char *DstFile, long CustomerID, con
 	
 	// If strlen(DstFile) == 0, then generate a temp file name for it.
 	if (!strlen(DstFile)) {
-	    tmpnam(tmpDst);
+	    tmpDst = makeTmpFileName("/tmp/parsefileXXXXXX");
 	} else { 
-        strcpy(tmpDst, DstFile);
+        tmpDst = DstFile;
     }
 
 	
@@ -100,7 +101,7 @@ void    parseFile(const char *SrcFile, const char *DstFile, long CustomerID, con
     parser.set("LoginTypeD",     LTDB.getStr("Description"));
 
     // Read in the entire source file.
-	dfp = fopen(tmpDst, "w");
+	dfp = fopen(tmpDst.toAscii().constData(), "w");
     parser.parseFile(SrcFile, dfp);
     fclose(dfp);
 }

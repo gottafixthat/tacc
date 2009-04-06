@@ -10,8 +10,8 @@
 #include <pwd.h>
 
 // Qt Includes
-#include <qlist.h>
-#include <qdatetm.h>
+#include <QtCore/QList>
+#include <QtCore/QDateTime>
 
 // Blarg includes
 #include <ADB.h>
@@ -26,7 +26,7 @@ void showSubscriptionTotals(float &totMonthly);
 long showLoginCountsByClass();
 void showSubscriptionDetails();
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     passwd  *pent;
     uid_t   myUID;
@@ -328,7 +328,7 @@ void showSubscriptionDetails()
             }
 
         }
-        printf("%5ld ", tmpQty);
+        printf("%5d ", tmpQty);
         totCount += tmpQty;
         //printf("%5ld ", sumDB.rowCount);
         //totCount += sumDB.rowCount;

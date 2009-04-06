@@ -398,9 +398,9 @@ void LoginEdit::cancelLogin()
 
 void LoginEdit::mailPrimaryLogin(void)
 {
-    char    fname[1024];        // The complete filename of the message to parse
+    QString fname;              // The complete filename of the message to parse
     char    prefix[1024];       // The path to the message to parse
-    char    mname[1024];        // The file name of the message.
+    QString mname;              // The file name of the message.
     char    *tmpstr;
     FILE    *fp;
     FILE    *fp2;
@@ -417,32 +417,32 @@ void LoginEdit::mailPrimaryLogin(void)
     
     for (unsigned int j = 0; j < files.count(); j++) {
         // Create the tmp files.
-        tmpnam(mname);
-        fp = fopen(mname, "w");
+        mname = makeTmpFileName("/tmp/mailprimaryXXXXXX");
+        fp = fopen(mname.toAscii().constData(), "w");
         if (fp != NULL) {
             fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
             fprintf(fp, "To: %s@avvanta.com\n", myLoginID);
             
             // Append the parsed file to our email message
             sprintf(tmpstr, "%s/%s", prefix, (const char *) files.at(j));
-            tmpnam(fname);
-            parseFile(tmpstr, fname, myCustID, myLoginID, "");
+            fname = makeTmpFileName("/tmp/mailprimary2XXXXXX");
+            parseFile(tmpstr, fname.toAscii().constData(), myCustID, myLoginID, "");
             
-            fp2 = fopen(fname, "r");
+            fp2 = fopen(fname.toAscii().constData(), "r");
             if (fp2 != NULL) {
                 while (fgets(tmpstr, sizeof(tmpstr), fp2) != NULL) {
                     fprintf(fp, tmpstr);
                 }
             }
             fclose(fp2);
-            unlink(fname);
+            unlink(fname.toAscii().constData());
             
             fclose(fp);
             
-            sprintf(tmpstr, "cp %s /var/spool/taamail/%s-%s-%s", mname, myLoginID, (const char *) files.at(j), myLoginID);
+            sprintf(tmpstr, "cp %s /var/spool/taamail/%s-%s-%s", mname.toAscii().constData(), myLoginID, (const char *) files.at(j), myLoginID);
             system(tmpstr);
             
-            unlink(mname);
+            unlink(mname.toAscii().constData());
         }
     }
     
@@ -456,9 +456,9 @@ void LoginEdit::mailPrimaryLogin(void)
 
 void LoginEdit::mailAddOnLogin(void)
 {
-    char    fname[1024];        // The complete filename of the message to parse
+    QString fname;              // The complete filename of the message to parse
     char    prefix[1024];       // The path to the message to parse
-    char    mname[1024];        // The file name of the message.
+    QString mname;              // The file name of the message.
     char    *tmpstr;
     FILE    *fp;
     FILE    *fp2;
@@ -475,32 +475,32 @@ void LoginEdit::mailAddOnLogin(void)
     
     for (unsigned int j = 0; j < files.count(); j++) {
         // Create the tmp files.
-        tmpnam(mname);
-        fp = fopen(mname, "w");
+        mname = makeTmpFileName("/tmp/mailaddonXXXXXX");
+        fp = fopen(mname.toAscii().constData(), "w");
         if (fp != NULL) {
             fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
             fprintf(fp, "To: %s@avvanta.com\n", myLoginID);
             
             // Append the parsed file to our email message
             sprintf(tmpstr, "%s/%s", prefix, (const char *) files.at(j));
-            tmpnam(fname);
-            parseFile(tmpstr, fname, myCustID, myLoginID, "");
+            fname = makeTmpFileName("/tmp/mailaddon2XXXXXX");
+            parseFile(tmpstr, fname.toAscii().constData(), myCustID, myLoginID, "");
             
-            fp2 = fopen(fname, "r");
+            fp2 = fopen(fname.toAscii().constData(), "r");
             if (fp2 != NULL) {
                 while (fgets(tmpstr, sizeof(tmpstr), fp2) != NULL) {
                     fprintf(fp, tmpstr);
                 }
             }
             fclose(fp2);
-            unlink(fname);
+            unlink(fname.toAscii().constData());
             
             fclose(fp);
             
-            sprintf(tmpstr, "cp %s /var/spool/taamail/%s-%s-%s", mname, myLoginID, (const char *) files.at(j), myLoginID);
+            sprintf(tmpstr, "cp %s /var/spool/taamail/%s-%s-%s", mname.toAscii().constData(), myLoginID, (const char *) files.at(j), myLoginID);
             system(tmpstr);
             
-            unlink(mname);
+            unlink(mname.toAscii().constData());
         }
     }
     
@@ -514,9 +514,9 @@ void LoginEdit::mailAddOnLogin(void)
 
 void LoginEdit::mailParent(void)
 {
-    char    fname[1024];        // The complete filename of the message to parse
-    char    prefix[1024];       // The path to the message to parse
-    char    mname[1024];        // The file name of the message.
+    QString fname;          // The complete filename of the message to parse
+    char    prefix[1024];   // The path to the message to parse
+    QString mname;          // The file name of the message.
     char    *tmpstr;
     FILE    *fp;
     FILE    *fp2;
@@ -537,32 +537,32 @@ void LoginEdit::mailParent(void)
     
     for (unsigned int j = 0; j < files.count(); j++) {
         // Create the tmp files.
-        tmpnam(mname);
-        fp = fopen(mname, "w");
+        mname = makeTmpFileName("/tmp/mailparentXXXXXX");
+        fp = fopen(mname.toAscii().constData(), "w");
         if (fp != NULL) {
             fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
             fprintf(fp, "To: %s@avvanta.com\n", (const char *) CDB.getStr("PrimaryLogin"));
             
             // Append the parsed file to our email message
             sprintf(tmpstr, "%s/%s", prefix, (const char *) files.at(j));
-            tmpnam(fname);
-            parseFile(tmpstr, fname, myCustID, myLoginID, "");
+            fname = makeTmpFileName("/tmp/mailparent2XXXXXX");
+            parseFile(tmpstr, fname.toAscii().constData(), myCustID, myLoginID, "");
             
-            fp2 = fopen(fname, "r");
+            fp2 = fopen(fname.toAscii().constData(), "r");
             if (fp2 != NULL) {
                 while (fgets(tmpstr, sizeof(tmpstr), fp2) != NULL) {
                     fprintf(fp, tmpstr);
                 }
             }
             fclose(fp2);
-            unlink(fname);
+            unlink(fname.toAscii().constData());
             
             fclose(fp);
             
-            sprintf(tmpstr, "cp %s /var/spool/taamail/%s-%s-%s", mname, myLoginID, (const char *) files.at(j), (const char *) CDB.getStr("PrimaryLogin"));
+            sprintf(tmpstr, "cp %s /var/spool/taamail/%s-%s-%s", mname.toAscii().constData(), myLoginID, (const char *) files.at(j), (const char *) CDB.getStr("PrimaryLogin"));
             system(tmpstr);
             
-            unlink(mname);
+            unlink(mname.toAscii().constData());
         }
     }
     
@@ -576,9 +576,9 @@ void LoginEdit::mailParent(void)
 
 void LoginEdit::mailAdmins(void)
 {
-    char    fname[1024];        // The complete filename of the message to parse
+    QString fname;              // The complete filename of the message to parse
     char    prefix[1024];       // The path to the message to parse
-    char    mname[1024];        // The file name of the message.
+    QString mname;              // The file name of the message.
     char    *tmpstr;
     FILE    *fp;
     FILE    *fp2;
@@ -600,32 +600,32 @@ void LoginEdit::mailAdmins(void)
     for (unsigned int i = 0; i < admins.count(); i++)
       for (unsigned int j = 0; j < files.count(); j++) {
         // Create the tmp files.
-        tmpnam(mname);
-        fp = fopen(mname, "w");
+        mname = makeTmpFileName("/tmp/mailadminsXXXXXX");
+        fp = fopen(mname.toAscii().constData(), "w");
         if (fp != NULL) {
             fprintf(fp, "From: Avvanta Support <support@avvanta.com>\n");
             fprintf(fp, "To: %s@avvanta.com\n", (const char *) admins.at(i));
             
             // Append the parsed file to our email message
             sprintf(tmpstr, "%s/%s", prefix, (const char *) files.at(j));
-            tmpnam(fname);
-            parseFile(tmpstr, fname, myCustID, myLoginID, "");
+            fname = makeTmpFileName("/tmp/mailadmins2XXXXXX");
+            parseFile(tmpstr, fname.toAscii().constData(), myCustID, myLoginID, "");
             
-            fp2 = fopen(fname, "r");
+            fp2 = fopen(fname.toAscii().constData(), "r");
             if (fp2 != NULL) {
                 while (fgets(tmpstr, sizeof(tmpstr), fp2) != NULL) {
                     fprintf(fp, tmpstr);
                 }
             }
             fclose(fp2);
-            unlink(fname);
+            unlink(fname.toAscii().constData());
             
             fclose(fp);
             
-            sprintf(tmpstr, "cp %s /var/spool/taamail/%s-%s-%s", mname, myLoginID, (const char *) files.at(j), (const char *) admins.at(i));
+            sprintf(tmpstr, "cp %s /var/spool/taamail/%s-%s-%s", mname.toAscii().constData(), myLoginID, (const char *) files.at(j), (const char *) admins.at(i));
             system(tmpstr);
             
-            unlink(mname);
+            unlink(mname.toAscii().constData());
         }
     }
     

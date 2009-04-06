@@ -46,7 +46,7 @@ SUBDIRS += modembilling
 SUBDIRS += radimport
 SUBDIRS += ccget
 SUBDIRS += wasync
-#SUBDIRS += backend
+SUBDIRS += backend
 
 SOURCES =	
 

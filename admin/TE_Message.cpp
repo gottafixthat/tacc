@@ -18,6 +18,7 @@
 #include <Qt3Support/Q3GridLayout>
 #include <Qt3Support/q3textstream.h>
 
+#include <TAATools.h>
 #include <TE_Message.h>
 
 using namespace Qt;
@@ -80,9 +81,12 @@ TE_Message::~TE_Message()
 
 char * TE_Message::createMessage()
 {
+    QString tmpFile;
+
     char    *RetVal = new char[1024];
     
-    strcpy(RetVal, tmpnam(NULL));
+    tmpFile = makeTmpFileName("/tmp/temessageXXXXXX");
+    strcpy(RetVal, tmpFile.toAscii().constData());
     
     QFile   qfp(RetVal);
     if (qfp.open(QIODevice::WriteOnly)) {
