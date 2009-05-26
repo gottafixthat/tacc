@@ -135,7 +135,7 @@ void PrintTreeWidget::print()
     // Print the report...
     // FIXME:  This should print children as well, but it doesn't.
     for (pageNo = 1; pageNo < totPages + 1; pageNo++) {
-        int sItem = ((pageNo -1) * 50) + 1;
+        int sItem = ((pageNo -1) * 50);
         int eItem = sItem + 50;
         if (eItem > myTree->topLevelItemCount()) eItem = myTree->topLevelItemCount();
         printHeader(p);
