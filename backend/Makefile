@@ -25,6 +25,7 @@ endif
 #SUBDIRS += taamaild qwestconnect openissues
 SUBDIRS += qwestconnect
 SUBDIRS += custstats
+SUBDIRS += cmrimport
 
 SOURCES =	
 
@@ -50,6 +51,7 @@ TARGET	=
 all: $(SUBDIRS)
 
 $(SUBDIRS): FORCE
+	echo Entering directory $@
 	cd $@; $(MAKE)
 
 $(TARGET): $(SRCMETA) $(OBJECTS) $(OBJMETA)
