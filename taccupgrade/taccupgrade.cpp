@@ -523,5 +523,23 @@ void upgradeDatabase()
 
         vers = 12;
     }
+
+    // Call Rates
+    /*
+    if (vers < 13) {
+        printf("Creating VoIPCarrierRates table...\n");
+        QSqlQuery   q(dbp.qsqldb());
+        QString     sql;
+
+        sql = "create table VoIPCarriers (CarrierID bigint(21) not null auto_increment, CarrierName varchar(255) not null, termvers bigint(21) not null, origvers bigint(21) not null, tforigvers bigint(21) not null, primary key (CarrierID))";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        sql = "create table VoIPCarrierRates (CarrierID bigint(21) NOT NULL, RateType enum('term','orig','tforig'), RatePlanVersion bigint(21) not null, npanxx varchar(10) not null, npa varchar(10) not null, nxx varchar(10) not null, locstate varchar(255) not null, lata varchar(255) not null, lataocn varchar(255) not null, lataname varchar(255) not null, ocn varchar(255) not null, ocnname varchar(255) not null, ocntype varchar(255) not null, interlatarate decimal (20,6) not null default '0.000000', intralatarate decimal(20,6) not null default '0.000000', lastupdated datetime not null, primary key(CarrierID, RateType, RatePlanVersion, npa, nxx, lata, lataocn))";
+        if (!q.exec(sql)) upgradeError(q.lastError().databaseText(), q.lastQuery());
+
+        vers = 13;
+    }
+    */
+
 }
 

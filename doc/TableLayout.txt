@@ -1983,3 +1983,36 @@ CREATE TABLE SavedReports (
     INDEX SaveNameIDX(LoginID, ReportName, SaveName)
 );
 
+# VoIP Carriers
+CREATE TABLE VoIPCarriers (
+  CarrierID bigint(21) not null auto_increment,
+  CarrierName varchar(255) not null,
+  termvers  bigint(21) not null default '0',
+  origvers  bigint(21) not null default '0',
+  tforigvers bigint(21) not null default '0',
+  PRIMARY KEY(CarrierID)
+);
+
+CREATE TABLE VoIPTermRates (
+  termrateid bigint(21) not null auto_increment,
+  CarrierID  bigint(21) not null default '0',
+  termvers   bigint(21) not null default '0',
+  npanxx     varchar(10) not null default '',
+  npa        varchar(10) not null default '',
+  nxx        varchar(10) not null default '',
+  locstate   varchar(255) not null default '',
+  lata       varchar(255) not null default '',
+  lataocn    varchar(255) not null default '',
+  lataname   varchar(255) not null default '',
+  ocn        varchar(255) not null default '',
+  ocnname    varchar(255) not null default '',
+  ocntype    varchar(255) not null default '',
+  interlatarate decimal(20,6) not null default '0.000000',
+  intralatarate decimal(20,6) not null default '0.000000',
+  lastupdated datetime,
+  PRIMARY KEY(termrateid),
+  INDEX CarrierIDX1(CarrierID,termvers),
+  INDEX npanxxIDX1(npanxx),
+  INDEX npanxxIDX2(npa,nxx)
+);
+
