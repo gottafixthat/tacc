@@ -8,8 +8,8 @@
  *   or in part by any means, electronic or otherwise, without the express
  *   written consent of Avvatel Corporation and R. Marc Lewis.
  *
- * cmrimport - ChoiceMax Rates Import program for importing PointOne's 
- * choicemax rates into the AVP database for use with TACC's VoIP Rating
+ * potfimport - PointOne TollFree Import program for importing PointOne's 
+ * toll free rates into the AVP database for use with TACC's VoIP Rating
  * system.
  */
 
@@ -25,13 +25,12 @@
 #include <TAATools.h>
 #include <Cfg.h>
 
-#include <cmrimport.h>
+#include <potfimport.h>
 
 QStringList fileList;
 
-QList<rateRecord> rateList;
+QList<tfrateRecord> tfrateList;
 long    carrierID;
-int     doLATAs;
 int     verbosity;
 
 /**
@@ -52,19 +51,14 @@ int main(int argc, char **argv)
 
     // Initialize our globals
     carrierID = 0;
-    doLATAs   = 0;
     verbosity = 0;
 
     // Parse our arguments.
     int opt;
-    while ((opt = getopt(argc, argv, "clv?i:")) != -1) {
+    while ((opt = getopt(argc, argv, "cv?i:")) != -1) {
         switch(opt) {
             case 'v':
                 verbosity++;
-                break;
-
-            case 'l':
-                doLATAs++;
                 break;
 
             case 'i':
@@ -78,7 +72,7 @@ int main(int argc, char **argv)
 
             case '?':
             default:    // '?'
-                fprintf(stderr, "Usage: %s [-c][-v][-l] -i carrierid file1 [file2 [fileN]]\n", argv[0]);
+                fprintf(stderr, "Usage: %s [-c][-v] -i carrierid file1 [file2 [fileN]]\n", argv[0]);
                 exit(-1);
                 break;
         }
@@ -118,7 +112,7 @@ int main(int argc, char **argv)
     }
     if (!allOkay) exit(-1);
 
-    fprintf(stderr, "Loaded %d rate records\n", rateList.size());
+    fprintf(stderr, "Loaded %d rate records\n", tfrateList.size());
 
     // Instantiate our application.
     //QCoreApplication a(argc, argv);  
@@ -186,18 +180,9 @@ bool readFile(QString filename)
 
     long rowCount = 0;
     // Extract the headers.
-    int npanxxCol       = parser.header().findIndex("NPANXX");
-    int npaCol          = parser.header().findIndex("NPA");
-    int nxxCol          = parser.header().findIndex("NXX");
-    int locStateCol     = parser.header().findIndex("LOC_STATE");
-    int LATAOCNCol      = parser.header().findIndex("LATAOCN");
-    int LATACol         = parser.header().findIndex("LATA");
-    int LATANameCol     = parser.header().findIndex("LATA_NAME");
-    int OCNCol          = parser.header().findIndex("OCN");
-    int OCNNameCol      = parser.header().findIndex("OCN_NAME");
-    int OCNTypeCol      = parser.header().findIndex("OCN_TYPE");
-    int interlataRateCol= parser.header().findIndex("Between_the_States");
-    int intralataRateCol= parser.header().findIndex("Within_a_state");
+    int LATACol     = parser.header().findIndex("LATA");
+    int LATANameCol = parser.header().findIndex("LATA_NAME");
+    int rateCol     = parser.header().findIndex("RATE");
 
     while(parser.loadRecord()) {
         rowCount++;
@@ -207,20 +192,11 @@ bool readFile(QString filename)
                 fflush(stdout);
             }
         }
-        rateRecord  rec;
-        rec.npanxx          = parser.row()[npanxxCol];
-        rec.npa             = parser.row()[npaCol];
-        rec.nxx             = parser.row()[nxxCol];
-        rec.locState        = parser.row()[locStateCol];
-        rec.LATAOCN         = parser.row()[LATAOCNCol];
-        rec.LATA            = parser.row()[LATACol];
-        rec.LATAName        = parser.row()[LATANameCol];
-        rec.OCN             = parser.row()[OCNCol];
-        rec.OCNName         = parser.row()[OCNNameCol];
-        rec.OCNType         = parser.row()[OCNTypeCol];
-        rec.interlataRate   = parser.row()[interlataRateCol];
-        rec.intralataRate   = parser.row()[intralataRateCol];
-        rateList.append(rec);
+        tfrateRecord  rec;
+        rec.LATA        = parser.row()[LATACol];
+        rec.LATAName    = parser.row()[LATANameCol];
+        rec.Rate        = parser.row()[rateCol];
+        tfrateList.append(rec);
     }
 
     if (verbosity) {
@@ -232,63 +208,41 @@ bool readFile(QString filename)
 /**
  * insertRates()
  *
- * Gets the current termvers from the carriers table, increments it by one
+ * Gets the current tforigvers from the carriers table, increments it by one
  * and then adds the rates for this carrier into the database.
  */
 void insertRates(void)
 {
     ADB         db;
-    ADBTable    ratedb("termrates");
+    ADBTable    ratedb("tforigrates");
     QString     timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd HH-mm-ss");
-    rateRecord  rec;
+    tfrateRecord rec;
     QString     sql;
 
-    if (doLATAs) {
-        if (verbosity) {
-            printf("Marking LATAs for removal...");
-            fflush(stdout);
-        }
-        db.dbcmd("update voiplatas set rmflag = 1");
-        if (verbosity) printf("Done.\n");
-    }
-
-    db.query("select termvers from VoIPCarriers where CarrierID = %ld", carrierID);
+    db.query("select tforigvers from VoIPCarriers where CarrierID = %ld", carrierID);
     if (!db.rowCount) {
         fprintf(stderr, "Unable to get the table version from the VoIPCarriers table!\n");
         exit(-1);
     }
 
     db.getrow();
-    long termVers = (atoi(db.curRow["termvers"]));
-    termVers++;
+    long tforigVers = (atoi(db.curRow["tforigvers"]));
+    tforigVers++;
     if (verbosity) {
-        printf("Inserting rate table version %ld\n", termVers);
+        printf("Inserting rate table version %ld\n", tforigVers);
     }
 
     // Now, walk through the list and insert them all.
-    for (int i = 0; i < rateList.size(); i++) {
-        rec = rateList.at(i);
+    for (int i = 0; i < tfrateList.size(); i++) {
+        rec = tfrateList.at(i);
         ratedb.clearData();
         ratedb.setValue("CarrierID",        carrierID);
-        ratedb.setValue("termvers",         termVers);
-        ratedb.setValue("npanxx",           rec.npanxx.ascii());
-        ratedb.setValue("npa",              rec.npa.ascii());
-        ratedb.setValue("nxx",              rec.nxx.ascii());
-        ratedb.setValue("locstate",         rec.locState.ascii());
+        ratedb.setValue("tforigvers",       tforigVers);
         ratedb.setValue("lata",             rec.LATA.ascii());
-        ratedb.setValue("lataocn",          rec.LATAOCN.ascii());
         ratedb.setValue("lataname",         rec.LATAName.ascii());
-        ratedb.setValue("ocn",              rec.OCN.ascii());
-        ratedb.setValue("ocnname",          rec.OCNName.ascii());
-        ratedb.setValue("ocntype",          rec.OCNType.ascii());
-        ratedb.setValue("interlatarate",    rec.interlataRate.ascii());
-        ratedb.setValue("intralatarate",    rec.intralataRate.ascii());
+        ratedb.setValue("rate",             rec.Rate.ascii());
         ratedb.setValue("lastupdated",      timestamp.ascii());
         ratedb.ins();
-
-        if (doLATAs) {
-            db.dbcmd("replace into voiplatas (npanxx, lata, rmflag) values ('%s', '%s', 0)", rec.npanxx.ascii(), rec.LATA.ascii());
-        }
 
         if (verbosity) {
             if (!(i % 100)) {
@@ -298,20 +252,11 @@ void insertRates(void)
         }
     }
     if (verbosity) {
-        printf("\rInserted %d records.\n", rateList.size());
-    }
-
-    if (doLATAs) {
-        if (verbosity) {
-            printf("Removing LATAs marked for removal...");
-            fflush(stdout);
-        }
-        db.dbcmd("delete from voiplatas where rmflag = 1");
-        if (verbosity) printf("Done.\n");
+        printf("\rInserted %d records.\n", tfrateList.size());
     }
 
     // Update the table version
-    db.dbcmd("update VoIPCarriers set termvers = %ld where CarrierID = %ld", termVers, carrierID);
+    db.dbcmd("update VoIPCarriers set tforigvers = %ld where CarrierID = %ld", tforigVers, carrierID);
 }
 
 

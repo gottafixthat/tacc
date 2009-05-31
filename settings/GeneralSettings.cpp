@@ -50,6 +50,7 @@ GeneralSettings::GeneralSettings(QWidget *parent, const char *name) : TAAWidget(
     curRow++;
 
     ml->addLayout(gl, 1);
+    ml->addStretch(1);
 
 }
 

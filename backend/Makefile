@@ -26,6 +26,8 @@ endif
 SUBDIRS += qwestconnect
 SUBDIRS += custstats
 SUBDIRS += cmrimport
+SUBDIRS += potfimport
+SUBDIRS += cdrs
 
 SOURCES =	
 
