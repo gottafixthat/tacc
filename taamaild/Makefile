@@ -12,7 +12,7 @@ LFLAGS  += -L/usr/local/lib -L../taccCore -ltaccCore
 LFLAGS  += -L/usr/lib/mysql -lmysqlclient
 LFLAGS  += -L../bdes
 LFLAGS  += -lmimepp_net -lmimepp_core -lmimepp_util
-LFLAGS	+= -L$(QTDIR)/lib -lQtCore
+LFLAGS	+= -L$(QTLIB) -lQtCore
 #LFLAGS	+= -static
 
 ifdef USEDES

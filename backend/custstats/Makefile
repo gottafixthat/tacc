@@ -11,7 +11,7 @@ LFLAGS  += -L/usr/X11R6/lib -lXext
 LFLAGS  += -L../../lib -L../../taccCore -L../../bdes -ltaccCore
 LFLAGS  += -L/usr/lib/mysql/ -lmysqlclient
 LFLAGS  += -ltaa -lbdes
-LFLAGS	+= -L$(QTDIR)/lib -lQtCore -lQt3Support
+LFLAGS	+= -L$(QTLIB) -lQtCore -lQt3Support
 #LFLAGS	+= -static
 
 

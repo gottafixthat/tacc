@@ -9,7 +9,7 @@ CFLAGS= -O2 -fno-strength-reduce -Wall -W
 #LFLAGS  += -lstdc++
 LFLAGS  += -L../lib -L../taccCore -L../bdes -ltaa -ltaccCore
 LFLAGS  += -L/usr/lib/mysql/ -lmysqlclient
-LFLAGS	+= -L$(QTDIR)/lib -lQtCore -lQt3Support
+LFLAGS	+= -L$(QTLIB) -lQtCore -lQt3Support
 #LFLAGS	+= -static
 
 
