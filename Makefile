@@ -24,8 +24,9 @@ CC	= gcc
 
 ####### Files
 
-export QTDIR=/usr/include/qt4
-export QTMOC=/usr/bin/moc
+export QTDIR=/usr/lib/qt4/include
+export QTMOC=/usr/lib/qt4/bin/moc
+export QTLIB=/usr/lib/qt4/lib
 export MYSQLLIB=/usr/lib/mysql
 export MYSQLINC=/usr/include/mysql
 BUILDNUM=scripts/buildnum

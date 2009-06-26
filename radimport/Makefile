@@ -4,7 +4,7 @@ INCDIRS	=  -I. -I/usr/local/include -I$(QTDIR) -I../taccCore -I../lib
 CFLAGS= -O2 -fno-strength-reduce -Wall
 LFLAGS  = -L/usr/local/lib -L/usr/lib/mysql -L../taccCore -L../lib -L../bdes
 LFLAGS  += -ltaccCore -lmysqlclient -ltaa
-LFLAGS	+= -L$(QTDIR)/lib -lQtCore
+LFLAGS	+= -L$(QTLIB) -lQtCore
 SHELL   = /bin/sh
 CC	= g++
 
