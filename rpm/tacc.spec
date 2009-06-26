@@ -43,6 +43,10 @@ install -m 755 bin/radimport $RPM_BUILD_ROOT%{prefix}/sbin/
 install -m 755 bin/taamail $RPM_BUILD_ROOT%{prefix}/sbin/
 install -m 755 bin/upgradetacc $RPM_BUILD_ROOT%{prefix}/sbin/
 install -m 755 bin/wasync $RPM_BUILD_ROOT%{prefix}/sbin/
+install -m 755 bin/cdrs $RPM_BUILD_ROOT%{prefix}/sbin/
+install -m 755 bin/potfimport $RPM_BUILD_ROOT%{prefix}/sbin/
+install -m 755 bin/cmrimport $RPM_BUILD_ROOT%{prefix}/sbin/
+
 
 
 # Our sample configuration files
