@@ -2,7 +2,7 @@
 
 USEDES	= 1
 
-INCDIR	=  -I. -I../bdes
+INCDIR	= -I$(QTDIR) -I. -I../bdes
 INCDIR  += -I/usr/local/include
 # CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I.
 CFLAGS	= -g -fno-strength-reduce -Wall -W

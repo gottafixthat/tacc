@@ -3,7 +3,7 @@
 USEDES = 1
 
 MYSQLDIR = /usr/lib/mysql
-INCDIRS	=  -I. -I../include -I$(QTDIR)/include -I../taccCore -I../lib -I../bdes
+INCDIRS	=  -I. -I../include -I$(QTDIR) -I../taccCore -I../lib -I../bdes
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
 #LFLAGS  += -lg++ -lstdc++
 LFLAGS  += -lstdc++

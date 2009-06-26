@@ -42,13 +42,13 @@ int     verbosity;
 int main(int argc, char **argv)
 {
     // Load the TAA Config
-    loadTAAConfig();
+    loadTAAConfig(true, false);
 
     // Setup the databases
-    ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
-    ADB::setDefaultDBase(cfgVal("TAAMySQLDB"));
-    ADB::setDefaultUser(cfgVal("TAAMySQLUser"));
-    ADB::setDefaultPass(cfgVal("TAAMySQLPass"));
+    ADB::setDefaultHost(cfgVal("RateTableDBHost"));
+    ADB::setDefaultDBase(cfgVal("RateTableDBName"));
+    ADB::setDefaultUser(cfgVal("RateTableDBUser"));
+    ADB::setDefaultPass(cfgVal("RateTableDBPass"));
 
     // Initialize our globals
     carrierID = 0;
@@ -136,14 +136,14 @@ int main(int argc, char **argv)
 void listCarriers(void)
 {
     ADB     db;
-    db.query("select * from VoIPCarriers");
+    db.query("select * from Carriers");
     if (!db.rowCount) {
         fprintf(stderr, "No carriers were found!\n");
         return;
     }
     printf("%-5s %s\n", "ID", "Carrier Name");
     while(db.getrow()) {
-        printf("%-5s %s\n", db.curRow["CarrierID"], db.curRow["CarrierName"]);
+        printf("%-5s %s\n", db.curRow["CarrierID"], db.curRow["Carrier"]);
     }
 }
 
@@ -156,12 +156,12 @@ bool checkCarrierID(void)
 {
     bool    retVal = true;
     ADB     db;
-    db.query("select * from VoIPCarriers where CarrierID = %ld", carrierID);
+    db.query("select * from Carriers where CarrierID = %ld", carrierID);
     if (!db.rowCount) {
         retVal = false;
     } else if (verbosity) {
         db.getrow();
-        printf("Selected Carrier: %s\n", db.curRow["CarrierName"]);
+        printf("Selected Carrier: %s\n", db.curRow["Carrier"]);
     }
 
     return retVal;
@@ -252,9 +252,9 @@ void insertRates(void)
         if (verbosity) printf("Done.\n");
     }
 
-    db.query("select termvers from VoIPCarriers where CarrierID = %ld", carrierID);
+    db.query("select termvers from Carriers where CarrierID = %ld", carrierID);
     if (!db.rowCount) {
-        fprintf(stderr, "Unable to get the table version from the VoIPCarriers table!\n");
+        fprintf(stderr, "Unable to get the table version from the Carriers table!\n");
         exit(-1);
     }
 
@@ -311,7 +311,7 @@ void insertRates(void)
     }
 
     // Update the table version
-    db.dbcmd("update VoIPCarriers set termvers = %ld where CarrierID = %ld", termVers, carrierID);
+    db.dbcmd("update Carriers set termvers = %ld where CarrierID = %ld", termVers, carrierID);
 }
 
 

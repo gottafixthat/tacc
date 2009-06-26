@@ -2,7 +2,7 @@
 
 USEDES	= 1
 
-INCDIR	=  $(QTDIR)/include
+INCDIR	=  $(QTDIR)
 # CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I.
 CFLAGS	= -O2 -Wall -fno-strength-reduce -I/usr/X11R6/include -I. -I../include/ -I../bdes
 CFLAGS += -I../taccCore -I../taccGui
@@ -10,7 +10,7 @@ CFLAGS += -I../taccCore -I../taccGui
 LFLAGS  = -lqt -lmysqlclient -lcrypt -L$(QTDIR)/lib -shared
 SHELL   = /bin/sh
 CC	= gcc
-MOC	= $(QTDIR)/bin/moc
+MOC	= $(QTMOC)
 
 # CFLAGS += -DDBDEBUG
 CFLAGS += -DQT3_SUPPORT

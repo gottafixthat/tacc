@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     passwd  *pent;
 	int     opt;
 
-    loadTAAConfig();
+    loadTAAConfig(true, false);
 
     // Initialize our Qt Application
     cdrsApp a(argc, argv);

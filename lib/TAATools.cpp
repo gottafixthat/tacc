@@ -100,7 +100,7 @@ void setMainWin(QMainWindow *newWinPtr)
  *
  * Returns true if we loaded it, false otherwise.
  */
-bool loadTAAConfig(bool isCritical)
+bool loadTAAConfig(bool isCritical, bool loadDB)
 {
     bool retVal = true;
     uid_t       myUID;
@@ -135,19 +135,21 @@ bool loadTAAConfig(bool isCritical)
         }
     }
 
-    // Setup the database pool
-    ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
-    ADB::setDefaultDBase(cfgVal("TAAMySQLDB"));
-    ADB::setDefaultUser(cfgVal("TAAMySQLUser"));
-    ADB::setDefaultPass(cfgVal("TAAMySQLPass"));
+    if (loadDB) {
+        // Setup the database pool
+        ADB::setDefaultHost(cfgVal("TAAMySQLHost"));
+        ADB::setDefaultDBase(cfgVal("TAAMySQLDB"));
+        ADB::setDefaultUser(cfgVal("TAAMySQLUser"));
+        ADB::setDefaultPass(cfgVal("TAAMySQLPass"));
 
-    // Now, load all of the configuration data into memory.
-    ADB DB;
-    DB.query("select * from Settings order by InternalID");
-    if (DB.rowCount) while (DB.getrow()) {
-        char    *tmpStr = new char[strlen(DB.curRow["Setting"])+2];
-        strcpy(tmpStr, DB.curRow["Setting"]);
-        setCfgVal(DB.curRow["Token"], tmpStr);
+        // Now, load all of the configuration data into memory.
+        ADB DB;
+        DB.query("select * from Settings order by InternalID");
+        if (DB.rowCount) while (DB.getrow()) {
+            char    *tmpStr = new char[strlen(DB.curRow["Setting"])+2];
+            strcpy(tmpStr, DB.curRow["Setting"]);
+            setCfgVal(DB.curRow["Token"], tmpStr);
+        }
     }
 
     return retVal;

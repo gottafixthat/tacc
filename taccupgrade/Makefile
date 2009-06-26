@@ -1,6 +1,6 @@
 ####### This section is automatically generated
 
-INCDIRS	=  -I. -I/usr/local/include -I../include -I../lib -I$(QTDIR)/include -I../taccCore -I../bdes
+INCDIRS	=  -I. -I/usr/local/include -I../include -I../lib -I$(QTDIR) -I../taccCore -I../bdes
 CFLAGS= -O2 -fno-strength-reduce -Wall
 LFLAGS  = -L/usr/local/lib -L/usr/lib/mysql -L../lib -L../taccCore -L../bdes -L$(QTDIR)/lib -L/usr/X11R6/lib/
 LFLAGS += -ltaa -ltaccCore -lQtCore -lQt3Support -lQtSql -lmysqlclient -lpcre 

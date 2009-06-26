@@ -2,7 +2,7 @@
 
 USEDES = 1
 
-INCDIR	=  $(QTDIR)/include
+INCDIR	=  $(QTDIR)
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include -I../lib -I/usr/local/include
 CFLAGS += -I../reports -I../voicemail -I../tickets -I../taccCore -I../taccGui -I../ccards
 # CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
@@ -11,7 +11,7 @@ LFLAGS  = -L../reports -lreports
 LFLAGS += $(LIBDIRS) -lqt -lmysqlclient -lblarg -laddr -L../lib -L/usr/local/lib -lqdbt -lBString
 SHELL   = /bin/sh
 CC	= g++
-MOC	= $(QTDIR)/bin/moc
+MOC	= $(QTMOC)
 
 ifdef USEDES
 	CFLAGS	+= -DUSEDES -I/usr/local/include
