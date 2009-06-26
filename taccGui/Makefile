@@ -13,9 +13,9 @@ LFLAGS  = -L. -L../bdes -L/usr/lib/mysql -lmysqlclient -lcrypt
 #LFLAGS += -static
 SHELL   = /bin/sh
 CC	= g++
-MOC	= $(QTDIR)/bin/moc
+MOC	= $(QTMOC)
 
-CFLAGS += -I$(QTDIR)/include
+CFLAGS += -I$(QTDIR)
 LFLAGS += -L$(QTDIR)/lib -lQtCore -lQt3Support
 TARGET	= libtaccGui
 

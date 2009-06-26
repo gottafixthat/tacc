@@ -67,7 +67,7 @@ bool CallRatingEngine::setCarrier(long newCarrier)
 
     ADB     db(myDBName.toAscii(), myDBUser.toAscii(), myDBPass.toAscii(), myDBHost.toAscii());
 
-    db.query("select * from VoIPCarriers where CarrierID = %ld", newCarrier);
+    db.query("select * from Carriers where CarrierID = %ld", newCarrier);
     if (!db.rowCount) {
         return false;
     }
@@ -92,7 +92,7 @@ int CallRatingEngine::setRatePlan(long crpid)
 
     ADB     db(myDBName.toAscii(), myDBUser.toAscii(), myDBPass.toAscii(), myDBHost.toAscii());
 
-    db.query("select * from CallRatePlans where crpid = %ld", crpid);
+    db.query("select * from rate_plans where id = %ld", crpid);
     if (db.rowCount) {
         db.getrow();
         myRatePlanID = crpid;
@@ -101,7 +101,7 @@ int CallRatingEngine::setRatePlan(long crpid)
 
         // Now, get the rules.
         rules.clear();
-        db.query("select * from CallRatePlanRules where crpid = %ld order by seqno", myRatePlanID);
+        db.query("select * from rate_plan_rules where rateplan_id = %ld order by seqno", myRatePlanID);
         if (db.rowCount) {
             while(db.getrow()) {
                 CallRatePlanRule    rule;

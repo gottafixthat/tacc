@@ -1992,9 +1992,12 @@ CREATE TABLE voiplatas (
 );
 
 # VoIP Carriers
-CREATE TABLE VoIPCarriers (
+CREATE TABLE Carriers (
   CarrierID bigint(21) not null auto_increment,
-  CarrierName varchar(255) not null,
+  Carrier varchar(255) not null,
+  NOCPhone  varchar(64) not null default '',
+  Account   varchar(64) not null default '',
+  Notes     text not null default '',
   termvers  bigint(21) not null default '0',
   origvers  bigint(21) not null default '0',
   tforigvers bigint(21) not null default '0',

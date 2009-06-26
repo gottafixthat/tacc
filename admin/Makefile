@@ -2,7 +2,7 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../customers -I../include -I../lib
+INCDIRS	=  -I$(QTDIR) -I. -I../customers -I../include -I../lib
 INCDIRS += -I../ccards
 INCDIRS += -I../reports -I../config -I../voicemail -I../taccCore -I../taccGui -I../bdes
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
@@ -20,7 +20,7 @@ LFLAGS  += -liserver -lmimepp_util -lmimepp_net -lmimepp_core
 # LFLAGS  += -static
 SHELL   = /bin/sh
 CC	= g++
-MOC	= $(QTDIR)/bin/moc
+MOC	= $(QTMOC)
 
 ifdef USEDES
 	CFLAGS	+= -DUSEDES -I/usr/local/include

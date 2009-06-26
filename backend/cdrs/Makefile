@@ -12,8 +12,8 @@
 ##  written consent of R. Marc Lewis.
 ###########################################################################
 
-QTDIR=/usr/lib/qt4
-QTINC=$(QTDIR)/include
+#QTDIR=/usr/lib/qt4
+QTINC=$(QTDIR)
 INCDIRS	=  -I. -I../include -I../../lib -I../../taccCore -I/usr/local/include
 INCDIRS += -I$(QTINC) -I$(QTINC)/QtCore -I$(QTINC)/QtNetwork -I$(QTINC)/QtSql -I$(QTINC)/QtXml
 CFLAGS= -O2 -fno-strength-reduce -Wall -W
@@ -26,7 +26,7 @@ LFLAGS += -L../../taccCore -ltaa -ltaccCore -L/usr/lib64/mysql -L/usr/lib/mysql 
 SHELL   = /bin/sh
 CC	= g++
 
-MOC = /usr/bin/moc-qt4
+MOC = $(QTMOC)
 
 ####### Files
 

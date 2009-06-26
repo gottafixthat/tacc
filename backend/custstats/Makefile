@@ -2,7 +2,7 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../include -I../../lib -I../../taccCore -I../../bdes
+INCDIRS	=  -I$(QTDIR) -I. -I../include -I../../lib -I../../taccCore -I../../bdes
 INCDIRS += -I/home/marc/src/taa/include
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include
 #LFLAGS  += -lg++ -lstdc++
@@ -17,7 +17,7 @@ LFLAGS	+= -L$(QTDIR)/lib -lQtCore -lQt3Support
 
 SHELL   = /bin/sh
 CC	= g++
-MOC	= $(QTDIR)/bin/moc
+MOC	= $(QTMOC)
 
 ifdef USEDES
 	CFLAGS += -DUSEDES -I/usr/local/include

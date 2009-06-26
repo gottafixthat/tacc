@@ -2,7 +2,7 @@
 
 USEDES	= 1
 
-INCDIR	=  $(QTDIR)/include
+INCDIR	=  $(QTDIR)
 CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. 
 CFLAGS += -I../include
 CFLAGS += -I../customers
@@ -14,7 +14,7 @@ LFLAGS  = -lqt -lmysqlclient -lcrypt -L$(QTDIR)/lib -shared
 LFLAGS += -L../lib -lblarg
 SHELL   = /bin/sh
 CC	= g++
-MOC	= $(QTDIR)/bin/moc
+MOC	= $(QTMOC)
 
 # CFLAGS += -DDBDEBUG
 CFLAGS += -DQT3_SUPPORT

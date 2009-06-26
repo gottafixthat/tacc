@@ -2,7 +2,7 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../include -I../lib -I../taccCore -I../bdes
+INCDIRS	=  -I$(QTDIR) -I. -I../include -I../lib -I../taccCore -I../bdes
 INCDIRS += -I/home/marc/src/taa/include
 CFLAGS= -O2 -fno-strength-reduce -Wall -W
 #LFLAGS  += -lg++ -lstdc++

@@ -49,7 +49,7 @@ struct taa_User {
 QWidget    *mainWin();
 void        setMainWin(QMainWindow *newWinPtr);
 
-bool        loadTAAConfig(bool isCritical = true);
+bool        loadTAAConfig(bool isCritical = true, bool loadDB = true);
 void        setDefaultConfigValues(void);
 void        updateCfgVal(const char *token, const char *val);
 

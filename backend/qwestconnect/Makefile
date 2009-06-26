@@ -1,7 +1,7 @@
 
 USEDES = 1
 
-INCDIRS	=  -I. -I../../include -I../../taccCore -I../../bdes -I../../tickets -I$(QTDIR)/include -I../../lib -I/usr/local/include
+INCDIRS	=  -I. -I../../include -I../../taccCore -I../../bdes -I../../tickets -I$(QTDIR) -I../../lib -I/usr/local/include
 CFLAGS= -O2 -fno-strength-reduce -Wall -W
 
 LFLAGS  = -L../../taccCore -L../../bdes -L../../lib -L../../tickets -L$(QTDIR)/lib

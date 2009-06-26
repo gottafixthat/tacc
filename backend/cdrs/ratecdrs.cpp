@@ -33,7 +33,7 @@ void rateCDRs(void)
     int fnProfile;
     int fnBillsec;
 
-    if (cre.initDB(cfgVal("TAASQLDriver"), cfgVal("TAAMySQLHost"), cfgVal("TAAMySQLDB"), cfgVal("TAAMySQLUser"), cfgVal("TAAMySQLPass")) != 1) {
+    if (cre.initDB(cfgVal("RateTableDBType"), cfgVal("RateTableDBHost"), cfgVal("RateTableDBName"), cfgVal("RateTableDBUser"), cfgVal("RateTableDBPass")) != 1) {
         fprintf(stderr, "Unable to connect to the database to rate calls!\n");
         return;
     }

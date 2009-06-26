@@ -2,7 +2,7 @@
 
 USEDES = 1
 
-INCDIRS	=  -I$(QTDIR)/include -I. -I../../include -I../../lib 
+INCDIRS	=  -I$(QTDIR) -I. -I../../include -I../../lib 
 CFLAGS= -O2 -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I../../taccCore -I../../taccGui
 # CFLAGS	= -g -fno-strength-reduce -Wall -W -I/usr/X11R6/include -I. -I../include/
 LFLAGS  += -L../../lib -ltaa -L../../taccCore -ltaccCore -L../../taccGui -ltaccGui
@@ -19,7 +19,7 @@ endif
 #LFLAGS  += -static
 SHELL   = /bin/sh
 CC	= g++
-MOC	= $(QTDIR)/bin/moc
+MOC	= $(QTMOC)
 
 ifdef USEDES
 	CFLAGS	+= -DUSEDES -I/usr/local/include
