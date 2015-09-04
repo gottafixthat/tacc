@@ -1,6 +1,6 @@
 #!/bin/sh
 
-BUILDNUM=`svn info | grep Revision | cut -f2 -d" "`
+BUILDNUM=`git rev-list HEAD --count`
 if [ $BUILDNUM != "" ]
 then
 #NEWBUILD=`expr $BUILDNUM + 1`
